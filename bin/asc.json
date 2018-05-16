@@ -57,6 +57,11 @@
     "type": "string",
     "aliases": [ "t" ]
   },
+  "abiFile": {
+    "desc": "Specifies the text output file (.abi).",
+    "type": "string",
+    "aliases": [ "g" ]
+  },
   "asmjsFile": {
     "desc": "Specifies the asm.js output file (.js).",
     "type": "string",

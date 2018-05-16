@@ -93,7 +93,7 @@ rl.question(chalk.white.bold("Do you want to proceed?") + " [Y/n] ", answer => {
     "",
     "To build the entry file to WebAssembly when you are ready, run:",
     "",
-    chalk.white.bold("  npm run asbuild"),
+    chalk.white.bold("  npm run usbuild"),
     "",
     "Running the command above creates the following binaries incl. their respective",
     "text format representations and source maps:",
@@ -210,15 +210,15 @@ function ensureGitignore() {
 function ensurePackageJson() {
   console.log("- Making sure that 'package.json' contains the build commands...")
   const entryPath = path.relative(projectDir, entryFile).replace(/\\/g, "/");
-  const buildUntouched = "asc " + entryPath + " -b build/untouched.wasm -t build/untouched.wat --sourceMap --validate";
-  const buildOptimized = "asc " + entryPath + " -b build/optimized.wasm -t build/optimized.wat --sourceMap --validate --optimize --noDebug";
-  const buildAll = "npm run asbuild:untouched && npm run asbuild:optimized";
+  const buildUntouched = "usc " + entryPath + " -b build/untouched.wasm -t build/untouched.wat --sourceMap --validate";
+  const buildOptimized = "usc " + entryPath + " -b build/optimized.wasm -t build/optimized.wat --sourceMap --validate --optimize --noDebug";
+  const buildAll = "npm run usbuild:untouched && npm run usbuild:optimized";
   if (!fs.existsSync(packageFile)) {
     fs.writeFileSync(packageFile, JSON.stringify({
       "scripts": {
-        "asbuild:untouched": buildUntouched,
-        "asbuild:optimized": buildOptimized,
-        "asbuild": buildAll
+        "usbuild:untouched": buildUntouched,
+        "usbuild:optimized": buildOptimized,
+        "usbuild": buildAll
       }
     }, null, 2));
     console.log(chalk.green("  Created: ") + packageFile);
@@ -226,10 +226,10 @@ function ensurePackageJson() {
     let pkg = JSON.parse(fs.readFileSync(packageFile));
     let scripts = pkg["scripts"];
     if (!scripts) scripts = {};
-    if (!scripts["asbuild"]) {
-      scripts["asbuild:untouched"] = buildUntouched;
-      scripts["asbuild:optimized"] = buildOptimized;
-      scripts["asbuild"] = buildAll;
+    if (!scripts["usbuild"]) {
+      scripts["usbuild:untouched"] = buildUntouched;
+      scripts["usbuild:optimized"] = buildOptimized;
+      scripts["usbuild"] = buildAll;
       pkg["scripts"] = scripts;
       fs.writeFileSync(packageFile, JSON.stringify(pkg, null, 2));
       console.log(chalk.green("  Updated: ") + packageFile);

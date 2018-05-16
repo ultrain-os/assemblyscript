@@ -501,10 +501,10 @@ exports.main = function main(argv, options, callback) {
     });
   }
 
-  let abi = program.toAbi();
-  console.log("abi:" +  JSON.stringify(abi.abiInfo));
+  let abiObj = program.toAbi();
+  // console.log("abi:" +  JSON.stringify(abiObj.abiInfo));
 
-  console.log("abi:" + abi.dispatch);
+  // console.log("abi:" + abiObj.dispatch);
 
   // Prepare output
   if (!args.noEmit) {
@@ -520,6 +520,28 @@ exports.main = function main(argv, options, callback) {
         args.binaryFile = args.outFile;
       }
     }
+
+    // Write abi.file
+    if (args.abiFile != null) {
+      let abi;
+      if (args.abiFile && args.abiFile.length) {
+        stats.emitCount++;
+        stats.emitTime += measure(() => {
+          abi = JSON.stringify(abiObj.abiInfo);
+        });
+
+        console.log("abi abi:" + abi);
+
+        writeFile(path.join(baseDir, args.abiFile), abi);
+      } else if (!hasStdout) {
+        stats.emitCount++;
+        stats.emitTime += measure(() => {
+          abi = JSON.stringify(abiObj.abiInfo);
+        });
+        writeStdout(abi);
+      }
+    }
+
 
     // Write binary
     if (args.binaryFile != null) {
