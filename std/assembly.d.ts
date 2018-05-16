@@ -580,3 +580,7 @@ declare function sealed(target: Function): any;
 
 /** Annotates a method or function as always inlined. */
 declare function inline(target: any, propertyKey: any, descriptor: any): any;
+
+// Decorators for the smart contract
+/** Annotates a method or function as contract */
+declare function action(target: any, propertyKey: any, descriptor: any): any;

@@ -1,5 +1,5 @@
 {
-  "name": "assemblyscript",
+  "name": "ultrascript",
   "version": "0.5.0",
   "author": "Daniel Wirtz <dcode+assemblyscript@dcode.io>",
   "license": "Apache-2.0",
@@ -35,8 +35,8 @@
   "main": "index.js",
   "types": "index.d.ts",
   "bin": {
-    "asc": "bin/asc",
-    "asinit": "bin/asinit"
+    "usc": "bin/asc",
+    "usinit": "bin/asinit"
   },
   "engines": {
     "node": ">=8"

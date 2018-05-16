@@ -21,7 +21,7 @@ var assemblyscript, isDev;
 (() => {
   try {
     assemblyscript = require("../dist/assemblyscript.js");
-    isDev = false;
+    isDev = true;
     try { require("source-map-support").install(); } catch (e) {/* optional */}
   } catch (e) {
     try {
@@ -32,7 +32,7 @@ var assemblyscript, isDev;
     } catch (e) {
       // last resort: same directory CommonJS
       assemblyscript = eval("require('./assemblyscript')");
-      isDev = false;
+      isDev = true;
     }
   }
 })();
@@ -500,6 +500,11 @@ exports.main = function main(argv, options, callback) {
       module.runPasses(runPasses.map(pass => pass.trim()));
     });
   }
+
+  let abi = program.toAbi();
+  console.log("abi:" +  JSON.stringify(abi.abiInfo));
+
+  console.log("abi:" + abi.dispatch);
 
   // Prepare output
   if (!args.noEmit) {

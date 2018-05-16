@@ -101,6 +101,11 @@ import {
   getConstValueI64Low
 } from "./module";
 
+
+import {
+  Abi
+} from "./abi";
+
 /** Path delimiter inserted between file system levels. */
 export const PATH_DELIMITER = "/";
 /** Substitution used to indicate the parent directory. */
@@ -229,6 +234,13 @@ export class Program extends DiagnosticEmitter {
   constructor(diagnostics: DiagnosticMessage[] | null = null) {
     super(diagnostics);
     this.sources = [];
+  }
+
+
+  toAbi(): Abi {
+    let abi = new Abi(this);
+    abi.resolve();
+    return abi;
   }
 
   /** Gets a source by its exact path. */

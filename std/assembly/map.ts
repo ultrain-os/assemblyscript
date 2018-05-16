@@ -19,6 +19,10 @@ export class Map<K,V> {
     return null;
   }
 
+  keys():K[]{
+    return this.__keys;
+  }
+
   has(key: K): bool {
     var keys = this.__keys;
     for (let i = 0, k = keys.length; i < k; ++i) {
