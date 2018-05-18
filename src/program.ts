@@ -1595,6 +1595,9 @@ export class Program extends DiagnosticEmitter {
     var alias = new TypeAlias();
     alias.typeParameters = declaration.typeParameters;
     alias.type = declaration.type;
+
+    console.log("set type aliases name:" + name + ".type: " + alias.type);
+
     this.typeAliases.set(name, alias);
   }
 

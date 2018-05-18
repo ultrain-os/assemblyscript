@@ -73,10 +73,18 @@ exports.libraryFiles = exports.isBundle ? BUNDLE_LIBRARY : (() => { // set up if
 /** Bundled definition files. */
 exports.definitionFiles = exports.isBundle ? BUNDLE_DEFINITIONS : (() => { // set up if not a bundle
   const stdDir = path.join(__dirname, "..", "std");
-  return {
+  // return {
+  //   "assembly": fs.readFileSync(path.join(stdDir, "assembly.d.ts"), "utf8"),
+  //   "portable": fs.readFileSync(path.join(stdDir, "portable.d.ts"), "utf8")
+  // };
+
+ let a =   {
     "assembly": fs.readFileSync(path.join(stdDir, "assembly.d.ts"), "utf8"),
     "portable": fs.readFileSync(path.join(stdDir, "portable.d.ts"), "utf8")
   };
+
+  console.log(a.assembly);
+
 })();
 
 /** Convenience function that parses and compiles source strings directly. */
@@ -104,7 +112,7 @@ exports.compileString = (sources, options) => {
 }
 
 /** Runs the command line utility using the specified arguments array. */
-exports.main = function main(argv, options, callback) {
+exports.main = function main(argv, options, callback, isDispatch) {
   if (typeof options === "function") {
     callback = options;
     options = {};
@@ -192,6 +200,7 @@ exports.main = function main(argv, options, callback) {
 
   // Include library files
   if (!args.noLib) { // bundled
+
     Object.keys(exports.libraryFiles).forEach(libPath => {
       if (libPath.indexOf("/") >= 0) return; // in sub-directory: imported on demand
       stats.parseCount++;
@@ -205,8 +214,14 @@ exports.main = function main(argv, options, callback) {
       });
     });
   }
+
+  console.log("218:parser" + parser.backlog);
+
   const customLibDirs = [];
   if (args.lib) {
+
+    console.log("args.lib====" + JSON.stringify(args.lib,undefined, 2));
+
     if (typeof args.lib === "string") args.lib = args.lib.split(",");
     Array.prototype.push.apply(customLibDirs, args.lib.map(lib => lib.trim()));
     for (let i = 0, k = customLibDirs.length; i < k; ++i) { // custom
@@ -218,6 +233,7 @@ exports.main = function main(argv, options, callback) {
       } else {
         libFiles = listFiles(libDir);
       }
+
       for (let j = 0, l = libFiles.length; j < l; ++j) {
         let libPath = libFiles[j];
         let libText = readFile(path.join(libDir, libPath));
@@ -237,9 +253,13 @@ exports.main = function main(argv, options, callback) {
 
   // Include entry files
   for (let i = 0, k = args._.length; i < k; ++i) {
+
+    console.log("args._.length");
+
     const filename = args._[i];
 
     let sourcePath = filename.replace(/\\/g, "/").replace(/(\.ts|\/)$/, "");
+    console.log("filename:" + filename + "sourcePath:" + sourcePath );
 
     // Try entryPath.ts, then entryPath/index.ts
     let sourceText = readFile(path.join(baseDir, sourcePath) + ".ts");
@@ -254,19 +274,65 @@ exports.main = function main(argv, options, callback) {
       sourcePath += ".ts";
     }
 
+    for(var key in exports.libraryFiles){
+      // console.log("library key:" + key);
+    }
+
+
     stats.parseCount++;
     stats.parseTime += measure(() => {
-      parser = assemblyscript.parseFile(sourceText, sourcePath, true, parser);
+      console.log("279:parseSourceText:   " + sourcePath + ".sourceText:" + sourceText);
+      // parser = assemblyscript.parseFile(sourceText, sourcePath, true, parser);
+
+
+      // if <pre> isDispathch == true </pre>, reproduce the code 
+      if(!isDispatch){
+        exports.dispatchText = exports.libraryFiles["contract/dispatch"];
+        exports.dispatchPath = "dispatch.ts";
+        parser = assemblyscript.parseFile(sourceText, sourcePath, true, parser);
+      } else {
+        // parser = assemblyscript.parseFile(sourceText, sourcePath, true, parser);
+        sourcePath = exports.dispatchPath;
+        sourceText = exports.dispatchText;
+        console.log("sourcePathsourcePath: " + sourcePath);
+
+        console.log("sourcePathsourcePath: " + sourceText);
+
+        parser = assemblyscript.parseFile(exports.dispatchText, exports.dispatchPath, true, parser);
+      }
+
     });
+
+
+    // console.log("283:parser" + parser.backlog);
+
+    console.log("283:parser" + "parser.backlog");
+
+    console.log("source file:001 isDispatch" +  isDispatch);
 
     // Process backlog
     while ((sourcePath = parser.nextFile()) != null) {
       let found = false;
 
+      if(isDispatch)
+        console.log("source file:001" +  sourcePath);
+
+
+      //TODO 
+      // let textDis = readFile("~lib/contract/dispatch.ts");
+
+      // console.log("dispatch:" + textDis);
+
       // Load library file if explicitly requested
       if (sourcePath.startsWith(exports.libraryPrefix)) {
+
+        console.log(sourcePath);
+
         const plainName = sourcePath.substring(exports.libraryPrefix.length);
         const indexName = sourcePath.substring(exports.libraryPrefix.length) + "/index";
+
+        // console.log("exports.libraryFiles:" + JSON.stringify(exports.libraryFiles, undefined, 2));
+
         if (exports.libraryFiles.hasOwnProperty(plainName)) {
           sourceText = exports.libraryFiles[plainName];
           sourcePath = exports.libraryPrefix + plainName + ".ts";
@@ -276,6 +342,9 @@ exports.main = function main(argv, options, callback) {
         } else {
           for (let i = 0, k = customLibDirs.length; i < k; ++i) {
             const dir = customLibDirs[i];
+
+            console.log("dir" + dir);
+
             sourceText = readFile(path.join(dir, plainName + ".ts"));
             if (sourceText !== null) {
               sourcePath = exports.libraryPrefix + plainName + ".ts";
@@ -340,6 +409,9 @@ exports.main = function main(argv, options, callback) {
     }
   }
 
+  console.log("403:parser" + "parser.backlog");
+
+
   // Finish parsing
   const program = assemblyscript.finishParsing(parser);
 
@@ -385,6 +457,10 @@ exports.main = function main(argv, options, callback) {
     }
   }
 
+
+  console.log("453:parser" + "parser.backlog");
+
+
   var module;
   stats.compileCount++;
   (() => {
@@ -396,6 +472,10 @@ exports.main = function main(argv, options, callback) {
       return callback(e);
     }
   })();
+
+  console.log("467:parser" + "parser.backlog");
+
+
   if (checkDiagnostics(parser, stderr)) {
     if (module) module.dispose();
     return callback(Error("Compile error"));
@@ -505,6 +585,9 @@ exports.main = function main(argv, options, callback) {
   // console.log("abi:" +  JSON.stringify(abiObj.abiInfo));
 
   // console.log("abi:" + abiObj.dispatch);
+  exports.dispatchText = exports.reproduceDispath(exports.dispatchText, abiObj);
+  console.log(exports.dispatchText);
+
 
   // Prepare output
   if (!args.noEmit) {
@@ -527,16 +610,16 @@ exports.main = function main(argv, options, callback) {
       if (args.abiFile && args.abiFile.length) {
         stats.emitCount++;
         stats.emitTime += measure(() => {
-          abi = JSON.stringify(abiObj.abiInfo);
+          abi = JSON.stringify(abiObj.abiInfo, undefined, 2);
         });
 
-        console.log("abi abi:" + abi);
+        // console.log("abi abi:" + abi);
 
         writeFile(path.join(baseDir, args.abiFile), abi);
       } else if (!hasStdout) {
         stats.emitCount++;
         stats.emitTime += measure(() => {
-          abi = JSON.stringify(abiObj.abiInfo);
+          abi = JSON.stringify(abiObj.abiInfo, undefined, 2);
         });
         writeStdout(abi);
       }
@@ -691,6 +774,9 @@ exports.main = function main(argv, options, callback) {
   return callback(null);
 
   function readFileNode(filename) {
+
+    console.log("readFileNode:" + filename);
+
     try {
       let text;
       stats.readCount++;
@@ -894,3 +980,25 @@ exports.tscOptions = {
   types: [],
   allowJs: false
 };
+
+/** Add Cutomer Function to generate the abi. */
+
+function reproduceDispath(sourceText, abi){
+
+  let sb = new Array();
+  if(abi.contractClassPrototype){
+    
+    for(let clzPrototype of abi.contractClassPrototype){
+      let clzName = clzPrototype.simpleName;
+      let moduleName = clzPrototype.declaration.range.source.internalPath;
+      sb.push(`import { ${clzName} } from "./${moduleName}";`);
+    }
+  }
+
+  sourceText = sb.join(EOL) + EOL + sourceText;
+  sourceText = sourceText.replace('function dispatch(action:Action, receiver:u64):void{}', abi.dispatch);
+
+  return sourceText;
+}
+
+exports.reproduceDispath = reproduceDispath;
