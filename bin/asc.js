@@ -31,8 +31,10 @@ var assemblyscript, isDev;
       isDev = true;
     } catch (e) {
       // last resort: same directory CommonJS
+      console.log("exception details:" + e);
       assemblyscript = eval("require('./assemblyscript')");
       isDev = true;
+
     }
   }
 })();
