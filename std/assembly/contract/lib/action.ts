@@ -95,6 +95,7 @@ export function sendContextFreeInline(serialization_action: u8[], size: i32): vo
     sendInline(serialization_action, size);
 }
 
+@global
 export class Action {
     private action_code: i64;
     private action_name: string;

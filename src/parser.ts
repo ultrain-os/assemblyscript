@@ -330,8 +330,6 @@ export class Parser extends DiagnosticEmitter {
     // return backlog.length ? backlog.shift() : null;
     let fileName = backlog.length ? backlog.shift() : null;
 
-    console.log("nextFile" + fileName);
-
     return fileName;
   }
 

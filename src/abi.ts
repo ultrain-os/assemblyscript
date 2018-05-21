@@ -95,10 +95,10 @@ export class Abi {
       ["u32", "uint32"],
       ["u64", "uint64"],
       ["usize", "usize"],
-      ["bool", "bool"],
+      ["bool", "int8"], // eos not support the bool
       ["f32", "f32"],
       ["f64", "f64"],
-      ["boolean", "bool"]
+      ["boolean", "int8"] // eos not suppot the bool
     ]);
 
     this.typeAliasSet = new Set();
@@ -166,13 +166,6 @@ export class Abi {
   resolveClzDispatcher(clzPrototype: ClassPrototype): Array<string> {
 
     let sb = new Array<string>();
-
-    let source = clzPrototype.declaration.range.source;
-
-    console.log("normal path:" + source.normalizedPath);
-    console.log("internal path:" + source.internalPath);
-
-
     let isActionClz = false;
     if (clzPrototype.instanceMembers) {
       let contractName = clzPrototype.simpleName;
@@ -183,22 +176,29 @@ export class Abi {
       for (let instance of clzPrototype.instanceMembers.values()) {
         if (this.isActionFuncPrototype(instance)) {
 
+
           this.resolveFunctionPrototype(<FunctionPrototype>instance);
 
           isActionClz = true;
           let declaration = (<FunctionPrototype>instance).declaration; // FunctionDeclaration
 
-          let instanceKey = declaration.name.range.toString();
+          let funcName = declaration.name.range.toString();
           let types = declaration.signature.parameterTypes; // FunctionDeclaration parameter types
 
           let fields = new Array<string>();
+
+          let iIndex = 0, sIndex = 0;
           for (var index = 0; index < types.length; index++) {
             let type = types[index];
             let parameterType = types[index].type.range.toString();
-            fields.push(`<${parameterType}>action.i_params[${index}]`);
+            if (parameterType == 'string') {
+              fields.push(`<${parameterType}>action.s_params[${sIndex++}]`);
+            } else {
+              fields.push(`<${parameterType}>action.i_params[${iIndex++}]`);
+            }
           }
           // TODO
-          sb.push(`if (action.action_name == '${instanceKey}') ${contractVarName}.${instanceKey}(${fields.join(',')});`);
+          sb.push(`if (action.name == '${funcName}') ${contractVarName}.${funcName}(${fields.join(',')});`);
         }
       }
 
@@ -245,30 +245,7 @@ export class Abi {
 
   resolve(): void{
 
-    let dispatchStr: string = "";
-    let dispatchArr = new Array<string>();
-    let typeAliases = this.program.typeAliases.values();
-
-
-    for(let typeAlias of typeAliases){
-      var typeNode = <TypeNode>typeAlias.type;
-
-      console.log("alias:" + typeAlias.type.range.toString() + ". node ." + typeNode.name.text);
-
-      // console.log(typeNode.name.text);
-
-      let nodes = typeAlias.typeParameters;
-      if (nodes) {
-
-        console.log("dddd");
-        // nodes.forEach((value, index) => {
-
-        // });
-        for (let node of nodes) {
-          console.log("node" + node);
-        }
-      }
-    }
+    let dispatchBuffer = new Array<string>();
 
     if (!this.program.elementsLookup) {
       return ;
@@ -280,10 +257,8 @@ export class Abi {
 
       // The element is functionPrototype
       if (this.isActionFuncPrototype(element)) {
-
-        console.log("are you kill func?");
         this.resolveFunctionPrototype(<FunctionPrototype>element);
-        dispatchArr.push(this.generateFuncDispatcher(<FunctionPrototype>element));
+        dispatchBuffer.push(this.generateFuncDispatcher(<FunctionPrototype>element));
       }
 
       // The element is ClassPrototype
@@ -292,30 +267,20 @@ export class Abi {
         if (!clzPrototype.instanceMembers) {
           continue;
         }
-        // // console.log("clz" + element.constructor);
-        // let instances = clzPrototype.instanceMembers.values();
-        // for (let instance of instances ) {
-        //   if (instance.kind == ElementKind.FUNCTION_PROTOTYPE && this.isActionFuncPrototype(instance)) {
-            
-
-        //     this.resolveFunctionPrototype(<FunctionPrototype>instance);
-        //     isActionClz = true;
-        //   }
-        // }
 
         if (!this.elementLookup.has(clzPrototype.internalName)) {
 
           let clzDispatch:Array<string> = this.resolveClzDispatcher(clzPrototype);
           clzDispatch.forEach((value, index) => {
-            dispatchArr.push(value);
+            dispatchBuffer.push(value);
           });
         } 
       }
     }
-    // this.dispatch = `export function dispatch(action:i64, args:number[]):void{ ${dispatchStr} }`;
-    this.dispatch = this.assemblyDispatch(dispatchArr);
+    this.dispatch = this.assemblyDispatch(dispatchBuffer);
   }
 
+  // Concat the dispatch message
   assemblyDispatch(body: Array<string>): string{
 
     let sb = new Array<string>();

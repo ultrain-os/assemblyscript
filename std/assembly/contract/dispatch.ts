@@ -3,9 +3,6 @@ import { Action } from "../../lib/action";
 import { Log } from "../../lib/log";
 import "allocator/arena";
 
-// import { Action } from "./lib/action";
-// import { Log } from "./lib/log";
-
 /**
  * @author fanliangqin@ultrain.io
  */
@@ -18,6 +15,7 @@ export function apply(receiver: u64, code: u64, actioncode: u64): void {
         }
         dispatch(action,receiver);
     }
+
 }
 
 function dispatch(action:Action, receiver:u64):void{}
