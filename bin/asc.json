@@ -53,7 +53,7 @@
     "aliases": [ "b" ]
   },
   "textFile": {
-    "desc": "Specifies the text output file (.wat).",
+    "desc": "Specifies the text output file (.wast).",
     "type": "string",
     "aliases": [ "t" ]
   },

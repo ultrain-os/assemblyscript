@@ -182,7 +182,7 @@ exports.main = function main(argv, options, callback, isDispatch) {
       "Syntax:   asc [entryFile ...] [options]",
       "",
       "Examples: asc hello.ts",
-      "          asc hello.ts -b hello.wasm -t hello.wat",
+      "          asc hello.ts -b hello.wasm -t hello.wast",
       "          asc hello1.ts hello2.ts -b -O > hello.wasm",
       "",
       "Options:"
