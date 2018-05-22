@@ -16,6 +16,8 @@ import {
   SignatureNode,
   ClassDeclaration,
   TypeNode,
+  NodeKind, 
+  Source,
   ParameterNode
 } from "./ast";
 
@@ -52,6 +54,17 @@ class Action {
 }
 
 
+class SourceNode{
+  sourceName: string;
+  importNames: Array<string>;
+
+  constructor(sourceNode:string){
+    this.sourceName = sourceNode;
+    this.importNames = new Array();
+  }
+}
+
+
 export class Abi {
 
   abiInfo: { types: Array<TypeAlias>, structs: Array<AbiStruct>, actions: Array<Action> } = {
@@ -60,10 +73,9 @@ export class Abi {
     actions: new Array<Action>()
   };
 
+  importElements: Map<string, SourceNode>;
+
   dispatch: string;
-
-
-  clzNames: Array<string>;
 
   program: Program;
 
@@ -71,17 +83,10 @@ export class Abi {
 
   typeAliasSet: Set<string>;
 
-  actionFunctionPrototypes = new Array<FunctionPrototype>();
-  /** To generate ClassPrototype */
-  contractClassPrototype = new Array<ClassPrototype>();
-
   elementLookup: Map<string, Element>;
 
-
-  // signatures: Array<Signature>;
   constructor(program: Program) {
 
-    this.clzNames = new Array();
     this.program = program;
 
     this.typeAliasLookup = new Map([
@@ -105,7 +110,7 @@ export class Abi {
 
     this.elementLookup = new Map();
 
-    // this.signatures = new Array<Signature>();
+    this.importElements = new Map();
   }
 
   getStruct(methodName: string, signature: SignatureNode): AbiStruct {
@@ -168,7 +173,8 @@ export class Abi {
     let sb = new Array<string>();
     let isActionClz = false;
     if (clzPrototype.instanceMembers) {
-      let contractName = clzPrototype.simpleName;
+
+      let contractName = clzPrototype.simpleName; //
       let contractVarName = "_" + contractName; //TODO
       sb[0] = `let ${contractVarName} = new ${contractName}(receiver);`;
 
@@ -176,9 +182,7 @@ export class Abi {
       for (let instance of clzPrototype.instanceMembers.values()) {
         if (this.isActionFuncPrototype(instance)) {
 
-
           this.resolveFunctionPrototype(<FunctionPrototype>instance);
-
           isActionClz = true;
           let declaration = (<FunctionPrototype>instance).declaration; // FunctionDeclaration
 
@@ -197,35 +201,84 @@ export class Abi {
               fields.push(`<${parameterType}>action.i_params[${iIndex++}]`);
             }
           }
-          // TODO
           sb.push(`if (action.name == '${funcName}') ${contractVarName}.${funcName}(${fields.join(',')});`);
         }
       }
 
       if(isActionClz){
-        this.contractClassPrototype.push(clzPrototype);
-        this.elementLookup.set(clzPrototype.internalName, clzPrototype);
+        let clzName = clzPrototype.simpleName;
+        let sourcePath = clzPrototype.declaration.range.source.internalPath;
+        this.checkAndImportElements(sourcePath, clzName);
       }
     }
     return isActionClz ? sb : new Array();
   }
 
 
-  generateFuncDispatcher(funcPrototype: FunctionPrototype): string {
+  checkAndImportElements(sourcePath: string, elementName:string){
+
+    let sourceNode = this.importElements.get(sourcePath);
+    if (sourceNode) {
+      let imprtNameSet = sourceNode.importNames;
+      imprtNameSet.push(elementName);
+    } else if (sourcePath) {
+      let sourceNode = new SourceNode(sourcePath);
+      sourceNode.importNames.push(elementName);
+      this.importElements.set(sourcePath, sourceNode);
+    }
+  }
+
+
+  isExportStatement(source:Source) :bool {
+
+    let statements = source.statements;
+    let isExprotStatement = false;
+    if (statements) {
+      for (let statement of statements) {
+        if (NodeKind.EXPORT == statement.kind) {
+          isExprotStatement = true;
+          break;
+        }
+      }
+    }
+    return isExprotStatement;
+  }
+
+
+  resolveFuncDispatcher(funcPrototype: FunctionPrototype): string {
 
     let funcDispatcher: string;
     if (this.isActionFuncPrototype(funcPrototype)) {
+
       let declaration = funcPrototype.declaration; // FunctionDeclaration
       let types = declaration.signature.parameterTypes; // FunctionDeclaration parameter types
       let funcName = declaration.name.range.toString();
 
+      if(!this.isExportStatement(funcPrototype.declaration.range.source)){
+        console.log(`Warning: action funciton ${funcName} is not export method!`);
+        return "";
+      }
+
+      this.resolveFunctionPrototype(funcPrototype);
+
+
+
       let fields = new Array<string>();
+      let iIndex = 0, sIndex = 0;
       for (var index = 0; index < types.length; index++) {
         let type = types[index];
         let parameterType = types[index].type.range.toString();
-        fields.push(`${parameterType}(args[${index}])`);
+        
+        if (parameterType == 'string') {
+          fields.push(`<${parameterType}>action.s_params[${sIndex++}]`);
+        } else {
+          fields.push(`<${parameterType}>action.i_params[${iIndex++}]`);
+        }
       }
-      funcDispatcher = `if (action == i64('${funcName}')) ${funcName}(${fields.join(',')});`;
+      funcDispatcher = `if (action.name == '${funcName}') ${funcName}(${fields.join(',')});`;
+        
+      let sourcePath = declaration.range.source.internalPath
+      this.checkAndImportElements(sourcePath, funcName);
       return funcDispatcher;
     }
     return "";
@@ -246,34 +299,34 @@ export class Abi {
   resolve(): void{
 
     let dispatchBuffer = new Array<string>();
-
     if (!this.program.elementsLookup) {
       return ;
     }
 
-    let elements = this.program.elementsLookup.values();
+    // Iterator all the elements
+    for (let element of this.program.elementsLookup.values()) {
 
-    for (let element of elements) {
+      // console.log(element.declar);
 
-      // The element is functionPrototype
       if (this.isActionFuncPrototype(element)) {
-        this.resolveFunctionPrototype(<FunctionPrototype>element);
-        dispatchBuffer.push(this.generateFuncDispatcher(<FunctionPrototype>element));
+
+        if(!this.elementLookup.has(element.internalName)){
+          dispatchBuffer.push(this.resolveFuncDispatcher(<FunctionPrototype>element));
+          // this.elementLookup.set(element.internalName, element);
+        }
       }
 
       // The element is ClassPrototype
       if (element.kind == ElementKind.CLASS_PROTOTYPE) {
-        let clzPrototype = (<ClassPrototype>element);
-        if (!clzPrototype.instanceMembers) {
-          continue;
-        }
 
+        let clzPrototype = (<ClassPrototype>element);
         if (!this.elementLookup.has(clzPrototype.internalName)) {
 
           let clzDispatch:Array<string> = this.resolveClzDispatcher(clzPrototype);
           clzDispatch.forEach((value, index) => {
             dispatchBuffer.push(value);
           });
+          this.elementLookup.set(clzPrototype.internalName, element);
         } 
       }
     }

@@ -1,6 +1,6 @@
 
-import { Action } from "../../lib/action";
-import { Log } from "../../lib/log";
+import { Action } from "contract/lib/action";
+import { Log } from "contract/lib/log";
 import "allocator/arena";
 
 /**
