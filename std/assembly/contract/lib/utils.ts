@@ -1,7 +1,7 @@
 /**
  * @author fanliangqin@ultrain.io
  */
-import "allocator/arena";
+import "allocator/buddy";
 
 declare function prints(ptr: usize): void;
 declare function prints_l(ptr: usize, strlen: i32): void;

@@ -1,7 +1,7 @@
 /**
  * @author fanliangqin@ultrain.io
  */
-import "allocator/arena";
+import "allocator/buddy";
 import { Log } from "./log";
 import { ASCIICHAR } from "./utils";
 

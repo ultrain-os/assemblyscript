@@ -229,19 +229,18 @@ export class Abi {
   }
 
 
+  // Check the statement whether export method. NodeKind.EXPORT value is 30, and the NodeKind.IMPORT is 35
   isExportStatement(source:Source) :bool {
 
     let statements = source.statements;
-    let isExprotStatement = false;
     if (statements) {
       for (let statement of statements) {
         if (NodeKind.EXPORT == statement.kind) {
-          isExprotStatement = true;
-          break;
+          return true;
         }
       }
     }
-    return isExprotStatement;
+    return false;
   }
 
 
@@ -254,14 +253,14 @@ export class Abi {
       let types = declaration.signature.parameterTypes; // FunctionDeclaration parameter types
       let funcName = declaration.name.range.toString();
 
-      if(!this.isExportStatement(funcPrototype.declaration.range.source)){
-        console.log(`Warning: action funciton ${funcName} is not export method!`);
-        return "";
-      }
+      // TODO 
+      // let isExportFunc = this.isExportStatement(funcPrototype.declaration.range.source);
+      // if (!isExportFunc) {
+      //   console.log(`Warning: action funciton ${funcName} is not export method!`);
+      //   // return "";
+      // }
 
       this.resolveFunctionPrototype(funcPrototype);
-
-
 
       let fields = new Array<string>();
       let iIndex = 0, sIndex = 0;
@@ -312,7 +311,7 @@ export class Abi {
 
         if(!this.elementLookup.has(element.internalName)){
           dispatchBuffer.push(this.resolveFuncDispatcher(<FunctionPrototype>element));
-          // this.elementLookup.set(element.internalName, element);
+          this.elementLookup.set(element.internalName, element);
         }
       }
 
