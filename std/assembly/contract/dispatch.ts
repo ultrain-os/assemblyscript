@@ -1,7 +1,7 @@
 
 import { Action } from "contract/lib/action";
 import { Log } from "contract/lib/log";
-import "allocator/arena";
+import "allocator/buddy";
 
 /**
  * @author fanliangqin@ultrain.io
