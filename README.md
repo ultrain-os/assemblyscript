@@ -23,19 +23,19 @@ Motivation
 Getting started
 ---------------
 
-All the details are provided in the [AssemblyScript wiki](https://github.com/AssemblyScript/assemblyscript/wiki) - make sure to pay it a visit. With that being said, the easiest way to get started with AssemblyScript is to point npm at the GitHub repository (for now)
+All the details are provided in the [AssemblyScript wiki](https://github.com/ultrain-os/assemblyscript/wiki) - make sure to pay it a visit. With that being said, the easiest way to get started with AssemblyScript is to point npm at the GitHub repository (for now)
 
 ```
-$> npm install --save-dev AssemblyScript/assemblyscript
+$> npm install --save-dev ultrain-os/assemblyscript
 ```
 
-followed by [scaffolding](https://github.com/AssemblyScript/assemblyscript/wiki/Using-the-CLI#scaffolding-with-asinit) a new project including the necessary configuration files, for example in the current directory:
+followed by [scaffolding](https://github.com/ultrain-os/assemblyscript/wiki/Using-the-CLI#scaffolding-with-asinit) a new project including the necessary configuration files, for example in the current directory:
 
 ```
 $> npx asinit .
 ```
 
-Once the project is set up, it's just a matter of using your existing [TypeScript tooling](https://code.visualstudio.com) while coding, and [using the CLI](https://github.com/AssemblyScript/assemblyscript/wiki/Using-the-CLI) to build to WebAssembly, either manually, or using (and maybe modifying) the generated build task in the generated `package.json`:
+Once the project is set up, it's just a matter of using your existing [TypeScript tooling](https://code.visualstudio.com) while coding, and [using the CLI](https://github.com/ultrain-os/assemblyscript/wiki/Using-the-CLI) to build to WebAssembly, either manually, or using (and maybe modifying) the generated build task in the generated `package.json`:
 
 ```
 $> npm run asbuild
@@ -46,7 +46,7 @@ The compiler's API can also [be used programmatically](./bin).
 If you rather prefer an installation suitable for development, pretty much the same can be achieved by cloning the GitHub repository instead:
 
 ```
-$> git clone https://github.com/AssemblyScript/assemblyscript.git
+$> git clone https://github.com/ultrain-os/assemblyscript.git
 $> cd assemblyscript
 $> npm install
 $> npm link

@@ -1,7 +1,7 @@
 /**
  * @author fanliangqin@ultrain.io
  */
-import "allocator/arena";
+import "allocator/buddy";
 import { Log } from "./log";
 import { ASCIICHAR } from "./utils";
 
@@ -95,7 +95,6 @@ export function sendContextFreeInline(serialization_action: u8[], size: i32): vo
     sendInline(serialization_action, size);
 }
 
-@global
 export class Action {
     private action_code: i64;
     private action_name: string;
@@ -172,7 +171,7 @@ export class Action {
 
     private read_params_nth_string(nth: i32): string {
         let nthlen = ts_action_params_nth_string_length(nth);
-        Log.s(":: params length is ").i(nthlen).flush();
+        // Log.s(":: params length is ").i(nthlen).flush();
 
         let value: string = "";
         for (let i = 0; i < nthlen; ++i) {

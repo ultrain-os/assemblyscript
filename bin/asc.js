@@ -112,7 +112,7 @@ exports.compileString = (sources, options) => {
 }
 
 /** Runs the command line utility using the specified arguments array. */
-exports.main = function main(argv, options, callback, isDispatch) {
+exports.main = function main(args, options, callback, isDispatch) {
   if (typeof options === "function") {
     callback = options;
     options = {};
@@ -136,7 +136,7 @@ exports.main = function main(argv, options, callback, isDispatch) {
     if (listFiles === listFilesNode) throw Error("'options.listFiles' must be specified");
   }
 
-  const args = parseArguments(argv);
+  // const args = parseArguments(argv);
   const indent = 24;
 
   // Use default callback if none is provided
@@ -536,8 +536,9 @@ exports.main = function main(argv, options, callback, isDispatch) {
     });
   }
 
-  let abiObj = program.toAbi();
+  var abiObj = program.toAbi();
   exports.dispatchText = exports.reproduceDispath(exports.dispatchText, abiObj);
+  //console.log("exports.dispatchText:" + exports.dispatchText);
  
   // Prepare output
   if (!args.noEmit) {
@@ -931,12 +932,10 @@ exports.tscOptions = {
 function reproduceDispath(sourceText, abi){
 
   let sb = new Array();
-  if(abi.contractClassPrototype){
-    
-    for(let clzPrototype of abi.contractClassPrototype){
-      let clzName = clzPrototype.simpleName;
-      let moduleName = clzPrototype.declaration.range.source.internalPath;
-      sb.push(`import { ${clzName} } from "./${moduleName}";`);
+  if(abi.importElements){
+
+    for(let sourceNode of abi.importElements.values()){
+      sb.push(`import { ${sourceNode.importNames.join(',')} } from "./${sourceNode.sourceName}";`);
     }
   }
 
