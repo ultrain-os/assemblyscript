@@ -21,7 +21,7 @@ var assemblyscript, isDev;
 (() => {
   try {
     assemblyscript = require("../dist/assemblyscript.js");
-    isDev = true;
+    isDev = false;
     try { require("source-map-support").install(); } catch (e) {/* optional */}
   } catch (e) {
     try {
@@ -75,12 +75,7 @@ exports.libraryFiles = exports.isBundle ? BUNDLE_LIBRARY : (() => { // set up if
 /** Bundled definition files. */
 exports.definitionFiles = exports.isBundle ? BUNDLE_DEFINITIONS : (() => { // set up if not a bundle
   const stdDir = path.join(__dirname, "..", "std");
-  // return {
-  //   "assembly": fs.readFileSync(path.join(stdDir, "assembly.d.ts"), "utf8"),
-  //   "portable": fs.readFileSync(path.join(stdDir, "portable.d.ts"), "utf8")
-  // };
-
- let a =   {
+  return {
     "assembly": fs.readFileSync(path.join(stdDir, "assembly.d.ts"), "utf8"),
     "portable": fs.readFileSync(path.join(stdDir, "portable.d.ts"), "utf8")
   };
@@ -421,10 +416,6 @@ exports.main = function main(args, options, callback, isDispatch) {
     try {
       stats.compileTime += measure(() => {
         module = assemblyscript.compileProgram(program, compilerOptions);
-
-        // module = assemblyscript.compileProgram(program, compilerOptions);
-
-
       });
     } catch (e) {
       return callback(e);
