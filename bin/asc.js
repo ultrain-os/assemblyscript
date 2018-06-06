@@ -268,13 +268,10 @@ exports.main = function main(args, options, callback, isDispatch) {
       
       // if <pre> isDispathch == true </pre>, reproduce the code 
       if(!isDispatch){
-        exports.dispatchText = exports.libraryFiles["contract/dispatch"];
-        exports.dispatchPath = "dispatch.ts";
+        exports.applyText = exports.libraryFiles["contract/dispatch"];
         parser = assemblyscript.parseFile(sourceText, sourcePath, true, parser);
       } else {
-        // parser = assemblyscript.parseFile(sourceText, sourcePath, true, parser);
-        sourcePath = exports.dispatchPath;
-        sourceText = exports.dispatchText;
+        sourceText = sourceText +  exports.applyText;
         parser = assemblyscript.parseFile(sourceText, sourcePath, true, parser);
       }
 
@@ -528,9 +525,8 @@ exports.main = function main(args, options, callback, isDispatch) {
   }
 
   var abiObj = program.toAbi();
-  exports.dispatchText = exports.reproduceDispath(exports.dispatchText, abiObj);
-  //console.log("exports.dispatchText:" + exports.dispatchText);
- 
+  exports.applyText = abiObj.dispatch;
+
   // Prepare output
   if (!args.noEmit) {
     let hasStdout = false;
@@ -930,8 +926,8 @@ function reproduceDispath(sourceText, abi){
     }
   }
 
-  sourceText = sb.join(EOL) + EOL + sourceText;
-  sourceText = sourceText.replace('function dispatch(action:Action, receiver:u64):void{}', abi.dispatch);
+  // sourceText = sb.join(EOL) + EOL + sourceText;
+  sourceText = sourceText.replace('export function apply(receiver: u64, code: u64, action: u64): void {}', abi.dispatch);
 
   return sourceText;
 }
