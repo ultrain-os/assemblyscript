@@ -2380,7 +2380,16 @@ export abstract class Element {
   protected constructor(program: Program, simpleName: string, internalName: string) {
     this.program = program;
     this.simpleName = simpleName;
-    this.internalName = internalName;
+    this.internalName = Element.replaceComma(internalName);
+  }
+
+  static replaceComma(str: string):string{
+    if(!str) return str;
+    let result  = "";
+    for(let ch of str){
+      result +=  ch == "," ? "_" : ch;
+    }
+    return result;
   }
 
   /** Tests if this element has a specific flag or flags. */
