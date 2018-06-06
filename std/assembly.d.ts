@@ -584,3 +584,7 @@ declare function inline(target: any, propertyKey: any, descriptor: any): any;
 // Decorators for the smart contract
 /** Annotates a method or function as contract */
 declare function action(target: any, propertyKey: any, descriptor: any): any;
+
+/** Annotates a class as database information */
+declare function database(target: Function, propertyKey: any, descriptor: any): any;
+
