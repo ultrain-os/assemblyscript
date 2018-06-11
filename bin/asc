@@ -1,26 +1,6 @@
 #!/usr/bin/env node
 const usc = module.exports = require("./asc.js");
 
-/** Add Cutomer Function to generate the abi. */
-function reproduceDispath(sourceText, abi){
-
-  let sb = new Array();
-  if(abi.importElements){
-
-    for(let sourceNode of abi.importElements.values()){
-      sb.push(`import { ${sourceNode.importNames.join(',')} } from "./${sourceNode.sourceName}";`);
-    }
-  }
-
-  // sourceText = sb.join(EOL) + EOL + sourceText;
-  sourceText = sourceText.replace('export function apply(receiver: u64, code: u64, action: u64): void {}', abi.dispatch);
-
-  return sourceText;
-}
-
-exports.reproduceDispath = reproduceDispath;
-
-
 function resolveSourceText(sourceText, applyText, library){
 	let memoryLib = "allocate/arena";
 	let resultTextBuffer  = new Array();

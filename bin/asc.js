@@ -526,6 +526,7 @@ exports.main = function main(args, options, callback, isDispatch) {
 
   var abiObj = program.toAbi();
   exports.applyText = abiObj.dispatch;
+  // console.log(exports.applyText);
 
   // Prepare output
   if (!args.noEmit) {
