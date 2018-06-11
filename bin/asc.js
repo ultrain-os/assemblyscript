@@ -268,10 +268,10 @@ exports.main = function main(args, options, callback, isDispatch) {
       
       // if <pre> isDispathch == true </pre>, reproduce the code 
       if(!isDispatch){
-        exports.applyText = exports.libraryFiles["contract/dispatch"];
+        sourceText = exports.resolveSourceText(sourceText, null,exports.libraryFiles);
         parser = assemblyscript.parseFile(sourceText, sourcePath, true, parser);
       } else {
-        sourceText = sourceText +  exports.applyText;
+        sourceText = exports.resolveSourceText(sourceText, exports.applyText,exports.libraryFiles);
         parser = assemblyscript.parseFile(sourceText, sourcePath, true, parser);
       }
 
@@ -914,22 +914,3 @@ exports.tscOptions = {
   allowJs: false
 };
 
-/** Add Cutomer Function to generate the abi. */
-
-function reproduceDispath(sourceText, abi){
-
-  let sb = new Array();
-  if(abi.importElements){
-
-    for(let sourceNode of abi.importElements.values()){
-      sb.push(`import { ${sourceNode.importNames.join(',')} } from "./${sourceNode.sourceName}";`);
-    }
-  }
-
-  // sourceText = sb.join(EOL) + EOL + sourceText;
-  sourceText = sourceText.replace('export function apply(receiver: u64, code: u64, action: u64): void {}', abi.dispatch);
-
-  return sourceText;
-}
-
-exports.reproduceDispath = reproduceDispath;
