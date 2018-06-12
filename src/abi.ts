@@ -222,8 +222,8 @@ export class Abi {
           throw new Error("Database decorator must have two arguments");
         }
 
-        let name = decorator.arguments[0].range.toString();
-        let type = this.retrieveArgumentText(decorator.arguments[1]);
+        let type = decorator.arguments[0].range.toString();
+        let name = this.retrieveArgumentText(decorator.arguments[1]);
 
         this.abiInfo.tables.push( new Table(name, type) );
 
@@ -469,14 +469,19 @@ export class Abi {
       if (element.kind == ElementKind.CLASS_PROTOTYPE) {
         let clzPrototype = <ClassPrototype>element;
         if (!this.elementLookup.has(clzPrototype.internalName)) {
-          let clzDispatch:Array<string> = this.resolveClassDispatcher(clzPrototype);
-          clzDispatch.forEach((value, index) => {
+          let classDispatch:Array<string> = this.resolveClassDispatcher(clzPrototype);
+          classDispatch.forEach((value, index) => {
             dispatchBuffer.push(value);
           });
           this.elementLookup.set(clzPrototype.internalName, element);
         } 
       }
     }
+
+    if(dispatchBuffer.length == 0){
+      throw new Error(`The smart contract must specify one action.`);
+    }
+
     this.dispatch = this.assemblyDispatch(dispatchBuffer);  
   }
 
