@@ -48,7 +48,7 @@ class Struct {
   fields: Array<Object> = new Array<Object>();
 }
 
-class TypeAlias{
+class AbiTypeAlias{
   new_type_name: string;
   type:string
 
@@ -97,11 +97,11 @@ class Table{
 export class Abi {
 
   abiInfo: { 
-    types: Array<TypeAlias>, 
+    types: Array<AbiTypeAlias>, 
     structs: Array<Struct>, 
     actions: Array<Action>,
     tables: Array<Table> } = {
-    types: new Array<TypeAlias>(),
+    types: new Array<AbiTypeAlias>(),
     structs: new Array<Struct>(),
     actions: new Array<Action>(),
     tables: new Array<Table>()
@@ -141,6 +141,9 @@ export class Abi {
     ]);
   }
 
+  /**
+  *  Add abi struct for abi info.
+  */
   toAbiStruct(methodName: string, signature: SignatureNode): Struct {
 
     let struct = new Struct();
@@ -165,13 +168,45 @@ export class Abi {
   addAbiTypeAlias(typeKindName: string): void{
 
     if(!this.typeAliasSet.has(typeKindName)){
-      let wasmType = this.typeAliasLookup.get(typeKindName);
+
+      // It's the assemblyscript internal type 
+      let originalTypeName = this.findOriginalTypeName(typeKindName);
+      let wasmType = this.typeAliasLookup.get(originalTypeName);
       if(wasmType){
-        this.abiInfo.types.push( new TypeAlias(typeKindName, wasmType));
-      }
+        this.abiInfo.types.push( new AbiTypeAlias(typeKindName, wasmType));
+      } 
       this.typeAliasSet.add(typeKindName);
     }
   }
+
+  /**
+  * Find the original type name, 
+  * eg: declare type account_name = u64;
+        declare type account_name_alias = account_name;
+
+    findOriginalTypeName("accout_name") return "u64";
+  */
+  findOriginalTypeName(typeKindName:string): string {
+
+    let typeAlias = this.program.typeAliases.get(typeKindName);
+    if(typeAlias){
+      let commonaTypeName = typeAlias.type.range.toString()
+      return this.findOriginalTypeName(commonaTypeName);
+    } else {
+      return typeKindName;
+    }
+  }
+
+
+  /**
+  * Find assemblyscript original type name 
+  * eg: account_name return 'u64'
+  */
+  findOriginalType(typeKindName: string): Type | null{
+    let originalName = this.findOriginalTypeName(typeKindName);
+    return this.program.typesLookup.get(originalName);
+  }
+
 
   // Check the FunctionPrototype weather has decoratorKind
   checkFuncPrototypeDecorator(funcPrototype: FunctionPrototype, decoratorKind: DecoratorKind): bool {
@@ -336,13 +371,15 @@ export class Abi {
       return {typeKind: AbiParameterKind.STRING, typeName: parameterType}
     }
 
-    let originalType =  this.program.typesLookup.get(parameterType);
+    let originalName:string = this.findOriginalTypeName(parameterType);
+    let originalType:Type|null = this.findOriginalType(originalName);
+
     if(!originalType){
         return {typeKind: AbiParameterKind.CLASS, typeName: parameterType};
     } else if(originalType.kind == TypeKind.BOOL){
         return {typeKind: AbiParameterKind.BOOL, typeName: parameterType}
     } else {
-        return {typeKind: AbiParameterKind.NUMBER, typeName: parameterType}
+        return {typeKind: AbiParameterKind.NUMBER, typeName: originalName}
     }
   }
 
