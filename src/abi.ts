@@ -148,7 +148,7 @@ export class Abi {
       ["permission_name", "name"],
       ["action_name", "name"],
       ["weight_type", "uint16"],
-      ["name", "u64"]
+      ["Asset", "asset"]
     ]);
   }
 
@@ -346,6 +346,7 @@ export class Abi {
       throw new Error(`Element ${internalName} not found, pleasure make sure that class ${internalName} was existed.`);
     }
 
+
     let classPrototype = <ClassPrototype> element;
     this.resolveClassPrototypeToStruct(classPrototype);
   }
@@ -357,6 +358,11 @@ export class Abi {
 
     let struct = new Struct();
     struct.name = classPrototype.simpleName;
+
+    if(this.abiTypeLookup.get(struct.name)){
+      return ;
+    }
+
     struct.base = "";
     for(let member of members){
       if(member.kind == NodeKind.FIELDDECLARATION){
