@@ -412,6 +412,69 @@ export class String {
   toString(): String {
     return this;
   }
+
+  get lengthUTF8(): i32 {
+    var len = 1; // null terminated
+    var pos: usize = 0;
+    var end = <usize>this.length;
+    while (pos < end) {
+      let c = <u32>load<u16>(changetype<usize>(this) + (pos << 1), HEADER_SIZE);
+      if (c < 128) {
+        len += 1; ++pos;
+      } else if (c < 2048) {
+        len += 2; ++pos;
+      } else {
+        if (
+          (c & 0xFC00) == 0xD800 && pos + 1 < end &&
+          (<u32>load<u16>(changetype<usize>(this) + ((pos + 1) << 1), HEADER_SIZE) & 0xFC00) == 0xDC00
+        ) {
+          len += 4; pos += 2;
+        } else {
+          len += 3; ++pos;
+        }
+      }
+    }
+    return len;
+  }
+
+  toUTF8(): usize {
+    var buf = allocate_memory(<usize>this.lengthUTF8);
+    var pos: usize = 0;
+    var end = <usize>this.length;
+    var off: usize = 0;
+    while (pos < end) {
+      let c1 = <u32>load<u16>(changetype<usize>(this) + (pos << 1), HEADER_SIZE);
+      if (c1 < 128) {
+        store<u8>(buf + off, c1);
+        ++off; ++pos;
+      } else if (c1 < 2048) {
+        let ptr = buf + off;
+        store<u8>(ptr, c1 >> 6      | 192);
+        store<u8>(ptr, c1      & 63 | 128, 1);
+        off += 2; ++pos;
+      } else {
+        let ptr = buf + off;
+        if ((c1 & 0xFC00) == 0xD800 && pos + 1 < end) {
+          let c2 = <u32>load<u16>(changetype<usize>(this) + ((pos + 1) << 1), HEADER_SIZE);
+          if ((c2 & 0xFC00) == 0xDC00) {
+            c1 = 0x10000 + ((c1 & 0x03FF) << 10) + (c2 & 0x03FF);
+            store<u8>(ptr, c1 >> 18      | 240);
+            store<u8>(ptr, c1 >> 12 & 63 | 128, 1);
+            store<u8>(ptr, c1 >> 6  & 63 | 128, 2);
+            store<u8>(ptr, c1       & 63 | 128, 3);
+            off += 4; pos += 2;
+            continue;
+          }
+        }
+        store<u8>(ptr, c1 >> 12      | 224);
+        store<u8>(ptr, c1 >> 6  & 63 | 128, 1);
+        store<u8>(ptr, c1       & 63 | 128, 2);
+        off += 3; ++pos;
+      }
+    }
+    store<u8>(buf + off, 0);
+    return buf;
+  }
 }
 
 export function parseInt(str: String, radix: i32 = 0): f64 {

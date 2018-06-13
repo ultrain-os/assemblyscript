@@ -3,28 +3,32 @@
  (type $iiiiv (func (param i32 i32 i32 i32)))
  (type $II (func (param i64) (result i64)))
  (type $v (func))
- (import "env" "abort" (func $abort (param i32 i32 i32 i32)))
+ (import "env" "abort" (func $~lib/env/abort (param i32 i32 i32 i32)))
  (memory $0 1)
- (data (i32.const 4) "\11\00\00\00~\00l\00i\00b\00/\00p\00o\00l\00y\00f\00i\00l\00l\00s\00.\00t\00s")
- (data (i32.const 44) "\10\00\00\00s\00t\00d\00/\00p\00o\00l\00y\00f\00i\00l\00l\00s\00.\00t\00s")
+ (data (i32.const 8) "\11\00\00\00~\00l\00i\00b\00/\00p\00o\00l\00y\00f\00i\00l\00l\00s\00.\00t\00s")
+ (data (i32.const 48) "\10\00\00\00s\00t\00d\00/\00p\00o\00l\00y\00f\00i\00l\00l\00s\00.\00t\00s")
  (export "memory" (memory $0))
  (start $start)
  (func $~lib/polyfills/bswap16<u16> (; 1 ;) (type $ii) (param $0 i32) (result i32)
   (local $1 i32)
   (if
    (i32.eqz
-    (if (result i32)
-     (tee_local $1
-      (i32.const 1)
-     )
-     (get_local $1)
-     (i32.const 0)
+    (tee_local $1
+     (i32.const 1)
     )
    )
+   (set_local $1
+    (i32.const 0)
+   )
+  )
+  (if
+   (i32.eqz
+    (get_local $1)
+   )
    (block
-    (call $abort
+    (call $~lib/env/abort
      (i32.const 0)
-     (i32.const 4)
+     (i32.const 8)
      (i32.const 27)
      (i32.const 2)
     )
@@ -32,12 +36,8 @@
    )
   )
   (if
-   (if (result i32)
-    (tee_local $1
-     (i32.const 1)
-    )
-    (get_local $1)
-    (i32.const 0)
+   (tee_local $1
+    (i32.const 1)
    )
    (return
     (i32.or
@@ -70,24 +70,30 @@
   (local $1 i32)
   (if
    (i32.eqz
-    (if (result i32)
-     (if (result i32)
-      (tee_local $1
-       (i32.const 1)
-      )
-      (get_local $1)
-      (tee_local $1
-       (i32.const 0)
-      )
-     )
-     (get_local $1)
-     (i32.const 0)
+    (tee_local $1
+     (i32.const 1)
     )
    )
+   (set_local $1
+    (i32.const 0)
+   )
+  )
+  (if
+   (i32.eqz
+    (get_local $1)
+   )
+   (set_local $1
+    (i32.const 0)
+   )
+  )
+  (if
+   (i32.eqz
+    (get_local $1)
+   )
    (block
-    (call $abort
+    (call $~lib/env/abort
      (i32.const 0)
-     (i32.const 4)
+     (i32.const 8)
      (i32.const 2)
      (i32.const 2)
     )
@@ -102,18 +108,22 @@
   (local $1 i32)
   (if
    (i32.eqz
-    (if (result i32)
-     (tee_local $1
-      (i32.const 1)
-     )
-     (get_local $1)
-     (i32.const 0)
+    (tee_local $1
+     (i32.const 1)
     )
    )
+   (set_local $1
+    (i32.const 0)
+   )
+  )
+  (if
+   (i32.eqz
+    (get_local $1)
+   )
    (block
-    (call $abort
+    (call $~lib/env/abort
      (i32.const 0)
-     (i32.const 4)
+     (i32.const 8)
      (i32.const 27)
      (i32.const 2)
     )
@@ -121,12 +131,8 @@
    )
   )
   (if
-   (if (result i32)
-    (tee_local $1
-     (i32.const 1)
-    )
-    (get_local $1)
-    (i32.const 0)
+   (tee_local $1
+    (i32.const 1)
    )
    (return
     (i32.or
@@ -162,24 +168,30 @@
   (local $1 i32)
   (if
    (i32.eqz
-    (if (result i32)
-     (if (result i32)
-      (tee_local $1
-       (i32.const 1)
-      )
-      (get_local $1)
-      (tee_local $1
-       (i32.const 0)
-      )
-     )
-     (get_local $1)
-     (i32.const 0)
+    (tee_local $1
+     (i32.const 1)
     )
    )
+   (set_local $1
+    (i32.const 0)
+   )
+  )
+  (if
+   (i32.eqz
+    (get_local $1)
+   )
+   (set_local $1
+    (i32.const 0)
+   )
+  )
+  (if
+   (i32.eqz
+    (get_local $1)
+   )
    (block
-    (call $abort
+    (call $~lib/env/abort
      (i32.const 0)
-     (i32.const 4)
+     (i32.const 8)
      (i32.const 2)
      (i32.const 2)
     )
@@ -194,18 +206,22 @@
   (local $1 i32)
   (if
    (i32.eqz
-    (if (result i32)
-     (tee_local $1
-      (i32.const 1)
-     )
-     (get_local $1)
-     (i32.const 0)
+    (tee_local $1
+     (i32.const 1)
     )
    )
+   (set_local $1
+    (i32.const 0)
+   )
+  )
+  (if
+   (i32.eqz
+    (get_local $1)
+   )
    (block
-    (call $abort
+    (call $~lib/env/abort
      (i32.const 0)
-     (i32.const 4)
+     (i32.const 8)
      (i32.const 2)
      (i32.const 2)
     )
@@ -230,21 +246,6 @@
   )
  )
  (func $~lib/polyfills/bswap<u64> (; 6 ;) (type $II) (param $0 i64) (result i64)
-  (local $1 i32)
-  (if
-   (i32.eqz
-    (i32.const 1)
-   )
-   (block
-    (call $abort
-     (i32.const 0)
-     (i32.const 4)
-     (i32.const 2)
-     (i32.const 2)
-    )
-    (unreachable)
-   )
-  )
   (i64.rotr
    (i64.or
     (i64.and
@@ -283,84 +284,50 @@
   )
  )
  (func $~lib/polyfills/bswap16<u32> (; 7 ;) (type $ii) (param $0 i32) (result i32)
-  (local $1 i32)
-  (if
-   (i32.eqz
-    (i32.const 1)
-   )
-   (block
-    (call $abort
-     (i32.const 0)
-     (i32.const 4)
-     (i32.const 27)
-     (i32.const 2)
-    )
-    (unreachable)
-   )
-  )
-  (return
+  (i32.or
    (i32.or
-    (i32.or
-     (i32.and
-      (i32.shl
-       (get_local $0)
-       (i32.const 8)
-      )
-      (i32.const 65280)
+    (i32.and
+     (i32.shl
+      (get_local $0)
+      (i32.const 8)
      )
-     (i32.and
-      (i32.shr_u
-       (get_local $0)
-       (i32.const 8)
-      )
-      (i32.const 255)
-     )
+     (i32.const 65280)
     )
     (i32.and
-     (get_local $0)
-     (i32.const -65536)
+     (i32.shr_u
+      (get_local $0)
+      (i32.const 8)
+     )
+     (i32.const 255)
     )
+   )
+   (i32.and
+    (get_local $0)
+    (i32.const -65536)
    )
   )
  )
  (func $~lib/polyfills/bswap16<i32> (; 8 ;) (type $ii) (param $0 i32) (result i32)
-  (local $1 i32)
-  (if
-   (i32.eqz
-    (i32.const 1)
-   )
-   (block
-    (call $abort
-     (i32.const 0)
-     (i32.const 4)
-     (i32.const 27)
-     (i32.const 2)
-    )
-    (unreachable)
-   )
-  )
-  (return
+  (i32.or
    (i32.or
-    (i32.or
-     (i32.and
-      (i32.shl
-       (get_local $0)
-       (i32.const 8)
-      )
-      (i32.const 65280)
+    (i32.and
+     (i32.shl
+      (get_local $0)
+      (i32.const 8)
      )
-     (i32.and
-      (i32.shr_s
-       (get_local $0)
-       (i32.const 8)
-      )
-      (i32.const 255)
-     )
+     (i32.const 65280)
     )
     (i32.and
-     (get_local $0)
-     (i32.const -65536)
+     (i32.shr_s
+      (get_local $0)
+      (i32.const 8)
+     )
+     (i32.const 255)
     )
+   )
+   (i32.and
+    (get_local $0)
+    (i32.const -65536)
    )
   )
  )
@@ -376,9 +343,9 @@
     (i32.const 48042)
    )
    (block
-    (call $abort
+    (call $~lib/env/abort
      (i32.const 0)
-     (i32.const 44)
+     (i32.const 48)
      (i32.const 4)
      (i32.const 0)
     )
@@ -396,9 +363,9 @@
     (i32.const 48042)
    )
    (block
-    (call $abort
+    (call $~lib/env/abort
      (i32.const 0)
-     (i32.const 44)
+     (i32.const 48)
      (i32.const 5)
      (i32.const 0)
     )
@@ -413,9 +380,9 @@
     (i32.const -573785174)
    )
    (block
-    (call $abort
+    (call $~lib/env/abort
      (i32.const 0)
-     (i32.const 44)
+     (i32.const 48)
      (i32.const 8)
      (i32.const 0)
     )
@@ -430,9 +397,9 @@
     (i32.const -573785174)
    )
    (block
-    (call $abort
+    (call $~lib/env/abort
      (i32.const 0)
-     (i32.const 44)
+     (i32.const 48)
      (i32.const 9)
      (i32.const 0)
     )
@@ -447,9 +414,9 @@
     (i64.const -2464388556401798912)
    )
    (block
-    (call $abort
+    (call $~lib/env/abort
      (i32.const 0)
-     (i32.const 44)
+     (i32.const 48)
      (i32.const 12)
      (i32.const 0)
     )
@@ -464,9 +431,9 @@
     (i64.const -2464388556401798912)
    )
    (block
-    (call $abort
+    (call $~lib/env/abort
      (i32.const 0)
-     (i32.const 44)
+     (i32.const 48)
      (i32.const 13)
      (i32.const 0)
     )
@@ -481,9 +448,9 @@
     (i32.const -573785174)
    )
    (block
-    (call $abort
+    (call $~lib/env/abort
      (i32.const 0)
-     (i32.const 44)
+     (i32.const 48)
      (i32.const 16)
      (i32.const 0)
     )
@@ -498,9 +465,9 @@
     (i32.const -573785174)
    )
    (block
-    (call $abort
+    (call $~lib/env/abort
      (i32.const 0)
-     (i32.const 44)
+     (i32.const 48)
      (i32.const 17)
      (i32.const 0)
     )
@@ -518,9 +485,9 @@
     (i32.const 48042)
    )
    (block
-    (call $abort
+    (call $~lib/env/abort
      (i32.const 0)
-     (i32.const 44)
+     (i32.const 48)
      (i32.const 20)
      (i32.const 0)
     )
@@ -538,9 +505,9 @@
     (i32.const 48042)
    )
    (block
-    (call $abort
+    (call $~lib/env/abort
      (i32.const 0)
-     (i32.const 44)
+     (i32.const 48)
      (i32.const 21)
      (i32.const 0)
     )
@@ -555,9 +522,9 @@
     (i32.const -7816278)
    )
    (block
-    (call $abort
+    (call $~lib/env/abort
      (i32.const 0)
-     (i32.const 44)
+     (i32.const 48)
      (i32.const 24)
      (i32.const 0)
     )
@@ -572,9 +539,9 @@
     (i32.const -7816278)
    )
    (block
-    (call $abort
+    (call $~lib/env/abort
      (i32.const 0)
-     (i32.const 44)
+     (i32.const 48)
      (i32.const 25)
      (i32.const 0)
     )

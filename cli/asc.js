@@ -8,7 +8,7 @@
  * Can also be packaged as a bundle suitable for in-browser use with the standard library injected
  * in the build step. See dist/asc.js for the bundle and webpack.config.js for building details.
  *
- * @module asc
+ * @module cli/asc
  */
 
 const fs = require("fs");
@@ -31,7 +31,6 @@ var assemblyscript, isDev;
       isDev = true;
     } catch (e) {
       // last resort: same directory CommonJS
-      console.log("exception details:" + e);
       assemblyscript = eval("require('./assemblyscript')");
       isDev = true;
 
@@ -45,10 +44,10 @@ exports.isBundle = typeof BUNDLE_VERSION === "string";
 /** Whether asc runs the sources directly or not. */
 exports.isDev = isDev;
 
-/** AssemblyScript veresion. */
+/** AssemblyScript version. */
 exports.version = exports.isBundle ? BUNDLE_VERSION : require("../package.json").version;
 
-/** Available options. */
+/** Available CLI options. */
 exports.options = require("./asc.json");
 
 /** Common root used in source maps. */
@@ -162,15 +161,15 @@ exports.main = function main(args, options, callback, isDispatch) {
       while (text.length < indent) {
         text += " ";
       }
-      if (Array.isArray(option.desc)) {
-        opts.push(text + option.desc[0] + option.desc.slice(1).map(line => {
+      if (Array.isArray(option.description)) {
+        opts.push(text + option.description[0] + option.description.slice(1).map(line => {
           for (let i = 0; i < indent; ++i) {
             line = " " + line;
           }
           return EOL + line;
         }).join(""));
       } else {
-        opts.push(text + option.desc);
+        opts.push(text + option.description);
       }
     });
 
@@ -189,6 +188,26 @@ exports.main = function main(args, options, callback, isDispatch) {
 
   // Set up base directory
   const baseDir = args.baseDir ? path.resolve(args.baseDir) : ".";
+
+  // Set up transforms
+  const transforms = [];
+  if (args.transform) {
+    if (typeof args.transform === "string") args.transform = args.transform.split(",");
+    args.transform.forEach(transform =>
+      transforms.push(
+        require(
+          path.isAbsolute(transform = transform.trim())
+            ? transform
+            : path.join(process.cwd(), transform)
+        )
+      )
+    );
+  }
+  function applyTransform(name, ...args) {
+    transforms.forEach(transform => {
+      if (typeof transform[name] === "function") transform[name](...args);
+    });
+  }
 
   // Begin parsing
   var parser = null;
@@ -361,6 +380,7 @@ exports.main = function main(args, options, callback, isDispatch) {
     }
   }
 
+  applyTransform("afterParse", parser);
 
   // Finish parsing
   const program = assemblyscript.finishParsing(parser);
@@ -379,6 +399,7 @@ exports.main = function main(args, options, callback, isDispatch) {
   // Initialize default aliases
   assemblyscript.setGlobalAlias(compilerOptions, "Math", "NativeMath");
   assemblyscript.setGlobalAlias(compilerOptions, "Mathf", "NativeMathf");
+  assemblyscript.setGlobalAlias(compilerOptions, "abort", "~lib/env/abort"); // to disable: --use abort=
 
   // Add or override aliases if specified
   var aliases = args.use;
@@ -390,7 +411,7 @@ exports.main = function main(args, options, callback, isDispatch) {
       if (p < 0) return callback(Error("Global alias '" + part + "' is invalid."));
       let name = part.substring(0, p).trim();
       let alias = part.substring(p + 1).trim();
-      if (!name.length || !alias.length) return callback(Error("Global alias '" + part + "' is invalid."));
+      if (!name.length) return callback(Error("Global alias '" + part + "' is invalid."));
       assemblyscript.setGlobalAlias(compilerOptions, name, alias);
     }
   }
@@ -490,6 +511,10 @@ exports.main = function main(args, options, callback, isDispatch) {
   } else if (args.shrinkLevel === "z") {
     shrinkLevel = 2;
   }
+
+  // Implicitly run costly non-LLVM optimizations on -O3 or -Oz
+  // see: https://github.com/WebAssembly/binaryen/pull/1596
+  if (optimizeLevel >= 3 || shrinkLevel >= 2) optimizeLevel = 4;
 
   module.setOptimizeLevel(optimizeLevel > 0 ? optimizeLevel : 0);
   module.setShrinkLevel(shrinkLevel);
@@ -786,6 +811,7 @@ function parseArguments(argv) {
   return require("minimist")(argv, opts);
 }
 
+
 exports.parseArguments = parseArguments;
 
 /** Checks diagnostics emitted so far for errors. */
@@ -793,10 +819,12 @@ function checkDiagnostics(emitter, stderr) {
   var diagnostic;
   var hasErrors = false;
   while ((diagnostic = assemblyscript.nextDiagnostic(emitter)) != null) {
-    stderr.write(
-      assemblyscript.formatDiagnostic(diagnostic, stderr.isTTY, true) +
-      EOL + EOL
-    );
+    if (stderr) {
+      stderr.write(
+        assemblyscript.formatDiagnostic(diagnostic, stderr.isTTY, true) +
+        EOL + EOL
+      );
+    }
     if (assemblyscript.isError(diagnostic)) hasErrors = true;
   }
   return hasErrors;
@@ -838,6 +866,7 @@ function measure(fn) {
 
 exports.measure = measure;
 
+/** Formats a high resolution time to a human readable string. */
 function formatTime(time) {
   return time ? (time / 1e6).toFixed(3) + " ms" : "N/A";
 }
@@ -899,7 +928,7 @@ function createMemoryStream(fn) {
 
 exports.createMemoryStream = createMemoryStream;
 
-/** Compatible TypeScript compiler options. */
+/** Compatible TypeScript compiler options for syntax highlighting etc. */
 exports.tscOptions = {
   alwaysStrict: true,
   noImplicitAny: true,

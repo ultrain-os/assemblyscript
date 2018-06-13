@@ -1,12 +1,12 @@
 const fs  = require("fs");
 const path = require("path");
 const os = require("os");
-const chalk = require("chalk");
+const colors = require("../cli/util/colors");
 const glob = require("glob");
 const minimist = require("minimist");
 
 const diff = require("./util/diff");
-const asc = require("../bin/asc.js");
+const asc = require("../cli/asc.js");
 
 const args = minimist(process.argv.slice(2), {
   boolean: [ "create", "help" ],
@@ -40,10 +40,23 @@ if (args._.length) {
   }
 }
 
+const EXPECT_ERROR_PREFIX = '// Expect error:';
+
+// Returns an array of error strings to expect, or null if compilation should succeed.
+function getExpectedErrors(filePath) {
+  const lines = fs.readFileSync(filePath).toString().split('\n');
+  const expectErrorLines = lines.filter(line => line.startsWith(EXPECT_ERROR_PREFIX));
+  if (expectErrorLines.length === 0) {
+    return null;
+  }
+  return expectErrorLines.map(line => line.slice(EXPECT_ERROR_PREFIX.length).trim());
+}
+
 // TODO: asc's callback is synchronous here. This might change.
 tests.forEach(filename => {
-  console.log(chalk.whiteBright("Testing compiler/" + filename) + "\n");
+  console.log(colors.white("Testing compiler/" + filename) + "\n");
 
+  const expectedErrors = getExpectedErrors(path.join(basedir, filename));
   const basename = filename.replace(/\.ts$/, "");
 
   const stdout = asc.createMemoryStream();
@@ -66,21 +79,39 @@ tests.forEach(filename => {
     stderr: stderr
   }, err => {
     console.log();
+
+    if (expectedErrors) {
+      const stderrString = stderr.toString();
+      for (const expectedError of expectedErrors) {
+        if (!stderrString.includes(expectedError)) {
+          console.log(`Expected error "${expectedError}" was not in the error output.`);
+          console.log("- " + colors.red("error check ERROR"));
+          failedTests.push(basename);
+          console.log();
+          return;
+        }
+      }
+      console.log("- " + colors.green("error check OK"));
+      ++successes;
+      console.log();
+      return;
+    }
+
     if (err)
       stderr.write(err + os.EOL);
     var actual = stdout.toString().replace(/\r\n/g, "\n");
     if (args.create) {
       fs.writeFileSync(path.join(basedir, basename + ".untouched.wat"), actual, { encoding: "utf8" });
-      console.log("- " + chalk.yellow("Created fixture"));
+      console.log("- " + colors.yellow("Created fixture"));
     } else {
       let expected = fs.readFileSync(path.join(basedir, basename + ".untouched.wat"), { encoding: "utf8" }).replace(/\r\n/g, "\n");
       let diffs = diff(basename + ".untouched.wat", expected, actual);
       if (diffs !== null) {
         console.log(diffs);
-        console.log("- " + chalk.red("diff ERROR"));
+        console.log("- " + colors.red("diff ERROR"));
         failed = true;
       } else
-        console.log("- " + chalk.green("diff OK"));
+        console.log("- " + colors.green("diff OK"));
     }
     console.log();
 
@@ -92,7 +123,7 @@ tests.forEach(filename => {
       filename,
       "--baseDir", basedir,
       "--validate",
-      "--optimize",
+      "-O3",
       "--measure",
       "--binaryFile" // -> stdout
     ];
@@ -130,9 +161,9 @@ tests.forEach(filename => {
             JSMath: Math
           });
         });
-        console.log("- " + chalk.green("instantiate OK") + " (" + asc.formatTime(runTime) + ")");
+        console.log("- " + colors.green("instantiate OK") + " (" + asc.formatTime(runTime) + ")");
       } catch (e) {
-        console.log("- " + chalk.red("instantiate ERROR: ") + e);
+        console.log("- " + colors.red("instantiate ERROR: ") + e);
         failed = true;
       }
 
@@ -145,6 +176,6 @@ tests.forEach(filename => {
 
 if (failedTests.length) {
   process.exitCode = 1;
-  console.log(chalk.red("ERROR: ") + failedTests.length + " compiler tests failed: " + failedTests.join(", "));
+  console.log(colors.red("ERROR: ") + failedTests.length + " compiler tests failed: " + failedTests.join(", "));
 } else
-  console.log("[ " + chalk.whiteBright("SUCCESS") + " ]");
+  console.log("[ " + colors.white("SUCCESS") + " ]");

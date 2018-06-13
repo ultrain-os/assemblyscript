@@ -173,7 +173,8 @@ export enum IdentifierHandling {
 }
 
 export function tokenFromKeyword(text: string): Token {
-  switch (text.length && text.charCodeAt(0)) {
+  assert(text.length);
+  switch (text.charCodeAt(0)) {
     case CharCode.a: {
       switch (text) {
         case "abstract": return Token.ABSTRACT;
@@ -1221,7 +1222,8 @@ export class Tokenizer extends DiagnosticEmitter {
       if (c == CharCode.DOT || c == CharCode.E || c == CharCode.e) {
         return false;
       }
-      if (c < CharCode._0 || c > CharCode._9) break;
+      if ((c < CharCode._0 || c > CharCode._9) && c != CharCode._) break;
+      // does not validate separator placement (this is done in readXYInteger)
       pos++;
     }
     return true;
@@ -1266,8 +1268,10 @@ export class Tokenizer extends DiagnosticEmitter {
     var start = this.pos;
     var value = i64_new(0, 0);
     var i64_16 = i64_new(16, 0);
+    var sepEnd = start;
     while (this.pos < this.end) {
-      let c = text.charCodeAt(this.pos);
+      let pos = this.pos;
+      let c = text.charCodeAt(pos);
       if (c >= CharCode._0 && c <= CharCode._9) {
         // value = value * 16 + c - CharCode._0;
         value = i64_add(
@@ -1286,15 +1290,30 @@ export class Tokenizer extends DiagnosticEmitter {
           i64_mul(value, i64_16),
           i64_new(10 + c - CharCode.a, 0)
         );
+      } else if (c == CharCode._) {
+        if (sepEnd == pos) {
+          this.error(
+            sepEnd == start
+              ? DiagnosticCode.Numeric_separators_are_not_allowed_here
+              : DiagnosticCode.Multiple_consecutive_numeric_separators_are_not_permitted,
+            this.range(pos)
+          );
+        }
+        sepEnd = pos + 1;
       } else {
         break;
       }
-      ++this.pos;
+      this.pos = pos + 1;
     }
     if (this.pos == start) {
       this.error(
         DiagnosticCode.Hexadecimal_digit_expected,
         this.range(start)
+      );
+    } else if (sepEnd == this.pos) {
+      this.error(
+        DiagnosticCode.Numeric_separators_are_not_allowed_here,
+        this.range(sepEnd - 1)
       );
     }
     return value;
@@ -1305,23 +1324,40 @@ export class Tokenizer extends DiagnosticEmitter {
     var start = this.pos;
     var value = i64_new(0, 0);
     var i64_10 = i64_new(10, 0);
+    var sepEnd = start;
     while (this.pos < this.end) {
-      let c = text.charCodeAt(this.pos);
+      let pos = this.pos;
+      let c = text.charCodeAt(pos);
       if (c >= CharCode._0 && c <= CharCode._9) {
         // value = value * 10 + c - CharCode._0;
         value = i64_add(
           i64_mul(value, i64_10),
           i64_new(c - CharCode._0, 0)
         );
+      } else if (c == CharCode._) {
+        if (sepEnd == pos) {
+          this.error(
+            sepEnd == start
+              ? DiagnosticCode.Numeric_separators_are_not_allowed_here
+              : DiagnosticCode.Multiple_consecutive_numeric_separators_are_not_permitted,
+            this.range(pos)
+          );
+        }
+        sepEnd = pos + 1;
       } else {
         break;
       }
-      ++this.pos;
+      this.pos = pos + 1;
     }
     if (this.pos == start) {
       this.error(
         DiagnosticCode.Digit_expected,
         this.range(start)
+      );
+    } else if (sepEnd == this.pos) {
+      this.error(
+        DiagnosticCode.Numeric_separators_are_not_allowed_here,
+        this.range(sepEnd - 1)
       );
     }
     return value;
@@ -1332,14 +1368,26 @@ export class Tokenizer extends DiagnosticEmitter {
     var start = this.pos;
     var value = i64_new(0, 0);
     var i64_8 = i64_new(8, 0);
+    var sepEnd = start;
     while (this.pos < this.end) {
-      let c = text.charCodeAt(this.pos);
+      let pos = this.pos;
+      let c = text.charCodeAt(pos);
       if (c >= CharCode._0 && c <= CharCode._7) {
         // value = value * 8 + c - CharCode._0;
         value = i64_add(
           i64_mul(value, i64_8),
           i64_new(c - CharCode._0, 0)
         );
+      } else if (c == CharCode._) {
+        if (sepEnd == pos) {
+          this.error(
+            sepEnd == start
+              ? DiagnosticCode.Numeric_separators_are_not_allowed_here
+              : DiagnosticCode.Multiple_consecutive_numeric_separators_are_not_permitted,
+            this.range(pos)
+          );
+        }
+        sepEnd = pos + 1;
       } else {
         break;
       }
@@ -1349,6 +1397,11 @@ export class Tokenizer extends DiagnosticEmitter {
       this.error(
         DiagnosticCode.Octal_digit_expected,
         this.range(start)
+      );
+    } else if (sepEnd == this.pos) {
+      this.error(
+        DiagnosticCode.Numeric_separators_are_not_allowed_here,
+        this.range(sepEnd - 1)
       );
     }
     return value;
@@ -1360,8 +1413,10 @@ export class Tokenizer extends DiagnosticEmitter {
     var value = i64_new(0, 0);
     var i64_2 = i64_new(2, 0);
     var i64_1 = i64_new(1, 0);
+    var sepEnd = start;
     while (this.pos < this.end) {
-      let c = text.charCodeAt(this.pos);
+      let pos = this.pos;
+      let c = text.charCodeAt(pos);
       if (c == CharCode._0) {
         // value = value * 2;
         value = i64_mul(
@@ -1374,15 +1429,30 @@ export class Tokenizer extends DiagnosticEmitter {
           i64_mul(value, i64_2),
           i64_1
         );
+      } else if (c == CharCode._) {
+        if (sepEnd == pos) {
+          this.error(
+            sepEnd == start
+              ? DiagnosticCode.Numeric_separators_are_not_allowed_here
+              : DiagnosticCode.Multiple_consecutive_numeric_separators_are_not_permitted,
+            this.range(pos)
+          );
+        }
+        sepEnd = pos + 1;
       } else {
         break;
       }
-      ++this.pos;
+      this.pos = pos + 1;
     }
     if (this.pos == start) {
       this.error(
         DiagnosticCode.Binary_digit_expected,
         this.range(start)
+      );
+    } else if (sepEnd == this.pos) {
+      this.error(
+        DiagnosticCode.Numeric_separators_are_not_allowed_here,
+        this.range(sepEnd - 1)
       );
     }
     return value;
@@ -1403,6 +1473,7 @@ export class Tokenizer extends DiagnosticEmitter {
   }
 
   readDecimalFloat(): f64 {
+    // TODO: numeric separators (parseFloat can't handle these)
     var start = this.pos;
     var text = this.source.text;
     while (this.pos < this.end && isDecimalDigit(text.charCodeAt(this.pos))) {

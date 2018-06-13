@@ -87,10 +87,12 @@ export class Parser extends DiagnosticEmitter {
 
   /** Program being created. */
   program: Program;
-  /** Log of source file names to be requested. */
+  /** Source file names to be requested next. */
   backlog: string[] = new Array();
-  /** Log of source file names already processed. */
+  /** Source file names already seen, that is processed or backlogged. */
   seenlog: Set<string> = new Set();
+  /** Source file names already completely processed. */
+  donelog: Set<string> = new Set();
   /** Optional handler to intercept comments while tokenizing. */
   onComment: CommentHandler | null = null;
 
@@ -106,16 +108,13 @@ export class Parser extends DiagnosticEmitter {
     path: string,
     isEntry: bool
   ): void {
-    var program = this.program;
-
-    // check if already parsed
     var normalizedPath = normalizePath(path);
     var internalPath = mangleInternalPath(normalizedPath);
-    var sources = program.sources;
-    for (let i = 0, k = sources.length; i < k; ++i) {
-      if (sources[i].internalPath == internalPath) return;
-    }
-    this.seenlog.add(internalPath);
+
+    // check if already processed
+    if (this.donelog.has(internalPath)) return;
+    this.donelog.add(internalPath); // do not parse again
+    this.seenlog.add(internalPath); // do not request again
 
     // create the source element
     var source = new Source(
@@ -127,7 +126,8 @@ export class Parser extends DiagnosticEmitter {
           ? SourceKind.LIBRARY
           : SourceKind.DEFAULT
     );
-    sources.push(source);
+    var program = this.program;
+    program.sources.push(source);
 
     // mark the special builtins library file
     if (source.normalizedPath == builtinsFile) {
@@ -244,15 +244,16 @@ export class Parser extends DiagnosticEmitter {
         break;
       }
       case Token.ABSTRACT: {
+        let state = tn.mark();
         tn.next();
-        flags |= CommonFlags.ABSTRACT;
         if (!tn.skip(Token.CLASS)) {
-          this.error(
-            DiagnosticCode._0_expected,
-            tn.range(tn.pos), "class"
-          );
+          tn.reset(state);
+          statement = this.parseStatement(tn, true);
           break;
+        } else {
+          tn.discard(state);
         }
+        flags |= CommonFlags.ABSTRACT;
         // fall through
       }
       case Token.CLASS:
@@ -263,9 +264,16 @@ export class Parser extends DiagnosticEmitter {
         break;
       }
       case Token.NAMESPACE: {
+        let state = tn.mark();
         tn.next();
-        statement = this.parseNamespace(tn, flags, decorators, startPos);
-        decorators = null;
+        if (tn.peek(false, IdentifierHandling.PREFER) == Token.IDENTIFIER) {
+          tn.discard(state);
+          statement = this.parseNamespace(tn, flags, decorators, startPos);
+          decorators = null;
+        } else {
+          tn.reset(state);
+          statement = this.parseStatement(tn, true);
+        }
         break;
       }
       case Token.IMPORT: {
@@ -278,10 +286,17 @@ export class Parser extends DiagnosticEmitter {
         }
         break;
       }
-      case Token.TYPE: {
+      case Token.TYPE: { // also identifier
+        let state = tn.mark();
         tn.next();
-        statement = this.parseTypeDeclaration(tn, flags, decorators, startPos);
-        decorators = null;
+        if (tn.peek(false, IdentifierHandling.PREFER) == Token.IDENTIFIER) {
+          tn.discard(state);
+          statement = this.parseTypeDeclaration(tn, flags, decorators, startPos);
+          decorators = null;
+        } else {
+          tn.reset(state);
+          statement = this.parseStatement(tn, true);
+        }
         break;
       }
       default: {
@@ -338,6 +353,7 @@ export class Parser extends DiagnosticEmitter {
     if (this.backlog.length) throw new Error("backlog is not empty");
     this.backlog = [];
     this.seenlog.clear();
+    this.donelog.clear();
     return this.program;
   }
 
@@ -351,13 +367,6 @@ export class Parser extends DiagnosticEmitter {
     // NOTE: this parses our limited subset
     var token = tn.next();
     var startPos = tn.tokenPos;
-
-    // 'void'
-    if (token == Token.VOID) {
-      return Node.createType(
-        Node.createIdentifierExpression("void", tn.range()), [], false, tn.range(startPos, tn.pos)
-      );
-    }
 
     var type: CommonTypeNode;
 
@@ -424,6 +433,12 @@ export class Parser extends DiagnosticEmitter {
         );
         return null;
       }
+
+    // 'void'
+    } else if (token == Token.VOID) {
+      type = Node.createType(
+        Node.createIdentifierExpression("void", tn.range()), [], false, tn.range(startPos, tn.pos)
+      );
 
     // 'this'
     } else if (token == Token.THIS) {
@@ -968,6 +983,8 @@ export class Parser extends DiagnosticEmitter {
     return null;
   }
 
+  private parseParametersThis: TypeNode | null = null;
+
   parseParameters(
     tn: Tokenizer,
     isConstructor: bool = false
@@ -979,9 +996,44 @@ export class Parser extends DiagnosticEmitter {
     var seenRest: ParameterNode | null = null;
     var seenOptional = false;
     var reportedRest = false;
+    var thisType: CommonTypeNode | null = null;
+
+    // check if there is a leading `this` parameter
+    this.parseParametersThis = null;
+    if (tn.skip(Token.THIS)) {
+      if (tn.skip(Token.COLON)) {
+        thisType = this.parseType(tn); // reports
+        if (!thisType) return null;
+        if (thisType.kind == NodeKind.TYPE) {
+          this.parseParametersThis = <TypeNode>thisType;
+        } else {
+          this.error(
+            DiagnosticCode.Operation_not_supported,
+            thisType.range
+          );
+        }
+      } else {
+        this.error(
+          DiagnosticCode._0_expected,
+          tn.range(), ":"
+        );
+        return null;
+      }
+      if (!tn.skip(Token.COMMA)) {
+        if (tn.skip(Token.CLOSEPAREN)) {
+          return parameters;
+        } else {
+          this.error(
+            DiagnosticCode._0_expected,
+            tn.range(), ")"
+          );
+          return null;
+        }
+      }
+    }
 
     while (!tn.skip(Token.CLOSEPAREN)) {
-      let param = this.parseParameter(tn, isConstructor);
+      let param = this.parseParameter(tn, isConstructor); // reports
       if (!param) return null;
       if (seenRest && !reportedRest) {
         this.error(
@@ -1036,43 +1088,28 @@ export class Parser extends DiagnosticEmitter {
     var isOptional = false;
     var startRange: Range | null = null;
     var accessFlags: CommonFlags = CommonFlags.NONE;
-    if (tn.skip(Token.PUBLIC)) {
-      startRange = tn.range();
-      if (!isConstructor) {
-        this.error(
-          DiagnosticCode._0_modifier_cannot_be_used_here,
-          startRange, "public"
-        );
+    if (isConstructor) {
+      if (tn.skip(Token.PUBLIC)) {
+        startRange = tn.range();
+        accessFlags |= CommonFlags.PUBLIC;
+      } else if (tn.skip(Token.PROTECTED)) {
+        startRange = tn.range();
+        accessFlags |= CommonFlags.PROTECTED;
+      } else if (tn.skip(Token.PRIVATE)) {
+        startRange = tn.range();
+        accessFlags |= CommonFlags.PRIVATE;
       }
-      accessFlags |= CommonFlags.PUBLIC;
-    } else if (tn.skip(Token.PROTECTED)) {
-      startRange = tn.range();
-      if (!isConstructor) {
-        this.error(
-          DiagnosticCode._0_modifier_cannot_be_used_here,
-          startRange, "protected"
-        );
+      if (tn.peek() == Token.READONLY) {
+        let state = tn.mark();
+        tn.next();
+        if (tn.peek() != Token.COLON) { // modifier
+          tn.discard(state);
+          if (!startRange) startRange = tn.range();
+          accessFlags |= CommonFlags.READONLY;
+        } else { // identifier
+          tn.reset(state);
+        }
       }
-      accessFlags |= CommonFlags.PROTECTED;
-    } else if (tn.skip(Token.PRIVATE)) {
-      startRange = tn.range();
-      if (!isConstructor) {
-        this.error(
-          DiagnosticCode._0_modifier_cannot_be_used_here,
-          startRange, "private"
-        );
-      }
-      accessFlags |= CommonFlags.PRIVATE;
-    }
-    if (tn.skip(Token.READONLY)) {
-      if (!startRange) startRange = tn.range();
-      if (!isConstructor) {
-        this.error(
-          DiagnosticCode._0_modifier_cannot_be_used_here,
-          startRange, "readonly"
-        );
-      }
-      accessFlags |= CommonFlags.READONLY;
     }
     if (tn.skip(Token.DOT_DOT_DOT)) {
       if (accessFlags) {
@@ -1191,6 +1228,7 @@ export class Parser extends DiagnosticEmitter {
 
     var parameters = this.parseParameters(tn);
     if (!parameters) return null;
+    var thisType = this.parseParametersThis;
 
     var isSetter = (flags & CommonFlags.SET) != 0;
     if (isSetter) {
@@ -1238,7 +1276,7 @@ export class Parser extends DiagnosticEmitter {
     var signature = Node.createSignature(
       parameters,
       returnType,
-      null,
+      thisType,
       false,
       tn.range(signatureStart, tn.pos)
     );
@@ -1353,7 +1391,7 @@ export class Parser extends DiagnosticEmitter {
     var signature = Node.createSignature(
       parameters,
       returnType,
-      null,
+      null, // TODO?
       false,
       tn.range(signatureStart, tn.pos)
     );
@@ -1657,6 +1695,7 @@ export class Parser extends DiagnosticEmitter {
       let signatureStart = tn.tokenPos;
       let parameters = this.parseParameters(tn, isConstructor);
       if (!parameters) return null;
+      let thisType = this.parseParametersThis;
       if (isConstructor) {
         for (let i = 0, k = parameters.length; i < k; ++i) {
           let parameter = parameters[i];
@@ -1730,7 +1769,7 @@ export class Parser extends DiagnosticEmitter {
       let signature = Node.createSignature(
         parameters,
         returnType,
-        null,
+        thisType,
         false,
         tn.range(signatureStart, tn.pos)
       );
@@ -1879,23 +1918,25 @@ export class Parser extends DiagnosticEmitter {
 
     // at 'export': '{' ExportMember (',' ExportMember)* }' ('from' StringLiteral)? ';'?
 
+    var path: StringLiteralExpression | null = null;
     if (tn.skip(Token.OPENBRACE)) {
       let members = new Array<ExportMember>();
-      if (!tn.skip(Token.CLOSEBRACE)) {
-        do {
+      while (!tn.skip(Token.CLOSEBRACE)) {
           let member = this.parseExportMember(tn);
           if (!member) return null;
           members.push(member);
-        } while (tn.skip(Token.COMMA));
-        if (!tn.skip(Token.CLOSEBRACE)) {
-          this.error(
-            DiagnosticCode._0_expected,
-            tn.range(), "}"
-          );
-          return null;
+        if (!tn.skip(Token.COMMA)) {
+          if (tn.skip(Token.CLOSEBRACE)) {
+            break;
+          } else {
+            this.error(
+              DiagnosticCode._0_expected,
+              tn.range(), "}"
+            );
+            return null;
+          }
         }
       }
-      let path: StringLiteralExpression | null = null;
       if (tn.skip(Token.FROM)) {
         if (tn.skip(Token.STRINGLITERAL)) {
           path = Node.createStringLiteralExpression(tn.readString(), tn.range());
@@ -1909,12 +1950,36 @@ export class Parser extends DiagnosticEmitter {
       }
       let ret = Node.createExportStatement(members, path, flags, tn.range(startPos, tn.pos));
       let internalPath = ret.internalPath;
-      if (internalPath != null && !this.seenlog.has(internalPath)) {
+      if (internalPath !== null && !this.seenlog.has(internalPath)) {
         this.backlog.push(internalPath);
         this.seenlog.add(internalPath);
       }
       tn.skip(Token.SEMICOLON);
       return ret;
+    } else if (tn.skip(Token.ASTERISK)) {
+      if (tn.skip(Token.FROM)) {
+        if (tn.skip(Token.STRINGLITERAL)) {
+          path = Node.createStringLiteralExpression(tn.readString(), tn.range());
+          let ret = Node.createExportStatement(null, path, flags, tn.range(startPos, tn.pos));
+          let internalPath = ret.internalPath;
+          if (internalPath !== null && !this.seenlog.has(internalPath)) {
+            this.backlog.push(internalPath);
+            this.seenlog.add(internalPath);
+          }
+          tn.skip(Token.SEMICOLON);
+          return ret;
+        } else {
+          this.error(
+            DiagnosticCode.String_literal_expected,
+            tn.range()
+          );
+        }
+      } else {
+        this.error(
+          DiagnosticCode._0_expected,
+          tn.range(), "from"
+        );
+      }
     } else {
       this.error(
         DiagnosticCode._0_expected,
@@ -1974,18 +2039,20 @@ export class Parser extends DiagnosticEmitter {
     var skipFrom = false;
     if (tn.skip(Token.OPENBRACE)) {
       members = new Array();
-      if (!tn.skip(Token.CLOSEBRACE)) {
-        do {
-          let member = this.parseImportDeclaration(tn);
-          if (!member) return null;
-          members.push(member);
-        } while (tn.skip(Token.COMMA));
-        if (!tn.skip(Token.CLOSEBRACE)) {
-          this.error(
-            DiagnosticCode._0_expected,
-            tn.range(), "}"
-          );
-          return null;
+      while (!tn.skip(Token.CLOSEBRACE)) {
+        let member = this.parseImportDeclaration(tn);
+        if (!member) return null;
+        members.push(member);
+        if (!tn.skip(Token.COMMA)) {
+          if (tn.skip(Token.CLOSEBRACE)) {
+            break;
+          } else {
+            this.error(
+              DiagnosticCode._0_expected,
+              tn.range(), "}"
+            );
+            return null;
+          }
         }
       }
     } else if (tn.skip(Token.ASTERISK)) {
@@ -2186,10 +2253,6 @@ export class Parser extends DiagnosticEmitter {
         statement = this.parseTryStatement(tn);
         break;
       }
-      case Token.TYPE: {
-        statement = this.parseTypeDeclaration(tn, CommonFlags.NONE, null, tn.tokenPos);
-        break;
-      }
       case Token.VOID: {
         statement = this.parseVoidStatement(tn);
         break;
@@ -2197,6 +2260,13 @@ export class Parser extends DiagnosticEmitter {
       case Token.WHILE: {
         statement = this.parseWhileStatement(tn);
         break;
+      }
+      case Token.TYPE: { // also identifier
+        if (tn.peek(false, IdentifierHandling.PREFER) == Token.IDENTIFIER) {
+          statement = this.parseTypeDeclaration(tn, CommonFlags.NONE, null, tn.tokenPos);
+          break;
+        }
+        // fall-through
       }
       default: {
         tn.reset(state);
@@ -2762,8 +2832,8 @@ export class Parser extends DiagnosticEmitter {
       return Node.createFalseExpression(tn.range());
     }
 
-    var p = determinePrecedenceStart(token);
-    if (p != Precedence.INVALID) {
+    var precedence = determinePrecedenceStart(token);
+    if (precedence != Precedence.INVALID) {
       let operand: Expression | null;
 
       // TODO: SpreadExpression, YieldExpression (currently become unsupported UnaryPrefixExpressions)
@@ -2787,7 +2857,7 @@ export class Parser extends DiagnosticEmitter {
         }
         return null;
       } else {
-        operand = this.parseExpression(tn, p);
+        operand = this.parseExpression(tn, precedence);
         if (!operand) return null;
       }
 
@@ -3065,7 +3135,7 @@ export class Parser extends DiagnosticEmitter {
       switch (token) {
         // AssertionExpression
         case Token.AS: {
-          let toType = this.parseType(tn);
+          let toType = this.parseType(tn); // reports
           if (!toType) return null;
           expr = Node.createAssertionExpression(
             AssertionKind.AS,
@@ -3075,9 +3145,20 @@ export class Parser extends DiagnosticEmitter {
           );
           break;
         }
+        // InstanceOfExpression
+        case Token.INSTANCEOF: {
+          let isType = this.parseType(tn); // reports
+          if (!isType) return null;
+          expr = Node.createInstanceOfExpression(
+            expr,
+            isType,
+            tn.range(startPos, tn.pos)
+          );
+          break;
+        }
         // ElementAccessExpression
         case Token.OPENBRACKET: {
-          next = this.parseExpression(tn);
+          next = this.parseExpression(tn); // reports
           if (!next) return null;
           if (!tn.skip(Token.CLOSEBRACKET)) {
             this.error(
@@ -3274,7 +3355,7 @@ export const enum Precedence {
 }
 
 /** Determines the precedence of a starting token. */
-function determinePrecedenceStart(kind: Token): i32 {
+function determinePrecedenceStart(kind: Token): Precedence {
   switch (kind) {
     case Token.DOT_DOT_DOT: return Precedence.SPREAD;
     case Token.YIELD: return Precedence.YIELD;
@@ -3293,7 +3374,7 @@ function determinePrecedenceStart(kind: Token): i32 {
 }
 
 /** Determines the precende of a non-starting token. */
-function determinePrecedence(kind: Token): i32 {
+function determinePrecedence(kind: Token): Precedence {
   switch (kind) {
     case Token.COMMA: return Precedence.COMMA;
     case Token.EQUALS:

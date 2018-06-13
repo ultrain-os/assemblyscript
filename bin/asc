@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-const usc = module.exports = require("./asc.js");
+const usc = module.exports = require("../cli/asc.js");
 
 function resolveSourceText(sourceText, applyText, library){
 	let memoryLib = "allocate/arena";

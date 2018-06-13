@@ -161,7 +161,7 @@ export class Abi {
     struct.name = methodName;
     struct.base = "";
 
-    let types = signature.parameterTypes;
+    let types = signature.parameters;
     if (types) {
       for (var index in types) {
         let type:ParameterNode = types[index];
@@ -481,10 +481,10 @@ export class Abi {
 
           this.resolveFunctionPrototype(<FunctionPrototype>instance);
           hasActionDecorator = true;
-          let declaration = (<FunctionPrototype>instance).declaration; // FunctionDeclaration
+          let declaration:FunctionDeclaration = (<FunctionPrototype>instance).declaration; // FunctionDeclaration
 
           let funcName = declaration.name.range.toString();
-          let types = declaration.signature.parameterTypes; // FunctionDeclaration parameter types
+          let types = declaration.signature.parameters; // FunctionDeclaration parameter types
           
           this.checkName(funcName);
 

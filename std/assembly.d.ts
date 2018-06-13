@@ -267,6 +267,8 @@ declare function offsetof<T>(fieldName?: string): usize;
 declare function changetype<T>(value: any): T;
 /** Explicitly requests no bounds checks on the provided expression. Useful for array accesses. */
 declare function unchecked<T>(value: T): T;
+/** Emits a `call_indirect` instruction, calling the specified function in the function table by index with the specified arguments. Does result in a runtime error if the arguments do not match the called function. */
+declare function call_indirect<T>(target: Function | u32, ...args: any[]): T;
 /** Tests if a 32-bit or 64-bit float is `NaN`. */
 declare function isNaN<T = f32 | f64>(value: T): bool;
 /** Tests if a 32-bit or 64-bit float is finite, that is not `NaN` or +/-`Infinity`. */
@@ -403,7 +405,8 @@ declare class String {
   static fromCodePoint(cp: i32): string;
   static fromCodePoints(arr: i32[]): string;
 
-  readonly length: u32;
+  readonly length: i32;
+  readonly lengthUTF8: i32;
 
   charAt(index: u32): string;
   charCodeAt(index: u32): u16;
@@ -419,6 +422,7 @@ declare class String {
   trimRight(): string;
   repeat(count?: i32): string;
   toString(): string;
+  toUTF8(): usize;
 }
 
 /** Class for representing a runtime error. Base class of all errors. */
@@ -569,8 +573,16 @@ declare const Mathf: IMath<f32>;
 /** Annotates an element as a program global. */
 declare function global(target: Function, propertyKey: string, descriptor: any): void;
 
-/** Annotates a method as an operator overload for the specified `token`. */
+/** Annotates a method as a binary operator overload for the specified `token`. */
 declare function operator(token: string): (target: any, propertyKey: string, descriptor: any) => void;
+declare namespace operator {
+  /** Annotates a method as a binary operator overload for the specified `token`. */
+  export function binary(token: string): (target: any, propertyKey: string, descriptor: any) => void;
+  /** Annotates a method as an unary prefix operator overload for the specified `token`. */
+  export function prefix(token: string): (target: any, propertyKey: string, descriptor: any) => void;
+  /** Annotates a method as an unary postfix operator overload for the specified `token`. */
+  export function postfix(token: string): (target: any, propertyKey: string, descriptor: any) => void;
+}
 
 /** Annotates a class as being unmanaged with limited capabilities. */
 declare function unmanaged(target: Function): any;

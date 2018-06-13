@@ -4,7 +4,7 @@
  (global $export/a i32 (i32.const 1))
  (global $export/b i32 (i32.const 2))
  (global $export/c i32 (i32.const 3))
- (global $HEAP_BASE i32 (i32.const 4))
+ (global $HEAP_BASE i32 (i32.const 8))
  (memory $0 1)
  (export "memory" (memory $0))
  (start $start)
@@ -36,6 +36,25 @@
   (nop)
  )
  (func $start (; 4 ;) (type $v)
+  (drop
+   (i32.add
+    (i32.add
+     (call $export/add
+      (i32.const 1)
+      (i32.const 2)
+     )
+     (call $export/sub
+      (i32.const 2)
+      (i32.const 3)
+     )
+    )
+    (call $export/mul
+     (i32.const 3)
+     (i32.const 1)
+    )
+   )
+  )
+  (call $export/ns.two)
   (drop
    (i32.add
     (i32.add

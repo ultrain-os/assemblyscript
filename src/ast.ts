@@ -19,7 +19,8 @@ import {
 
 import {
   normalizePath,
-  resolvePath
+  resolvePath,
+  CharCode
 } from "./util";
 
 export { Token, Range };
@@ -44,6 +45,7 @@ export enum NodeKind {
   ELEMENTACCESS,
   FALSE,
   FUNCTION,
+  INSTANCEOF,
   LITERAL,
   NEW,
   NULL,
@@ -180,7 +182,7 @@ export abstract class Node {
   ): SignatureNode {
     var sig = new SignatureNode();
     sig.range = range;
-    sig.parameterTypes = parameters; setParent(parameters, sig);
+    sig.parameters = parameters; setParent(parameters, sig);
     sig.returnType = returnType; returnType.parent = sig;
     sig.explicitThisType = explicitThisType; if (explicitThisType) explicitThisType.parent = sig;
     sig.isNullable = isNullable;
@@ -190,17 +192,15 @@ export abstract class Node {
   // special
 
   static createDecorator(
-    expression: Expression,
+    name: Expression,
     args: Expression[] | null,
     range: Range
   ): DecoratorNode {
     var stmt = new DecoratorNode();
     stmt.range = range;
-    stmt.name = expression; expression.parent = stmt;
+    stmt.name = name; name.parent = stmt;
     stmt.arguments = args; if (args) setParent(args, stmt);
-    stmt.decoratorKind = expression.kind == NodeKind.IDENTIFIER
-      ? stringToDecoratorKind((<IdentifierExpression>expression).text)
-      : DecoratorKind.CUSTOM;
+    stmt.decoratorKind = decoratorNameToKind(name);
     return stmt;
   }
 
@@ -344,6 +344,18 @@ export abstract class Node {
     expr.flags = declaration.flags & CommonFlags.ARROW;
     expr.range = declaration.range;
     expr.declaration = declaration;
+    return expr;
+  }
+
+  static createInstanceOfExpression(
+    expression: Expression,
+    isType: CommonTypeNode,
+    range: Range
+  ): InstanceOfExpression {
+    var expr = new InstanceOfExpression();
+    expr.range = range;
+    expr.expression = expression; expression.parent = expr;
+    expr.isType = isType; isType.parent = expr;
     return expr;
   }
 
@@ -590,7 +602,7 @@ export abstract class Node {
   }
 
   static createExportStatement(
-    members: ExportMember[],
+    members: ExportMember[] | null,
     path: StringLiteralExpression | null,
     flags: CommonFlags,
     range: Range
@@ -598,7 +610,7 @@ export abstract class Node {
     var stmt = new ExportStatement();
     stmt.range = range;
     stmt.flags = flags;
-    stmt.members = members; setParent(members, stmt);
+    stmt.members = members; if (members) setParent(members, stmt);
     stmt.path = path;
     if (path) {
       let normalizedPath = normalizePath(path.value);
@@ -1037,7 +1049,7 @@ export class SignatureNode extends CommonTypeNode {
   kind = NodeKind.SIGNATURE;
 
   /** Accepted parameters. */
-  parameterTypes: ParameterNode[];
+  parameters: ParameterNode[];
   /** Return type. */
   returnType: CommonTypeNode;
   /** Explicitly provided this type, if any. */
@@ -1051,6 +1063,9 @@ export enum DecoratorKind {
   CUSTOM,
   GLOBAL,
   OPERATOR,
+  OPERATOR_BINARY,
+  OPERATOR_PREFIX,
+  OPERATOR_POSTFIX,
   UNMANAGED,
   SEALED,
   INLINE,
@@ -1058,18 +1073,69 @@ export enum DecoratorKind {
   DATABASE
 }
 
-/** Returns the decorator kind represented by the specified string. */
-export function stringToDecoratorKind(str: string): DecoratorKind {
-  switch (str) {
-    case "global": return DecoratorKind.GLOBAL;
-    case "operator": return DecoratorKind.OPERATOR;
-    case "unmanaged": return DecoratorKind.UNMANAGED;
-    case "sealed": return DecoratorKind.SEALED;
-    case "inline": return DecoratorKind.INLINE;
-    case "action": return DecoratorKind.ACTION;
-    case "database" : return DecoratorKind.DATABASE;
-    default: return DecoratorKind.CUSTOM;
+
+/** Returns the kind of the specified decorator. Defaults to {@link DecoratorKind.CUSTOM}. */
+export function decoratorNameToKind(name: Expression): DecoratorKind {
+  // @global, @inline, @operator, @sealed, @unmanaged
+  if (name.kind == NodeKind.IDENTIFIER) {
+    let nameStr = (<IdentifierExpression>name).text;
+    assert(nameStr.length);
+    switch (nameStr.charCodeAt(0)) {
+      case CharCode.a:{
+        if (nameStr == "action") return DecoratorKind.ACTION;
+        break;
+      }
+      case CharCode.d:{
+        if (nameStr == "database") return DecoratorKind.DATABASE;
+        break;
+      }
+      case CharCode.g: {
+        if (nameStr == "global") return DecoratorKind.GLOBAL;
+        break;
+      }
+      case CharCode.i: {
+        if (nameStr == "inline") return DecoratorKind.INLINE;
+        break;
+      }
+      case CharCode.o: {
+        if (nameStr == "operator") return DecoratorKind.OPERATOR;
+        break;
+      }
+      case CharCode.s: {
+        if (nameStr == "sealed") return DecoratorKind.SEALED;
+        break;
+      }
+      case CharCode.u: {
+        if (nameStr == "unmanaged") return DecoratorKind.UNMANAGED;
+        break;
+      }
+    }
+  } else if (
+    name.kind == NodeKind.PROPERTYACCESS &&
+    (<PropertyAccessExpression>name).expression.kind == NodeKind.IDENTIFIER
+  ) {
+    let nameStr = (<IdentifierExpression>(<PropertyAccessExpression>name).expression).text;
+    assert(nameStr.length);
+    let propStr = (<PropertyAccessExpression>name).property.text;
+    assert(propStr.length);
+    // @operator.binary, @operator.prefix, @operator.postfix
+    if (nameStr == "operator") {
+      switch (propStr.charCodeAt(0)) {
+        case CharCode.b: {
+          if (propStr == "binary") return DecoratorKind.OPERATOR_BINARY;
+          break;
+        }
+        case CharCode.p: {
+          switch (propStr) {
+            case "prefix": return DecoratorKind.OPERATOR_PREFIX;
+            case "postfix": return DecoratorKind.OPERATOR_POSTFIX;
+          }
+          break;
+        }
+      }
+    }
   }
+  return DecoratorKind.CUSTOM;
 }
 
 /** Represents a decorator. */
@@ -1223,6 +1289,16 @@ export class FunctionExpression extends Expression {
 
   /** Inline function declaration. */
   declaration: FunctionDeclaration;
+}
+
+/** Represents an `instanceof` expression. */
+export class InstanceOfExpression extends Expression {
+  kind = NodeKind.INSTANCEOF;
+
+  /** Expression being asserted. */
+  expression: Expression;
+  /** Type to test for. */
+  isType: CommonTypeNode;
 }
 
 /** Represents an integer literal expression. */
@@ -1562,8 +1638,8 @@ export class ExportMember extends Node {
 export class ExportStatement extends Statement {
   kind = NodeKind.EXPORT;
 
-  /** Array of members. */
-  members: ExportMember[];
+  /** Array of members if a set of named exports, or `null` if a filespace export. */
+  members: ExportMember[] | null;
   /** Path being exported from, if applicable. */
   path: StringLiteralExpression | null;
   /** Normalized path, if `path` is set. */

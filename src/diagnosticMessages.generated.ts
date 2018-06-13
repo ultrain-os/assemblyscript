@@ -23,6 +23,8 @@ export enum DiagnosticCode {
   Class_0_is_sealed_and_cannot_be_extended = 211,
   Decorator_0_is_not_valid_here = 212,
   Duplicate_decorator = 213,
+  An_allocator_must_be_declared_to_allocate_memory_Try_importing_allocator_arena_or_allocator_tlsf = 214,
+  Optional_parameter_must_have_an_initializer = 215,
   Unterminated_string_literal = 1002,
   Identifier_expected = 1003,
   _0_expected = 1005,
@@ -109,7 +111,9 @@ export enum DiagnosticCode {
   Expected_0_type_arguments_but_got_1 = 2558,
   A_member_initializer_in_a_enum_declaration_cannot_reference_members_declared_after_it_including_members_defined_in_other_enums = 2651,
   Namespace_0_has_no_exported_member_1 = 2694,
-  File_0_not_found = 6054
+  File_0_not_found = 6054,
+  Numeric_separators_are_not_allowed_here = 6188,
+  Multiple_consecutive_numeric_separators_are_not_permitted = 6189
 }
 
 /** Translates a diagnostic code to its respective string. */
@@ -131,6 +135,8 @@ export function diagnosticCodeToString(code: DiagnosticCode): string {
     case 211: return "Class '{0}' is sealed and cannot be extended.";
     case 212: return "Decorator '{0}' is not valid here.";
     case 213: return "Duplicate decorator.";
+    case 214: return "An allocator must be declared to allocate memory. Try importing allocator/arena or allocator/tlsf.";
+    case 215: return "Optional parameter must have an initializer.";
     case 1002: return "Unterminated string literal.";
     case 1003: return "Identifier expected.";
     case 1005: return "'{0}' expected.";
@@ -218,6 +224,8 @@ export function diagnosticCodeToString(code: DiagnosticCode): string {
     case 2651: return "A member initializer in a enum declaration cannot reference members declared after it, including members defined in other enums.";
     case 2694: return "Namespace '{0}' has no exported member '{1}'.";
     case 6054: return "File '{0}' not found.";
+    case 6188: return "Numeric separators are not allowed here.";
+    case 6189: return "Multiple consecutive numeric separators are not permitted.";
     default: return "";
   }
 }

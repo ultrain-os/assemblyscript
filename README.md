@@ -41,7 +41,7 @@ Once the project is set up, it's just a matter of using your existing [TypeScrip
 $> npm run asbuild
 ```
 
-The compiler's API can also [be used programmatically](./bin).
+The CLI API can also [be used programmatically](./cli).
 
 If you rather prefer an installation suitable for development, pretty much the same can be achieved by cloning the GitHub repository instead:
 
@@ -60,7 +60,7 @@ Examples
 * **[Conway's Game of Life](./examples/game-of-life)** [ [demo](https://rawgit.com/AssemblyScript/assemblyscript/master/examples/game-of-life/index.html) | [fiddle](https://webassembly.studio/?f=gvuw4enb3qk) ]<br />
   Continuously updates the cellular automaton and visualizes its state on a canvas.
 
-* **[Mandelbrot Set](./examples/mandelbrot)** [ [demo](https://rawgit.com/AssemblyScript/assemblyscript/master/examples/mandelbrot/index.html) ]<br />
+* **[Mandelbrot Set](./examples/mandelbrot)** [ [demo](https://rawgit.com/AssemblyScript/assemblyscript/master/examples/mandelbrot/index.html) | [fiddle](https://webassembly.studio/?f=pne1undq5g) ]<br />
   Renders the Mandelbrot set to a canvas.
 
 * **[i64 polyfill](./examples/i64-polyfill)**<br />

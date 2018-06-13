@@ -64,7 +64,7 @@ import {
   VariableLikeDeclarationStatement,
   VariableStatement,
 
-  stringToDecoratorKind
+  decoratorNameToKind
 } from "./ast";
 
 import {
@@ -100,6 +100,7 @@ import {
   getConstValueF64,
   getConstValueI64Low
 } from "./module";
+import { CharCode } from "./util";
 
 
 import {
@@ -124,6 +125,8 @@ export const INNER_DELIMITER = "~";
 export const LIBRARY_SUBST = "~lib";
 /** Library directory prefix. */
 export const LIBRARY_PREFIX = LIBRARY_SUBST + PATH_DELIMITER;
+/** Prefix used to indicate a filespace element. */
+export const FILESPACE_PREFIX = "file:";
 
 /** Represents a yet unresolved export. */
 class QueuedExport {
@@ -137,7 +140,7 @@ class QueuedImport {
   internalName: string;
   referencedName: string;
   referencedNameAlt: string;
-  declaration: ImportDeclaration;
+  declaration: ImportDeclaration | null; // not set if a filespace
 }
 
 /** Represents a type alias. */
@@ -149,48 +152,161 @@ class TypeAlias {
 /** Represents the kind of an operator overload. */
 export enum OperatorKind {
   INVALID,
-  INDEXED_GET,
-  INDEXED_SET,
-  UNCHECKED_INDEXED_GET,
-  UNCHECKED_INDEXED_SET,
-  ADD,
-  SUB,
-  MUL,
-  DIV,
-  REM,
-  POW,
-  AND,
-  OR,
-  XOR,
-  EQ,
-  NE,
-  GT,
-  GE,
-  LT,
-  LE
+
+  // indexed access
+  INDEXED_GET,            // a[]
+  INDEXED_SET,            // a[]=b
+  UNCHECKED_INDEXED_GET,  // unchecked(a[])
+  UNCHECKED_INDEXED_SET,  // unchecked(a[]=b)
+
+  // binary
+  ADD,                    // a + b
+  SUB,                    // a - b
+  MUL,                    // a * b
+  DIV,                    // a / b
+  REM,                    // a % b
+  POW,                    // a ** b
+  BITWISE_AND,            // a & b
+  BITWISE_OR,             // a | b
+  BITWISE_XOR,            // a ^ b
+  BITWISE_SHL,            // a << b
+  BITWISE_SHR,            // a >> b
+  BITWISE_SHR_U,          // a >>> b
+  EQ,                     // a == b
+  NE,                     // a != b
+  GT,                     // a > b
+  GE,                     // a >= b
+  LT,                     // a < b
+  LE,                     // a <= b
+
+  // unary prefix
+  PLUS,                   // +a
+  MINUS,                  // -a
+  NOT,                    // !a
+  BITWISE_NOT,            // ~a
+  PREFIX_INC,             // ++a
+  PREFIX_DEC,             // --a
+
+  // unary postfix
+  POSTFIX_INC,            // a++
+  POSTFIX_DEC             // a--
+
+  // not overridable:
+  // IDENTITY             // a === b
+  // LOGICAL_AND          // a && b
+  // LOGICAL_OR           // a || b
 }
 
-function operatorKindFromString(str: string): OperatorKind {
-  switch (str) {
-    case "[]" : return OperatorKind.INDEXED_GET;
-    case "[]=": return OperatorKind.INDEXED_SET;
-    case "{}" : return OperatorKind.UNCHECKED_INDEXED_GET;
-    case "{}=": return OperatorKind.UNCHECKED_INDEXED_SET;
-    case "+"  : return OperatorKind.ADD;
-    case "-"  : return OperatorKind.SUB;
-    case "*"  : return OperatorKind.MUL;
-    case "/"  : return OperatorKind.DIV;
-    case "%"  : return OperatorKind.REM;
-    case "**" : return OperatorKind.POW;
-    case "&"  : return OperatorKind.AND;
-    case "|"  : return OperatorKind.OR;
-    case "^"  : return OperatorKind.XOR;
-    case "==" : return OperatorKind.EQ;
-    case "!=" : return OperatorKind.NE;
-    case ">"  : return OperatorKind.GT;
-    case ">=" : return OperatorKind.GE;
-    case "<"  : return OperatorKind.LT;
-    case "<=" : return OperatorKind.LE;
+/** Returns the operator kind represented by the specified decorator and string argument. */
+function operatorKindFromDecorator(decoratorKind: DecoratorKind, arg: string): OperatorKind {
+  assert(arg.length);
+  switch (decoratorKind) {
+    case DecoratorKind.OPERATOR:
+    case DecoratorKind.OPERATOR_BINARY: {
+      switch (arg.charCodeAt(0)) {
+        case CharCode.OPENBRACKET: {
+          if (arg == "[]") return OperatorKind.INDEXED_GET;
+          if (arg == "[]=") return OperatorKind.INDEXED_SET;
+          break;
+        }
+        case CharCode.OPENBRACE: {
+          if (arg == "{}") return OperatorKind.UNCHECKED_INDEXED_GET;
+          if (arg == "{}=") return OperatorKind.UNCHECKED_INDEXED_SET;
+          break;
+        }
+        case CharCode.PLUS: {
+          if (arg == "+") return OperatorKind.ADD;
+          break;
+        }
+        case CharCode.MINUS: {
+          if (arg == "-") return OperatorKind.SUB;
+          break;
+        }
+        case CharCode.ASTERISK: {
+          if (arg == "*") return OperatorKind.MUL;
+          if (arg == "**") return OperatorKind.POW;
+          break;
+        }
+        case CharCode.SLASH: {
+          if (arg == "/") return OperatorKind.DIV;
+          break;
+        }
+        case CharCode.PERCENT: {
+          if (arg == "%") return OperatorKind.REM;
+          break;
+        }
+        case CharCode.AMPERSAND: {
+          if (arg == "&") return OperatorKind.BITWISE_AND;
+          break;
+        }
+        case CharCode.BAR: {
+          if (arg == "|") return OperatorKind.BITWISE_OR;
+          break;
+        }
+        case CharCode.CARET: {
+          if (arg == "^") return OperatorKind.BITWISE_XOR;
+          break;
+        }
+        case CharCode.EQUALS: {
+          if (arg == "==") return OperatorKind.EQ;
+          break;
+        }
+        case CharCode.EXCLAMATION: {
+          if (arg == "!=") return OperatorKind.NE;
+          break;
+        }
+        case CharCode.GREATERTHAN: {
+          if (arg == ">") return OperatorKind.GT;
+          if (arg == ">=") return OperatorKind.GE;
+          if (arg == ">>") return OperatorKind.BITWISE_SHR;
+          if (arg == ">>>") return OperatorKind.BITWISE_SHR_U;
+          break;
+        }
+        case CharCode.LESSTHAN: {
+          if (arg == "<") return OperatorKind.LT;
+          if (arg == "<=") return OperatorKind.LE;
+          if (arg == "<<") return OperatorKind.BITWISE_SHL;
+          break;
+        }
+      }
+      break;
+    }
+    case DecoratorKind.OPERATOR_PREFIX: {
+      switch (arg.charCodeAt(0)) {
+        case CharCode.PLUS: {
+          if (arg == "+") return OperatorKind.PLUS;
+          if (arg == "++") return OperatorKind.PREFIX_INC;
+          break;
+        }
+        case CharCode.MINUS: {
+          if (arg == "-") return OperatorKind.MINUS;
+          if (arg == "--") return OperatorKind.PREFIX_DEC;
+          break;
+        }
+        case CharCode.EXCLAMATION: {
+          if (arg == "!") return OperatorKind.NOT;
+          break;
+        }
+        case CharCode.TILDE: {
+          if (arg == "~") return OperatorKind.BITWISE_NOT;
+          break;
+        }
+      }
+      break;
+    }
+    case DecoratorKind.OPERATOR_POSTFIX: {
+      switch (arg.charCodeAt(0)) {
+        case CharCode.PLUS: {
+          if (arg == "++") return OperatorKind.POSTFIX_INC;
+          break;
+        }
+        case CharCode.MINUS: {
+          if (arg == "--") return OperatorKind.POSTFIX_DEC;
+          break;
+        }
+      }
+      break;
+    }
   }
   return OperatorKind.INVALID;
 }
@@ -229,6 +345,8 @@ export class Program extends DiagnosticEmitter {
   resolvedThisExpression: Expression | null = null;
   /** Element expression of the previously resolved element access. */
   resolvedElementExpression : Expression | null = null;
+  /** Currently processing filespace. */
+  currentFilespace: Filespace;
 
   /** Constructs a new program, optionally inheriting parser diagnostics. */
   constructor(diagnostics: DiagnosticMessage[] | null = null) {
@@ -255,11 +373,12 @@ export class Program extends DiagnosticEmitter {
 
   /** Looks up the source for the specified possibly ambiguous path. */
   lookupSourceByPath(normalizedPathWithoutExtension: string): Source | null {
+    var tmp: string;
     return (
       this.getSource(normalizedPathWithoutExtension + ".ts") ||
       this.getSource(normalizedPathWithoutExtension + "/index.ts") ||
-      this.getSource(LIBRARY_PREFIX + normalizedPathWithoutExtension + ".ts") ||
-      this.getSource(LIBRARY_PREFIX + normalizedPathWithoutExtension + "/index.ts")
+      this.getSource((tmp = LIBRARY_PREFIX + normalizedPathWithoutExtension) + ".ts") ||
+      this.getSource( tmp                                                    + "/index.ts")
     );
   }
 
@@ -293,6 +412,13 @@ export class Program extends DiagnosticEmitter {
     // build initial lookup maps of internal names to declarations
     for (let i = 0, k = this.sources.length; i < k; ++i) {
       let source = this.sources[i];
+
+      // create one filespace per source
+      let filespace = new Filespace(this, source);
+      this.elementsLookup.set(filespace.internalName, filespace);
+      this.currentFilespace = filespace;
+
+      // process this source's statements
       let statements = source.statements;
       for (let j = 0, l = statements.length; j < l; ++j) {
         let statement = statements[j];
@@ -340,22 +466,39 @@ export class Program extends DiagnosticEmitter {
     // queued imports should be resolvable now through traversing exports and queued exports
     for (let i = 0; i < queuedImports.length;) {
       let queuedImport = queuedImports[i];
-      let element = this.tryResolveImport(queuedImport.referencedName, queuedExports);
-      if (element) {
-        this.elementsLookup.set(queuedImport.internalName, element);
-        queuedImports.splice(i, 1);
-      } else {
-        if (element = this.tryResolveImport(queuedImport.referencedNameAlt, queuedExports)) {
+      let declaration = queuedImport.declaration;
+      if (declaration) { // named
+        let element = this.tryResolveImport(queuedImport.referencedName, queuedExports);
+        if (element) {
           this.elementsLookup.set(queuedImport.internalName, element);
           queuedImports.splice(i, 1);
         } else {
-          this.error(
-            DiagnosticCode.Module_0_has_no_exported_member_1,
-            queuedImport.declaration.range,
-            (<ImportStatement>queuedImport.declaration.parent).path.value,
-            queuedImport.declaration.externalName.text
-          );
-          ++i;
+          if (element = this.tryResolveImport(queuedImport.referencedNameAlt, queuedExports)) {
+            this.elementsLookup.set(queuedImport.internalName, element);
+            queuedImports.splice(i, 1);
+          } else {
+            this.error(
+              DiagnosticCode.Module_0_has_no_exported_member_1,
+              declaration.range,
+              (<ImportStatement>declaration.parent).path.value,
+              declaration.externalName.text
+            );
+            ++i;
+          }
+        }
+      } else { // filespace
+        let element = this.elementsLookup.get(queuedImport.referencedName);
+        if (element) {
+          this.elementsLookup.set(queuedImport.internalName, element);
+          queuedImports.splice(i, 1);
+        } else {
+          if (element = this.elementsLookup.get(queuedImport.referencedNameAlt)) {
+            this.elementsLookup.set(queuedImport.internalName, element);
+            queuedImports.splice(i, 1);
+          } else {
+            assert(false); // already reported by the parser not finding the file
+            ++i;
+          }
         }
       }
     }
@@ -428,8 +571,10 @@ export class Program extends DiagnosticEmitter {
     var globalAliases = options.globalAliases;
     if (globalAliases) {
       for (let [alias, name] of globalAliases) {
-        let element = this.elementsLookup.get(name); // TODO: error? has no source range
+        if (!name.length) continue; // explicitly disabled
+        let element = this.elementsLookup.get(name);
         if (element) this.elementsLookup.set(alias, element);
+        else throw new Error("element not found: " + name);
       }
     }
 
@@ -490,24 +635,21 @@ export class Program extends DiagnosticEmitter {
     var presentFlags = DecoratorFlags.NONE;
     for (let i = 0, k = decorators.length; i < k; ++i) {
       let decorator = decorators[i];
-      if (decorator.name.kind == NodeKind.IDENTIFIER) {
-        let name = (<IdentifierExpression>decorator.name).text;
-        let kind = stringToDecoratorKind(name);
-        let flag = decoratorKindToFlag(kind);
-        if (flag) {
-          if (!(acceptedFlags & flag)) {
-            this.error(
-              DiagnosticCode.Decorator_0_is_not_valid_here,
-              decorator.range, name
-            );
-          } else if (presentFlags & flag) {
-            this.error(
-              DiagnosticCode.Duplicate_decorator,
-              decorator.range, name
-            );
-          } else {
-            presentFlags |= flag;
-          }
+      let kind = decoratorNameToKind(decorator.name);
+      let flag = decoratorKindToFlag(kind);
+      if (flag) {
+        if (!(acceptedFlags & flag)) {
+          this.error(
+            DiagnosticCode.Decorator_0_is_not_valid_here,
+            decorator.range, decorator.name.range.toString()
+          );
+        } else if (presentFlags & flag) {
+          this.error(
+            DiagnosticCode.Duplicate_decorator,
+            decorator.range, decorator.name.range.toString()
+          );
+        } else {
+          presentFlags |= flag;
         }
       }
     }
@@ -631,6 +773,7 @@ export class Program extends DiagnosticEmitter {
         return;
       }
       this.fileLevelExports.set(internalName, prototype);
+      this.currentFilespace.members.set(simpleName, prototype);
       if (prototype.is(CommonFlags.EXPORT) && declaration.range.source.isEntry) {
         if (this.moduleLevelExports.has(internalName)) {
           this.error(
@@ -752,7 +895,9 @@ export class Program extends DiagnosticEmitter {
     var decoratorFlags = DecoratorFlags.NONE;
     if (decorators) {
       decoratorFlags = this.filterDecorators(decorators,
-        DecoratorFlags.OPERATOR |
+        DecoratorFlags.OPERATOR_BINARY  |
+        DecoratorFlags.OPERATOR_PREFIX  |
+        DecoratorFlags.OPERATOR_POSTFIX |
         DecoratorFlags.INLINE
       );
     }
@@ -843,50 +988,54 @@ export class Program extends DiagnosticEmitter {
     prototype: FunctionPrototype,
     classPrototype: ClassPrototype
   ): void {
-    // handle operator annotations. operators are either instance methods taking
-    // a second argument of the instance's type or static methods taking two
-    // arguments of the instance's type. return values vary depending on the
-    // operation.
     if (decorators) {
       for (let i = 0, k = decorators.length; i < k; ++i) {
         let decorator = decorators[i];
-        if (decorator.decoratorKind == DecoratorKind.OPERATOR) {
-          let numArgs = decorator.arguments && decorator.arguments.length || 0;
-          if (numArgs == 1) {
-            let firstArg = (<Expression[]>decorator.arguments)[0];
-            if (
-              firstArg.kind == NodeKind.LITERAL &&
-              (<LiteralExpression>firstArg).literalKind == LiteralKind.STRING
-            ) {
-              let kind = operatorKindFromString((<StringLiteralExpression>firstArg).value);
-              if (kind == OperatorKind.INVALID) {
-                this.error(
-                  DiagnosticCode.Operation_not_supported,
-                  firstArg.range
+        switch (decorator.decoratorKind) {
+          case DecoratorKind.OPERATOR:
+          case DecoratorKind.OPERATOR_BINARY:
+          case DecoratorKind.OPERATOR_PREFIX:
+          case DecoratorKind.OPERATOR_POSTFIX: {
+            let numArgs = decorator.arguments && decorator.arguments.length || 0;
+            if (numArgs == 1) {
+              let firstArg = (<Expression[]>decorator.arguments)[0];
+              if (
+                firstArg.kind == NodeKind.LITERAL &&
+                (<LiteralExpression>firstArg).literalKind == LiteralKind.STRING
+              ) {
+                let kind = operatorKindFromDecorator(
+                  decorator.decoratorKind,
+                  (<StringLiteralExpression>firstArg).value
                 );
-              } else {
-                let overloads = classPrototype.overloadPrototypes;
-                if (overloads.has(kind)) {
+                if (kind == OperatorKind.INVALID) {
                   this.error(
-                    DiagnosticCode.Duplicate_function_implementation,
+                    DiagnosticCode.Operation_not_supported,
                     firstArg.range
                   );
                 } else {
-                  prototype.operatorKind = kind;
-                  overloads.set(kind, prototype);
+                  let overloads = classPrototype.overloadPrototypes;
+                  if (overloads.has(kind)) {
+                    this.error(
+                      DiagnosticCode.Duplicate_function_implementation,
+                      firstArg.range
+                    );
+                  } else {
+                    prototype.operatorKind = kind;
+                    overloads.set(kind, prototype);
+                  }
                 }
+              } else {
+                this.error(
+                  DiagnosticCode.String_literal_expected,
+                  firstArg.range
+                );
               }
             } else {
               this.error(
-                DiagnosticCode.String_literal_expected,
-                firstArg.range
+                DiagnosticCode.Expected_0_arguments_but_got_1,
+                decorator.range, "1", numArgs.toString(0)
               );
             }
-          } else {
-            this.error(
-              DiagnosticCode.Expected_0_arguments_but_got_1,
-              decorator.range, "1", numArgs.toString(0)
-            );
           }
         }
       }
@@ -1058,6 +1207,7 @@ export class Program extends DiagnosticEmitter {
         return;
       }
       this.fileLevelExports.set(internalName, element);
+      this.currentFilespace.members.set(simpleName, element);
       if (declaration.range.source.isEntry) {
         if (this.moduleLevelExports.has(internalName)) {
           this.error(
@@ -1108,26 +1258,45 @@ export class Program extends DiagnosticEmitter {
     queuedExports: Map<string,QueuedExport>
   ): void {
     var members = statement.members;
-    for (let i = 0, k = members.length; i < k; ++i) {
-      this.initializeExport(members[i], statement.internalPath, queuedExports);
+    if (members) { // named
+      for (let i = 0, k = members.length; i < k; ++i) {
+        this.initializeExport(members[i], statement.internalPath, queuedExports);
+      }
+    } else { // TODO: filespace
+      this.error(
+        DiagnosticCode.Operation_not_supported,
+        statement.range
+      );
     }
   }
 
   private setExportAndCheckLibrary(
-    name: string,
+    internalName: string,
     element: Element,
     identifier: IdentifierExpression
   ): void {
-    this.fileLevelExports.set(name, element);
-    if (identifier.range.source.isLibrary) { // add global alias
-      if (this.elementsLookup.has(identifier.text)) {
+    // add to file-level exports
+    this.fileLevelExports.set(internalName, element);
+
+    // add to filespace
+    var internalPath = identifier.range.source.internalPath;
+    var prefix = FILESPACE_PREFIX + internalPath;
+    var filespace = this.elementsLookup.get(prefix);
+    if (!filespace) filespace = assert(this.elementsLookup.get(prefix + PATH_DELIMITER + "index"));
+    assert(filespace.kind == ElementKind.FILESPACE);
+    var simpleName = identifier.text;
+    (<Filespace>filespace).members.set(simpleName, element);
+
+    // add global alias if from a library file
+    if (identifier.range.source.isLibrary) {
+      if (this.elementsLookup.has(simpleName)) {
         this.error(
           DiagnosticCode.Export_declaration_conflicts_with_exported_declaration_of_0,
-          identifier.range, identifier.text
+          identifier.range, simpleName
         );
       } else {
-        element.internalName = identifier.text;
-        this.elementsLookup.set(identifier.text, element);
+        element.internalName = simpleName;
+        this.elementsLookup.set(simpleName, element);
       }
     }
   }
@@ -1294,6 +1463,7 @@ export class Program extends DiagnosticEmitter {
         return;
       }
       this.fileLevelExports.set(internalName, prototype);
+      this.currentFilespace.members.set(simpleName, prototype);
       if (declaration.range.source.isEntry) {
         if (this.moduleLevelExports.has(internalName)) {
           this.error(
@@ -1339,10 +1509,22 @@ export class Program extends DiagnosticEmitter {
         );
         return;
       }
-      this.error( // TODO
-        DiagnosticCode.Operation_not_supported,
-        statement.range
-      );
+
+      // resolve right away if the exact filespace exists
+      let filespace = this.elementsLookup.get(statement.internalPath);
+      if (filespace) {
+        this.elementsLookup.set(internalName, filespace);
+        return;
+      }
+
+      // otherwise queue it
+      let queuedImport = new QueuedImport();
+      queuedImport.internalName = internalName;
+      let prefix = FILESPACE_PREFIX + statement.internalPath;
+      queuedImport.referencedName = prefix;
+      queuedImport.referencedNameAlt = prefix + PATH_DELIMITER + "index";
+      queuedImport.declaration = null;
+      queuedImports.push(queuedImport);
     }
   }
 
@@ -1404,9 +1586,10 @@ export class Program extends DiagnosticEmitter {
     }
 
     var decorators = declaration.decorators;
+    var simpleName = declaration.name.text;
     var prototype = new InterfacePrototype(
       this,
-      declaration.name.text,
+      simpleName,
       internalName,
       declaration,
       decorators
@@ -1441,6 +1624,7 @@ export class Program extends DiagnosticEmitter {
         return;
       }
       this.fileLevelExports.set(internalName, prototype);
+      this.currentFilespace.members.set(simpleName, prototype);
       if (declaration.range.source.isEntry) {
         if (this.moduleLevelExports.has(internalName)) {
           this.error(
@@ -1525,6 +1709,7 @@ export class Program extends DiagnosticEmitter {
       } else {
         this.fileLevelExports.set(internalName, namespace);
       }
+      this.currentFilespace.members.set(simpleName, namespace);
       if (declaration.range.source.isEntry) {
         if (this.moduleLevelExports.has(internalName)) {
           this.error(
@@ -1653,6 +1838,7 @@ export class Program extends DiagnosticEmitter {
         } else {
           this.fileLevelExports.set(internalName, global);
         }
+        this.currentFilespace.members.set(simpleName, global);
         if (declaration.range.source.isEntry) {
           if (this.moduleLevelExports.has(internalName)) {
             this.error(
@@ -1685,7 +1871,7 @@ export class Program extends DiagnosticEmitter {
       );
       if (!thisType) return null;
     }
-    var parameterTypeNodes = node.parameterTypes;
+    var parameterTypeNodes = node.parameters;
     var numParameters = parameterTypeNodes.length;
     var parameterTypes = new Array<Type>(numParameters);
     var parameterNames = new Array<string>(numParameters);
@@ -1741,7 +1927,9 @@ export class Program extends DiagnosticEmitter {
     if (node.kind == NodeKind.SIGNATURE) {
       let signature = this.resolveSignature(<SignatureNode>node, contextualTypeArguments, reportNotFound);
       if (!signature) return null;
-      return Type.u32.asFunction(signature);
+      return node.isNullable
+        ? signature.type.asNullable()
+        : signature.type;
     }
     var typeNode = <TypeNode>node;
     var simpleName = typeNode.name.text;
@@ -1749,17 +1937,22 @@ export class Program extends DiagnosticEmitter {
     var localName = typeNode.range.source.internalPath + PATH_DELIMITER + simpleName;
 
     var element: Element | null;
-
-    // check file-global / program-global element
-    if ((element = this.elementsLookup.get(localName)) || (element = this.elementsLookup.get(globalName))) {
+    if (
+      (element = this.elementsLookup.get(localName)) || // file-global
+      (element = this.elementsLookup.get(globalName))   // program-global
+    ) {
       switch (element.kind) {
+        case ElementKind.ENUM: return Type.i32;
         case ElementKind.CLASS_PROTOTYPE: {
           let instance = (<ClassPrototype>element).resolveUsingTypeArguments(
             typeNode.typeArguments,
             contextualTypeArguments,
             null
           ); // reports
-          return instance ? instance.type : null;
+          if (!instance) return null;
+          return node.isNullable
+            ? instance.type.asNullable()
+            : instance.type;
         }
       }
     }
@@ -2031,11 +2224,13 @@ export class Program extends DiagnosticEmitter {
       }
       default: { // enums or other namespace-like elements
         let members = target.members;
-        let member: Element | null;
-        if (members && (member = members.get(propertyName))) {
-          this.resolvedThisExpression = targetExpression;
-          this.resolvedElementExpression = null;
-          return member; // static ENUMVALUE, static GLOBAL, static FUNCTION_PROTOTYPE...
+        if (members) {
+          let member = members.get(propertyName);
+          if (member) {
+            this.resolvedThisExpression = targetExpression;
+            this.resolvedElementExpression = null;
+            return member; // static ENUMVALUE, static GLOBAL, static FUNCTION_PROTOTYPE...
+          }
         }
         break;
       }
@@ -2260,7 +2455,9 @@ export enum ElementKind {
   /** A {@link Property}. */
   PROPERTY,
   /** A {@link Namespace}. */
-  NAMESPACE
+  NAMESPACE,
+  /** A {@link Filespace}. */
+  FILESPACE,
 }
 
 /** Indicates traits of a {@link Node} or {@link Element}. */
@@ -2327,7 +2524,9 @@ export enum CommonFlags {
   /** Is scoped. */
   SCOPED = 1 << 24,
   /** Is a trampoline. */
-  TRAMPOLINE = 1 << 25
+  TRAMPOLINE = 1 << 25,
+  /** Is a virtual method. */
+  VIRTUAL = 1 << 26
 }
 
 export enum DecoratorFlags {
@@ -2335,20 +2534,27 @@ export enum DecoratorFlags {
   NONE = 0,
   /** Is a program global. */
   GLOBAL = 1 << 0,
-  /** Is an operator overload. */
-  OPERATOR = 1 << 1,
+  /** Is a binary operator overload. */
+  OPERATOR_BINARY = 1 << 1,
+  /** Is a unary prefix operator overload. */
+  OPERATOR_PREFIX = 1 << 2,
+  /** Is a unary postfix operator overload. */
+  OPERATOR_POSTFIX = 1 << 3,
   /** Is an unmanaged class. */
-  UNMANAGED = 1 << 2,
+  UNMANAGED = 1 << 4,
   /** Is a sealed class. */
-  SEALED = 1 << 3,
+  SEALED = 1 << 5,
   /** Is always inlined. */
-  INLINE = 1 << 4
+  INLINE = 1 << 6
 }
 
 export function decoratorKindToFlag(kind: DecoratorKind): DecoratorFlags {
   switch (kind) {
     case DecoratorKind.GLOBAL: return DecoratorFlags.GLOBAL;
-    case DecoratorKind.OPERATOR: return DecoratorFlags.OPERATOR;
+    case DecoratorKind.OPERATOR:
+    case DecoratorKind.OPERATOR_BINARY: return DecoratorFlags.OPERATOR_BINARY;
+    case DecoratorKind.OPERATOR_PREFIX: return DecoratorFlags.OPERATOR_PREFIX;
+    case DecoratorKind.OPERATOR_POSTFIX: return DecoratorFlags.OPERATOR_POSTFIX;
     case DecoratorKind.UNMANAGED: return DecoratorFlags.UNMANAGED;
     case DecoratorKind.SEALED: return DecoratorFlags.SEALED;
     case DecoratorKind.INLINE: return DecoratorFlags.INLINE;
@@ -2402,7 +2608,25 @@ export abstract class Element {
   hasDecorator(flag: DecoratorFlags): bool { return (this.decoratorFlags & flag) == flag; }
 }
 
-/** A namespace. */
+/** A filespace representing the implicit top-level namespace of a source. */
+export class Filespace extends Element {
+
+  kind = ElementKind.FILESPACE;
+
+  /** File members (externally visible only). */
+  members: Map<string,Element>; // more specific
+
+  /** Constructs a new filespace. */
+  constructor(
+    program: Program,
+    source: Source
+  ) {
+    super(program, source.internalPath, FILESPACE_PREFIX + source.internalPath);
+    this.members = new Map();
+  }
+}
+
+/** A namespace that differs from a filespace in being user-declared with a name. */
 export class Namespace extends Element {
 
   // All elements have namespace semantics. This is an explicitly declared one.
@@ -2680,7 +2904,7 @@ export class FunctionPrototype extends Element {
     }
 
     // resolve signature node
-    var signatureParameters = signatureNode.parameterTypes;
+    var signatureParameters = signatureNode.parameters;
     var signatureParameterCount = signatureParameters.length;
     var parameterTypes = new Array<Type>(signatureParameterCount);
     var parameterNames = new Array<string>(signatureParameterCount);
@@ -3605,7 +3829,10 @@ export const enum FlowFlags {
   /** This branch explicitly requests no bounds checking. */
   UNCHECKED_CONTEXT = 1 << 11,
   /** This branch returns a properly wrapped value. */
-  RETURNS_WRAPPED = 1 << 12
+  RETURNS_WRAPPED = 1 << 12,
+
+  /** This branch is terminated if any of these flags is set. */
+  TERMINATED = FlowFlags.RETURNS | FlowFlags.THROWS | FlowFlags.BREAKS | FlowFlags.CONTINUES
 }
 
 /** A control flow evaluator. */
@@ -3655,7 +3882,7 @@ export class Flow {
   /** Tests if this flow has the specified flag or flags. */
   is(flag: FlowFlags): bool { return (this.flags & flag) == flag; }
   /** Tests if this flow has one of the specified flags. */
-  isAny(flag: CommonFlags): bool { return (this.flags & flag) != 0; }
+  isAny(flag: FlowFlags): bool { return (this.flags & flag) != 0; }
   /** Sets the specified flag or flags. */
   set(flag: FlowFlags): void { this.flags |= flag; }
   /** Unsets the specified flag or flags. */
@@ -3678,7 +3905,7 @@ export class Flow {
   }
 
   /** Leaves the current branch or scope and returns the parent flow. */
-  leaveBranchOrScope(): Flow {
+  leaveBranchOrScope(propagate: bool = true): Flow {
     var parent = assert(this.parent);
 
     // Free block-scoped locals
@@ -3692,22 +3919,23 @@ export class Flow {
     }
 
     // Propagate conditionaal flags to parent
-    if (this.is(FlowFlags.RETURNS)) {
-      parent.set(FlowFlags.CONDITIONALLY_RETURNS);
+    if (propagate) {
+      if (this.is(FlowFlags.RETURNS)) {
+        parent.set(FlowFlags.CONDITIONALLY_RETURNS);
+      }
+      if (this.is(FlowFlags.THROWS)) {
+        parent.set(FlowFlags.CONDITIONALLY_THROWS);
+      }
+      if (this.is(FlowFlags.BREAKS) && parent.breakLabel == this.breakLabel) {
+        parent.set(FlowFlags.CONDITIONALLY_BREAKS);
+      }
+      if (this.is(FlowFlags.CONTINUES) && parent.continueLabel == this.continueLabel) {
+        parent.set(FlowFlags.CONDITIONALLY_CONTINUES);
+      }
+      if (this.is(FlowFlags.ALLOCATES)) {
+        parent.set(FlowFlags.CONDITIONALLY_ALLOCATES);
+      }
     }
-    if (this.is(FlowFlags.THROWS)) {
-      parent.set(FlowFlags.CONDITIONALLY_THROWS);
-    }
-    if (this.is(FlowFlags.BREAKS) && parent.breakLabel == this.breakLabel) {
-      parent.set(FlowFlags.CONDITIONALLY_BREAKS);
-    }
-    if (this.is(FlowFlags.CONTINUES) && parent.continueLabel == this.continueLabel) {
-      parent.set(FlowFlags.CONDITIONALLY_CONTINUES);
-    }
-    if (this.is(FlowFlags.ALLOCATES)) {
-      parent.set(FlowFlags.CONDITIONALLY_ALLOCATES);
-    }
-
     return parent;
   }
 

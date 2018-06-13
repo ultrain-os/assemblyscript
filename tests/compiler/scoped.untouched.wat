@@ -4,7 +4,7 @@
  (global $scoped/aGlobal (mut i32) (i32.const 1))
  (global $scoped/aConstant i32 (i32.const 3))
  (global $scoped/aStartFunctionLocal (mut i32) (i32.const 2))
- (global $HEAP_BASE i32 (i32.const 4))
+ (global $HEAP_BASE i32 (i32.const 8))
  (memory $0 1)
  (export "memory" (memory $0))
  (start $start)
@@ -26,48 +26,48 @@
    (set_local $0
     (i32.const 0)
    )
-   (loop $continue|0
-    (if
-     (i32.lt_s
+   (loop $repeat|0
+    (br_if $break|0
+     (i32.eqz
+      (i32.lt_s
+       (get_local $0)
+       (i32.const 1)
+      )
+     )
+    )
+    (nop)
+    (set_local $0
+     (i32.add
       (get_local $0)
       (i32.const 1)
      )
-     (block
-      (nop)
-      (set_local $0
-       (i32.add
-        (get_local $0)
-        (i32.const 1)
-       )
-      )
-      (br $continue|0)
-     )
     )
+    (br $repeat|0)
    )
   )
   (block $break|1
    (set_local $1
     (i32.const 0)
    )
-   (loop $continue|1
-    (if
-     (i32.lt_s
+   (loop $repeat|1
+    (br_if $break|1
+     (i32.eqz
+      (i32.lt_s
+       (get_local $1)
+       (i32.const 1)
+      )
+     )
+    )
+    (drop
+     (get_local $1)
+    )
+    (set_local $1
+     (i32.add
       (get_local $1)
       (i32.const 1)
      )
-     (block
-      (drop
-       (get_local $1)
-      )
-      (set_local $1
-       (i32.add
-        (get_local $1)
-        (i32.const 1)
-       )
-      )
-      (br $continue|1)
-     )
     )
+    (br $repeat|1)
    )
   )
   (block

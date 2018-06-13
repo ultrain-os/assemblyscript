@@ -11,7 +11,7 @@
  (global $infer-type/rI (mut i64) (i64.const 0))
  (global $infer-type/rf (mut f32) (f32.const 0))
  (global $infer-type/rF (mut f64) (f64.const 0))
- (global $HEAP_BASE i32 (i32.const 4))
+ (global $HEAP_BASE i32 (i32.const 8))
  (memory $0 1)
  (export "memory" (memory $0))
  (start $start)
@@ -107,23 +107,23 @@
      (i32.const 10)
     )
    )
-   (loop $continue|0
-    (if
-     (i32.lt_s
-      (get_local $0)
-      (get_local $1)
-     )
-     (block
-      (nop)
-      (set_local $0
-       (i32.add
-        (get_local $0)
-        (i32.const 1)
-       )
+   (loop $repeat|0
+    (br_if $break|0
+     (i32.eqz
+      (i32.lt_s
+       (get_local $0)
+       (get_local $1)
       )
-      (br $continue|0)
      )
     )
+    (nop)
+    (set_local $0
+     (i32.add
+      (get_local $0)
+      (i32.const 1)
+     )
+    )
+    (br $repeat|0)
    )
   )
  )

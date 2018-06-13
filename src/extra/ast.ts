@@ -52,6 +52,7 @@ import {
   ForStatement,
   IfStatement,
   ImportStatement,
+  InstanceOfExpression,
   ReturnStatement,
   SwitchStatement,
   ThrowStatement,
@@ -158,6 +159,10 @@ export class ASTBuilder {
       }
       case NodeKind.FUNCTION: {
         this.visitFunctionExpression(<FunctionExpression>node);
+        break;
+      }
+      case NodeKind.INSTANCEOF: {
+        this.visitInstanceOfExpression(<InstanceOfExpression>node);
         break;
       }
       case NodeKind.LITERAL: {
@@ -380,7 +385,7 @@ export class ASTBuilder {
       sb.push("this: ");
       this.visitTypeNode(explicitThisType);
     }
-    var parameters = node.parameterTypes;
+    var parameters = node.parameters;
     var numParameters = parameters.length;
     if (numParameters) {
       if (explicitThisType) sb.push(", ");
@@ -542,6 +547,12 @@ export class ASTBuilder {
 
   visitFloatLiteralExpression(node: FloatLiteralExpression): void {
     this.sb.push(node.value.toString(10));
+  }
+
+  visitInstanceOfExpression(node: InstanceOfExpression): void {
+    this.visitNode(node.expression);
+    this.sb.push(" instanceof ");
+    this.visitTypeNode(node.isType);
   }
 
   visitIntegerLiteralExpression(node: IntegerLiteralExpression): void {
@@ -710,7 +721,10 @@ export class ASTBuilder {
       sb.push(";\n");
     } else {
       let last = sb[sb.length - 1];
-      if (last.length && last.charCodeAt(last.length - 1) == CharCode.CLOSEBRACE) {
+      if (last.length && (
+          last.charCodeAt(last.length - 1) == CharCode.CLOSEBRACE ||
+          last.charCodeAt(last.length - 1) == CharCode.SEMICOLON)
+      ) {
         sb.push("\n");
       } else {
         sb.push(";\n");
@@ -889,14 +903,18 @@ export class ASTBuilder {
       sb.push("declare ");
     }
     var members = node.members;
-    var numMembers = members.length;
-    if (numMembers) {
+    if (members && members.length) {
+      let numMembers = members.length;
       sb.push("export {\n");
-      this.visitExportMember(node.members[0]);
+      let indentLevel = ++this.indentLevel;
+      indent(sb, indentLevel);
+      this.visitExportMember(members[0]);
       for (let i = 1; i < numMembers; ++i) {
         sb.push(",\n");
-        this.visitExportMember(node.members[i]);
+        indent(sb, indentLevel);
+        this.visitExportMember(members[i]);
       }
+      --this.indentLevel;
       sb.push("\n}");
     } else {
       sb.push("export {}");
@@ -906,6 +924,7 @@ export class ASTBuilder {
       sb.push(" from ");
       this.visitStringLiteralExpression(path);
     }
+    sb.push(";");
   }
 
   visitExpressionStatement(node: ExpressionStatement): void {
@@ -995,13 +1014,19 @@ export class ASTBuilder {
       }
     }
     sb.push("(");
-    var parameterTypes = signature.parameterTypes;
-    var numParameterTypes = parameterTypes.length;
-    if (numParameterTypes) {
-      this.serializeParameter(parameterTypes[0]);
-      for (let i = 1; i < numParameterTypes; ++i) {
+    var parameters = signature.parameters;
+    var numParameters = parameters.length;
+    var explicitThisType = signature.explicitThisType;
+    if (explicitThisType) {
+      sb.push("this: ");
+      this.visitTypeNode(explicitThisType);
+    }
+    if (numParameters) {
+      if (explicitThisType) sb.push(", ");
+      this.serializeParameter(parameters[0]);
+      for (let i = 1; i < numParameters; ++i) {
         sb.push(", ");
-        this.serializeParameter(parameterTypes[i]);
+        this.serializeParameter(parameters[i]);
       }
     }
     var body = node.body;

@@ -6,11 +6,11 @@
  (type $iiii (func (param i32 i32 i32) (result i32)))
  (type $ifff (func (param i32 f32 f32) (result f32)))
  (type $v (func))
- (import "env" "abort" (func $abort (param i32 i32 i32 i32)))
+ (import "env" "abort" (func $~lib/env/abort (param i32 i32 i32 i32)))
  (global $class/Animal.ONE (mut i32) (i32.const 1))
- (global $HEAP_BASE i32 (i32.const 24))
+ (global $HEAP_BASE i32 (i32.const 28))
  (memory $0 1)
- (data (i32.const 4) "\08\00\00\00c\00l\00a\00s\00s\00.\00t\00s\00")
+ (data (i32.const 8) "\08\00\00\00c\00l\00a\00s\00s\00.\00t\00s\00")
  (export "test" (func $class/test))
  (export "memory" (memory $0))
  (start $start)
@@ -137,9 +137,9 @@
     )
    )
    (block
-    (call $abort
+    (call $~lib/env/abort
      (i32.const 0)
-     (i32.const 4)
+     (i32.const 8)
      (i32.const 13)
      (i32.const 0)
     )

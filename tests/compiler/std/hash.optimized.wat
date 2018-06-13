@@ -5,9 +5,9 @@
  (type $v (func))
  (import "env" "logi" (func $std/hash/logi (param i32)))
  (memory $0 1)
- (data (i32.const 8) "\01\00\00\00a")
- (data (i32.const 16) "\02\00\00\00a\00b")
- (data (i32.const 24) "\03\00\00\00a\00b\00c")
+ (data (i32.const 12) "\01\00\00\00a")
+ (data (i32.const 20) "\02\00\00\00a\00b")
+ (data (i32.const 28) "\03\00\00\00a\00b\00c")
  (export "memory" (memory $0))
  (start $start)
  (func $~lib/internal/hash/hashStr (; 1 ;) (type $ii) (param $0 i32) (result i32)
@@ -17,43 +17,43 @@
   (set_local $2
    (i32.const -2128831035)
   )
-  (set_local $3
-   (i32.shl
-    (i32.load
-     (get_local $0)
+  (block $break|0
+   (set_local $3
+    (i32.shl
+     (i32.load
+      (get_local $0)
+     )
+     (i32.const 1)
     )
-    (i32.const 1)
    )
-  )
-  (loop $continue|0
-   (if
-    (i32.lt_u
-     (get_local $1)
-     (get_local $3)
+   (loop $repeat|0
+    (br_if $break|0
+     (i32.ge_u
+      (get_local $1)
+      (get_local $3)
+     )
     )
-    (block
-     (set_local $2
-      (i32.mul
-       (i32.xor
-        (get_local $2)
-        (i32.load8_u offset=4
-         (i32.add
-          (get_local $0)
-          (get_local $1)
-         )
+    (set_local $2
+     (i32.mul
+      (i32.xor
+       (get_local $2)
+       (i32.load8_u offset=4
+        (i32.add
+         (get_local $0)
+         (get_local $1)
         )
        )
-       (i32.const 16777619)
       )
+      (i32.const 16777619)
      )
-     (set_local $1
-      (i32.add
-       (get_local $1)
-       (i32.const 1)
-      )
-     )
-     (br $continue|0)
     )
+    (set_local $1
+     (i32.add
+      (get_local $1)
+      (i32.const 1)
+     )
+    )
+    (br $repeat|0)
    )
   )
   (get_local $2)
@@ -210,22 +210,22 @@
   )
   (call $std/hash/logi
    (call $~lib/internal/hash/hashStr
-    (i32.const 4)
-   )
-  )
-  (call $std/hash/logi
-   (call $~lib/internal/hash/hashStr
     (i32.const 8)
    )
   )
   (call $std/hash/logi
    (call $~lib/internal/hash/hashStr
-    (i32.const 16)
+    (i32.const 12)
    )
   )
   (call $std/hash/logi
    (call $~lib/internal/hash/hashStr
-    (i32.const 24)
+    (i32.const 20)
+   )
+  )
+  (call $std/hash/logi
+   (call $~lib/internal/hash/hashStr
+    (i32.const 28)
    )
   )
   (call $std/hash/logi

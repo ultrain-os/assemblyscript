@@ -15,6 +15,8 @@
   "Class '{0}' is sealed and cannot be extended.": 211,
   "Decorator '{0}' is not valid here.": 212,
   "Duplicate decorator.": 213,
+  "An allocator must be declared to allocate memory. Try importing allocator/arena or allocator/tlsf.": 214,
+  "Optional parameter must have an initializer.": 215,
 
   "Unterminated string literal.": 1002,
   "Identifier expected.": 1003,
@@ -104,5 +106,7 @@
   "A member initializer in a enum declaration cannot reference members declared after it, including members defined in other enums.": 2651,
   "Namespace '{0}' has no exported member '{1}'.": 2694,
 
-  "File '{0}' not found.": 6054
+  "File '{0}' not found.": 6054,
+  "Numeric separators are not allowed here.": 6188,
+  "Multiple consecutive numeric separators are not permitted.": 6189
 }
