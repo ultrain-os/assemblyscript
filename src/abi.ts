@@ -5,6 +5,10 @@ import {
 } from "./types";
 
 import {
+  Range
+} from "./tokenizer";
+
+import {
   ElementKind,
   Element,
   ClassPrototype,
@@ -29,6 +33,7 @@ import {
   Expression,
   Node,
   VariableLikeDeclarationStatement,
+  LiteralKind,
   StringLiteralExpression,
   CommonTypeNode
 } from "./ast";
@@ -38,6 +43,7 @@ enum AbiParameterKind{
   BOOL, // boolean and bool
   NUMBER, // original type except boolean and bool
   STRING, // string kind
+  ARRAY, // array kind
   CLASS // class kind
 }
 
@@ -111,7 +117,7 @@ export class Abi {
 
   program: Program;
 
-  typeAliasLookup: Map<string, string> = new Map();
+  abiTypeLookup: Map<string, string> = new Map();
 
   typeAliasSet: Set<string> = new Set<string>();
 
@@ -123,7 +129,7 @@ export class Abi {
 
     this.program = program;
 
-    this.typeAliasLookup = new Map([
+    this.abiTypeLookup = new Map([
       ["i8", "int8"],
       ["i16", "int16"],
       ["i32", "int32"],
@@ -137,7 +143,12 @@ export class Abi {
       ["bool", "uint8"], // eos not support the bool
       ["f32", "f32"],
       ["f64", "f64"],
-      ["boolean", "uint8"] // eos not suppot the bool
+      ["boolean", "uint8"], // eos not suppot the bool
+      ["account_name", "name"],
+      ["permission_name", "name"],
+      ["action_name", "name"],
+      ["weight_type", "uint16"],
+      ["name", "u64"]
     ]);
   }
 
@@ -168,10 +179,9 @@ export class Abi {
   addAbiTypeAlias(typeKindName: string): void{
 
     if(!this.typeAliasSet.has(typeKindName)){
-
       // It's the assemblyscript internal type 
-      let originalTypeName = this.findOriginalTypeName(typeKindName);
-      let wasmType = this.typeAliasLookup.get(originalTypeName);
+      let originalTypeName = this.findContractOriginalType(typeKindName);
+      let wasmType = this.abiTypeLookup.get(originalTypeName);
       if(wasmType){
         this.abiInfo.types.push( new AbiTypeAlias(typeKindName, wasmType));
       } 
@@ -184,27 +194,45 @@ export class Abi {
   * eg: declare type account_name = u64;
         declare type account_name_alias = account_name;
 
-    findOriginalTypeName("accout_name") return "u64";
+    findContractOriginalType("account_name_alias") return "account_name";
   */
-  findOriginalTypeName(typeKindName:string): string {
+  findContractOriginalType(typeKindName:string): string {
 
+    let abiType:string|null = this.abiTypeLookup.get(typeKindName);
+    if(abiType){
+      return typeKindName;
+    }
     let typeAlias = this.program.typeAliases.get(typeKindName);
     if(typeAlias){
       let commonaTypeName = typeAlias.type.range.toString()
-      return this.findOriginalTypeName(commonaTypeName);
+      return this.findContractOriginalType(commonaTypeName);
     } else {
       return typeKindName;
     }
   }
 
+  /**
+  * Find the script original type name
+  */
+  findScriptOriginalTypeName(typeKindName: string): string {
+    let typeAlias = this.program.typeAliases.get(typeKindName);
+    if(typeAlias){
+      let commonaTypeName = typeAlias.type.range.toString()
+      return this.findScriptOriginalTypeName(commonaTypeName);
+    } else {
+      return typeKindName;
+    }
+  }
 
   /**
   * Find assemblyscript original type name 
   * eg: account_name return 'u64'
   */
-  findOriginalType(typeKindName: string): Type | null{
-    let originalName = this.findOriginalTypeName(typeKindName);
-    return this.program.typesLookup.get(originalName);
+  findScriptOriginalType(typeKindName: string): Type | null{
+    let originalName = this.findScriptOriginalTypeName(typeKindName);
+    //Get the AssemblyScript original type 
+    let scriptType:Type|null =  this.program.typesLookup.get(originalName);
+    return scriptType;
   }
 
 
@@ -356,10 +384,42 @@ export class Abi {
   }
 
 
+  isArray(typeName:string): bool {
+    return typeName.indexOf("[") != -1;
+  }
+
+  getBaseTypeName(typeName: string): string{
+
+    let bracketIndex = typeName.indexOf("[");
+    if(bracketIndex != -1){
+      let index = typeName.indexOf(" ") == -1 ?  bracketIndex : typeName.indexOf(" ");
+      let baseTypeName =  typeName.substring(0, index);
+      return baseTypeName;
+    }
+    return typeName;
+  }
+
+  static nameMap = ".12345abcdefghijklmnopqrstuvwxyz";
+
+
+  checkName(str: string):void{
+
+    if(str.length > 13){
+      throw new Error(`Action Name:${str} should be less than 13 characters.`);
+    }  
+
+    for(let ch of str){
+      if(Abi.nameMap.indexOf(ch) == -1){
+        throw new Error(`Action Name:${str} should only contains the following symbol .12345abcdefghijklmnopqrstuvwxyz`);
+      }
+    }
+  }
+
+
   /** 
   * string TypeKind is 9, and usize TypeKind is also 9.
   */
-  resolveAbiParameterType(type:CommonTypeNode): {typeKind:AbiParameterKind, typeName:string}{  
+  resolveAbiParameterType(type:CommonTypeNode): {typeKind:AbiParameterKind, typeName:string, isArray: bool}{  
 
     let parameterType = type.range.toString();
     let typeAlias = this.program.typeAliases.get(parameterType);
@@ -367,19 +427,27 @@ export class Abi {
       parameterType = typeAlias.type.range.toString();
     } 
 
-    if (parameterType == "string"){
-      return {typeKind: AbiParameterKind.STRING, typeName: parameterType}
+    let isArray:bool = this.isArray(parameterType);
+    let baseTypeName: string = this.getBaseTypeName(parameterType);
+
+    // console.log("isArray:" + isArray );
+    // console.log("baseTypeName:" + baseTypeName + ". type kind:" + type.kind);
+
+    if (baseTypeName == "string"){
+      return {typeKind: AbiParameterKind.STRING, typeName: baseTypeName, isArray};
     }
 
-    let originalName:string = this.findOriginalTypeName(parameterType);
-    let originalType:Type|null = this.findOriginalType(originalName);
+    let originalName:string = this.findContractOriginalType(baseTypeName);
+    let originalType:Type|null = this.findScriptOriginalType(originalName);
+
+
 
     if(!originalType){
-        return {typeKind: AbiParameterKind.CLASS, typeName: parameterType};
+        return {typeKind: AbiParameterKind.CLASS, typeName: originalName, isArray:isArray};
     } else if(originalType.kind == TypeKind.BOOL){
-        return {typeKind: AbiParameterKind.BOOL, typeName: parameterType}
+        return {typeKind: AbiParameterKind.BOOL, typeName: originalType.toString() , isArray:isArray};
     } else {
-        return {typeKind: AbiParameterKind.NUMBER, typeName: originalName}
+        return {typeKind: AbiParameterKind.NUMBER, typeName: originalType.toString(), isArray:isArray}
     }
   }
 
@@ -412,6 +480,8 @@ export class Abi {
           let funcName = declaration.name.range.toString();
           let types = declaration.signature.parameterTypes; // FunctionDeclaration parameter types
           
+          this.checkName(funcName);
+
           body.push(`    if (action == N("${funcName}")){`);
 
           let fields = new Array<string>();
@@ -421,18 +491,32 @@ export class Abi {
             let parameterName = type.name.range.toString();
 
             let abiType = this.resolveAbiParameterType(type.type);
-            
-            if(abiType.typeKind == AbiParameterKind.STRING){
-              body.push(`      let ${parameterName} = ds.readString();`);
-            } else if(abiType.typeKind == AbiParameterKind.BOOL){
-              body.push(`      let ${parameterName} = ds.read<u8>() != 0;`);
-            } else if(abiType.typeKind == AbiParameterKind.NUMBER ){
-              body.push(`      let ${parameterName} = ds.read<${abiType.typeName}>();`);
-            } else {
-              let internalName = this.getInternalName(type.type);
-              this.retrieveStructByInternalName(internalName);
-              body.push(`      let ${parameterName} = new ${parameterType}();`);
-              body.push(`      ${parameterName}.deserialize(ds)`);
+
+            if(abiType.isArray){
+              if(abiType.typeKind == AbiParameterKind.NUMBER){
+                body.push(`      let ${parameterName} = ds.readVector<${abiType.typeName}>();`);
+              } else if(abiType.typeKind == AbiParameterKind.BOOL){
+                body.push(`      let ${parameterName} = ds.readVector<u8>();`);
+              } else if(abiType.typeKind == AbiParameterKind.STRING){
+
+              } else {
+                body.push(`      let ${parameterName} = ds.readComplexVector<${abiType.typeName}>();`);
+              }
+
+
+            } else{
+              if(abiType.typeKind == AbiParameterKind.STRING){
+                body.push(`      let ${parameterName} = ds.readString();`);
+              } else if(abiType.typeKind == AbiParameterKind.BOOL){
+                body.push(`      let ${parameterName} = ds.read<u8>() != 0;`);
+              } else if(abiType.typeKind == AbiParameterKind.NUMBER ){
+                body.push(`      let ${parameterName} = ds.read<${abiType.typeName}>();`);
+              } else {
+                let internalName = this.getInternalName(type.type);
+                this.retrieveStructByInternalName(internalName);
+                body.push(`      let ${parameterName} = new ${parameterType}();`);
+                body.push(`      ${parameterName}.deserialize(ds)`);
+              }
             }
             fields.push(parameterName);
           }
