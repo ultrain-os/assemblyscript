@@ -56,6 +56,9 @@ exports.sourceMapRoot = "assemblyscript:///";
 /** Prefix used for library files. */
 exports.libraryPrefix = assemblyscript.LIBRARY_PREFIX;
 
+/** node modules path */
+exports.nodeModulesPrefix = "./node_modules/";
+
 /** Default Binaryen optimization level. */
 exports.defaultOptimizeLevel = 2;
 
@@ -231,6 +234,9 @@ exports.main = function main(args, options, callback, isDispatch) {
 
 
   const customLibDirs = [];
+
+  args.lib = (!args.lib) ? exports.nodeModulesPrefix : exports.nodeModulesPrefix + args.lib;
+
   if (args.lib) {
 
     if (typeof args.lib === "string") args.lib = args.lib.split(",");
@@ -548,10 +554,9 @@ exports.main = function main(args, options, callback, isDispatch) {
       module.runPasses(runPasses.map(pass => pass.trim()));
     });
   }
-
+  
   var abiObj = program.toAbi();
   exports.applyText = abiObj.dispatch;
-  // console.log(exports.applyText);
 
   // Prepare output
   if (!args.noEmit) {
@@ -944,3 +949,20 @@ exports.tscOptions = {
   allowJs: false
 };
 
+function resolveSourceText(sourceText, applyText, library){
+  let memoryLib = "allocate/arena";
+  let resultTextBuffer  = new Array();
+  if(library[memoryLib] == undefined){
+    resultTextBuffer.push( `import "allocator/arena";`);
+  }
+
+  resultTextBuffer.push(sourceText);
+
+  if(applyText){
+    resultTextBuffer.push(applyText);
+  }
+  return resultTextBuffer.join("\n");
+}
+
+
+module.exports.resolveSourceText = resolveSourceText;

@@ -57,6 +57,11 @@
     "type": "string",
     "aliases": [ "t" ]
   },
+  "applyText": {
+    "description": "Print the log of generated dispatch method.",
+    "type": "boolean",
+    "aliases": [ "l" ]
+  },
   "abiFile": {
     "desc": "Specifies the text output file (.abi).",
     "type": "string",
