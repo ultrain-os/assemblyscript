@@ -11,11 +11,6 @@ if (/\busc$/.test(process.argv[1])) {
   } else {
   	process.exitCode = usc.main(args);
   }
-
-  // if(args.applyText){
-  // 	console.log("The generated apply text:");
-  // 	console.log(module.exports.applyText);
-  // }
-
+  
 }
 

@@ -117,8 +117,6 @@ exports.main = function main(args, options, callback, isDispatch) {
     options = {};
   }
 
-  console.log(JSON.stringify(args, null, 2));
-
   const stdout = options.stdout || process.stdout;
   const stderr = options.stderr || process.stderr;
   const readFile = options.readFile || readFileNode;
@@ -559,6 +557,12 @@ exports.main = function main(args, options, callback, isDispatch) {
   
   var abiObj = program.toAbi();
   exports.applyText = abiObj.dispatch;
+  // console.log("applyText:" + exports.applyText);
+
+  if(args.applyText){
+    console.log("The generated apply text:");
+    console.log(exports.applyText);
+  }
 
   // Prepare output
   if (!args.noEmit) {
