@@ -4,8 +4,6 @@ const usc = module.exports = require("../cli/asc.js");
 if (/\busc$/.test(process.argv[1])) {
   const args = usc.parseArguments(process.argv.slice(2));
 
-  // console.log( JSON.stringify(args, null, 2) );
-
   // There are two steps to generate the wast file
   if(args.textFile){
   	usc.main(args);
@@ -14,10 +12,10 @@ if (/\busc$/.test(process.argv[1])) {
   	process.exitCode = usc.main(args);
   }
 
-  if(args.applyText){
-  	console.log("The generated apply text:");
-  	console.log(module.exports.applyText);
-  }
+  // if(args.applyText){
+  // 	console.log("The generated apply text:");
+  // 	console.log(module.exports.applyText);
+  // }
 
 }
 

@@ -117,6 +117,8 @@ exports.main = function main(args, options, callback, isDispatch) {
     options = {};
   }
 
+  console.log(JSON.stringify(args, null, 2));
+
   const stdout = options.stdout || process.stdout;
   const stderr = options.stderr || process.stderr;
   const readFile = options.readFile || readFileNode;
@@ -235,7 +237,7 @@ exports.main = function main(args, options, callback, isDispatch) {
 
   const customLibDirs = [];
 
-  args.lib = (!args.lib) ? exports.nodeModulesPrefix : exports.nodeModulesPrefix + args.lib;
+  args.lib = (!args.lib) ? exports.nodeModulesPrefix : exports.nodeModulesPrefix + "," + args.lib;
 
   if (args.lib) {
 
@@ -964,5 +966,4 @@ function resolveSourceText(sourceText, applyText, library){
   return resultTextBuffer.join("\n");
 }
 
-
-module.exports.resolveSourceText = resolveSourceText;
+exports.resolveSourceText = resolveSourceText;
