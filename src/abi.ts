@@ -27,7 +27,7 @@ import {
   DeclarationStatement,
   FieldDeclaration,
   TypeNode,
-  NodeKind, 
+  NodeKind,
   Source,
   ParameterNode,
   Expression,
@@ -68,6 +68,7 @@ class Action {
 
   name: string;
   type: string;
+  ricardian_contract:string = "";
 
   constructor(name: string, type: string) {
     this.name = name;
@@ -102,15 +103,12 @@ class Table{
 
 export class Abi {
 
-  abiInfo: { 
+  abiInfo: {
+    version:string,
     types: Array<AbiTypeAlias>, 
     structs: Array<Struct>, 
     actions: Array<Action>,
-    tables: Array<Table> } = {
-    types: new Array<AbiTypeAlias>(),
-    structs: new Array<Struct>(),
-    actions: new Array<Action>(),
-    tables: new Array<Table>()
+    tables: Array<Table> 
   };
 
   dispatch: string;
@@ -128,6 +126,13 @@ export class Abi {
   constructor(program: Program) {
 
     this.program = program;
+
+    this.abiInfo = {
+    version: "ultraio:1.0",
+    types: new Array<AbiTypeAlias>(),
+    structs: new Array<Struct>(),
+    actions: new Array<Action>(),
+    tables: new Array<Table>()};
 
     this.abiTypeLookup = new Map([
       ["i8", "int8"],
@@ -163,13 +168,10 @@ export class Abi {
 
     let types = signature.parameters;
     if (types) {
-      for (var index in types) {
-        let type:ParameterNode = types[index];
-        let typeKind = types[index].type.range.toString();
-
+      for (let type of types) {
+        let typeKind = type.type.range.toString();
         this.addAbiTypeAlias(typeKind);
-
-        struct.fields.push({ name: types[index].name.range.toString(), type: types[index].type.range.toString() });
+        struct.fields.push({ name: type.name.range.toString(), type: type.type.range.toString() });
       }
     }
     return struct;
@@ -460,7 +462,7 @@ export class Abi {
 
   /**
   *  Resolve ClassPrototype to dispatcher  
-  *  
+  *
   *
   */
   resolveClassDispatcher(clzPrototype: ClassPrototype): Array<string> {
@@ -542,7 +544,7 @@ export class Abi {
     }
     return hasActionDecorator ? body : new Array();
   }
-   
+
   resolveFunctionPrototype(funcPrototype: FunctionPrototype): void {
 
     let declaration:FunctionDeclaration = funcPrototype.declaration;
@@ -561,7 +563,7 @@ export class Abi {
     for(let key of typesLookupKeys){
       let value = this.program.typesLookup.get(key);
       if(value){
-        console.log("type look up key:" + key  + ". value:" + value.kind)
+        console.log(`type look up key: ${key}. value: ${value.kind}`);
       }
     }
 
@@ -569,7 +571,7 @@ export class Abi {
     for(let key of typesAliasKeys){
       let value = this.program.typeAliases.get(key);
       if(value){
-        console.log("type alias key:" + key + ". Value:" + value.type.range.toString());
+        console.log(`type alias key: ${key}. Value: ${value.type.range.toString()}`);
       }
     }
   }
@@ -579,7 +581,7 @@ export class Abi {
       for(let key of keys){
         let value = this.program.elementsLookup.get(key);
         if(value)
-          console.log("Element lookup key:" + key + ". Kind:" + value.kind );
+          console.log(`Element lookup key:${key}.Kind:${value.kind}`);
       }
   }
 
@@ -597,7 +599,7 @@ export class Abi {
         let clzPrototype = <ClassPrototype>element;
         if (!this.elementLookup.has(clzPrototype.internalName)) {
           let classDispatch:Array<string> = this.resolveClassDispatcher(clzPrototype);
-          classDispatch.forEach((value, index) => {
+          classDispatch.forEach((value:string, index:number):void => {
             dispatchBuffer.push(value);
           });
           this.elementLookup.set(clzPrototype.internalName, element);
@@ -619,7 +621,7 @@ export class Abi {
     let sb = new Array<string>();
     sb.push("export function apply(receiver: u64, code: u64, action: u64): void {");
 
-    body.forEach( (value, index) =>{
+    body.forEach( (value:string, index:number):void =>{
       sb.push(value);
     });
     sb.push("}");

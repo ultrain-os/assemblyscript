@@ -11,15 +11,9 @@ export enum AttributeKind{
 }
 
 
-
-
-
-
 /**Base class of all attribute */
 interface Attribute {
   kind:AttributeKind;
-
-  // toAbi():string;
 } 
 
 
@@ -53,7 +47,6 @@ class StructField implements Attribute{
   toAbi():string{
     return `{name:${this.name}, type:${this.type}}`;
   }
-
 }
 
 
@@ -64,7 +57,6 @@ export class Struct implements Attribute {
   name: string = "";
   base: string = "";
   fields: Array<StructField> = new Array<StructField>();
-
 }
 
 class AbiTypeAlias{
