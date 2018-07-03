@@ -2837,12 +2837,7 @@ export function compileAbort(
   compiler.currentType = Type.void;
   return module.createBlock(null, [
     module.createCallImport(
-      abortInstance.internalName, [
-        messageArg,
-        filenameArg,
-        module.createI32(reportNode.range.line),
-        module.createI32(reportNode.range.column)
-      ],
+      abortInstance.internalName, [],
       NativeType.None
     ),
     module.createUnreachable()

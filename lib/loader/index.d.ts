@@ -6,7 +6,9 @@ interface ImportsObject {
   env: {
     memory?: WebAssembly.Memory,
     table?: WebAssembly.Table,
-    abort?: (msg: number, file: number, line: number, column: number) => void
+    // abort?: (msg: number, file: number, line: number, column: number) => void
+    abort?: () => void
+
   }
 }
 
