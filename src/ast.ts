@@ -9,7 +9,7 @@ import {
   STATIC_DELIMITER,
   INSTANCE_DELIMITER,
   LIBRARY_PREFIX
-} from "./program";
+} from "./common";
 
 import {
   Token,
@@ -97,6 +97,37 @@ export enum NodeKind {
   EXPORTMEMBER,
   SWITCHCASE,
   COMMENT
+}
+
+/** Checks if a node represents a constant value. */
+export function nodeIsConstantValue(kind: NodeKind): bool {
+  switch (kind) {
+    case NodeKind.LITERAL:
+    case NodeKind.NULL:
+    case NodeKind.TRUE:
+    case NodeKind.FALSE: return true;
+  }
+  return false;
+}
+
+/** Checks if a node might be callable. */
+export function nodeIsCallable(kind: NodeKind): bool {
+  switch (kind) {
+    case NodeKind.IDENTIFIER:
+    case NodeKind.CALL:
+    case NodeKind.ELEMENTACCESS:
+    case NodeKind.PROPERTYACCESS: return true;
+  }
+  return false;
+}
+
+/** Checks if a node might be callable with generic arguments. */
+export function nodeIsGenericCallable(kind: NodeKind): bool {
+  switch (kind) {
+    case NodeKind.IDENTIFIER:
+    case NodeKind.PROPERTYACCESS: return true;
+  }
+  return false;
 }
 
 /** Base class of all nodes. */
@@ -1070,7 +1101,8 @@ export enum DecoratorKind {
   SEALED,
   INLINE,
   ACTION,
-  DATABASE
+  DATABASE,
+  EXTERNAL
 }
 
 
@@ -1087,6 +1119,9 @@ export function decoratorNameToKind(name: Expression): DecoratorKind {
       }
       case CharCode.d:{
         if (nameStr == "database") return DecoratorKind.DATABASE;
+      }
+      case CharCode.e: {
+        if (nameStr == "external") return DecoratorKind.EXTERNAL;
         break;
       }
       case CharCode.g: {
@@ -1413,6 +1448,20 @@ export class UnaryPrefixExpression extends UnaryExpression {
 
 // statements
 
+export function isLastStatement(statement: Statement): bool {
+  var parent = assert(statement.parent);
+  if (parent.kind == NodeKind.BLOCK) {
+    let statements = (<BlockStatement>parent).statements;
+    if (statements[statements.length - 1] === statement) {
+      switch (assert(parent.parent).kind) {
+        case NodeKind.FUNCTIONDECLARATION:
+        case NodeKind.METHODDECLARATION: return true;
+      }
+    }
+  }
+  return false;
+}
+
 /** Base class of all statement nodes. */
 export abstract class Statement extends Node { }
 
@@ -1437,6 +1486,8 @@ export class Source extends Node {
   normalizedPath: string;
   /** Path used internally. */
   internalPath: string;
+  /** Simple path (last part without extension). */
+  simplePath: string;
   /** Contained statements. */
   statements: Statement[];
   /** Full source text. */
@@ -1445,13 +1496,18 @@ export class Source extends Node {
   tokenizer: Tokenizer | null = null;
   /** Source map index. */
   debugInfoIndex: i32 = -1;
+  /** Re-exported sources. */
+  exportPaths: Set<string> | null = null;
 
   /** Constructs a new source node. */
   constructor(normalizedPath: string, text: string, kind: SourceKind) {
     super();
     this.sourceKind = kind;
     this.normalizedPath = normalizedPath;
-    this.internalPath = mangleInternalPath(this.normalizedPath);
+    var internalPath = mangleInternalPath(this.normalizedPath);
+    this.internalPath = internalPath;
+    var pos = internalPath.lastIndexOf(PATH_DELIMITER);
+    this.simplePath = pos >= 0 ? internalPath.substring(pos + 1) : internalPath;
     this.statements = new Array();
     this.range = new Range(this, 0, text.length);
     this.text = text;
@@ -1845,17 +1901,15 @@ export class WhileStatement extends Statement {
   statement: Statement;
 }
 
-/** Tests if a specific decorator is present within the specified decorators. */
-export function hasDecorator(name: string, decorators: DecoratorNode[] | null): bool {
+/** Finds the first decorator matching the specified kind. */
+export function findDecorator(kind: DecoratorKind, decorators: DecoratorNode[] | null): DecoratorNode | null {
   if (decorators) {
     for (let i = 0, k = decorators.length; i < k; ++i) {
-      let expression = decorators[i].name;
-      if (expression.kind == NodeKind.IDENTIFIER && (<IdentifierExpression>expression).text == name) {
-        return true;
-      }
+      let decorator = decorators[i];
+      if (decorator.decoratorKind == kind) return decorator;
     }
   }
-  return false;
+  return null;
 }
 
 /** Mangles a declaration's name to an internal name. */

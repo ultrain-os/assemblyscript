@@ -2,6 +2,8 @@
 
 var globalScope = typeof window !== "undefined" && window || typeof global !== "undefined" && global || self;
 
+globalScope.ASC_TARGET = 0;
+
 Object.defineProperties(
   globalScope["i8"] = function i8(value) { return value << 24 >> 24; }
 , {
@@ -214,5 +216,6 @@ globalScope["fmodf"] = function fmodf(x, y) {
   return Math.fround(x % y);
 };
 
-require("./portable/math")(globalScope);
-require("./portable/memory")(globalScope);
+globalScope["JSMath"] = Math;
+
+require("./memory")(globalScope);

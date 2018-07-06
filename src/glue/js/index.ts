@@ -4,7 +4,9 @@
  * @preferred
  *//***/
 
-import "../../../std/portable";
+/// <reference path="./node.d.ts" />
+
+import "../../../std/portable/index";
 import "./binaryen";
-import "./i64";
 import "./float";
+import "./i64";

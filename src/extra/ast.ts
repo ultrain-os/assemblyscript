@@ -76,12 +76,10 @@ import {
   ParameterNode,
   ParameterKind,
   ExportMember,
-  SwitchCase,
-  DeclarationStatement
+  SwitchCase
 } from "../ast";
 
 import {
-  Token,
   operatorTokenToString
 } from "../tokenizer";
 
@@ -92,7 +90,7 @@ import {
 
 import {
   CommonFlags
-} from "../program";
+} from "../common";
 
 /** An AST builder. */
 export class ASTBuilder {

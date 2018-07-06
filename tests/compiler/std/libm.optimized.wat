@@ -12,7 +12,7 @@
  (global $std/libm/PI f64 (f64.const 3.141592653589793))
  (global $std/libm/SQRT1_2 f64 (f64.const 0.7071067811865476))
  (global $std/libm/SQRT2 f64 (f64.const 1.4142135623730951))
- (memory $0 1)
+ (memory $0 0)
  (export "E" (global $std/libm/E))
  (export "LN10" (global $std/libm/LN10))
  (export "LN2" (global $std/libm/LN2))
@@ -5775,21 +5775,19 @@
   )
  )
  (func $std/libm/sign (; 51 ;) (type $FF) (param $0 f64) (result f64)
-  (if
+  (if (result f64)
    (f64.gt
     (f64.abs
      (get_local $0)
     )
     (f64.const 0)
    )
-   (set_local $0
-    (f64.copysign
-     (f64.const 1)
-     (get_local $0)
-    )
+   (f64.copysign
+    (f64.const 1)
+    (get_local $0)
    )
+   (get_local $0)
   )
-  (get_local $0)
  )
  (func $~lib/math/NativeMath.sinh (; 52 ;) (type $FF) (param $0 f64) (result f64)
   (local $1 f64)

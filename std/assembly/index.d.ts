@@ -3,6 +3,8 @@
  * @module std/assembly
  *//***/
 
+/// <reference no-default-lib="true"/>
+
 // Types
 
 /** An 8-bit signed integer. */
@@ -31,6 +33,23 @@ declare type bool = boolean | number;
 declare type f32 = number;
 /** A 64-bit float. */
 declare type f64 = number;
+
+/** Compiler target. 0 = JS, 1 = WASM32, 2 = WASM64. */
+declare const ASC_TARGET: i32;
+/** Provided noTreeshaking option. */
+declare const ASC_NO_TREESHAKING: bool;
+/** Provided noAssert option. */
+declare const ASC_NO_ASSERT: bool;
+/** Provided memoryBase option. */
+declare const ASC_MEMORY_BASE: i32;
+/** Provided optimizeLevel option. */
+declare const ASC_OPTIMIZE_LEVEL: i32;
+/** Provided shrinkLevel option. */
+declare const ASC_SHRINK_LEVEL: i32;
+/** Whether the mutable global feature is enabled. */
+declare const ASC_FEATURE_MUTABLE_GLOBAL: bool;
+/** Whether the sign extension feature is enabled. */
+declare const ASC_FEATURE_SIGN_EXTENSION: bool;
 
 /** Converts any other numeric value to an 8-bit signed integer. */
 declare function i8(value: i8 | i16 | i32 | i64 | isize | u8 | u16 | u32 | u64 | usize | bool | f32 | f64): i8;
@@ -307,7 +326,7 @@ declare class ArrayBuffer {
   /** The size, in bytes, of the array. */
   readonly byteLength: i32;
   /** Constructs a new array buffer of the given length in bytes. */
-  constructor(length: i32);
+  constructor(length: i32, unsafe?: bool);
   /** Returns a copy of this array buffer's bytes from begin, inclusive, up to end, exclusive. */
   slice(begin?: i32, end?: i32): ArrayBuffer;
 }
@@ -451,6 +470,14 @@ interface Number {}
 interface Object {}
 interface RegExp {}
 
+declare class Map<K,V> {
+  readonly size: i32;
+  has(key: K): bool;
+  set(key: K, value: V): void;
+  delete(key: K): bool;
+  clear(): void;
+}
+
 declare class Set<T> {
   readonly size: i32;
   has(value: T): bool;
@@ -458,6 +485,13 @@ declare class Set<T> {
   delete(value: T): bool;
   clear(): void;
 }
+
+interface SymbolConstructor {
+  (description?: string | null): symbol;
+  for(key: string): symbol;
+  keyFor(sym: symbol): string | null;
+}
+declare const Symbol: SymbolConstructor;
 
 interface IMath<T> {
   /** The base of natural logarithms, e, approximately 2.718. */
@@ -593,10 +627,14 @@ declare function sealed(target: Function): any;
 /** Annotates a method or function as always inlined. */
 declare function inline(target: any, propertyKey: any, descriptor: any): any;
 
+/** Annotates an explicit external name of a function or global. */
+declare function external(target: any, propertyKey: any, descriptor: any): any;
+
 // Decorators for the smart contract
 /** Annotates a method or function as contract */
 declare function action(target: any, propertyKey: any, descriptor: any): any;
 
 /** Annotates a class as database information */
 declare function database(target: Function, propertyKey: any, descriptor: any): any;
+
 
