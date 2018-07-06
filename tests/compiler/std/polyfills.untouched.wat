@@ -84,16 +84,12 @@
      )
      (i32.and
       (get_local $0)
-      (i32.wrap/i64
-       (i64.const 4294901760)
-      )
+      (i32.const -65536)
      )
     )
    )
   )
-  (return
-   (get_local $0)
-  )
+  (get_local $0)
  )
  (func $~lib/polyfills/bswap<u16> (; 2 ;) (type $ii) (param $0 i32) (result i32)
   (local $1 i32)
@@ -224,16 +220,12 @@
      )
      (i32.and
       (get_local $0)
-      (i32.wrap/i64
-       (i64.const 4294901760)
-      )
+      (i32.const -65536)
      )
     )
    )
   )
-  (return
-   (get_local $0)
-  )
+  (get_local $0)
  )
  (func $~lib/polyfills/bswap<i16> (; 4 ;) (type $ii) (param $0 i32) (result i32)
   (local $1 i32)
@@ -466,57 +458,55 @@
     (unreachable)
    )
   )
-  (block
-   (set_local $2
-    (i64.and
-     (i64.shr_u
-      (get_local $0)
-      (i64.const 8)
-     )
-     (i64.const 71777214294589695)
-    )
-   )
-   (set_local $3
-    (i64.shl
-     (i64.and
-      (get_local $0)
-      (i64.const 71777214294589695)
-     )
+  (set_local $2
+   (i64.and
+    (i64.shr_u
+     (get_local $0)
      (i64.const 8)
     )
+    (i64.const 71777214294589695)
    )
-   (set_local $4
+  )
+  (set_local $3
+   (i64.shl
+    (i64.and
+     (get_local $0)
+     (i64.const 71777214294589695)
+    )
+    (i64.const 8)
+   )
+  )
+  (set_local $4
+   (i64.or
+    (get_local $2)
+    (get_local $3)
+   )
+  )
+  (set_local $2
+   (i64.and
+    (i64.shr_u
+     (get_local $4)
+     (i64.const 16)
+    )
+    (i64.const 281470681808895)
+   )
+  )
+  (set_local $3
+   (i64.shl
+    (i64.and
+     (get_local $4)
+     (i64.const 281470681808895)
+    )
+    (i64.const 16)
+   )
+  )
+  (return
+   (i64.rotr
     (i64.or
      (get_local $2)
      (get_local $3)
     )
-   )
-   (set_local $2
-    (i64.and
-     (i64.shr_u
-      (get_local $4)
-      (i64.const 16)
-     )
-     (i64.const 281470681808895)
-    )
-   )
-   (set_local $3
-    (i64.shl
-     (i64.and
-      (get_local $4)
-      (i64.const 281470681808895)
-     )
-     (i64.const 16)
-    )
-   )
-   (return
-    (i64.rotr
-     (i64.or
-      (get_local $2)
-      (get_local $3)
-     )
-     (i64.const 32)
-    )
+    (i64.const 32)
    )
   )
  )
@@ -569,57 +559,55 @@
     (unreachable)
    )
   )
-  (block
-   (set_local $2
-    (i64.and
-     (i64.shr_u
-      (get_local $0)
-      (i64.const 8)
-     )
-     (i64.const 71777214294589695)
-    )
-   )
-   (set_local $3
-    (i64.shl
-     (i64.and
-      (get_local $0)
-      (i64.const 71777214294589695)
-     )
+  (set_local $2
+   (i64.and
+    (i64.shr_u
+     (get_local $0)
      (i64.const 8)
     )
+    (i64.const 71777214294589695)
    )
-   (set_local $4
+  )
+  (set_local $3
+   (i64.shl
+    (i64.and
+     (get_local $0)
+     (i64.const 71777214294589695)
+    )
+    (i64.const 8)
+   )
+  )
+  (set_local $4
+   (i64.or
+    (get_local $2)
+    (get_local $3)
+   )
+  )
+  (set_local $2
+   (i64.and
+    (i64.shr_u
+     (get_local $4)
+     (i64.const 16)
+    )
+    (i64.const 281470681808895)
+   )
+  )
+  (set_local $3
+   (i64.shl
+    (i64.and
+     (get_local $4)
+     (i64.const 281470681808895)
+    )
+    (i64.const 16)
+   )
+  )
+  (return
+   (i64.rotr
     (i64.or
      (get_local $2)
      (get_local $3)
     )
-   )
-   (set_local $2
-    (i64.and
-     (i64.shr_u
-      (get_local $4)
-      (i64.const 16)
-     )
-     (i64.const 281470681808895)
-    )
-   )
-   (set_local $3
-    (i64.shl
-     (i64.and
-      (get_local $4)
-      (i64.const 281470681808895)
-     )
-     (i64.const 16)
-    )
-   )
-   (return
-    (i64.rotr
-     (i64.or
-      (get_local $2)
-      (get_local $3)
-     )
-     (i64.const 32)
-    )
+    (i64.const 32)
    )
   )
  )
@@ -829,9 +817,7 @@
     )
    )
   )
-  (return
-   (get_local $0)
-  )
+  (get_local $0)
  )
  (func $~lib/polyfills/bswap16<i32> (; 12 ;) (type $ii) (param $0 i32) (result i32)
   (local $1 i32)
@@ -909,9 +895,7 @@
     )
    )
   )
-  (return
-   (get_local $0)
-  )
+  (get_local $0)
  )
  (func $start (; 13 ;) (type $v)
   (if

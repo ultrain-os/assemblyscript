@@ -34,8 +34,7 @@ import {
 } from "./parser";
 
 import {
-  Program,
-  LIBRARY_PREFIX
+  Program
 } from "./program";
 
 /** Parses a source file. If `parser` has been omitted a new one is created. */
@@ -98,11 +97,6 @@ export function setNoAssert(options: Options, noAssert: bool): void {
   options.noAssert = noAssert;
 }
 
-/** Sets the `noMemory` option. */
-export function setNoMemory(options: Options, noMemory: bool): void {
-  options.noMemory = noMemory;
-}
-
 /** Sets the `importMemory` option. */
 export function setImportMemory(options: Options, importMemory: bool): void {
   options.importMemory = importMemory;
@@ -140,6 +134,12 @@ export function enableFeature(options: Options, feature: Feature): void {
   options.features |= feature;
 }
 
+/** Gives the compiler a hint at the optimize levels that will be used later on. */
+export function setOptimizeLevelHints(options: Options, optimizeLevel: i32, shrinkLevel: i32): void {
+  options.optimizeLevelHint = optimizeLevel;
+  options.shrinkLevelHint = shrinkLevel;
+}
+
 /** Finishes parsing. */
 export function finishParsing(parser: Parser): Program {
   return parser.finish();
@@ -168,4 +168,4 @@ export function buildTSD(program: Program): string {
 }
 
 /** Prefix indicating a library file. */
-export { LIBRARY_PREFIX };
+export { LIBRARY_PREFIX } from "./common";

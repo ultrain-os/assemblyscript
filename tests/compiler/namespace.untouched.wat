@@ -6,18 +6,14 @@
  (global $namespace/Outer.Inner.anEnum.TWO i32 (i32.const 2))
  (global $namespace/Joined.THREE i32 (i32.const 3))
  (global $HEAP_BASE i32 (i32.const 8))
- (memory $0 1)
+ (memory $0 0)
  (export "memory" (memory $0))
  (start $start)
  (func $namespace/Outer.Inner.aFunc (; 0 ;) (type $i) (result i32)
-  (return
-   (get_global $namespace/Outer.Inner.aVar)
-  )
+  (get_global $namespace/Outer.Inner.aVar)
  )
  (func $namespace/Joined.anotherFunc (; 1 ;) (type $i) (result i32)
-  (return
-   (i32.const 3)
-  )
+  (i32.const 3)
  )
  (func $start (; 2 ;) (type $v)
   (drop

@@ -12,6 +12,8 @@
  * @module std/portable
  *//***/
 
+/// <reference no-default-lib="true"/>
+
 // Portable types
 
 declare type i8 = number;
@@ -25,6 +27,9 @@ declare type bool = boolean;
 declare type usize = number;
 declare type f32 = number;
 declare type f64 = number;
+
+/** Compiler target. 0 = JS, 1 = WASM32, 2 = WASM64. */
+declare const ASC_TARGET: i32;
 
 /** Converts any other numeric value to an 8-bit signed integer. */
 declare function i8(value: i8 | i16 | i32 | isize | u8 | u16 | u32 | usize | bool | f32 | f64): i8;
@@ -309,11 +314,6 @@ declare class Error {
   stack: string | null;
 }
 
-declare class Symbol {
-  private constructor();
-  static readonly iterator: symbol;
-}
-
 declare class Set<T> {
   constructor(entries?: T[]);
   readonly size: i32;
@@ -336,6 +336,14 @@ declare class Map<K,V> {
   values(): Iterable<V>;
   [Symbol.iterator](): Iterator<[K,V]>;
 }
+
+interface SymbolConstructor {
+  (description?: string | null): symbol;
+  for(key: string): symbol;
+  keyFor(sym: symbol): string | null;
+  readonly iterator: symbol;
+}
+declare const Symbol: SymbolConstructor;
 
 interface Iterable<T> {
   [Symbol.iterator](): Iterator<T>;

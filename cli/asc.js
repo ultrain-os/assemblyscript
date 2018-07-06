@@ -11,29 +11,38 @@
  * @module cli/asc
  */
 
+// Use "." instead of "/" as cwd in browsers
+if (process.browser) process.cwd = function() { return "."; };
+
 const fs = require("fs");
 const path = require("path");
 const utf8 = require("@protobufjs/utf8");
+const colorsUtil = require("./util/colors");
+const optionsUtil = require("./util/options");
 const EOL = process.platform === "win32" ? "\r\n" : "\n";
 
 // Use distribution files if present, otherwise run the sources directly
-var assemblyscript, isDev;
+var assemblyscript, isDev = false;
 (() => {
-  try {
+  try { // `asc` on the command line
     assemblyscript = require("../dist/assemblyscript.js");
-    isDev = false;
-    try { require("source-map-support").install(); } catch (e) {/* optional */}
   } catch (e) {
-    try {
+    try { // `asc` on the command line without dist files
       require("ts-node").register({ project: path.join(__dirname, "..", "src", "tsconfig.json") });
       require("../src/glue/js");
       assemblyscript = require("../src");
       isDev = true;
-    } catch (e) {
-      // last resort: same directory CommonJS
-      assemblyscript = eval("require('./assemblyscript')");
-      isDev = true;
-
+    } catch (e_ts) {
+      try { // `require("dist/asc.js")` in explicit browser tests
+        assemblyscript = eval("require('./assemblyscript')");
+      } catch (e) {
+        // combine both errors that lead us here
+        e.stack = e_ts.stack + "\n---\n" + e.stack;
+        // Emscripten adds an `uncaughtException` listener to Binaryen that results in an additional
+        // useless code fragment on top of the actual error. suppress this:
+        if (process.removeAllListeners) process.removeAllListeners("uncaughtException");
+        throw e;
+      }
     }
   }
 })();
@@ -68,7 +77,7 @@ exports.defaultShrinkLevel = 1;
 /** Bundled library files. */
 exports.libraryFiles = exports.isBundle ? BUNDLE_LIBRARY : (() => { // set up if not a bundle
   const libDir = path.join(__dirname, "..", "std", "assembly");
-  const libFiles = require("glob").sync("**/*.ts", { cwd: libDir });
+  const libFiles = require("glob").sync("**/!(*.d).ts", { cwd: libDir });
   const bundled = {};
   libFiles.forEach(file => bundled[file.replace(/\.ts$/, "")] = fs.readFileSync(path.join(libDir, file), "utf8" ));
   return bundled;
@@ -78,8 +87,8 @@ exports.libraryFiles = exports.isBundle ? BUNDLE_LIBRARY : (() => { // set up if
 exports.definitionFiles = exports.isBundle ? BUNDLE_DEFINITIONS : (() => { // set up if not a bundle
   const stdDir = path.join(__dirname, "..", "std");
   return {
-    "assembly": fs.readFileSync(path.join(stdDir, "assembly.d.ts"), "utf8"),
-    "portable": fs.readFileSync(path.join(stdDir, "portable.d.ts"), "utf8")
+    "assembly": fs.readFileSync(path.join(stdDir, "assembly", "index.d.ts"), "utf8"),
+    "portable": fs.readFileSync(path.join(stdDir, "portable", "index.d.ts"), "utf8")
   };
 
 })();
@@ -93,12 +102,16 @@ exports.compileString = (sources, options) => {
     binary: null,
     text: null
   });
-  exports.main([
+  var argv = [
     "--binaryFile", "binary",
     "--textFile", "text",
-    ...Object.keys(options || {}).map(arg => `--${arg}=${options[arg]}`),
-    ...Object.keys(sources),
-  ], {
+  ];
+  Object.keys(options || {}).forEach(key => {
+    var val = options[key];
+    if (Array.isArray(val)) val.forEach(val => argv.push("--" + key, String(val)));
+    else argv.push("--" + key, String(val));
+  });
+  exports.main(argv.concat(Object.keys(sources)), {
     stdout: output.stdout,
     stderr: output.stderr,
     readFile: name => sources.hasOwnProperty(name) ? sources[name] : null,
@@ -109,7 +122,7 @@ exports.compileString = (sources, options) => {
 }
 
 /** Runs the command line utility using the specified arguments array. */
-exports.main = function main(args, options, callback, isDispatch) {
+exports.main = function main(argv, options, callback, isDispatch) {
   if (typeof options === "function") {
     callback = options;
     options = {};
@@ -124,23 +137,38 @@ exports.main = function main(args, options, callback, isDispatch) {
   const listFiles = options.listFiles || listFilesNode;
   const stats = options.stats || createStats();
 
-  // All of the above must be specified in browser environments
+  // Output must be specified if not present in the environment
   if (!stdout) throw Error("'options.stdout' must be specified");
   if (!stderr) throw Error("'options.stderr' must be specified");
-  if (!fs.readFileSync) {
-    if (readFile === readFileNode) throw Error("'options.readFile' must be specified");
-    if (writeFile === writeFileNode) throw Error("'options.writeFile' must be specified");
-    if (listFiles === listFilesNode) throw Error("'options.listFiles' must be specified");
+
+  const opts = optionsUtil.parse(argv, exports.options);
+  const args = opts.options;
+  argv = opts.arguments;
+  if (args.noColors) {
+    colorsUtil.stdout.supported =
+    colorsUtil.stderr.supported = false;
+  } else {
+    colorsUtil.stdout = colorsUtil.from(stdout);
+    colorsUtil.stderr = colorsUtil.from(stderr);
   }
 
-  // const args = parseArguments(argv);
-  const indent = 24;
+  // Check for unknown arguments
+  if (opts.unknown.length) {
+    opts.unknown.forEach(arg => {
+      stderr.write(colorsUtil.stderr.yellow("WARN: ") + "Unknown option '" + arg + "'" + EOL);
+    });
+  }
+
+  // Check for trailing arguments
+  if (opts.trailing.length) {
+    stderr.write(colorsUtil.stderr.yellow("WARN: ") + "Unsupported trailing arguments: " + opts.trailing.join(" ") + EOL);
+  }
 
   // Use default callback if none is provided
   if (!callback) callback = function defaultCallback(err) {
     var code = 0;
     if (err) {
-      stderr.write(err.stack + EOL);
+      stderr.write(colorsUtil.stderr.red("ERROR: ") + err.stack.replace(/^ERROR: /i, "") + EOL);
       code = 1;
     }
     return code;
@@ -152,41 +180,30 @@ exports.main = function main(args, options, callback, isDispatch) {
     return callback(null);
   }
   // Print the help message if requested or no source files are provided
-  if (args.help || args._.length < 1) {
-    const opts = [];
-    Object.keys(exports.options).forEach(name => {
-      var option = exports.options[name];
-      var text = " ";
-      text += "--" + name;
-      if (option.aliases && option.aliases[0].length === 1) {
-        text += ", -" + option.aliases[0];
-      }
-      while (text.length < indent) {
-        text += " ";
-      }
-      if (Array.isArray(option.description)) {
-        opts.push(text + option.description[0] + option.description.slice(1).map(line => {
-          for (let i = 0; i < indent; ++i) {
-            line = " " + line;
-          }
-          return EOL + line;
-        }).join(""));
-      } else {
-        opts.push(text + option.description);
-      }
-    });
-
-    (args.help ? stdout : stderr).write([
-      "Version " + exports.version + (isDev ? "-dev" : ""),
-      "Syntax:   asc [entryFile ...] [options]",
+  if (args.help || !argv.length) {
+    var out = args.help ? stdout : stderr;
+    var color = args.help ? colorsUtil.stdout : colorsUtil.stderr;
+    out.write([
+      color.white("SYNTAX"),
+      "  " + color.cyan("asc") + " [entryFile ...] [options]",
       "",
-      "Examples: asc hello.ts",
-      "          asc hello.ts -b hello.wasm -t hello.wast",
-      "          asc hello1.ts hello2.ts -b -O > hello.wasm",
+      color.white("EXAMPLES"),
+      "  " + color.cyan("asc") + " hello.ts",
+      "  " + color.cyan("asc") + " hello.ts -b hello.wasm -t hello.wat",
+      "  " + color.cyan("asc") + " hello1.ts hello2.ts -b -O > hello.wasm",
       "",
-      "Options:"
-    ].concat(opts).join(EOL) + EOL);
+      color.white("OPTIONS"),
+    ].concat(
+      optionsUtil.help(exports.options, 24, EOL)
+    ).join(EOL) + EOL);
     return callback(null);
+  }
+
+  // I/O must be specified if not present in the environment
+  if (!fs.readFileSync) {
+    if (readFile === readFileNode) throw Error("'options.readFile' must be specified");
+    if (writeFile === writeFileNode) throw Error("'options.writeFile' must be specified");
+    if (listFiles === listFilesNode) throw Error("'options.listFiles' must be specified");
   }
 
   // Set up base directory
@@ -195,7 +212,6 @@ exports.main = function main(args, options, callback, isDispatch) {
   // Set up transforms
   const transforms = [];
   if (args.transform) {
-    if (typeof args.transform === "string") args.transform = args.transform.split(",");
     args.transform.forEach(transform =>
       transforms.push(
         require(
@@ -238,9 +254,9 @@ exports.main = function main(args, options, callback, isDispatch) {
   args.lib = (!args.lib) ? exports.nodeModulesPrefix : exports.nodeModulesPrefix + "," + args.lib;
 
   if (args.lib) {
-
-    if (typeof args.lib === "string") args.lib = args.lib.split(",");
-    Array.prototype.push.apply(customLibDirs, args.lib.map(lib => lib.trim()));
+    let lib = args.lib;
+    if (typeof lib === "string") lib = lib.split(",");
+    Array.prototype.push.apply(customLibDirs, lib.map(lib => lib.trim()));
     for (let i = 0, k = customLibDirs.length; i < k; ++i) { // custom
       let libDir = customLibDirs[i];
       let libFiles;
@@ -269,11 +285,10 @@ exports.main = function main(args, options, callback, isDispatch) {
   }
 
   // Include entry files
-  for (let i = 0, k = args._.length; i < k; ++i) {
+  for (let i = 0, k = argv.length; i < k; ++i) {
+    const filename = argv[i];
 
-    const filename = args._[i];
-
-    let sourcePath = filename.replace(/\\/g, "/").replace(/(\.ts|\/)$/, "");
+    let sourcePath = String(filename).replace(/\\/g, "/").replace(/(\.ts|\/)$/, "");
 
     // Try entryPath.ts, then entryPath/index.ts
     let sourceText = readFile(path.join(baseDir, sourcePath) + ".ts");
@@ -391,16 +406,32 @@ exports.main = function main(args, options, callback, isDispatch) {
   // Finish parsing
   const program = assemblyscript.finishParsing(parser);
 
+  // Set up optimization levels
+  var optimizeLevel = 0;
+  var shrinkLevel = 0;
+  if (args.optimize) {
+    optimizeLevel = exports.defaultOptimizeLevel;
+    shrinkLevel = exports.defaultShrinkLevel;
+  }
+  if (typeof args.optimizeLevel === "number") {
+    optimizeLevel = args.optimizeLevel;
+  }
+  if (typeof args.shrinkLevel === "number") {
+    shrinkLevel = args.shrinkLevel;
+  }
+  optimizeLevel = Math.min(Math.max(optimizeLevel, 0), 3);
+  shrinkLevel = Math.min(Math.max(shrinkLevel, 0), 2);
+
   // Begin compilation
   const compilerOptions = assemblyscript.createOptions();
   assemblyscript.setTarget(compilerOptions, 0);
-  assemblyscript.setNoTreeShaking(compilerOptions, !!args.noTreeShaking);
-  assemblyscript.setNoAssert(compilerOptions, !!args.noAssert);
-  assemblyscript.setNoMemory(compilerOptions, !!args.noMemory);
-  assemblyscript.setImportMemory(compilerOptions, !!args.importMemory);
-  assemblyscript.setImportTable(compilerOptions, !!args.importTable);
+  assemblyscript.setNoTreeShaking(compilerOptions, args.noTreeShaking);
+  assemblyscript.setNoAssert(compilerOptions, args.noAssert);
+  assemblyscript.setImportMemory(compilerOptions, args.importMemory);
+  assemblyscript.setImportTable(compilerOptions, args.importTable);
   assemblyscript.setMemoryBase(compilerOptions, args.memoryBase >>> 0);
   assemblyscript.setSourceMap(compilerOptions, args.sourceMap != null);
+  assemblyscript.setOptimizeLevelHints(compilerOptions, optimizeLevel, shrinkLevel);
 
   // Initialize default aliases
   assemblyscript.setGlobalAlias(compilerOptions, "Math", "NativeMath");
@@ -408,9 +439,8 @@ exports.main = function main(args, options, callback, isDispatch) {
   assemblyscript.setGlobalAlias(compilerOptions, "abort", "~lib/env/abort"); // to disable: --use abort=
 
   // Add or override aliases if specified
-  var aliases = args.use;
-  if (aliases != null) {
-    if (typeof aliases === "string") aliases = aliases.split(",");
+  if (args.use) {
+    let aliases = args.use;
     for (let i = 0, k = aliases.length; i < k; ++i) {
       let part = aliases[i];
       let p = part.indexOf("=");
@@ -478,53 +508,13 @@ exports.main = function main(args, options, callback, isDispatch) {
     return callback(Error("Unsupported trap mode"));
   }
 
-  var optimizeLevel = -1;
-  var shrinkLevel = 0;
-  var debugInfo = !args.noDebug;
-
-  if (args.optimize !== false) {
-    if (typeof args.optimize === "number") {
-      optimizeLevel = args.optimize;
-    } else if (args["0"]) {
-      optimizeLevel = 0;
-    } else if (args["1"]) {
-      optimizeLevel = 1;
-    } else if (args["2"]) {
-      optimizeLevel = 2;
-    } else if (args["3"]) {
-      optimizeLevel = 3;
-    } else if (args.optimize === true) {
-      optimizeLevel = exports.defaultOptimizeLevel;
-      shrinkLevel = exports.defaultShrinkLevel;
-    } else
-      optimizeLevel = 0;
-  }
-
-  if (args["s"]) {
-    shrinkLevel = 1;
-  } else if (args["z"]) {
-    shrinkLevel = 2;
-  }
-
-  if (typeof args.optimizeLevel === "number") {
-    optimizeLevel = args.optimizeLevel;
-  }
-
-  if (typeof args.shrinkLevel === "number") {
-    shrinkLevel = args.shrinkLevel;
-  } else if (args.shrinkLevel === "s") {
-    shrinkLevel = 1;
-  } else if (args.shrinkLevel === "z") {
-    shrinkLevel = 2;
-  }
-
   // Implicitly run costly non-LLVM optimizations on -O3 or -Oz
   // see: https://github.com/WebAssembly/binaryen/pull/1596
   if (optimizeLevel >= 3 || shrinkLevel >= 2) optimizeLevel = 4;
 
-  module.setOptimizeLevel(optimizeLevel > 0 ? optimizeLevel : 0);
+  module.setOptimizeLevel(optimizeLevel);
   module.setShrinkLevel(shrinkLevel);
-  module.setDebugInfo(debugInfo);
+  module.setDebugInfo(!args.noDebug);
 
   var runPasses = [];
   if (args.runPasses) {
@@ -540,7 +530,7 @@ exports.main = function main(args, options, callback, isDispatch) {
   }
 
   // Optimize the module if requested
-  if (optimizeLevel >= 0) {
+  if (optimizeLevel > 0 || shrinkLevel > 0) {
     stats.optimizeCount++;
     stats.optimizeTime += measure(() => {
       module.optimize();
@@ -779,7 +769,7 @@ exports.main = function main(args, options, callback, isDispatch) {
     var files;
     try {
       stats.readTime += measure(() => {
-        files = require("glob").sync("*.ts", { cwd: dirname });
+        files = fs.readdirSync(dirname).filter(file => /^(?!.*\.d\.ts$).*\.ts$/.test(file));
       });
       return files;
     } catch (e) {
@@ -802,28 +792,23 @@ exports.main = function main(args, options, callback, isDispatch) {
   }
 }
 
-/** Parses the specified command line arguments. */
-function parseArguments(argv) {
-  const opts = {};
-  Object.keys(exports.options).forEach(key => {
-    const opt = exports.options[key];
-    if (opt.aliases) {
-      (opts.alias || (opts.alias = {}))[key] = opt.aliases;
-    }
-    if (opt.default !== undefined) {
-      (opts.default || (opts.default = {}))[key] = opt.default;
-    }
-    if (opt.type === "string") {
-      (opts.string || (opts.string = [])).push(key);
-    } else if (opt.type === "boolean") {
-      (opts.boolean || (opts.boolean = [])).push(key);
-    }
-  });
-  return require("minimist")(argv, opts);
-}
-
-
-exports.parseArguments = parseArguments;
+var argumentSubstitutions = {
+  "-O"  : [ "--optimize" ],
+  "-Os" : [ "--optimize", "--shrinkLevel", "1" ],
+  "-Oz" : [ "--optimize", "--shrinkLevel", "2" ],
+  "-O0" : [ "--optimizeLevel", "0", "--shrinkLevel", "0" ],
+  "-O0s": [ "--optimizeLevel", "0", "--shrinkLevel", "1" ],
+  "-O0z": [ "--optimizeLevel", "0", "--shrinkLevel", "2" ],
+  "-O1" : [ "--optimizeLevel", "1", "--shrinkLevel", "0" ],
+  "-O1s": [ "--optimizeLevel", "1", "--shrinkLevel", "1" ],
+  "-O1z": [ "--optimizeLevel", "1", "--shrinkLevel", "2" ],
+  "-O2" : [ "--optimizeLevel", "2", "--shrinkLevel", "0" ],
+  "-O2s": [ "--optimizeLevel", "2", "--shrinkLevel", "1" ],
+  "-O2z": [ "--optimizeLevel", "2", "--shrinkLevel", "2" ],
+  "-O3" : [ "--optimizeLevel", "3", "--shrinkLevel", "0" ],
+  "-O3s": [ "--optimizeLevel", "3", "--shrinkLevel", "1" ],
+  "-O3z": [ "--optimizeLevel", "3", "--shrinkLevel", "2" ],
+};
 
 /** Checks diagnostics emitted so far for errors. */
 function checkDiagnostics(emitter, stderr) {
@@ -917,6 +902,9 @@ function createMemoryStream(fn) {
       chunk = buffer;
     }
     this.push(chunk);
+  };
+  stream.reset = function() {
+    stream.length = 0;
   };
   stream.toBuffer = function() {
     var offset = 0, i = 0, k = this.length;

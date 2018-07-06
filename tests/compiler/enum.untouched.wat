@@ -19,7 +19,7 @@
  (global $enum/SelfReference.ONE i32 (i32.const 1))
  (global $enum/enumType (mut i32) (i32.const 0))
  (global $HEAP_BASE i32 (i32.const 8))
- (memory $0 1)
+ (memory $0 0)
  (export "Implicit.ZERO" (global $enum/Implicit.ZERO))
  (export "Implicit.ONE" (global $enum/Implicit.ONE))
  (export "Implicit.TWO" (global $enum/Implicit.TWO))
@@ -37,9 +37,7 @@
  (export "memory" (memory $0))
  (start $start)
  (func $enum/getZero (; 0 ;) (type $i) (result i32)
-  (return
-   (i32.const 0)
-  )
+  (i32.const 0)
  )
  (func $start (; 1 ;) (type $v)
   (set_global $enum/NonConstant.ZERO

@@ -4,13 +4,11 @@
  (global $void/u8Val1 (mut i32) (i32.const 1))
  (global $void/u8Val2 (mut i32) (i32.const 255))
  (global $HEAP_BASE i32 (i32.const 8))
- (memory $0 1)
+ (memory $0 0)
  (export "memory" (memory $0))
  (start $start)
  (func $void/anInt (; 0 ;) (type $i) (result i32)
-  (return
-   (i32.const 2)
-  )
+  (i32.const 2)
  )
  (func $start (; 1 ;) (type $v)
   (drop

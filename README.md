@@ -1,7 +1,6 @@
 ![](https://avatars1.githubusercontent.com/u/28916798?s=64) AssemblyScript
 =================
 
-[![npm](https://img.shields.io/npm/v/assemblyscript.svg)](https://www.npmjs.com/package/assemblyscript)
 [![Build Status](https://travis-ci.org/AssemblyScript/assemblyscript.svg?branch=master)](https://travis-ci.org/AssemblyScript/assemblyscript)
 [![Snap Status](https://build.snapcraft.io/badge/AssemblyScript/assemblyscript.svg)](https://build.snapcraft.io/user/AssemblyScript/assemblyscript)
 
@@ -81,7 +80,7 @@ To build an UMD bundle to `dist/assemblyscript.js` (depends on [binaryen.js](htt
 $> npm run build
 ```
 
-Cleaning the distributions files (again):
+Cleaning the distribution files (again):
 
 ```
 $> npm run clean

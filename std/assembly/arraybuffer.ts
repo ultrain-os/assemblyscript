@@ -9,10 +9,10 @@ export class ArrayBuffer {
 
   readonly byteLength: i32; // capped to [0, MAX_LENGTH]
 
-  constructor(length: i32) {
+  constructor(length: i32, unsafe: bool = false) {
     if (<u32>length > <u32>MAX_BLENGTH) throw new RangeError("Invalid array buffer length");
     var buffer = allocUnsafe(length);
-    set_memory(changetype<usize>(buffer) + HEADER_SIZE, 0, <usize>length);
+    if (!unsafe) set_memory(changetype<usize>(buffer) + HEADER_SIZE, 0, <usize>length);
     return buffer;
   }
 

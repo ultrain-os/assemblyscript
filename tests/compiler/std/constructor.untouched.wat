@@ -19,7 +19,7 @@
  (global $std/constructor/ctorAllocates (mut i32) (i32.const 0))
  (global $std/constructor/ctorConditionallyAllocates (mut i32) (i32.const 0))
  (global $HEAP_BASE i32 (i32.const 8))
- (memory $0 1)
+ (memory $0 0)
  (export "memory" (memory $0))
  (start $start)
  (func $~lib/allocator/arena/allocate_memory (; 0 ;) (type $ii) (param $0 i32) (result i32)
@@ -128,13 +128,10 @@
     )
    )
   )
-  (return
-   (i32.const 0)
-  )
+  (i32.const 0)
  )
  (func $std/constructor/EmptyCtor#constructor (; 1 ;) (type $ii) (param $0 i32) (result i32)
   (local $1 i32)
-  (nop)
   (tee_local $0
    (if (result i32)
     (get_local $0)
@@ -154,7 +151,6 @@
  )
  (func $std/constructor/EmptyCtorWithFieldInit#constructor (; 2 ;) (type $ii) (param $0 i32) (result i32)
   (local $1 i32)
-  (nop)
   (tee_local $0
    (if (result i32)
     (get_local $0)
@@ -178,7 +174,6 @@
  )
  (func $std/constructor/EmptyCtorWithFieldNoInit#constructor (; 3 ;) (type $ii) (param $0 i32) (result i32)
   (local $1 i32)
-  (nop)
   (tee_local $0
    (if (result i32)
     (get_local $0)
@@ -201,10 +196,8 @@
   )
  )
  (func $std/constructor/CtorReturns#constructor (; 4 ;) (type $ii) (param $0 i32) (result i32)
-  (return
-   (call $~lib/allocator/arena/allocate_memory
-    (i32.const 0)
-   )
+  (call $~lib/allocator/arena/allocate_memory
+   (i32.const 0)
   )
  )
  (func $std/constructor/CtorConditionallyReturns#constructor (; 5 ;) (type $ii) (param $0 i32) (result i32)

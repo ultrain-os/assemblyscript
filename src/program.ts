@@ -4,7 +4,19 @@
  *//***/
 
 import {
-  Options
+  CommonFlags,
+  PATH_DELIMITER,
+  STATIC_DELIMITER,
+  INSTANCE_DELIMITER,
+  LIBRARY_PREFIX,
+  GETTER_PREFIX,
+  SETTER_PREFIX,
+  FILESPACE_PREFIX
+} from "./common";
+
+import {
+  Options,
+  Feature
 } from "./compiler";
 
 import {
@@ -18,7 +30,6 @@ import {
   TypeKind,
   TypeFlags,
   Signature,
-
   typesToString
 } from "./types";
 
@@ -100,47 +111,28 @@ import {
   getConstValueF64,
   getConstValueI64Low
 } from "./module";
-import { CharCode } from "./util";
 
+import {
+  CharCode
+} from "./util";
 
 import {
   Abi
 } from "./abi";
 
-/** Path delimiter inserted between file system levels. */
-export const PATH_DELIMITER = "/";
-/** Substitution used to indicate the parent directory. */
-export const PARENT_SUBST = "..";
-/** Function name prefix used for getters. */
-export const GETTER_PREFIX = "get:";
-/** Function name prefix used for setters. */
-export const SETTER_PREFIX = "set:";
-/** Delimiter used between class names and instance members. */
-export const INSTANCE_DELIMITER = "#";
-/** Delimiter used between class and namespace names and static members. */
-export const STATIC_DELIMITER = ".";
-/** Delimiter used between a function and its inner elements. */
-export const INNER_DELIMITER = "~";
-/** Substitution used to indicate a library directory. */
-export const LIBRARY_SUBST = "~lib";
-/** Library directory prefix. */
-export const LIBRARY_PREFIX = LIBRARY_SUBST + PATH_DELIMITER;
-/** Prefix used to indicate a filespace element. */
-export const FILESPACE_PREFIX = "file:";
+/** Represents a yet unresolved import. */
+class QueuedImport {
+  localName: string;
+  externalName: string;
+  externalNameAlt: string;
+  declaration: ImportDeclaration | null; // not set if a filespace
+}
 
 /** Represents a yet unresolved export. */
 class QueuedExport {
+  externalName: string;
   isReExport: bool;
-  referencedName: string;
   member: ExportMember;
-}
-
-/** Represents a yet unresolved import. */
-class QueuedImport {
-  internalName: string;
-  referencedName: string;
-  referencedNameAlt: string;
-  declaration: ImportDeclaration | null; // not set if a filespace
 }
 
 /** Represents a type alias. */
@@ -322,6 +314,7 @@ export class Program extends DiagnosticEmitter {
   diagnosticsOffset: i32 = 0;
   /** Compiler options. */
   options: Options;
+
   /** Elements by internal name. */
   elementsLookup: Map<string,Element> = new Map();
   /** Class and function instances by internal name. */
@@ -334,12 +327,15 @@ export class Program extends DiagnosticEmitter {
   fileLevelExports: Map<string,Element> = new Map();
   /** Module-level exports by exported name. */
   moduleLevelExports: Map<string,Element> = new Map();
+
   /** Array prototype reference. */
   arrayPrototype: ClassPrototype | null = null;
-  /** ArrayBufferView prototype reference. */
-  arrayBufferViewPrototype: InterfacePrototype | null = null;
   /** String instance reference. */
   stringInstance: Class | null = null;
+  /** Start function reference. */
+  startFunction: FunctionPrototype;
+  /** Main function reference, if present. */
+  mainFunction: FunctionPrototype | null = null;
 
   /** Target expression of the previously resolved property or element access. */
   resolvedThisExpression: Expression | null = null;
@@ -385,6 +381,8 @@ export class Program extends DiagnosticEmitter {
   /** Initializes the program and its elements prior to compilation. */
   initialize(options: Options): void {
     this.options = options;
+
+    // add built-in types
     this.typesLookup = new Map([
       ["i8", Type.i8],
       ["i16", Type.i16],
@@ -404,8 +402,27 @@ export class Program extends DiagnosticEmitter {
       ["boolean", Type.bool]
     ]);
 
-    var queuedExports = new Map<string,QueuedExport>();
+    // add compiler hints
+    this.setConstantInteger("ASC_TARGET", Type.i32,
+      i64_new(options.isWasm64 ? 2 : 1));
+    this.setConstantInteger("ASC_NO_TREESHAKING", Type.bool,
+      i64_new(options.noTreeShaking ? 1 : 0, 0));
+    this.setConstantInteger("ASC_NO_ASSERT", Type.bool,
+      i64_new(options.noAssert ? 1 : 0, 0));
+    this.setConstantInteger("ASC_MEMORY_BASE", Type.i32,
+      i64_new(options.memoryBase, 0));
+    this.setConstantInteger("ASC_OPTIMIZE_LEVEL", Type.i32,
+      i64_new(options.optimizeLevelHint, 0));
+    this.setConstantInteger("ASC_SHRINK_LEVEL", Type.i32,
+      i64_new(options.shrinkLevelHint, 0));
+    this.setConstantInteger("ASC_FEATURE_MUTABLE_GLOBAL", Type.bool,
+      i64_new(options.hasFeature(Feature.MUTABLE_GLOBAL) ? 1 : 0, 0));
+    this.setConstantInteger("ASC_FEATURE_SIGN_EXTENSION", Type.bool,
+      i64_new(options.hasFeature(Feature.SIGN_EXTENSION) ? 1 : 0, 0));
+
+    // remember deferred elements
     var queuedImports = new Array<QueuedImport>();
+    var queuedExports = new Map<string,QueuedExport>();
     var queuedExtends = new Array<ClassPrototype>();
     var queuedImplements = new Array<ClassPrototype>();
 
@@ -468,13 +485,13 @@ export class Program extends DiagnosticEmitter {
       let queuedImport = queuedImports[i];
       let declaration = queuedImport.declaration;
       if (declaration) { // named
-        let element = this.tryResolveImport(queuedImport.referencedName, queuedExports);
+        let element = this.tryResolveImport(queuedImport.externalName, queuedExports);
         if (element) {
-          this.elementsLookup.set(queuedImport.internalName, element);
+          this.elementsLookup.set(queuedImport.localName, element);
           queuedImports.splice(i, 1);
         } else {
-          if (element = this.tryResolveImport(queuedImport.referencedNameAlt, queuedExports)) {
-            this.elementsLookup.set(queuedImport.internalName, element);
+          if (element = this.tryResolveImport(queuedImport.externalNameAlt, queuedExports)) {
+            this.elementsLookup.set(queuedImport.localName, element);
             queuedImports.splice(i, 1);
           } else {
             this.error(
@@ -487,13 +504,13 @@ export class Program extends DiagnosticEmitter {
           }
         }
       } else { // filespace
-        let element = this.elementsLookup.get(queuedImport.referencedName);
+        let element = this.elementsLookup.get(queuedImport.externalName);
         if (element) {
-          this.elementsLookup.set(queuedImport.internalName, element);
+          this.elementsLookup.set(queuedImport.localName, element);
           queuedImports.splice(i, 1);
         } else {
-          if (element = this.elementsLookup.get(queuedImport.referencedNameAlt)) {
-            this.elementsLookup.set(queuedImport.internalName, element);
+          if (element = this.elementsLookup.get(queuedImport.externalNameAlt)) {
+            this.elementsLookup.set(queuedImport.localName, element);
             queuedImports.splice(i, 1);
           } else {
             assert(false); // already reported by the parser not finding the file
@@ -509,7 +526,7 @@ export class Program extends DiagnosticEmitter {
       let element: Element | null;
       do {
         if (currentExport.isReExport) {
-          if (element = this.fileLevelExports.get(currentExport.referencedName)) {
+          if (element = this.fileLevelExports.get(currentExport.externalName)) {
             this.setExportAndCheckLibrary(
               exportName,
               element,
@@ -517,7 +534,7 @@ export class Program extends DiagnosticEmitter {
             );
             break;
           }
-          currentExport = queuedExports.get(currentExport.referencedName);
+          currentExport = queuedExports.get(currentExport.externalName);
           if (!currentExport) {
             this.error(
               DiagnosticCode.Module_0_has_no_exported_member_1,
@@ -529,7 +546,7 @@ export class Program extends DiagnosticEmitter {
         } else {
           if (
             // normal export
-            (element = this.elementsLookup.get(currentExport.referencedName)) ||
+            (element = this.elementsLookup.get(currentExport.externalName)) ||
             // library re-export
             (element = this.elementsLookup.get(currentExport.member.name.text))
           ) {
@@ -585,13 +602,6 @@ export class Program extends DiagnosticEmitter {
       this.arrayPrototype = <ClassPrototype>arrayPrototype;
     }
 
-    // register 'ArrayBufferView'
-    var arrayBufferViewPrototype = this.elementsLookup.get("ArrayBufferView");
-    if (arrayBufferViewPrototype) {
-      assert(arrayBufferViewPrototype.kind == ElementKind.INTERFACE_PROTOTYPE);
-      this.arrayBufferViewPrototype = <InterfacePrototype>arrayBufferViewPrototype;
-    }
-
     // register 'String'
     var stringPrototype = this.elementsLookup.get("String");
     if (stringPrototype) {
@@ -610,25 +620,63 @@ export class Program extends DiagnosticEmitter {
         }
       }
     }
+
+    // register 'start'
+    {
+      let element = <Element>assert(this.elementsLookup.get("start"));
+      assert(element.kind == ElementKind.FUNCTION_PROTOTYPE);
+      this.startFunction = <FunctionPrototype>element;
+    }
+
+    // register 'main' if present
+    if (this.moduleLevelExports.has("main")) {
+      let element = <Element>this.moduleLevelExports.get("main");
+      if (
+        element.kind == ElementKind.FUNCTION_PROTOTYPE &&
+        !(<FunctionPrototype>element).isAny(CommonFlags.GENERIC | CommonFlags.AMBIENT)
+      ) {
+        (<FunctionPrototype>element).set(CommonFlags.MAIN);
+        this.mainFunction = <FunctionPrototype>element;
+      }
+    }
+  }
+
+  /** Sets a constant integer value. */
+  setConstantInteger(globalName: string, type: Type, value: I64): void {
+    assert(type.is(TypeFlags.INTEGER));
+    this.elementsLookup.set(globalName,
+      new Global(this, globalName, globalName, type, null, DecoratorFlags.NONE)
+        .withConstantIntegerValue(value)
+    );
+  }
+
+  /** Sets a constant float value. */
+  setConstantFloat(globalName: string, type: Type, value: f64): void {
+    assert(type.is(TypeFlags.FLOAT));
+    this.elementsLookup.set(globalName,
+      new Global(this, globalName, globalName, type, null, DecoratorFlags.NONE)
+        .withConstantFloatValue(value)
+    );
   }
 
   /** Tries to resolve an import by traversing exports and queued exports. */
   private tryResolveImport(
-    referencedName: string,
-    queuedExports: Map<string,QueuedExport>
+    externalName: string,
+    queuedNamedExports: Map<string,QueuedExport>
   ): Element | null {
     var element: Element | null;
     var fileLevelExports = this.fileLevelExports;
     do {
-      if (element = fileLevelExports.get(referencedName)) return element;
-      let queuedExport = queuedExports.get(referencedName);
-      if (!queuedExport) return null;
+      if (element = fileLevelExports.get(externalName)) return element;
+      let queuedExport = queuedNamedExports.get(externalName);
+      if (!queuedExport) break;
       if (queuedExport.isReExport) {
-        referencedName = queuedExport.referencedName;
+        externalName = queuedExport.externalName;
         continue;
       }
-      return this.elementsLookup.get(queuedExport.referencedName);
+      return this.elementsLookup.get(queuedExport.externalName);
     } while (true);
+    return null;
   }
 
   private filterDecorators(decorators: DecoratorNode[], acceptedFlags: DecoratorFlags): DecoratorFlags {
@@ -775,15 +823,15 @@ export class Program extends DiagnosticEmitter {
       this.fileLevelExports.set(internalName, prototype);
       this.currentFilespace.members.set(simpleName, prototype);
       if (prototype.is(CommonFlags.EXPORT) && declaration.range.source.isEntry) {
-        if (this.moduleLevelExports.has(internalName)) {
+        if (this.moduleLevelExports.has(simpleName)) {
           this.error(
             DiagnosticCode.Export_declaration_conflicts_with_exported_declaration_of_0,
-            declaration.name.range, internalName
+            declaration.name.range, (<Element>this.moduleLevelExports.get(simpleName)).internalName
           );
           return;
         }
         prototype.set(CommonFlags.MODULE_EXPORT);
-        this.moduleLevelExports.set(internalName, prototype);
+        this.moduleLevelExports.set(simpleName, prototype);
       }
     }
 
@@ -1209,15 +1257,15 @@ export class Program extends DiagnosticEmitter {
       this.fileLevelExports.set(internalName, element);
       this.currentFilespace.members.set(simpleName, element);
       if (declaration.range.source.isEntry) {
-        if (this.moduleLevelExports.has(internalName)) {
+        if (this.moduleLevelExports.has(simpleName)) {
           this.error(
             DiagnosticCode.Export_declaration_conflicts_with_exported_declaration_of_0,
-            declaration.name.range, internalName
+            declaration.name.range, (<Element>this.moduleLevelExports.get(simpleName)).internalName
           );
           return;
         }
         element.set(CommonFlags.MODULE_EXPORT);
-        this.moduleLevelExports.set(internalName, element);
+        this.moduleLevelExports.set(simpleName, element);
       }
     }
 
@@ -1342,7 +1390,7 @@ export class Program extends DiagnosticEmitter {
       }
       queuedExport = new QueuedExport();
       queuedExport.isReExport = false;
-      queuedExport.referencedName = referencedName; // -> internal name
+      queuedExport.externalName = referencedName; // -> here: local name
       queuedExport.member = member;
       queuedExports.set(externalName, queuedExport);
 
@@ -1365,7 +1413,7 @@ export class Program extends DiagnosticEmitter {
       let seen = new Set<QueuedExport>();
       while (queuedExport = queuedExports.get(referencedName)) {
         if (queuedExport.isReExport) {
-          referencedElement = this.fileLevelExports.get(queuedExport.referencedName);
+          referencedElement = this.fileLevelExports.get(queuedExport.externalName);
           if (referencedElement) {
             this.setExportAndCheckLibrary(
               externalName,
@@ -1374,11 +1422,11 @@ export class Program extends DiagnosticEmitter {
             );
             return;
           }
-          referencedName = queuedExport.referencedName;
+          referencedName = queuedExport.externalName;
           if (seen.has(queuedExport)) break;
           seen.add(queuedExport);
         } else {
-          referencedElement = this.elementsLookup.get(queuedExport.referencedName);
+          referencedElement = this.elementsLookup.get(queuedExport.externalName);
           if (referencedElement) {
             this.setExportAndCheckLibrary(
               externalName,
@@ -1401,7 +1449,7 @@ export class Program extends DiagnosticEmitter {
       }
       queuedExport = new QueuedExport();
       queuedExport.isReExport = true;
-      queuedExport.referencedName = referencedName; // -> export name
+      queuedExport.externalName = referencedName; // -> here: external name
       queuedExport.member = member;
       queuedExports.set(externalName, queuedExport);
     }
@@ -1430,7 +1478,8 @@ export class Program extends DiagnosticEmitter {
       decorators
         ? this.filterDecorators(decorators,
             DecoratorFlags.GLOBAL |
-            DecoratorFlags.INLINE
+            DecoratorFlags.INLINE |
+            DecoratorFlags.EXTERNAL
           )
         : DecoratorFlags.NONE
     );
@@ -1465,15 +1514,15 @@ export class Program extends DiagnosticEmitter {
       this.fileLevelExports.set(internalName, prototype);
       this.currentFilespace.members.set(simpleName, prototype);
       if (declaration.range.source.isEntry) {
-        if (this.moduleLevelExports.has(internalName)) {
+        if (this.moduleLevelExports.has(simpleName)) {
           this.error(
             DiagnosticCode.Duplicate_identifier_0,
-            declaration.name.range, internalName
+            declaration.name.range, (<Element>this.moduleLevelExports.get(simpleName)).internalName
           );
           return;
         }
         prototype.set(CommonFlags.MODULE_EXPORT);
-        this.moduleLevelExports.set(internalName, prototype);
+        this.moduleLevelExports.set(simpleName, prototype);
       }
     }
 
@@ -1519,11 +1568,11 @@ export class Program extends DiagnosticEmitter {
 
       // otherwise queue it
       let queuedImport = new QueuedImport();
-      queuedImport.internalName = internalName;
-      let prefix = FILESPACE_PREFIX + statement.internalPath;
-      queuedImport.referencedName = prefix;
-      queuedImport.referencedNameAlt = prefix + PATH_DELIMITER + "index";
-      queuedImport.declaration = null;
+      queuedImport.localName = internalName;
+      let externalName = FILESPACE_PREFIX + statement.internalPath;
+      queuedImport.externalName = externalName;
+      queuedImport.externalNameAlt = externalName + PATH_DELIMITER + "index";
+      queuedImport.declaration = null; // filespace
       queuedImports.push(queuedImport);
     }
   }
@@ -1531,47 +1580,47 @@ export class Program extends DiagnosticEmitter {
   private initializeImport(
     declaration: ImportDeclaration,
     internalPath: string,
-    queuedExports: Map<string,QueuedExport>,
+    queuedNamedExports: Map<string,QueuedExport>,
     queuedImports: QueuedImport[]
   ): void {
-    var internalName = declaration.fileLevelInternalName;
-    if (this.elementsLookup.has(internalName)) {
+    var localName = declaration.fileLevelInternalName;
+    if (this.elementsLookup.has(localName)) {
       this.error(
         DiagnosticCode.Duplicate_identifier_0,
-        declaration.name.range, internalName
+        declaration.name.range, localName
       );
       return;
     }
 
-    var referencedName = internalPath + PATH_DELIMITER + declaration.externalName.text;
+    var externalName = internalPath + PATH_DELIMITER + declaration.externalName.text;
 
     // resolve right away if the exact export exists
     var element: Element | null;
-    if (element = this.fileLevelExports.get(referencedName)) {
-      this.elementsLookup.set(internalName, element);
+    if (element = this.fileLevelExports.get(externalName)) {
+      this.elementsLookup.set(localName, element);
       return;
     }
 
     // otherwise queue it
     const indexPart = PATH_DELIMITER + "index";
     var queuedImport = new QueuedImport();
-    queuedImport.internalName = internalName;
+    queuedImport.localName = localName;
     if (internalPath.endsWith(indexPart)) {
-      queuedImport.referencedName = referencedName; // try exact first
-      queuedImport.referencedNameAlt = (
+      queuedImport.externalName = externalName; // try exact first
+      queuedImport.externalNameAlt = (
         internalPath.substring(0, internalPath.length - indexPart.length + 1) +
         declaration.externalName.text
       );
     } else {
-      queuedImport.referencedName = referencedName; // try exact first
-      queuedImport.referencedNameAlt = (
+      queuedImport.externalName = externalName; // try exact first
+      queuedImport.externalNameAlt = (
         internalPath +
         indexPart +
         PATH_DELIMITER +
         declaration.externalName.text
       );
     }
-    queuedImport.declaration = declaration;
+    queuedImport.declaration = declaration; // named
     queuedImports.push(queuedImport);
   }
 
@@ -1626,15 +1675,15 @@ export class Program extends DiagnosticEmitter {
       this.fileLevelExports.set(internalName, prototype);
       this.currentFilespace.members.set(simpleName, prototype);
       if (declaration.range.source.isEntry) {
-        if (this.moduleLevelExports.has(internalName)) {
+        if (this.moduleLevelExports.has(simpleName)) {
           this.error(
             DiagnosticCode.Duplicate_identifier_0,
-            declaration.name.range, internalName
+            declaration.name.range, (<Element>this.moduleLevelExports.get(simpleName)).internalName
           );
           return;
         }
         prototype.set(CommonFlags.MODULE_EXPORT);
-        this.moduleLevelExports.set(internalName, prototype);
+        this.moduleLevelExports.set(simpleName, prototype);
       }
     }
 
@@ -1711,15 +1760,18 @@ export class Program extends DiagnosticEmitter {
       }
       this.currentFilespace.members.set(simpleName, namespace);
       if (declaration.range.source.isEntry) {
-        if (this.moduleLevelExports.has(internalName)) {
-          this.error(
-            DiagnosticCode.Duplicate_identifier_0,
-            declaration.name.range, internalName
-          );
-          return;
+        if (this.moduleLevelExports.has(simpleName)) {
+          if (this.moduleLevelExports.get(simpleName) !== namespace) { // not merged
+            this.error(
+              DiagnosticCode.Duplicate_identifier_0,
+              declaration.name.range, (<Element>this.moduleLevelExports.get(simpleName)).internalName
+            );
+            return;
+          }
+        } else {
+          this.moduleLevelExports.set(simpleName, namespace);
         }
         namespace.set(CommonFlags.MODULE_EXPORT);
-        this.moduleLevelExports.set(internalName, namespace);
       }
     }
 
@@ -1806,7 +1858,8 @@ export class Program extends DiagnosticEmitter {
         declaration,
         decorators
           ? this.filterDecorators(decorators,
-              DecoratorFlags.GLOBAL
+              DecoratorFlags.GLOBAL |
+              DecoratorFlags.EXTERNAL
             )
           : DecoratorFlags.NONE
       );
@@ -1840,15 +1893,15 @@ export class Program extends DiagnosticEmitter {
         }
         this.currentFilespace.members.set(simpleName, global);
         if (declaration.range.source.isEntry) {
-          if (this.moduleLevelExports.has(internalName)) {
+          if (this.moduleLevelExports.has(simpleName)) {
             this.error(
               DiagnosticCode.Duplicate_identifier_0,
-              declaration.name.range, internalName
+              declaration.name.range, (<Element>this.moduleLevelExports.get(simpleName)).internalName
             );
             continue;
           }
           global.set(CommonFlags.MODULE_EXPORT);
-          this.moduleLevelExports.set(internalName, global);
+          this.moduleLevelExports.set(simpleName, global);
         }
       }
       this.checkGlobalOptions(global, declaration);
@@ -2047,58 +2100,46 @@ export class Program extends DiagnosticEmitter {
   /** Resolves an identifier to the element it refers to. */
   resolveIdentifier(
     identifier: IdentifierExpression,
-    contextualFunction: Function | null,
-    contextualEnum: Enum | null = null
+    context: Element | null
   ): Element | null {
     var name = identifier.text;
-
     var element: Element | null;
-    var namespace: Element | null;
 
-    // check siblings
-    if (contextualEnum) {
+    if (context) {
+      let parent: Element | null;
 
-      if (
-        contextualEnum.members &&
-        (element = contextualEnum.members.get(name)) &&
-        element.kind == ElementKind.ENUMVALUE
-      ) {
-        this.resolvedThisExpression = null;
-        this.resolvedElementExpression = null;
-        return element; // ENUMVALUE
-      }
-
-    } else if (contextualFunction) {
-
-      // check locals
-      if (element = contextualFunction.flow.getScopedLocal(name)) {
-        this.resolvedThisExpression = null;
-        this.resolvedElementExpression = null;
-        return element; // LOCAL
-      }
-
-      // check outer scope locals
-      // let outerScope = contextualFunction.outerScope;
-      // while (outerScope) {
-      //   if (element = outerScope.getScopedLocal(name)) {
-      //     let scopedLocal = <Local>element;
-      //     let scopedGlobal = scopedLocal.scopedGlobal;
-      //     if (!scopedGlobal) scopedGlobal = outerScope.addScopedGlobal(scopedLocal);
-      //     if (!resolvedElement) resolvedElement = new ResolvedElement();
-      //     return resolvedElement.set(scopedGlobal);
-      //   }
-      //   outerScope = outerScope.currentFunction.outerScope;
-      // }
-
-      // search contextual parent namespaces if applicable
-      if (namespace = contextualFunction.prototype.parent) {
-        do {
-          if (element = this.elementsLookup.get(namespace.internalName + STATIC_DELIMITER + name)) {
+      switch (context.kind) {
+        case ElementKind.FUNCTION: { // search locals
+          element = (<Function>context).flow.getScopedLocal(name);
+          if (element) {
             this.resolvedThisExpression = null;
             this.resolvedElementExpression = null;
-            return element; // LOCAL
+            return element;
           }
-        } while (namespace = namespace.parent);
+          parent = (<Function>context).prototype.parent;
+          break;
+        }
+        case ElementKind.CLASS: {
+          parent = (<Class>context).prototype.parent;
+          break;
+        }
+        default: {
+          parent = context;
+          break;
+        }
+      }
+
+      // search parent
+      while (parent) {
+        let members = parent.members;
+        if (members) {
+          if (element = members.get(name)) {
+            this.resolvedThisExpression = null;
+            this.resolvedElementExpression = null;
+            return element;
+          }
+        }
+        parent = parent.parent;
       }
     }
 
@@ -2422,6 +2463,16 @@ export class Program extends DiagnosticEmitter {
     );
     return null;
   }
+
+  // resolveExpressionType(
+  //   expression: Expression,
+  //   contextualFunction: Function
+  // ): Type {
+  //   var element = this.resolveExpression(expression, contextualFunction);
+  //   switch (element.kind) {
+
+  //   }
+  // }
 }
 
 /** Indicates the specific kind of an {@link Element}. */
@@ -2460,75 +2511,6 @@ export enum ElementKind {
   FILESPACE,
 }
 
-/** Indicates traits of a {@link Node} or {@link Element}. */
-export enum CommonFlags {
-  /** No flags set. */
-  NONE = 0,
-
-  // Basic modifiers
-
-  /** Has an `import` modifier. */
-  IMPORT = 1 << 0,
-  /** Has an `export` modifier. */
-  EXPORT = 1 << 1,
-  /** Has a `declare` modifier. */
-  DECLARE = 1 << 2,
-  /** Has a `const` modifier. */
-  CONST = 1 << 3,
-  /** Has a `let` modifier. */
-  LET = 1 << 4,
-  /** Has a `static` modifier. */
-  STATIC = 1 << 5,
-  /** Has a `readonly` modifier. */
-  READONLY = 1 << 6,
-  /** Has an `abstract` modifier. */
-  ABSTRACT = 1 << 7,
-  /** Has a `public` modifier. */
-  PUBLIC = 1 << 8,
-  /** Has a `private` modifier. */
-  PRIVATE = 1 << 9,
-  /** Has a `protected` modifier. */
-  PROTECTED = 1 << 10,
-  /** Has a `get` modifier. */
-  GET = 1 << 11,
-  /** Has a `set` modifier. */
-  SET = 1 << 12,
-
-  // Extended modifiers usually derived from basic modifiers
-
-  /** Is ambient, that is either declared or nested in a declared element. */
-  AMBIENT = 1 << 13,
-  /** Is generic. */
-  GENERIC = 1 << 14,
-  /** Is part of a generic context. */
-  GENERIC_CONTEXT = 1 << 15,
-  /** Is an instance member. */
-  INSTANCE = 1 << 16,
-  /** Is a constructor. */
-  CONSTRUCTOR = 1 << 17,
-  /** Is an arrow function. */
-  ARROW = 1 << 18,
-  /** Is a module export. */
-  MODULE_EXPORT = 1 << 19,
-  /** Is a module import. */
-  MODULE_IMPORT = 1 << 20,
-
-  // Compilation states
-
-  /** Is a builtin. */
-  BUILTIN = 1 << 21,
-  /** Is compiled. */
-  COMPILED = 1 << 22,
-  /** Has a constant value and is therefore inlined. */
-  INLINED = 1 << 23,
-  /** Is scoped. */
-  SCOPED = 1 << 24,
-  /** Is a trampoline. */
-  TRAMPOLINE = 1 << 25,
-  /** Is a virtual method. */
-  VIRTUAL = 1 << 26
-}
-
 export enum DecoratorFlags {
   /** No flags set. */
   NONE = 0,
@@ -2545,7 +2527,9 @@ export enum DecoratorFlags {
   /** Is a sealed class. */
   SEALED = 1 << 5,
   /** Is always inlined. */
-  INLINE = 1 << 6
+  INLINE = 1 << 6,
+  /** Is using a different external name. */
+  EXTERNAL = 1 << 7
 }
 
 export function decoratorKindToFlag(kind: DecoratorKind): DecoratorFlags {
@@ -2558,6 +2542,7 @@ export function decoratorKindToFlag(kind: DecoratorKind): DecoratorFlags {
     case DecoratorKind.UNMANAGED: return DecoratorFlags.UNMANAGED;
     case DecoratorKind.SEALED: return DecoratorFlags.SEALED;
     case DecoratorKind.INLINE: return DecoratorFlags.INLINE;
+    case DecoratorKind.EXTERNAL: return DecoratorFlags.EXTERNAL;
     default: return DecoratorFlags.NONE;
   }
 }
@@ -2725,9 +2710,9 @@ export class VariableLikeElement extends Element {
     this.declaration = declaration;
   }
 
-  withConstantIntegerValue(lo: i32, hi: i32): this {
+  withConstantIntegerValue(value: I64): this {
     this.constantValueKind = ConstantValueKind.INTEGER;
-    this.constantIntegerValue = i64_new(lo, hi);
+    this.constantIntegerValue = value;
     this.set(CommonFlags.CONST | CommonFlags.INLINED);
     return this;
   }
@@ -3521,34 +3506,33 @@ export class ClassPrototype extends Element {
               fieldDeclaration.type,
               instance.contextualTypeArguments
             );
-            if (fieldType) {
-              let fieldInstance = new Field(
-                <FieldPrototype>member,
-                internalName + INSTANCE_DELIMITER + (<FieldPrototype>member).simpleName,
-                fieldType,
-                fieldDeclaration,
-                instance
-              );
-              switch (fieldType.byteSize) { // align
-                case 1: break;
-                case 2: {
-                  if (memoryOffset & 1) ++memoryOffset;
-                  break;
-                }
-                case 4: {
-                  if (memoryOffset & 3) memoryOffset = (memoryOffset | 3) + 1;
-                  break;
-                }
-                case 8: {
-                  if (memoryOffset & 7) memoryOffset = (memoryOffset | 7) + 1;
-                  break;
-                }
-                default: assert(false);
+            if (!fieldType) break;
+            let fieldInstance = new Field(
+              <FieldPrototype>member,
+              internalName + INSTANCE_DELIMITER + (<FieldPrototype>member).simpleName,
+              fieldType,
+              fieldDeclaration,
+              instance
+            );
+            switch (fieldType.byteSize) { // align
+              case 1: break;
+              case 2: {
+                if (memoryOffset & 1) ++memoryOffset;
+                break;
               }
-              fieldInstance.memoryOffset = memoryOffset;
-              memoryOffset += fieldType.byteSize;
-              instance.members.set(member.simpleName, fieldInstance);
+              case 4: {
+                if (memoryOffset & 3) memoryOffset = (memoryOffset | 3) + 1;
+                break;
+              }
+              case 8: {
+                if (memoryOffset & 7) memoryOffset = (memoryOffset | 7) + 1;
+                break;
+              }
+              default: assert(false);
             }
+            fieldInstance.memoryOffset = memoryOffset;
+            memoryOffset += fieldType.byteSize;
+            instance.members.set(member.simpleName, fieldInstance);
             break;
           }
 
@@ -3802,37 +3786,63 @@ export const enum FlowFlags {
   /** No specific conditions. */
   NONE = 0,
 
+  // categorical
+
   /** This branch always returns. */
   RETURNS = 1 << 0,
+  /** This branch always returns a wrapped value. */
+  RETURNS_WRAPPED = 1 << 1,
   /** This branch always throws. */
-  THROWS = 1 << 1,
+  THROWS = 1 << 2,
   /** This branch always breaks. */
-  BREAKS = 1 << 2,
+  BREAKS = 1 << 3,
   /** This branch always continues. */
-  CONTINUES = 1 << 3,
+  CONTINUES = 1 << 4,
   /** This branch always allocates. Constructors only. */
-  ALLOCATES = 1 << 4,
+  ALLOCATES = 1 << 5,
+
+  // conditional
 
   /** This branch conditionally returns in a child branch. */
-  CONDITIONALLY_RETURNS = 1 << 5,
+  CONDITIONALLY_RETURNS = 1 << 6,
   /** This branch conditionally throws in a child branch. */
-  CONDITIONALLY_THROWS = 1 << 6,
+  CONDITIONALLY_THROWS = 1 << 7,
   /** This branch conditionally breaks in a child branch. */
-  CONDITIONALLY_BREAKS = 1 << 7,
+  CONDITIONALLY_BREAKS = 1 << 8,
   /** This branch conditionally continues in a child branch. */
-  CONDITIONALLY_CONTINUES = 1 << 8,
+  CONDITIONALLY_CONTINUES = 1 << 9,
   /** This branch conditionally allocates in a child branch. Constructors only. */
-  CONDITIONALLY_ALLOCATES = 1 << 9,
+  CONDITIONALLY_ALLOCATES = 1 << 10,
+
+  // special
 
   /** This branch is part of inlining a function. */
-  INLINE_CONTEXT = 1 << 10,
+  INLINE_CONTEXT = 1 << 11,
   /** This branch explicitly requests no bounds checking. */
-  UNCHECKED_CONTEXT = 1 << 11,
-  /** This branch returns a properly wrapped value. */
-  RETURNS_WRAPPED = 1 << 12,
+  UNCHECKED_CONTEXT = 1 << 12,
 
-  /** This branch is terminated if any of these flags is set. */
-  TERMINATED = FlowFlags.RETURNS | FlowFlags.THROWS | FlowFlags.BREAKS | FlowFlags.CONTINUES
+  // masks
+
+  /** Any terminating flag. */
+  ANY_TERMINATING = FlowFlags.RETURNS
+                  | FlowFlags.THROWS
+                  | FlowFlags.BREAKS
+                  | FlowFlags.CONTINUES,
+
+  /** Any categorical flag. */
+  ANY_CATEGORICAL = FlowFlags.RETURNS
+                  | FlowFlags.RETURNS_WRAPPED
+                  | FlowFlags.THROWS
+                  | FlowFlags.BREAKS
+                  | FlowFlags.CONTINUES
+                  | FlowFlags.ALLOCATES,
+
+  /** Any conditional flag. */
+  ANY_CONDITIONAL = FlowFlags.CONDITIONALLY_RETURNS
+                  | FlowFlags.CONDITIONALLY_THROWS
+                  | FlowFlags.CONDITIONALLY_BREAKS
+                  | FlowFlags.CONDITIONALLY_CONTINUES
+                  | FlowFlags.CONDITIONALLY_ALLOCATES
 }
 
 /** A control flow evaluator. */
@@ -3888,8 +3898,8 @@ export class Flow {
   /** Unsets the specified flag or flags. */
   unset(flag: FlowFlags): void { this.flags &= ~flag; }
 
-  /** Enters a new branch or scope and returns the new flow. */
-  enterBranchOrScope(): Flow {
+  /** Forks this flow to a child flow. */
+  fork(): Flow {
     var branch = new Flow();
     branch.parent = this;
     branch.flags = this.flags;
@@ -3904,37 +3914,16 @@ export class Flow {
     return branch;
   }
 
-  /** Leaves the current branch or scope and returns the parent flow. */
-  leaveBranchOrScope(propagate: bool = true): Flow {
+  /** Frees this flow's scoped variables. */
+  free(): Flow {
     var parent = assert(this.parent);
-
-    // Free block-scoped locals
-    if (this.scopedLocals) {
+    if (this.scopedLocals) { // free block-scoped locals
       for (let scopedLocal of this.scopedLocals.values()) {
         if (scopedLocal.is(CommonFlags.SCOPED)) { // otherwise an alias
           this.currentFunction.freeTempLocal(scopedLocal);
         }
       }
       this.scopedLocals = null;
-    }
-
-    // Propagate conditionaal flags to parent
-    if (propagate) {
-      if (this.is(FlowFlags.RETURNS)) {
-        parent.set(FlowFlags.CONDITIONALLY_RETURNS);
-      }
-      if (this.is(FlowFlags.THROWS)) {
-        parent.set(FlowFlags.CONDITIONALLY_THROWS);
-      }
-      if (this.is(FlowFlags.BREAKS) && parent.breakLabel == this.breakLabel) {
-        parent.set(FlowFlags.CONDITIONALLY_BREAKS);
-      }
-      if (this.is(FlowFlags.CONTINUES) && parent.continueLabel == this.continueLabel) {
-        parent.set(FlowFlags.CONDITIONALLY_CONTINUES);
-      }
-      if (this.is(FlowFlags.ALLOCATES)) {
-        parent.set(FlowFlags.CONDITIONALLY_ALLOCATES);
-      }
     }
     return parent;
   }
@@ -4069,36 +4058,43 @@ export class Flow {
     else this.wrappedLocals = map;
   }
 
-  /** Inherits flags and local wrap states from the specified flow (e.g. on inner block). */
+  /** Inherits flags and local wrap states from the specified flow (e.g. blocks). */
   inherit(other: Flow): void {
-    this.flags |= other.flags & (
-      FlowFlags.RETURNS |
-      FlowFlags.RETURNS_WRAPPED |
-      FlowFlags.THROWS |
-      FlowFlags.BREAKS |
-      FlowFlags.CONTINUES |
-      FlowFlags.ALLOCATES
-    );
+    this.flags |= other.flags & (FlowFlags.ANY_CATEGORICAL | FlowFlags.ANY_CONDITIONAL);
     this.wrappedLocals = other.wrappedLocals;
     this.wrappedLocalsExt = other.wrappedLocalsExt; // no need to slice because other flow is finished
   }
 
-  /** Inherits mutual flags and local wrap states from the specified flows (e.g. on then/else branches). */
+  /** Inherits categorical flags as conditional flags from the specified flow (e.g. then without else). */
+  inheritConditional(other: Flow): void {
+    if (other.is(FlowFlags.RETURNS)) {
+      this.set(FlowFlags.CONDITIONALLY_RETURNS);
+    }
+    if (other.is(FlowFlags.THROWS)) {
+      this.set(FlowFlags.CONDITIONALLY_THROWS);
+    }
+    if (other.is(FlowFlags.BREAKS) && other.breakLabel == this.breakLabel) {
+      this.set(FlowFlags.CONDITIONALLY_BREAKS);
+    }
+    if (other.is(FlowFlags.CONTINUES) && other.continueLabel == this.continueLabel) {
+      this.set(FlowFlags.CONDITIONALLY_CONTINUES);
+    }
+    if (other.is(FlowFlags.ALLOCATES)) {
+      this.set(FlowFlags.CONDITIONALLY_ALLOCATES);
+    }
+  }
+
+  /** Inherits mutual flags and local wrap states from the specified flows (e.g. then with else). */
   inheritMutual(left: Flow, right: Flow): void {
-    // flags set in both arms
-    this.flags |= left.flags & right.flags & (
-      FlowFlags.RETURNS |
-      FlowFlags.RETURNS_WRAPPED |
-      FlowFlags.THROWS |
-      FlowFlags.BREAKS |
-      FlowFlags.CONTINUES |
-      FlowFlags.ALLOCATES
-    );
+    // categorical flags set in both arms
+    this.flags |= left.flags & right.flags & FlowFlags.ANY_CATEGORICAL;
+
+    // conditional flags set in at least one arm
+    this.flags |= left.flags & FlowFlags.ANY_CONDITIONAL;
+    this.flags |= right.flags & FlowFlags.ANY_CONDITIONAL;
+
     // locals wrapped in both arms
-    this.wrappedLocals = i64_and(
-      left.wrappedLocals,
-      right.wrappedLocals
-    );
+    this.wrappedLocals = i64_and(left.wrappedLocals, right.wrappedLocals);
     var leftExt = left.wrappedLocalsExt;
     var rightExt = right.wrappedLocalsExt;
     if (leftExt != null && rightExt != null) {

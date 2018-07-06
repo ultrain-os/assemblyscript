@@ -10,7 +10,7 @@
  (global $~lib/allocator/arena/offset (mut i32) (i32.const 0))
  (global $std/new/aClass (mut i32) (i32.const 0))
  (global $HEAP_BASE i32 (i32.const 8))
- (memory $0 1)
+ (memory $0 0)
  (export "memory" (memory $0))
  (start $start)
  (func $~lib/allocator/arena/allocate_memory (; 0 ;) (type $ii) (param $0 i32) (result i32)
@@ -119,49 +119,45 @@
     )
    )
   )
-  (return
-   (i32.const 0)
-  )
+  (i32.const 0)
  )
  (func $std/new/AClass#constructor (; 1 ;) (type $ifi) (param $0 i32) (param $1 f32) (result i32)
   (local $2 i32)
-  (block
-   (i32.store
-    (get_local $0)
-    (i32.add
-     (i32.load
-      (tee_local $0
-       (if (result i32)
-        (get_local $0)
-        (get_local $0)
-        (tee_local $0
-         (block (result i32)
-          (set_local $2
-           (call $~lib/allocator/arena/allocate_memory
-            (i32.const 8)
-           )
+  (i32.store
+   (get_local $0)
+   (i32.add
+    (i32.load
+     (tee_local $0
+      (if (result i32)
+       (get_local $0)
+       (get_local $0)
+       (tee_local $0
+        (block (result i32)
+         (set_local $2
+          (call $~lib/allocator/arena/allocate_memory
+           (i32.const 8)
           )
-          (i32.store
-           (get_local $2)
-           (i32.const 1)
-          )
-          (f32.store offset=4
-           (get_local $2)
-           (f32.const 2)
-          )
-          (get_local $2)
          )
+         (i32.store
+          (get_local $2)
+          (i32.const 1)
+         )
+         (f32.store offset=4
+          (get_local $2)
+          (f32.const 2)
+         )
+         (get_local $2)
         )
        )
       )
      )
-     (i32.const 1)
     )
+    (i32.const 1)
    )
-   (f32.store offset=4
-    (get_local $0)
-    (get_local $1)
-   )
+  )
+  (f32.store offset=4
+   (get_local $0)
+   (get_local $1)
   )
   (get_local $0)
  )
