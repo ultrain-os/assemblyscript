@@ -559,7 +559,7 @@ exports.main = function main(args, options, callback, isDispatch) {
   exports.applyText = abiObj.dispatch;
   // console.log("applyText:" + exports.applyText);
 
-  if(args.applyText){
+  if(args.applyText && isDispatch){
     console.log("The generated apply text:");
     console.log(exports.applyText);
   }

@@ -608,7 +608,7 @@ export class Abi {
     }
 
     if(dispatchBuffer.length == 0){
-      throw new Error(`The smart contract must specify one action.`);
+      // throw new Error(`The smart contract must specify one action.`);
     }
 
     this.dispatch = this.assemblyDispatch(dispatchBuffer);  
