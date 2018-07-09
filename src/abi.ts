@@ -1,6 +1,6 @@
 import{
   SerializeHelper, 
-  SerializeLocatorResult
+  SerializePoint
 } from "./serialize";
 
 import {
@@ -128,7 +128,7 @@ export class Abi {
 
   elementLookup: Map<string, Element> = new Map();
 
-  serializeProgram: SerializeLocatorResult;
+  fileSerializeLookup: Map<string, Array<SerializePoint>> = new Map<string, Array<SerializePoint>>();
 
   constructor(program: Program) {
 
@@ -612,10 +612,9 @@ export class Abi {
     // this.findDBManager();
     // this.printClassProtoTypeInfo();
 
-    let serializeObj:SerializeHelper =  new SerializeHelper(this.program);
-    serializeObj.resolve();
-    serializeObj.serializeProgram.sortSerializeArry();
-    this.serializeProgram = serializeObj.serializeProgram;
+    let serializeHelper:SerializeHelper =  new SerializeHelper(this.program);
+    serializeHelper.resolve();
+    this.fileSerializeLookup = serializeHelper.fileSerializeLookup;
 
     let dispatchBuffer = new Array<string>();
 

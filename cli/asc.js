@@ -312,6 +312,7 @@ exports.main = function main(argv, options, callback, isDispatch) {
         sourceText = exports.resolveSourceText(sourceText, null,exports.libraryFiles);
         parser = assemblyscript.parseFile(sourceText, sourcePath, true, parser);
       } else {
+        sourceText = exports.insertSerializeMethodText(sourcePath, sourceText);
         sourceText = exports.resolveSourceText(sourceText, exports.applyText,exports.libraryFiles);
         parser = assemblyscript.parseFile(sourceText, sourcePath, true, parser);
       }
@@ -397,7 +398,7 @@ exports.main = function main(argv, options, callback, isDispatch) {
         // console.log(`source Text: ${sourceText}`);
 
         if(isDispatch){
-          console.log(`SourcePath :${sourcePath}`);
+          // console.log(`SourcePath :${sourcePath}`);
           sourceText = exports.insertSerializeMethodText(sourcePath, sourceText); 
         }
         assemblyscript.parseFile(sourceText, sourcePath, false, parser);
@@ -971,7 +972,7 @@ exports.resolveSourceText = resolveSourceText;
 
 function insertSerializeMethodText(sourcePath, sourceText){
   
-  let serializeLookup =  exports.abiObj.serializeProgram.fileSerializeLookup;
+  let serializeLookup =  exports.abiObj.fileSerializeLookup;
 
   if(serializeLookup.has(sourcePath)){
 
@@ -981,14 +982,14 @@ function insertSerializeMethodText(sourcePath, sourceText){
     console.log(`data.length :${data.length}`);
 
     for(let serialize of serializeArray){
-      data.splice(serialize.line, 0, serialize.serialize);
-      data.splice(serialize.line, 0 , EOF);
-      data.splice(serialize.line, 0, serialize.deserialize);
-      console.log( `${serialize.line}`);
+      data.splice(serialize.line, 0, serialize.toSerialize());
+      data.splice(serialize.line, 0 , EOL);
+      data.splice(serialize.line, 0, serialize.toDeserialize());
+      // console.log( `${serialize.line}`);
     }
-    console.log(`return sourceText: ${data.join(EOL)}`);
+     console.log(`return sourceText: ${data.join(EOL)}`);
 
-    return sourceText;
+    return data.join(EOL);
   } else {
     return sourceText;
   }
