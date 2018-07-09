@@ -1,3 +1,6 @@
+import { Msg } from "./msg";
+import { Block } from "./block";
+
 export declare function isInteger<T>(value?: T): bool;
 
 export declare function isFloat<T>(value?: T): bool;
@@ -232,3 +235,9 @@ export namespace f64 {
 export declare const HEAP_BASE: usize;
 
 export declare function start(): void;
+
+// Add extra builtin various
+// export let msg:Msg = new Msg();
+export let block:Block = new Block();
+// 
+export let map:Map<string, string> = new Map<string, string>();

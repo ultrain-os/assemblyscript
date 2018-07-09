@@ -637,4 +637,12 @@ declare function action(target: any, propertyKey: any, descriptor: any): any;
 /** Annotates a class as database information */
 declare function database(target: Function, propertyKey: any, descriptor: any): any;
 
+declare class Msg{
+
+  
+
+}
+
+export const msg:Msg;
+
 

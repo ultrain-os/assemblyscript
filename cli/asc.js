@@ -26,6 +26,7 @@ var assemblyscript, isDev = false;
 (() => {
   try { // `asc` on the command line
     assemblyscript = require("../dist/assemblyscript.js");
+    throw new Error();
   } catch (e) {
     try { // `asc` on the command line without dist files
       require("ts-node").register({ project: path.join(__dirname, "..", "src", "tsconfig.json") });
@@ -393,6 +394,12 @@ exports.main = function main(argv, options, callback, isDispatch) {
       }
       stats.parseCount++;
       stats.parseTime += measure(() => {
+        // console.log(`source Text: ${sourceText}`);
+
+        if(isDispatch){
+          console.log(`SourcePath :${sourcePath}`);
+          sourceText = exports.insertSerializeMethodText(sourcePath, sourceText); 
+        }
         assemblyscript.parseFile(sourceText, sourcePath, false, parser);
       });
     }
@@ -545,10 +552,12 @@ exports.main = function main(argv, options, callback, isDispatch) {
     });
   }
   
-  var abiObj = program.toAbi();
-  exports.applyText = abiObj.dispatch;
-  // console.log("applyText:" + exports.applyText);
+  if(!isDispatch){
+    exports.abiObj = program.toAbi();
+    exports.applyText = exports.abiObj.dispatch;
+  }
 
+  // console.log("applyText:" + exports.applyText);
   if(args.applyText && isDispatch){
     console.log("The generated apply text:");
     console.log(exports.applyText);
@@ -575,14 +584,14 @@ exports.main = function main(argv, options, callback, isDispatch) {
       if (args.abiFile && args.abiFile.length) {
         stats.emitCount++;
         stats.emitTime += measure(() => {
-          abi = JSON.stringify(abiObj.abiInfo, undefined, 2);
+          abi = JSON.stringify(exports.abiObj.abiInfo, undefined, 2);
         });
 
         writeFile(path.join(baseDir, args.abiFile), abi);
       } else if (!hasStdout) {
         stats.emitCount++;
         stats.emitTime += measure(() => {
-          abi = JSON.stringify(abiObj.abiInfo, undefined, 2);
+          abi = JSON.stringify(exports.abiObj.abiInfo, undefined, 2);
         });
         writeStdout(abi);
       }
@@ -910,7 +919,7 @@ function createMemoryStream(fn) {
     var offset = 0, i = 0, k = this.length;
     while (i < k) offset += this[i++].length;
     var buffer = allocBuffer(offset);
-    offset = i = 0;
+    offset = i = 0;g
     while (i < k) {
       buffer.set(this[i], offset);
       offset += this[i].length;
@@ -959,3 +968,33 @@ function resolveSourceText(sourceText, applyText, library){
 }
 
 exports.resolveSourceText = resolveSourceText;
+
+function insertSerializeMethodText(sourcePath, sourceText){
+  
+  let serializeLookup =  exports.abiObj.serializeProgram.fileSerializeLookup;
+
+  if(serializeLookup.has(sourcePath)){
+
+    let serializeArray = serializeLookup.get(sourcePath);
+    let data = sourceText.split(EOL);
+
+    console.log(`data.length :${data.length}`);
+
+    for(let serialize of serializeArray){
+      data.splice(serialize.line, 0, serialize.serialize);
+      data.splice(serialize.line, 0 , EOF);
+      data.splice(serialize.line, 0, serialize.deserialize);
+      console.log( `${serialize.line}`);
+    }
+    console.log(`return sourceText: ${data.join(EOL)}`);
+
+    return sourceText;
+  } else {
+    return sourceText;
+  }
+
+}
+
+exports.insertSerializeMethodText = insertSerializeMethodText;
+
+

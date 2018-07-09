@@ -1,3 +1,8 @@
+import{
+  SerializeObj, 
+  SerializeProgram
+} from "./serialize";
+
 import {
   Type,
   TypeKind,
@@ -123,6 +128,8 @@ export class Abi {
 
   elementLookup: Map<string, Element> = new Map();
 
+  serializeProgram: SerializeProgram;
+
   constructor(program: Program) {
 
     this.program = program;
@@ -215,6 +222,7 @@ export class Abi {
 
   /**
   * Find the script original type name
+  * @param typeKindName
   */
   findScriptOriginalTypeName(typeKindName: string): string {
     let typeAlias = this.program.typeAliases.get(typeKindName);
@@ -229,6 +237,8 @@ export class Abi {
   /**
   * Find assemblyscript original type name 
   * eg: account_name return 'u64'
+  * 
+  * @param typeKindName
   */
   findScriptOriginalType(typeKindName: string): Type | null{
     let originalName = this.findScriptOriginalTypeName(typeKindName);
@@ -448,8 +458,6 @@ export class Abi {
     let originalName:string = this.findContractOriginalType(baseTypeName);
     let originalType:Type|null = this.findScriptOriginalType(originalName);
 
-
-
     if(!originalType){
         return {typeKind: AbiParameterKind.CLASS, typeName: originalName, isArray:isArray};
     } else if(originalType.kind == TypeKind.BOOL){
@@ -510,8 +518,6 @@ export class Abi {
               } else {
                 body.push(`      let ${parameterName} = ds.readComplexVector<${abiType.typeName}>();`);
               }
-
-
             } else{
               if(abiType.typeKind == AbiParameterKind.STRING){
                 body.push(`      let ${parameterName} = ds.readString();`);
@@ -585,11 +591,31 @@ export class Abi {
       }
   }
 
+  private printClassProtoTypeInfo():void {
+    let keys = this.program.elementsLookup.keys();
+    for(let key of keys){
+      let value:Element|null = this.program.elementsLookup.get(key);
+      if(value && value.kind == ElementKind.CLASS_PROTOTYPE){
+        // console.log(`Element lookup key:${key}.Kind:${value.kind}`);
+        let classPrototype:ClassPrototype = <ClassPrototype>value;
+        if(classPrototype.basePrototype)
+          console.log(`Element lookup key:${key}. Base prototype:${classPrototype.basePrototype.simpleName}`);
+      }
+       
+    }
+  }    
+
   resolve(): void{
 
     // this.printTypeAliasInfo();
     // this.printElementLookUpInfo();
     // this.findDBManager();
+    // this.printClassProtoTypeInfo();
+
+    let serializeObj:SerializeObj =  new SerializeObj(this.program);
+    serializeObj.resolve();
+    serializeObj.serializeProgram.sortSerializeArry();
+    this.serializeProgram = serializeObj.serializeProgram;
 
     let dispatchBuffer = new Array<string>();
 
