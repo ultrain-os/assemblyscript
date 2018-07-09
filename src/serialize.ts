@@ -57,8 +57,11 @@ export class TypeNodeHelper {
 
     abiTypeLookup: Map<string, string> = new Map();
 
-    constructor(program: Program) {
+    commonTypeNode:CommonTypeNode;
+
+    constructor(program: Program, commonTypeNode:CommonTypeNode) {
         this.program = program;
+        this.commonTypeNode = commonTypeNode;
         this.abiTypeLookup = new Map([
             ["i8", "int8"],
             ["i16", "int16"],
@@ -251,17 +254,16 @@ export class TypeNodeHelper {
 
 
 
-
-class ClassPrototypeUtil {
+/**
+ * 
+ */
+class SerializeGenerator {
 
     classPrototype: ClassPrototype;
-
-
 
     constructor(classPrototype: ClassPrototype) {
         this.classPrototype = classPrototype;
     }
-
 
     getInternalName(node: Node): string {
         let internalPath = node.range.source.internalPath;
@@ -270,119 +272,142 @@ class ClassPrototypeUtil {
         return internalName;
     }
 
-    getFields(): SerializeImpl {
+    getSerializePoints(): SerializePoint {
+
+        let serializePoint:SerializePoint = new SerializePoint(this.classPrototype.declaration.range);
 
         if (!this.classPrototype.instanceMembers)
-            return new SerializeImpl();
+            return serializePoint;
 
-        let serializeBody: Array<string> = new Array<string>();
-        let deserializeBody: Array<string> = new Array<string>();
-
-        serializeBody.push(`   serialize(ds: DataStream): void {`);
-        deserializeBody.push(`   deserialize(ds: DataStream): void {`);
-        for (let [key, element] of this.classPrototype.instanceMembers) {
-            // console.log(`Key: ${key}. Element  ${ElementKind[element.kind]}`);
+        for (let [fieldName, element] of this.classPrototype.instanceMembers) {
             if (element.kind == ElementKind.FIELD_PROTOTYPE) {
+
+
+                console.log(`fieldName: ${fieldName}. Element  ${ElementKind[element.kind]}`);
+
+
                 let fieldPrototype: FieldPrototype = <FieldPrototype>element;
                 let fieldDeclaration: FieldDeclaration = fieldPrototype.declaration;
 
                 let commonType: CommonTypeNode | null = fieldDeclaration.type;
                 if (commonType && commonType.kind == NodeKind.TYPE) {
-                    let typeNode = <TypeNode>commonType;
-                    let name: IdentifierExpression = typeNode.name;
-                    // console.log(`type node name kind:${NodeKind[name.kind]}`);
-                    // console.log(`type node name string:${name.text}`);
-                    // console.log(`internal name ${this.getInternalName(typeNode)}`);
-                    let typeNodeHelper: TypeNodeHelper = new TypeNodeHelper(this.classPrototype.program);
-                    typeNodeHelper.getDeserializeBody(key, typeNode);
-                    deserializeBody.push(typeNodeHelper.getDeserializeBody(key, typeNode));
-                    serializeBody.push(typeNodeHelper.getSerializeBody(key, typeNode));
+                    let typeNode = <TypeNode>commonType;              
+                    let typeNodeHelper: TypeNodeHelper = new TypeNodeHelper(this.classPrototype.program, typeNode);
+                    
+                    typeNodeHelper.getDeserializeBody(fieldName, typeNode);
+
+                    serializePoint.addSerializeExpr(typeNodeHelper.getDeserializeBody(fieldName, typeNode));
+                    serializePoint.addDeserializeExpr(typeNodeHelper.getSerializeBody(fieldName, typeNode));
                 }
-
-                console.log(`Key: ${key}. Element  ${ElementKind[element.kind]}`);
-                // console.log(`CommonType:${commonType.}`);
-                console.log(`FieldDeclaration ${fieldDeclaration.programLevelInternalName}`);
-                console.log(`FieldDeclaration ${fieldDeclaration.fileLevelInternalName}`);
-
-                let programLevelInternalName = fieldDeclaration.programLevelInternalName;
-                let fileLevleInternalname = fieldDeclaration.fileLevelInternalName;
             }
         }
-        serializeBody.push(`   }`);
-        deserializeBody.push(`   }`)
 
-        // console.log("\n\n");
-        // console.log(`${this.classPrototype.internalName} Serialize body: ${serializeBody.join("\n")}`);
-        // console.log(`${this.classPrototype.internalName} Deserialize body: ${deserializeBody.join("\n")}`);
-
-        let serializeImpl: SerializeImpl = new SerializeImpl();
-        serializeImpl.serialize = serializeBody.join("\n");
-        serializeImpl.deserialize = deserializeBody.join("\n");
-        serializeImpl.range = this.classPrototype.declaration.range;
-        serializeImpl.normalizedPath = this.classPrototype.declaration.range.source.normalizedPath;
-        serializeImpl.line = this.classPrototype.declaration.range.line;
-
-        this.getSourceCode();
-
-        return serializeImpl;
+        return serializePoint;
     }
 
 
-    getSourceCode(): void {
+    // implSerialize(fieldName:string, typeNode: TypeNode) :void{
 
-        let classDeclaration: ClassDeclaration = this.classPrototype.declaration;
-        let sourceCode = classDeclaration.range.toString();
+    //     let typeNodeHelper: TypeNodeHelper = new TypeNodeHelper(this.classPrototype.program, typeNode);
+    //     // typeNodeHelper.getSerializeBody(type)
 
-        let range = classDeclaration.range;
+        
+    //     let body: Array<string> = new Array<string>();
+    //     let abiType = typeNodeHelper.resolveAbiParameterType(type);
 
-        let statements = classDeclaration.range.source.statements;
+    //     if (abiType.isArray) {
+    //         if (abiType.typeKind == AbiParameterKind.NUMBER) {
+    //             body.push(`      let ${fieldName} = ds.readVector<${abiType.typeName}>();`);
+    //         } else if (abiType.typeKind == AbiParameterKind.BOOL) {
+    //             body.push(`      let ${fieldName} = ds.readVector<u8>();`);
+    //         } else if (abiType.typeKind == AbiParameterKind.STRING) {
 
-        for (let statement of statements) {
-            // console.log(`statement ${statement.range.toString()}`);
-        }
+    //         } else {
+    //             body.push(`      let ${fieldName} = ds.readComplexVector<${abiType.typeName}>();`);
+    //         }
+    //     } else {
+    //         if (abiType.typeKind == AbiParameterKind.STRING) {
+    //             body.push(`      ds.readString(this.${fieldName});`);
+    //         } else if (abiType.typeKind == AbiParameterKind.BOOL) {
+    //             body.push(`      ds.write<u8>(this.${fieldName});`);
+    //         } else if (abiType.typeKind == AbiParameterKind.NUMBER) {
+    //             body.push(`      ds.write<${abiType.typeName}>(this.${fieldName});`);
+    //         } else {
+    //             body.push(`      ds.deserialize(this.${fieldName})`);
+    //         }
+    //     }
+    //     return body.join("\n");
+
+    // }
+
+    // getSourceCode(): void {
+
+    //     let classDeclaration: ClassDeclaration = this.classPrototype.declaration;
+    //     let sourceCode = classDeclaration.range.toString();
+
+    //     let range = classDeclaration.range;
+
+    //     let statements = classDeclaration.range.source.statements;
+
+    //     for (let statement of statements) {
+    //         // console.log(`statement ${statement.range.toString()}`);
+    //     }
 
 
-        console.log(`source code:${sourceCode}`);
-        console.log(`source code line: ${range.line} `);
-        console.log(`source path: ${range.source.internalPath}`);
-        console.log(`source path: ${range.source.normalizedPath}`);
+    //     console.log(`source code:${sourceCode}`);
+    //     console.log(`source code line: ${range.line} `);
+    //     console.log(`source path: ${range.source.internalPath}`);
+    //     console.log(`source path: ${range.source.normalizedPath}`);
 
-        // console.log(`source statement:${classDeclaration.range.source.text}`);
+    //     // console.log(`source statement:${classDeclaration.range.source.text}`);
 
-    }
+    // }
 }
 
 
-class SerializeImpl {
+class SerializePoint {
 
-    serialize: string;
+    serialize: Array<string> = new Array<string>();
 
-    deserialize: string;
+    deserialize: Array<string> = new Array<string>();
 
     range: Range;
 
-    line: i32;
+    get line():i32{
+        return this.range.line;
+    }
+    get normalizedPath(): string{
+        return this.range.source.normalizedPath;
+    }
 
-    normalizedPath: string;
+    constructor(range: Range){
+        this.range = range;
+        this.serialize.push(`   serialize(ds: DataStream): void {`);
+        this.deserialize.push(`   deserialize(ds: DataStream): void {`);
+    }
+
+    addSerializeExpr(expr: string):void{
+        this.serialize.push(expr);
+    }
+
+    addDeserializeExpr(expr: string):void{
+        this.deserialize.push(expr);
+    }
 }
 
-export class SerializeProgram {
+export class SerializeLocatorResult {
 
-    serializeImplArr: Array<SerializeImpl> = new Array<SerializeImpl>();
+    fileSerializeLookup: Map<string, Array<SerializePoint>> = new Map<string, Array<SerializePoint>>();
 
-    fileSerializeLookup: Map<string, Array<SerializeImpl>> = new Map<string, Array<SerializeImpl>>();
-
-    addSerializeImpl(serialize: SerializeImpl): void {
-
-        this.serializeImplArr.push(serialize);
+    addSerializeImpl(serialize: SerializePoint): void {
 
         let normalizedPath = serialize.normalizedPath;
-        let fileSerialize: Array<SerializeImpl> | null = this.fileSerializeLookup.get(normalizedPath);
+        let fileSerialize: Array<SerializePoint> | null = this.fileSerializeLookup.get(normalizedPath);
 
         if (fileSerialize) {
             fileSerialize.push(serialize);
         } else {
-            fileSerialize = new Array<SerializeImpl>();
+            fileSerialize = new Array<SerializePoint>();
             fileSerialize.push(serialize);
             this.fileSerializeLookup.set(normalizedPath, fileSerialize);
             
@@ -394,7 +419,7 @@ export class SerializeProgram {
     sortSerializeArry(): void {
 
         for (let [key, array] of this.fileSerializeLookup) {
-            let compartor = (a: SerializeImpl, b: SerializeImpl): i32 => {
+            let compartor = (a: SerializePoint, b: SerializePoint): i32 => {
                 return (a.line - b.line);
             }
             array.sort(compartor);
@@ -402,15 +427,19 @@ export class SerializeProgram {
     }
 }
 
-export class SerializeObj {
+export class SerializeHelper {
 
     SERIALIZE_INTERFANCE: string = "ISerializable";
+
+    SERIALIZE_METHOD_NAME:string = "serialize";
+
+    DESERIALIZE_METHOD_NAME:string = "deserialize";
+
     /**Program  */
     program: Program;
-    /**Class Element internal name */
-    internalName: string;
+
     /**Serialize the progrma  */
-    serializeProgram: SerializeProgram = new SerializeProgram();
+    serializeProgram: SerializeLocatorResult = new SerializeLocatorResult();
 
     constructor(program: Program) {
         this.program = program;
@@ -418,24 +447,19 @@ export class SerializeObj {
 
     resolve(): void {
 
-        let keys = this.program.elementsLookup.keys();
-        for (let key of keys) {
-            let value: Element | null = this.program.elementsLookup.get(key);
-            if (value && value.kind == ElementKind.CLASS_PROTOTYPE) {
 
-                // console.log(`Element lookup key:${key}.Kind:${value.kind}`);
-                let classPrototype: ClassPrototype = <ClassPrototype>value;
-                let range: Range = classPrototype.declaration.range;
-                
-                let define = range.toString();
-                if (define.includes(this.SERIALIZE_INTERFANCE)) {
-                    console.log(`Element lookup key:${key}.Kind:${value.kind}`);
-                } else {
-                    continue;
+        for(let [key, element] of this.program.elementsLookup){
+            
+            if(element && element.kind == ElementKind.CLASS_PROTOTYPE){
+                let classDeclaration:ClassDeclaration = (<ClassPrototype> element).declaration;
+                let classDeclareStr = classDeclaration.range.toString();
+
+                if (classDeclareStr.includes(this.SERIALIZE_INTERFANCE)){
+                    let generator:SerializeGenerator = new SerializeGenerator(<ClassPrototype> element);
+                    generator.getSerializePoints();
                 }
-                let serializeImpl = new ClassPrototypeUtil(classPrototype).getFields();
-                this.serializeProgram.addSerializeImpl(serializeImpl);
             }
+
         }
     }
 }
