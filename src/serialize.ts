@@ -41,8 +41,9 @@ import {
     CommonTypeNode,
     IdentifierExpression
 } from "./ast";
+import { AbiHelper } from "./abi";
 
-enum ParameterKind {
+export enum VarialbeKind {
     BOOL, // boolean and bool
     NUMBER, // original type except boolean and bool
     STRING, // string kind
@@ -51,13 +52,14 @@ enum ParameterKind {
 }
 
 
-export class NodeUtil{
+
+export class NodeUtil {
 
     /**
      * Get the node internal name
      * @param node The program node
      */
-    static getInternalName(node: Node):string{
+    static getInternalName(node: Node): string {
         let internalPath = node.range.source.internalPath;
         let name = node.range.toString();
         let internalName = `${internalPath}/${name}`;
@@ -66,23 +68,8 @@ export class NodeUtil{
 }
 
 
-export class ParameterDeclaration{
 
-    /** Abi filed type kind */
-    parameterKind:ParameterKind;
-    /** The abi field namd */
-    abiName:string;
-    /** Whether parameter or field is array  */
-    isArray: boolean;
-
-    constructor(parameterKind:ParameterKind, abiName:string, isArray:boolean){
-        this.parameterKind = parameterKind;
-        this.abiName = abiName;
-        this.isArray = isArray;
-    }
-}
-
-export class TypeNodeHelper {
+export class VariableDeclaration {
 
     program: Program;
 
@@ -90,96 +77,91 @@ export class TypeNodeHelper {
 
     commonTypeNode: CommonTypeNode;
 
+    kind: VarialbeKind;
+    /** Parameter name, u64 */
+    declareType: string;
+    /** Base Parameter type */
+    baseType:string;
+    /** The abi field type, eg:account_name */
+    abiType: string; 
+    /** The field fact type, eg: u64, u32 */
+    factType: string;
+    // /** Whether parameter or field is array  */
+
     constructor(program: Program, commonTypeNode: CommonTypeNode) {
         this.program = program;
         this.commonTypeNode = commonTypeNode;
-        this.abiTypeLookup = new Map([
-            ["i8", "int8"],
-            ["i16", "int16"],
-            ["i32", "int32"],
-            ["i64", "int64"],
-            ["isize", ""],
-            ["u8", "uint8"],
-            ["u16", "uint16"],
-            ["u32", "uint32"],
-            ["u64", "uint64"],
-            ["usize", "usize"],
-            ["bool", "uint8"], // eos not support the bool
-            ["f32", "f32"],
-            ["f64", "f64"],
-            ["boolean", "uint8"], // eos not suppot the bool
-            ["account_name", "name"],
-            ["permission_name", "name"],
-            ["action_name", "name"],
-            ["weight_type", "uint16"],
-            ["Asset", "asset"]
-        ]);
-    }
-
-    getInternalName(): string {
-        return NodeUtil.getInternalName(this.commonTypeNode);
+        this.abiTypeLookup = AbiHelper.abiTypeLookup;
+  
     }
 
     /**
      * string TypeKind is 9, and usize TypeKind is also 9.
      * @param type 
      */
-    resolveAbiParameterType(): ParameterDeclaration {
+    resolveAbiParameterType(): VariableDeclaration {
 
-        let parameterType = this.commonTypeNode.range.toString();
-        let typeAlias = this.program.typeAliases.get(parameterType);
+        let variableType = this.commonTypeNode.range.toString();
+        let typeAlias = this.program.typeAliases.get(variableType);
         if (typeAlias) {
-            parameterType = typeAlias.type.range.toString();
+            variableType = typeAlias.type.range.toString();
         }
-
-        let isArray: bool = this.isArray(parameterType);
-        let baseTypeName: string = this.getBaseTypeName(parameterType);
-
+        this.declareType = variableType;
+        let baseTypeName: string = this.getBaseTypeName(variableType);
+        this.baseType = this.baseType;
         if (baseTypeName == "string") {
-            return new ParameterDeclaration(ParameterKind.STRING, baseTypeName, isArray);
+            this.kind = VarialbeKind.STRING;
+            this.factType = "string";
         }
+        this.abiType = this.findAbiType(baseTypeName);
+        let factType: Type | null = this.findFactType(this.abiType);
 
-        let originalName: string = this.findContractOriginalType(baseTypeName);
-        let originalType: Type | null = this.findScriptOriginalType(originalName);
-
-        if (!originalType) {
-            return new ParameterDeclaration(ParameterKind.CLASS, originalName, isArray);
-
-            // return { typeKind: ParameterKind.CLASS, typeName: originalName, isArray: isArray };
-        } else if (originalType.kind == TypeKind.BOOL) {
-            return new ParameterDeclaration(ParameterKind.BOOL,  originalType.toString(), isArray);
-
+        if (!factType) {
+            this.kind = VarialbeKind.CLASS;
+        } else if (factType.kind == TypeKind.BOOL) {
+            this.kind = VarialbeKind.BOOL;
+            this.factType = factType.toString();
         } else {
-            return new ParameterDeclaration(ParameterKind.NUMBER,  originalType.toString(), isArray);
+            this.kind = VarialbeKind.NUMBER
+            this.factType = factType.toString();
         }
+        return this;
     }
 
     /**
-     *  Find the original type name, 
+     * Find the original type name, 
      * eg: declare type account_name = u64;
      *     declare type account_name_alias = account_name;
-     *     findContractOriginalType("account_name_alias") return "account_name";
+     *     findAbiType("account_name_alias") return "account_name";
+     * 
+     * eg: findAbiType("u64") return "u64";
      * @param typeKindName
      * */
-    findContractOriginalType(typeKindName: string): string {
+    findAbiType(typeKindName: string): string {
 
+        /**Watch the type whether was the root type */
         let abiType: string | null = this.abiTypeLookup.get(typeKindName);
         if (abiType) {
             return typeKindName;
         }
         let typeAlias = this.program.typeAliases.get(typeKindName);
         if (typeAlias) {
-            let commonaTypeName = typeAlias.type.range.toString()
-            return this.findContractOriginalType(commonaTypeName);
+            let typeName = typeAlias.type.range.toString()
+            return this.findAbiType(typeName);
         } else {
             return typeKindName;
         }
     }
 
-    isArray(typeName: string): bool {
-        return typeName.includes("[");
+    get isArray(): bool {
+        return this.declareType.includes("[");
     }
 
+    /**
+     * Get the base type name, 
+     * If the type name is string[], so the base type name is string
+     * @param typeName 
+     */
     getBaseTypeName(typeName: string): string {
 
         let bracketIndex = typeName.indexOf("[");
@@ -196,11 +178,11 @@ export class TypeNodeHelper {
      *  @param typeKindName
      * 
      */
-    findScriptOriginalTypeName(typeKindName: string): string {
+    private findFactTypeName(typeKindName: string): string {
         let typeAlias = this.program.typeAliases.get(typeKindName);
         if (typeAlias) {
             let commonaTypeName = typeAlias.type.range.toString()
-            return this.findScriptOriginalTypeName(commonaTypeName);
+            return this.findFactTypeName(commonaTypeName);
         } else {
             return typeKindName;
         }
@@ -212,8 +194,8 @@ export class TypeNodeHelper {
     * 
     * @param typeKindName
     */
-    findScriptOriginalType(typeKindName: string): Type | null {
-        let originalName = this.findScriptOriginalTypeName(typeKindName);
+    private findFactType(typeKindName: string): Type | null {
+        let originalName = this.findFactTypeName(typeKindName);
         //Get the AssemblyScript original type 
         let scriptType: Type | null = this.program.typesLookup.get(originalName);
         return scriptType;
@@ -233,10 +215,10 @@ class SerializeGenerator {
 
     classPrototype: ClassPrototype;
     /**Need to implement the Serialize method of the serialize interface */
-    private needImplSerialize: boolean = true; 
+    private needImplSerialize: boolean = true;
     /**Need to implement the Deserialize method of the serialize interface */
     private needImplDeSerialize: boolean = true;
-
+    /**Need to implement the primaryKey method */
     private needImplPrimary: boolean = true;
 
     constructor(classPrototype: ClassPrototype) {
@@ -274,16 +256,16 @@ class SerializeGenerator {
     }
 
 
-    checkTypeNode(typeNode: CommonTypeNode) : void{
+    checkFieldImplSerialize(typeNode: CommonTypeNode): void {
 
-        let internalName =  NodeUtil.getInternalName(typeNode);
-        let element:Element|null = this.classPrototype.program.elementsLookup.get(internalName)
+        let internalName = NodeUtil.getInternalName(typeNode);
+        let element: Element | null = this.classPrototype.program.elementsLookup.get(internalName)
 
-        if(element && element.kind == ElementKind.CLASS_PROTOTYPE){
-           let hasImpl = SerializeHelper.hasImplSerialize((<ClassPrototype>element).declaration);
-           if(!hasImpl){
-              throw new Error(`Class ${internalName} not implements the interface ${SerializeHelper.SERIALIZE_INTERFANCE}`);
-           }
+        if (element && element.kind == ElementKind.CLASS_PROTOTYPE) {
+            let hasImpl = SerializeHelper.hasImplSerialize((<ClassPrototype>element).declaration);
+            if (!hasImpl) {
+                throw new Error(`Class ${internalName} not implements the interface ${SerializeHelper.SERIALIZE_INTERFANCE}`);
+            }
         }
     }
 
@@ -305,7 +287,7 @@ class SerializeGenerator {
                 let commonType: CommonTypeNode | null = fieldDeclaration.type;
 
                 if (commonType && commonType.kind == NodeKind.TYPE) {
-                    this.checkTypeNode(commonType);
+                    this.checkFieldImplSerialize(commonType);
 
                     let typeNode = <TypeNode>commonType;
                     if (this.needImplDeSerialize)
@@ -326,29 +308,27 @@ class SerializeGenerator {
     /** Implement the serrialize field */
     serializeField(fieldName: string, typeNode: TypeNode): string {
 
-        let typeNodeHelper: TypeNodeHelper = new TypeNodeHelper(this.classPrototype.program, typeNode);
-        // typeNodeHelper.getSerializeBody(type)
-
+        let typeNodeHelper: VariableDeclaration = new VariableDeclaration(this.classPrototype.program, typeNode);
         let body: Array<string> = new Array<string>();
-        let abiType = typeNodeHelper.resolveAbiParameterType();
+        let paramDeclaration: VariableDeclaration = typeNodeHelper.resolveAbiParameterType();
 
-        if (abiType.isArray) {
-            if (abiType.typeKind == ParameterKind.NUMBER) {
-                body.push(`      let ${fieldName} = ds.readVector<${abiType.typeName}>();`);
-            } else if (abiType.typeKind == ParameterKind.BOOL) {
+        if (paramDeclaration.isArray) {
+            if (paramDeclaration.kind == VarialbeKind.NUMBER) {
+                body.push(`      let ${fieldName} = ds.readVector<${paramDeclaration.abiType}>();`);
+            } else if (paramDeclaration.kind == VarialbeKind.BOOL) {
                 body.push(`      let ${fieldName} = ds.readVector<u8>();`);
-            } else if (abiType.typeKind == ParameterKind.STRING) {
+            } else if (paramDeclaration.kind == VarialbeKind.STRING) {
 
             } else {
-                body.push(`      let ${fieldName} = ds.readComplexVector<${abiType.typeName}>();`);
+                body.push(`      let ${fieldName} = ds.readComplexVector<${paramDeclaration.declareType}>();`);
             }
         } else {
-            if (abiType.typeKind == ParameterKind.STRING) {
+            if (paramDeclaration.kind == VarialbeKind.STRING) {
                 body.push(`      ds.writeString(this.${fieldName});`);
-            } else if (abiType.typeKind == ParameterKind.BOOL) {
+            } else if (paramDeclaration.kind == VarialbeKind.BOOL) {
                 body.push(`      ds.write<u8>(this.${fieldName});`);
-            } else if (abiType.typeKind == ParameterKind.NUMBER) {
-                body.push(`      ds.write<${abiType.typeName}>(this.${fieldName});`);
+            } else if (paramDeclaration.kind == VarialbeKind.NUMBER) {
+                body.push(`      ds.write<${paramDeclaration.declareType}>(this.${fieldName});`);
             } else {
                 body.push(`      this.${fieldName}.serialize(ds);`);
             }
@@ -358,28 +338,28 @@ class SerializeGenerator {
 
     deserializeField(fieldName: string, type: TypeNode): string {
 
-        let typeNodeHelper: TypeNodeHelper = new TypeNodeHelper(this.classPrototype.program, type);
+        let typeNodeHelper: VariableDeclaration = new VariableDeclaration(this.classPrototype.program, type);
 
         let body: Array<string> = new Array<string>();
-        let abiType = typeNodeHelper.resolveAbiParameterType();
+        let variableType:VariableDeclaration = typeNodeHelper.resolveAbiParameterType();
 
-        if (abiType.isArray) {
-            if (abiType.typeKind == ParameterKind.NUMBER) {
-                body.push(`      let ${fieldName} = ds.readVector<${abiType.typeName}>();`);
-            } else if (abiType.typeKind == ParameterKind.BOOL) {
+        if (variableType.isArray) {
+            if (variableType.kind == VarialbeKind.NUMBER) {
+                body.push(`      let ${fieldName} = ds.readVector<${variableType.factType}>();`);
+            } else if (variableType.kind == VarialbeKind.BOOL) {
                 body.push(`      let ${fieldName} = ds.readVector<u8>();`);
-            } else if (abiType.typeKind == ParameterKind.STRING) {
+            } else if (variableType.kind == VarialbeKind.STRING) {
 
             } else {
-                body.push(`      let ${fieldName} = ds.readComplexVector<${abiType.typeName}>();`);
+                body.push(`      let ${fieldName} = ds.readComplexVector<${variableType.factType}>();`);
             }
         } else {
-            if (abiType.typeKind == ParameterKind.STRING) {
+            if (variableType.kind == VarialbeKind.STRING) {
                 body.push(`      this.${fieldName} = ds.readString();`);
-            } else if (abiType.typeKind == ParameterKind.BOOL) {
+            } else if (variableType.kind == VarialbeKind.BOOL) {
                 body.push(`      this.${fieldName} = ds.read<u8>() != 0;`);
-            } else if (abiType.typeKind == ParameterKind.NUMBER) {
-                body.push(`      this.${fieldName} = ds.read<${abiType.typeName}>();`);
+            } else if (variableType.kind == VarialbeKind.NUMBER) {
+                body.push(`      this.${fieldName} = ds.read<${variableType.factType}>();`);
             } else {
                 body.push(`      this.${fieldName}.deserialize(ds);`);
             }
@@ -419,6 +399,7 @@ export class SerializePoint {
         this.range = range;
         this.serialize.push(`    serialize(ds: DataStream): void {`);
         this.deserialize.push(`    deserialize(ds: DataStream): void {`);
+        
         this.primaryKey.push(`   primaryKey(): id_type {`);
         this.primaryKey.push(`      return 0;`)
         this.primaryKey.push(`   }`)
@@ -446,8 +427,8 @@ export class SerializePoint {
         return this.deserialize.join("\n");
     }
 
-    toPrimarykey():string{
-        return this.primaryKey.join("\n");
+    toPrimarykey(): string {
+        return  this.needPrimaryKey ? this.primaryKey.join("\n") : "";
     }
 }
 
