@@ -41,10 +41,8 @@ import {
     CommonTypeNode,
     IdentifierExpression
 } from "./ast";
-import { FEATURE_MUTABLE_GLOBAL } from ".";
 
-
-enum AbiParameterKind {
+enum ParameterKind {
     BOOL, // boolean and bool
     NUMBER, // original type except boolean and bool
     STRING, // string kind
@@ -55,6 +53,10 @@ enum AbiParameterKind {
 
 export class NodeUtil{
 
+    /**
+     * Get the node internal name
+     * @param node The program node
+     */
     static getInternalName(node: Node):string{
         let internalPath = node.range.source.internalPath;
         let name = node.range.toString();
@@ -63,6 +65,22 @@ export class NodeUtil{
     }
 }
 
+
+export class ParameterDeclaration{
+
+    /** Abi filed type kind */
+    parameterKind:ParameterKind;
+    /** The abi field namd */
+    abiName:string;
+    /** Whether parameter or field is array  */
+    isArray: boolean;
+
+    constructor(parameterKind:ParameterKind, abiName:string, isArray:boolean){
+        this.parameterKind = parameterKind;
+        this.abiName = abiName;
+        this.isArray = isArray;
+    }
+}
 
 export class TypeNodeHelper {
 
@@ -99,18 +117,14 @@ export class TypeNodeHelper {
     }
 
     getInternalName(): string {
-
-        let internalPath = this.commonTypeNode.range.source.internalPath;
-        let name = this.commonTypeNode.range.toString();
-        let internalName = `${internalPath}/${name}`;
-        return internalName;
+        return NodeUtil.getInternalName(this.commonTypeNode);
     }
 
     /**
      * string TypeKind is 9, and usize TypeKind is also 9.
      * @param type 
      */
-    resolveAbiParameterType(): { typeKind: AbiParameterKind, typeName: string, isArray: bool } {
+    resolveAbiParameterType(): ParameterDeclaration {
 
         let parameterType = this.commonTypeNode.range.toString();
         let typeAlias = this.program.typeAliases.get(parameterType);
@@ -121,22 +135,22 @@ export class TypeNodeHelper {
         let isArray: bool = this.isArray(parameterType);
         let baseTypeName: string = this.getBaseTypeName(parameterType);
 
-        // console.log("isArray:" + isArray );
-        // console.log("baseTypeName:" + baseTypeName + ". type kind:" + type.kind);
-
         if (baseTypeName == "string") {
-            return { typeKind: AbiParameterKind.STRING, typeName: baseTypeName, isArray };
+            return new ParameterDeclaration(ParameterKind.STRING, baseTypeName, isArray);
         }
 
         let originalName: string = this.findContractOriginalType(baseTypeName);
         let originalType: Type | null = this.findScriptOriginalType(originalName);
 
         if (!originalType) {
-            return { typeKind: AbiParameterKind.CLASS, typeName: originalName, isArray: isArray };
+            return new ParameterDeclaration(ParameterKind.CLASS, originalName, isArray);
+
+            // return { typeKind: ParameterKind.CLASS, typeName: originalName, isArray: isArray };
         } else if (originalType.kind == TypeKind.BOOL) {
-            return { typeKind: AbiParameterKind.BOOL, typeName: originalType.toString(), isArray: isArray };
+            return new ParameterDeclaration(ParameterKind.BOOL,  originalType.toString(), isArray);
+
         } else {
-            return { typeKind: AbiParameterKind.NUMBER, typeName: originalType.toString(), isArray: isArray }
+            return new ParameterDeclaration(ParameterKind.NUMBER,  originalType.toString(), isArray);
         }
     }
 
@@ -163,7 +177,7 @@ export class TypeNodeHelper {
     }
 
     isArray(typeName: string): bool {
-        return typeName.indexOf("[") != -1;
+        return typeName.includes("[");
     }
 
     getBaseTypeName(typeName: string): string {
@@ -215,11 +229,15 @@ class SerializeGenerator {
 
     DESERIALIZE_METHOD_NAME: string = "deserialize";
 
+    PRIMARY_METHOD_NAME: string = "primaryKey";
+
     classPrototype: ClassPrototype;
-
-    private needImplSerialize: boolean = true;
-
+    /**Need to implement the Serialize method of the serialize interface */
+    private needImplSerialize: boolean = true; 
+    /**Need to implement the Deserialize method of the serialize interface */
     private needImplDeSerialize: boolean = true;
+
+    private needImplPrimary: boolean = true;
 
     constructor(classPrototype: ClassPrototype) {
         this.classPrototype = classPrototype;
@@ -245,9 +263,11 @@ class SerializeGenerator {
                 if (functionPrototype.declaration.name.range.toString() == this.SERIALIZE_METHOD_NAME) {
                     this.needImplSerialize = false;
                 }
-
                 if (functionPrototype.declaration.name.range.toString() == this.DESERIALIZE_METHOD_NAME) {
                     this.needImplDeSerialize = false;
+                }
+                if (functionPrototype.declaration.name.range.toString() == this.PRIMARY_METHOD_NAME) {
+                    this.needImplPrimary = false;
                 }
             }
         }
@@ -272,6 +292,7 @@ class SerializeGenerator {
         let serializePoint: SerializePoint = new SerializePoint(this.classPrototype.declaration.range);
         serializePoint.needDeserialize = this.needImplDeSerialize;
         serializePoint.needSerialize = this.needImplSerialize;
+        serializePoint.needPrimaryKey = this.needImplPrimary;
 
         if (!this.classPrototype.instanceMembers)
             return serializePoint;
@@ -288,18 +309,22 @@ class SerializeGenerator {
 
                     let typeNode = <TypeNode>commonType;
                     if (this.needImplDeSerialize)
-                        serializePoint.addSerializeExpr(this.implSerialize(fieldName, typeNode));
+                        serializePoint.addSerializeExpr(this.serializeField(fieldName, typeNode));
 
                     if (this.needImplSerialize)
-                        serializePoint.addDeserializeExpr(this.implDeserialize(fieldName, typeNode));
+                        serializePoint.addDeserializeExpr(this.deserializeField(fieldName, typeNode));
                 }
             }
         }
+        serializePoint.addDeserializeExpr(`   }`);
+        serializePoint.addSerializeExpr(`   }`);
+
         return serializePoint;
     }
 
 
-    implSerialize(fieldName: string, typeNode: TypeNode): string {
+    /** Implement the serrialize field */
+    serializeField(fieldName: string, typeNode: TypeNode): string {
 
         let typeNodeHelper: TypeNodeHelper = new TypeNodeHelper(this.classPrototype.program, typeNode);
         // typeNodeHelper.getSerializeBody(type)
@@ -308,21 +333,21 @@ class SerializeGenerator {
         let abiType = typeNodeHelper.resolveAbiParameterType();
 
         if (abiType.isArray) {
-            if (abiType.typeKind == AbiParameterKind.NUMBER) {
+            if (abiType.typeKind == ParameterKind.NUMBER) {
                 body.push(`      let ${fieldName} = ds.readVector<${abiType.typeName}>();`);
-            } else if (abiType.typeKind == AbiParameterKind.BOOL) {
+            } else if (abiType.typeKind == ParameterKind.BOOL) {
                 body.push(`      let ${fieldName} = ds.readVector<u8>();`);
-            } else if (abiType.typeKind == AbiParameterKind.STRING) {
+            } else if (abiType.typeKind == ParameterKind.STRING) {
 
             } else {
                 body.push(`      let ${fieldName} = ds.readComplexVector<${abiType.typeName}>();`);
             }
         } else {
-            if (abiType.typeKind == AbiParameterKind.STRING) {
+            if (abiType.typeKind == ParameterKind.STRING) {
                 body.push(`      ds.writeString(this.${fieldName});`);
-            } else if (abiType.typeKind == AbiParameterKind.BOOL) {
+            } else if (abiType.typeKind == ParameterKind.BOOL) {
                 body.push(`      ds.write<u8>(this.${fieldName});`);
-            } else if (abiType.typeKind == AbiParameterKind.NUMBER) {
+            } else if (abiType.typeKind == ParameterKind.NUMBER) {
                 body.push(`      ds.write<${abiType.typeName}>(this.${fieldName});`);
             } else {
                 body.push(`      this.${fieldName}.serialize(ds);`);
@@ -331,8 +356,7 @@ class SerializeGenerator {
         return body.join("\n");
     }
 
-
-    implDeserialize(fieldName: string, type: TypeNode): string {
+    deserializeField(fieldName: string, type: TypeNode): string {
 
         let typeNodeHelper: TypeNodeHelper = new TypeNodeHelper(this.classPrototype.program, type);
 
@@ -340,21 +364,21 @@ class SerializeGenerator {
         let abiType = typeNodeHelper.resolveAbiParameterType();
 
         if (abiType.isArray) {
-            if (abiType.typeKind == AbiParameterKind.NUMBER) {
+            if (abiType.typeKind == ParameterKind.NUMBER) {
                 body.push(`      let ${fieldName} = ds.readVector<${abiType.typeName}>();`);
-            } else if (abiType.typeKind == AbiParameterKind.BOOL) {
+            } else if (abiType.typeKind == ParameterKind.BOOL) {
                 body.push(`      let ${fieldName} = ds.readVector<u8>();`);
-            } else if (abiType.typeKind == AbiParameterKind.STRING) {
+            } else if (abiType.typeKind == ParameterKind.STRING) {
 
             } else {
                 body.push(`      let ${fieldName} = ds.readComplexVector<${abiType.typeName}>();`);
             }
         } else {
-            if (abiType.typeKind == AbiParameterKind.STRING) {
+            if (abiType.typeKind == ParameterKind.STRING) {
                 body.push(`      this.${fieldName} = ds.readString();`);
-            } else if (abiType.typeKind == AbiParameterKind.BOOL) {
+            } else if (abiType.typeKind == ParameterKind.BOOL) {
                 body.push(`      this.${fieldName} = ds.read<u8>() != 0;`);
-            } else if (abiType.typeKind == AbiParameterKind.NUMBER) {
+            } else if (abiType.typeKind == ParameterKind.NUMBER) {
                 body.push(`      this.${fieldName} = ds.read<${abiType.typeName}>();`);
             } else {
                 body.push(`      this.${fieldName}.deserialize(ds);`);
@@ -370,9 +394,13 @@ export class SerializePoint {
 
     private deserialize: Array<string> = new Array<string>();
 
+    private primaryKey: Array<string> = new Array<string>();
+
     needSerialize: bool;
 
     needDeserialize: bool;
+
+    needPrimaryKey: bool;
 
     range: Range;
 
@@ -391,6 +419,9 @@ export class SerializePoint {
         this.range = range;
         this.serialize.push(`    serialize(ds: DataStream): void {`);
         this.deserialize.push(`    deserialize(ds: DataStream): void {`);
+        this.primaryKey.push(`   primaryKey(): id_type {`);
+        this.primaryKey.push(`      return 0;`)
+        this.primaryKey.push(`   }`)
     }
 
     addSerializeExpr(expr: string): void {
@@ -402,21 +433,21 @@ export class SerializePoint {
     }
 
     toSerialize(): string {
-
         if (!this.needSerialize) {
             return "";
         }
-        return `${this.serialize.join("\n")}
-    }`;
+        return this.serialize.join("\n");
     }
 
     toDeserialize(): string {
-
         if (!this.needDeserialize) {
             return "";
         }
+        return this.deserialize.join("\n");
+    }
 
-        return `${this.deserialize.join("\n")}}`;
+    toPrimarykey():string{
+        return this.primaryKey.join("\n");
     }
 }
 
