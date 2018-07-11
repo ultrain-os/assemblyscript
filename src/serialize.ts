@@ -288,13 +288,12 @@ class SerializeGenerator {
                 let commonType: CommonTypeNode | null = fieldDeclaration.type;
 
                 if (commonType && commonType.kind == NodeKind.TYPE) {
-                    this.checkFieldImplSerialize(commonType);
 
                     let typeNode = <TypeNode>commonType;
-                    if (this.needImplDeSerialize)
+                    if (this.needImplDeSerialize && this.checkFieldImplSerialize(commonType))
                         serializePoint.addSerializeExpr(this.serializeField(fieldName, typeNode));
 
-                    if (this.needImplSerialize)
+                    if (this.needImplSerialize && this.checkFieldImplSerialize(commonType))
                         serializePoint.addDeserializeExpr(this.deserializeField(fieldName, typeNode));
                 }
             }

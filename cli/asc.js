@@ -12,7 +12,7 @@
  */
 
 // Use "." instead of "/" as cwd in browsers
-if (process.browser) process.cwd = function() { return "."; };
+if (process.browser) process.cwd = function () { return "."; };
 
 const fs = require("fs");
 const path = require("path");
@@ -79,7 +79,7 @@ exports.libraryFiles = exports.isBundle ? BUNDLE_LIBRARY : (() => { // set up if
   const libDir = path.join(__dirname, "..", "std", "assembly");
   const libFiles = require("glob").sync("**/!(*.d).ts", { cwd: libDir });
   const bundled = {};
-  libFiles.forEach(file => bundled[file.replace(/\.ts$/, "")] = fs.readFileSync(path.join(libDir, file), "utf8" ));
+  libFiles.forEach(file => bundled[file.replace(/\.ts$/, "")] = fs.readFileSync(path.join(libDir, file), "utf8"));
   return bundled;
 })();
 
@@ -146,7 +146,7 @@ exports.main = function main(argv, options, callback, isDispatch) {
   argv = opts.arguments;
   if (args.noColors) {
     colorsUtil.stdout.supported =
-    colorsUtil.stderr.supported = false;
+      colorsUtil.stderr.supported = false;
   } else {
     colorsUtil.stdout = colorsUtil.from(stdout);
     colorsUtil.stderr = colorsUtil.from(stderr);
@@ -261,7 +261,7 @@ exports.main = function main(argv, options, callback, isDispatch) {
       let libDir = customLibDirs[i];
       let libFiles;
       if (libDir.endsWith(".ts")) {
-        libFiles = [ path.basename(libDir) ];
+        libFiles = [path.basename(libDir)];
         libDir = path.dirname(libDir);
       } else {
         libFiles = listFiles(libDir);
@@ -305,14 +305,14 @@ exports.main = function main(argv, options, callback, isDispatch) {
 
     stats.parseCount++;
     stats.parseTime += measure(() => {
-      
+
       // if <pre> isDispathch == true </pre>, reproduce the code 
-      if(!isDispatch){
-        sourceText = exports.resolveSourceText(sourceText, null,exports.libraryFiles);
+      if (!isDispatch) {
+        sourceText = exports.resolveSourceText(sourceText, null, exports.libraryFiles);
         parser = assemblyscript.parseFile(sourceText, sourcePath, true, parser);
       } else {
         sourceText = exports.insertSerializeMethodText(sourcePath, sourceText);
-        sourceText = exports.resolveSourceText(sourceText, exports.applyText,exports.libraryFiles);
+        sourceText = exports.resolveSourceText(sourceText, exports.applyText, exports.libraryFiles);
         parser = assemblyscript.parseFile(sourceText, sourcePath, true, parser);
       }
 
@@ -352,7 +352,7 @@ exports.main = function main(argv, options, callback, isDispatch) {
           }
         }
 
-      // Otherwise try nextFile.ts, nextFile/index.ts, ~lib/nextFile.ts, ~lib/nextFile/index.ts
+        // Otherwise try nextFile.ts, nextFile/index.ts, ~lib/nextFile.ts, ~lib/nextFile/index.ts
       } else {
         const plainName = sourcePath;
         const indexName = sourcePath + "/index";
@@ -396,9 +396,9 @@ exports.main = function main(argv, options, callback, isDispatch) {
       stats.parseTime += measure(() => {
         // console.log(`source Text: ${sourceText}`);
 
-        if(isDispatch){
+        if (isDispatch) {
           // console.log(`SourcePath :${sourcePath}`);
-          sourceText = exports.insertSerializeMethodText(sourcePath, sourceText); 
+          sourceText = exports.insertSerializeMethodText(sourcePath, sourceText);
         }
         assemblyscript.parseFile(sourceText, sourcePath, false, parser);
       });
@@ -503,12 +503,12 @@ exports.main = function main(argv, options, callback, isDispatch) {
   if (args.trapMode === "clamp") {
     stats.optimizeCount++;
     stats.optimizeTime += measure(() => {
-      module.runPasses([ "trap-mode-clamp" ]);
+      module.runPasses(["trap-mode-clamp"]);
     });
   } else if (args.trapMode === "js") {
     stats.optimizeCount++;
     stats.optimizeTime += measure(() => {
-      module.runPasses([ "trap-mode-js" ]);
+      module.runPasses(["trap-mode-js"]);
     });
   } else if (args.trapMode !== "allow") {
     module.dispose();
@@ -551,14 +551,14 @@ exports.main = function main(argv, options, callback, isDispatch) {
       module.runPasses(runPasses.map(pass => pass.trim()));
     });
   }
-  
-  if(!isDispatch){
+
+  if (!isDispatch) {
     exports.abiObj = program.toAbi();
     exports.applyText = exports.abiObj.dispatch;
   }
 
   // console.log("applyText:" + exports.applyText);
-  if(args.applyText && isDispatch){
+  if (args.applyText && isDispatch) {
     console.log("The generated apply text:");
     console.log(exports.applyText);
   }
@@ -763,7 +763,7 @@ exports.main = function main(argv, options, callback, isDispatch) {
       stats.writeCount++;
       stats.writeTime += measure(() => {
         if (typeof contents === "string") {
-          fs.writeFileSync(filename, contents, { encoding: "utf8" } );
+          fs.writeFileSync(filename, contents, { encoding: "utf8" });
         } else {
           fs.writeFileSync(filename, contents);
         }
@@ -802,21 +802,21 @@ exports.main = function main(argv, options, callback, isDispatch) {
 }
 
 var argumentSubstitutions = {
-  "-O"  : [ "--optimize" ],
-  "-Os" : [ "--optimize", "--shrinkLevel", "1" ],
-  "-Oz" : [ "--optimize", "--shrinkLevel", "2" ],
-  "-O0" : [ "--optimizeLevel", "0", "--shrinkLevel", "0" ],
-  "-O0s": [ "--optimizeLevel", "0", "--shrinkLevel", "1" ],
-  "-O0z": [ "--optimizeLevel", "0", "--shrinkLevel", "2" ],
-  "-O1" : [ "--optimizeLevel", "1", "--shrinkLevel", "0" ],
-  "-O1s": [ "--optimizeLevel", "1", "--shrinkLevel", "1" ],
-  "-O1z": [ "--optimizeLevel", "1", "--shrinkLevel", "2" ],
-  "-O2" : [ "--optimizeLevel", "2", "--shrinkLevel", "0" ],
-  "-O2s": [ "--optimizeLevel", "2", "--shrinkLevel", "1" ],
-  "-O2z": [ "--optimizeLevel", "2", "--shrinkLevel", "2" ],
-  "-O3" : [ "--optimizeLevel", "3", "--shrinkLevel", "0" ],
-  "-O3s": [ "--optimizeLevel", "3", "--shrinkLevel", "1" ],
-  "-O3z": [ "--optimizeLevel", "3", "--shrinkLevel", "2" ],
+  "-O": ["--optimize"],
+  "-Os": ["--optimize", "--shrinkLevel", "1"],
+  "-Oz": ["--optimize", "--shrinkLevel", "2"],
+  "-O0": ["--optimizeLevel", "0", "--shrinkLevel", "0"],
+  "-O0s": ["--optimizeLevel", "0", "--shrinkLevel", "1"],
+  "-O0z": ["--optimizeLevel", "0", "--shrinkLevel", "2"],
+  "-O1": ["--optimizeLevel", "1", "--shrinkLevel", "0"],
+  "-O1s": ["--optimizeLevel", "1", "--shrinkLevel", "1"],
+  "-O1z": ["--optimizeLevel", "1", "--shrinkLevel", "2"],
+  "-O2": ["--optimizeLevel", "2", "--shrinkLevel", "0"],
+  "-O2s": ["--optimizeLevel", "2", "--shrinkLevel", "1"],
+  "-O2z": ["--optimizeLevel", "2", "--shrinkLevel", "2"],
+  "-O3": ["--optimizeLevel", "3", "--shrinkLevel", "0"],
+  "-O3s": ["--optimizeLevel", "3", "--shrinkLevel", "1"],
+  "-O3z": ["--optimizeLevel", "3", "--shrinkLevel", "2"],
 };
 
 /** Checks diagnostics emitted so far for errors. */
@@ -897,13 +897,13 @@ function printStats(stats, output) {
 exports.printStats = printStats;
 
 var allocBuffer = typeof global !== "undefined" && global.Buffer
-  ? global.Buffer.allocUnsafe || function(len) { return new global.Buffer(len); }
-  : function(len) { return new Uint8Array(len) };
+  ? global.Buffer.allocUnsafe || function (len) { return new global.Buffer(len); }
+  : function (len) { return new Uint8Array(len) };
 
 /** Creates a memory stream that can be used in place of stdout/stderr. */
 function createMemoryStream(fn) {
   var stream = [];
-  stream.write = function(chunk) {
+  stream.write = function (chunk) {
     if (fn) fn(chunk);
     if (typeof chunk === "string") {
       let buffer = allocBuffer(utf8.length(chunk));
@@ -912,10 +912,10 @@ function createMemoryStream(fn) {
     }
     this.push(chunk);
   };
-  stream.reset = function() {
+  stream.reset = function () {
     stream.length = 0;
   };
-  stream.toBuffer = function() {
+  stream.toBuffer = function () {
     var offset = 0, i = 0, k = this.length;
     while (i < k) offset += this[i++].length;
     var buffer = allocBuffer(offset);
@@ -927,7 +927,7 @@ function createMemoryStream(fn) {
     }
     return buffer;
   };
-  stream.toString = function() {
+  stream.toString = function () {
     var buffer = this.toBuffer();
     return utf8.read(buffer, 0, buffer.length);
   };
@@ -952,16 +952,16 @@ exports.tscOptions = {
   allowJs: false
 };
 
-function resolveSourceText(sourceText, applyText, library){
+function resolveSourceText(sourceText, applyText, library) {
   let memoryLib = "allocate/arena";
-  let resultTextBuffer  = new Array();
-  if(library[memoryLib] == undefined){
-    resultTextBuffer.push( `import "allocator/arena";`);
+  let resultTextBuffer = new Array();
+  if (library[memoryLib] == undefined) {
+    resultTextBuffer.push(`import "allocator/arena";`);
   }
 
   resultTextBuffer.push(sourceText);
 
-  if(applyText){
+  if (applyText) {
     resultTextBuffer.push(applyText);
   }
   return resultTextBuffer.join("\n");
@@ -969,27 +969,22 @@ function resolveSourceText(sourceText, applyText, library){
 
 exports.resolveSourceText = resolveSourceText;
 
-function insertSerializeMethodText(sourcePath, sourceText){
-  
-  let serializeLookup =  exports.abiObj.fileSerializeLookup;
-
-  if(serializeLookup.has(sourcePath)){
+function insertSerializeMethodText(sourcePath, sourceText) {
+  let serializeLookup = exports.abiObj.fileSerializeLookup;
+  if (serializeLookup.has(sourcePath)) {
 
     let serializeArray = serializeLookup.get(sourcePath);
     let data = sourceText.split(EOL);
-
-    console.log(`data.length :${data.length}`);
-
-    for(let serialize of serializeArray){
+    // console.log(`data.length :${data.length}`);
+    for (let serialize of serializeArray) {
       data.splice(serialize.line, 0, serialize.toSerialize());
-      data.splice(serialize.line, 0 , EOL);
+      // data.splice(serialize.line, 0, EOL);
       data.splice(serialize.line, 0, serialize.toDeserialize());
-      data.splice(serialize.line, 0 , EOL);
+      // data.splice(serialize.line, 0, EOL);
       data.splice(serialize.line, 0, serialize.toPrimarykey());
       // console.log( `${serialize.line}`);
     }
-     console.log(`return sourceText: ${data.join(EOL)}`);
-
+    console.log(`return sourceText: ${data.join(EOL)}`);
     return data.join(EOL);
   } else {
     return sourceText;
