@@ -26,7 +26,6 @@ var assemblyscript, isDev = false;
 (() => {
   try { // `asc` on the command line
     assemblyscript = require("../dist/assemblyscript.js");
-    throw new Error();
   } catch (e) {
     try { // `asc` on the command line without dist files
       require("ts-node").register({ project: path.join(__dirname, "..", "src", "tsconfig.json") });
@@ -920,7 +919,7 @@ function createMemoryStream(fn) {
     var offset = 0, i = 0, k = this.length;
     while (i < k) offset += this[i++].length;
     var buffer = allocBuffer(offset);
-    offset = i = 0;g
+    offset = i = 0;
     while (i < k) {
       buffer.set(this[i], offset);
       offset += this[i].length;
@@ -985,6 +984,8 @@ function insertSerializeMethodText(sourcePath, sourceText){
       data.splice(serialize.line, 0, serialize.toSerialize());
       data.splice(serialize.line, 0 , EOL);
       data.splice(serialize.line, 0, serialize.toDeserialize());
+      data.splice(serialize.line, 0 , EOL);
+      data.splice(serialize.line, 0, serialize.toPrimarykey());
       // console.log( `${serialize.line}`);
     }
      console.log(`return sourceText: ${data.join(EOL)}`);
@@ -993,7 +994,6 @@ function insertSerializeMethodText(sourcePath, sourceText){
   } else {
     return sourceText;
   }
-
 }
 
 exports.insertSerializeMethodText = insertSerializeMethodText;

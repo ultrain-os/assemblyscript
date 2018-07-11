@@ -269,6 +269,7 @@ class SerializeGenerator {
         }
     }
 
+    /**Parse the class prototype and get serialize points */
     getSerializePoints(): SerializePoint {
 
         let serializePoint: SerializePoint = new SerializePoint(this.classPrototype.declaration.range);
@@ -400,9 +401,9 @@ export class SerializePoint {
         this.serialize.push(`    serialize(ds: DataStream): void {`);
         this.deserialize.push(`    deserialize(ds: DataStream): void {`);
         
-        this.primaryKey.push(`   primaryKey(): id_type {`);
-        this.primaryKey.push(`      return 0;`)
-        this.primaryKey.push(`   }`)
+        this.primaryKey.push(`     primaryKey(): id_type {`);
+        this.primaryKey.push(`       return 0;`)
+        this.primaryKey.push(`    }`)
     }
 
     addSerializeExpr(expr: string): void {

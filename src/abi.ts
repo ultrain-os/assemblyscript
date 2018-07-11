@@ -2,7 +2,8 @@ import {
   SerializeHelper,
   SerializePoint,
   VariableDeclaration,
-  VarialbeKind
+  VarialbeKind,
+  NodeUtil
 } from "./serialize";
 
 import {
@@ -71,17 +72,6 @@ class Action {
   constructor(name: string, type: string) {
     this.name = name;
     this.type = type;
-  }
-}
-
-
-class SourceNode {
-  sourceName: string;
-  importNames: Array<string>;
-
-  constructor(sourceNode: string) {
-    this.sourceName = sourceNode;
-    this.importNames = new Array();
   }
 }
 
@@ -315,7 +305,7 @@ export class Abi {
       return argu.substring(1, argu.length - 2);
     }
 
-    let internelName = this.getInternalName(expr);
+    let internelName = NodeUtil.getInternalName(expr);
     let element: Element | null = this.program.elementsLookup.get(internelName);
 
     if (element) {
@@ -329,13 +319,6 @@ export class Abi {
   }
 
 
-  getInternalName(node: Node): string {
-
-    let internalPath = node.range.source.internalPath;
-    let name = node.range.toString();
-    let internalName = `${internalPath}/${name}`;
-    return internalName;
-  }
 
 
 
@@ -401,21 +384,6 @@ export class Abi {
   }
 
 
-  isArray(typeName: string): bool {
-    return typeName.indexOf("[") != -1;
-  }
-
-  getBaseTypeName(typeName: string): string {
-
-    let bracketIndex = typeName.indexOf("[");
-    if (bracketIndex != -1) {
-      let index = typeName.indexOf(" ") == -1 ? bracketIndex : typeName.indexOf(" ");
-      let baseTypeName = typeName.substring(0, index);
-      return baseTypeName;
-    }
-    return typeName;
-  }
-
   static nameMap = ".12345abcdefghijklmnopqrstuvwxyz";
 
 
@@ -429,40 +397,6 @@ export class Abi {
       if (Abi.nameMap.indexOf(ch) == -1) {
         throw new Error(`Action Name:${str} should only contains the following symbol .12345abcdefghijklmnopqrstuvwxyz`);
       }
-    }
-  }
-
-
-  /** 
-  * string TypeKind is 9, and usize TypeKind is also 9.
-  */
-  resolveAbiParameterType(type: CommonTypeNode): { typeKind: VarialbeKind, typeName: string, isArray: bool } {
-
-    let parameterType = type.range.toString();
-    let typeAlias = this.program.typeAliases.get(parameterType);
-    if (typeAlias) {
-      parameterType = typeAlias.type.range.toString();
-    }
-
-    let isArray: bool = this.isArray(parameterType);
-    let baseTypeName: string = this.getBaseTypeName(parameterType);
-
-    // console.log("isArray:" + isArray );
-    // console.log("baseTypeName:" + baseTypeName + ". type kind:" + type.kind);
-
-    if (baseTypeName == "string") {
-      return { typeKind: VarialbeKind.STRING, typeName: baseTypeName, isArray };
-    }
-
-    let originalName: string = this.findContractOriginalType(baseTypeName);
-    let originalType: Type | null = this.findScriptOriginalType(originalName);
-
-    if (!originalType) {
-      return { typeKind: VarialbeKind.CLASS, typeName: originalName, isArray: isArray };
-    } else if (originalType.kind == TypeKind.BOOL) {
-      return { typeKind: VarialbeKind.BOOL, typeName: originalType.toString(), isArray: isArray };
-    } else {
-      return { typeKind: VarialbeKind.NUMBER, typeName: originalType.toString(), isArray: isArray }
     }
   }
 
@@ -505,27 +439,29 @@ export class Abi {
             let parameterType = type.type.range.toString();
             let parameterName = type.name.range.toString();
 
-            let abiType = this.resolveAbiParameterType(type.type);
+
+            let variableDeclaration: VariableDeclaration = new VariableDeclaration(this.program, type.type);
+            let abiType = variableDeclaration.resolveAbiParameterType();
 
             if (abiType.isArray) {
-              if (abiType.typeKind == VarialbeKind.NUMBER) {
-                body.push(`      let ${parameterName} = ds.readVector<${abiType.typeName}>();`);
-              } else if (abiType.typeKind == VarialbeKind.BOOL) {
+              if (abiType.kind == VarialbeKind.NUMBER) {
+                body.push(`      let ${parameterName} = ds.readVector<${abiType.factType}>();`);
+              } else if (abiType.kind == VarialbeKind.BOOL) {
                 body.push(`      let ${parameterName} = ds.readVector<u8>();`);
-              } else if (abiType.typeKind == VarialbeKind.STRING) {
+              } else if (abiType.kind == VarialbeKind.STRING) {
 
               } else {
-                body.push(`      let ${parameterName} = ds.readComplexVector<${abiType.typeName}>();`);
+                body.push(`      let ${parameterName} = ds.readComplexVector<${abiType.factType}>();`);
               }
             } else {
-              if (abiType.typeKind == VarialbeKind.STRING) {
+              if (abiType.kind == VarialbeKind.STRING) {
                 body.push(`      let ${parameterName} = ds.readString();`);
-              } else if (abiType.typeKind == VarialbeKind.BOOL) {
+              } else if (abiType.kind == VarialbeKind.BOOL) {
                 body.push(`      let ${parameterName} = ds.read<u8>() != 0;`);
-              } else if (abiType.typeKind == VarialbeKind.NUMBER) {
-                body.push(`      let ${parameterName} = ds.read<${abiType.typeName}>();`);
+              } else if (abiType.kind == VarialbeKind.NUMBER) {
+                body.push(`      let ${parameterName} = ds.read<${abiType.factType}>();`);
               } else {
-                let internalName = this.getInternalName(type.type);
+                let internalName = NodeUtil.getInternalName(type.type);
                 this.retrieveStructByInternalName(internalName);
                 body.push(`      let ${parameterName} = new ${parameterType}();`);
                 body.push(`      ${parameterName}.deserialize(ds)`);

@@ -2557,7 +2557,7 @@ export abstract class Element {
   /** Simple name. */
   simpleName: string;
   /** Internal name referring to this element. */
-  internalName: string;
+  _internalName: string;
   /** Common flags indicating specific traits. */
   flags: CommonFlags = CommonFlags.NONE;
   /** Decorator flags indicating annotated traits. */
@@ -2571,7 +2571,7 @@ export abstract class Element {
   protected constructor(program: Program, simpleName: string, internalName: string) {
     this.program = program;
     this.simpleName = simpleName;
-    this.internalName = Element.replaceComma(internalName);
+    this._internalName = internalName;
   }
 
   static replaceComma(str: string):string{
@@ -2581,6 +2581,14 @@ export abstract class Element {
       result +=  ch == "," ? "_" : ch;
     }
     return result;
+  }
+
+  get internalName():string{
+    return Element.replaceComma(this._internalName);
+  }
+
+  set internalName(internalName:string) {
+    this._internalName = internalName;
   }
 
   /** Tests if this element has a specific flag or flags. */
