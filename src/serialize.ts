@@ -108,7 +108,7 @@ export class VariableDeclaration {
         }
         this.declareType = variableType;
         let baseTypeName: string = this.getBaseTypeName(variableType);
-        this.baseType = this.baseType;
+        this.baseType = baseTypeName;
         if (baseTypeName == "string") {
             this.kind = VarialbeKind.STRING;
             this.factType = "string";
@@ -351,7 +351,7 @@ class SerializeGenerator {
             } else if (variableType.kind == VarialbeKind.STRING) {
 
             } else {
-                body.push(`      let ${fieldName} = ds.readComplexVector<${variableType.factType}>();`);
+                body.push(`      let ${fieldName} = ds.readComplexVector<${variableType.baseType}>();`);
             }
         } else {
             if (variableType.kind == VarialbeKind.STRING) {
@@ -472,6 +472,10 @@ export class SerializeHelper {
         this.sortSerializePoints();
     }
 
+    /**
+     * Add the serialize point
+     * @param serialize The serialize point
+     */
     addSerializePoint(serialize: SerializePoint): void {
 
         let normalizedPath = serialize.normalizedPath;
@@ -486,6 +490,10 @@ export class SerializeHelper {
         }
     }
 
+    /**
+     * Sorting the serialize points by the line number, 
+     * the max line number is in front of.
+     */
     sortSerializePoints(): void {
         for (let [key, array] of this.fileSerializeLookup) {
             let compartor = (a: SerializePoint, b: SerializePoint): i32 => {

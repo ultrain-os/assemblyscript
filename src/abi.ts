@@ -257,7 +257,6 @@ export class Abi {
     if (str == undefined || str == null) {
       return false;
     }
-
     return str.charAt(0) == "\"" && str.charAt(str.length - 1) == "\""
       ? true : false;
   }
@@ -339,8 +338,6 @@ export class Abi {
     if (!element || element.kind != ElementKind.CLASS_PROTOTYPE) {
       throw new Error(`Element ${internalName} not found, pleasure make sure that class ${internalName} was existed.`);
     }
-
-
     let classPrototype = <ClassPrototype>element;
     this.resolveClassPrototypeToStruct(classPrototype);
   }
@@ -349,7 +346,6 @@ export class Abi {
   resolveClassPrototypeToStruct(classPrototype: ClassPrototype): void {
 
     let members: DeclarationStatement[] = classPrototype.declaration.members;
-
     let struct = new Struct();
     struct.name = classPrototype.simpleName;
 
@@ -369,10 +365,8 @@ export class Abi {
         }
       }
     }
-
     this.addStruct(struct);
   }
-
 
 
   addStruct(struct: Struct): void {
@@ -403,8 +397,6 @@ export class Abi {
 
   /**
   *  Resolve ClassPrototype to dispatcher  
-  *
-  *
   */
   resolveClassDispatcher(clzPrototype: ClassPrototype): Array<string> {
 
@@ -451,7 +443,7 @@ export class Abi {
               } else if (abiType.kind == VarialbeKind.STRING) {
 
               } else {
-                body.push(`      let ${parameterName} = ds.readComplexVector<${abiType.factType}>();`);
+                body.push(`      let ${parameterName} = ds.readComplexVector<${abiType.baseType}>();`);
               }
             } else {
               if (abiType.kind == VarialbeKind.STRING) {
