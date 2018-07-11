@@ -429,7 +429,7 @@ export class Abi {
           let funcName = declaration.name.range.toString();
           let types = declaration.signature.parameters; // FunctionDeclaration parameter types
 
-          this.checkName(funcName);
+          // this.checkName(funcName);
 
           body.push(`    if (action == N("${funcName}")){`);
 
