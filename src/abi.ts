@@ -456,7 +456,7 @@ export class Abi {
                 let internalName = NodeUtil.getInternalName(type.type);
                 this.retrieveStructByInternalName(internalName);
                 body.push(`      let ${parameterName} = new ${parameterType}();`);
-                body.push(`      ${parameterName}.deserialize(ds)`);
+                body.push(`      ${parameterName}.deserialize(ds);`);
               }
             }
             fields.push(parameterName);
