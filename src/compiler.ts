@@ -74,6 +74,10 @@ import {
 } from "./program";
 
 import {
+  Resolver
+} from "./resolver";
+
+import {
   Token,
   operatorTokenToString
 } from "./tokenizer";
@@ -126,6 +130,7 @@ import {
   LiteralExpression,
   LiteralKind,
   NewExpression,
+  ObjectLiteralExpression,
   ParenthesizedExpression,
   PropertyAccessExpression,
   TernaryExpression,
@@ -250,6 +255,8 @@ export class Compiler extends DiagnosticEmitter {
 
   /** Program reference. */
   program: Program;
+  /** Resolver reference. */
+  resolver: Resolver;
   /** Provided options. */
   options: Options;
   /** Module instance being compiled. */
@@ -258,6 +265,8 @@ export class Compiler extends DiagnosticEmitter {
   currentFunction: Function;
   /** Current outer function in compilation, if compiling a function expression. */
   currentOuterFunction: Function | null = null;
+  /** Current inline functions stack. */
+  currentInlineFunctions: Function[] = [];
   /** Current enum in compilation. */
   currentEnum: Enum | null = null;
   /** Current type in compilation. */
@@ -288,6 +297,7 @@ export class Compiler extends DiagnosticEmitter {
   constructor(program: Program, options: Options | null = null) {
     super(program.diagnostics);
     this.program = program;
+    this.resolver = program.resolver;
     if (!options) options = new Options();
     this.options = options;
     this.memoryOffset = i64_new(
@@ -430,7 +440,7 @@ export class Compiler extends DiagnosticEmitter {
             (noTreeShaking || (isEntry && statement.is(CommonFlags.EXPORT))) &&
             !(<ClassDeclaration>statement).isGeneric
           ) {
-            this.compileClassDeclaration(<ClassDeclaration>statement, []);
+            this.compileClassDeclaration(<ClassDeclaration>statement, [], null);
           }
           break;
         }
@@ -514,7 +524,7 @@ export class Compiler extends DiagnosticEmitter {
 
         // resolve now if annotated
         if (declaration.type) {
-          let resolvedType = this.program.resolveType(declaration.type); // reports
+          let resolvedType = this.resolver.resolveType(declaration.type); // reports
           if (!resolvedType) return false;
           if (resolvedType == Type.void) {
             this.error(
@@ -827,7 +837,8 @@ export class Compiler extends DiagnosticEmitter {
     outerScope: Flow | null,
     reportNode: Node
   ): Function | null {
-    var instance = prototype.resolveUsingTypeArguments( // reports
+    var instance = this.resolver.resolveFunctionInclTypeArguments(
+      prototype,
       typeArguments,
       contextualTypeArguments,
       reportNode
@@ -1203,8 +1214,7 @@ export class Compiler extends DiagnosticEmitter {
   compileClassDeclaration(
     declaration: ClassDeclaration,
     typeArguments: TypeNode[],
-    contextualTypeArguments: Map<string,Type> | null = null,
-    alternativeReportNode: Node | null = null
+    contextualTypeArguments: Map<string,Type> | null = null
   ): void {
     var element = assert(this.program.elementsLookup.get(declaration.fileLevelInternalName));
     assert(element.kind == ElementKind.CLASS_PROTOTYPE);
@@ -1212,7 +1222,7 @@ export class Compiler extends DiagnosticEmitter {
       <ClassPrototype>element,
       typeArguments,
       contextualTypeArguments,
-      alternativeReportNode
+      declaration
     );
   }
 
@@ -1222,10 +1232,11 @@ export class Compiler extends DiagnosticEmitter {
     contextualTypeArguments: Map<string,Type> | null = null,
     alternativeReportNode: Node | null = null
   ): void {
-    var instance = prototype.resolveUsingTypeArguments( // reports
+    var instance = this.resolver.resolveClassInclTypeArguments(
+      prototype,
       typeArguments,
       contextualTypeArguments,
-      alternativeReportNode
+      alternativeReportNode || prototype.declaration
     );
     if (!instance) return;
     this.compileClass(instance);
@@ -2002,13 +2013,14 @@ export class Compiler extends DiagnosticEmitter {
     // other variables become locals
     var initializers = new Array<ExpressionRef>();
     var flow = this.currentFunction.flow;
+    var resolver = this.resolver;
     for (let i = 0; i < numDeclarations; ++i) {
       let declaration = declarations[i];
       let name = declaration.name.text;
       let type: Type | null = null;
       let initExpr: ExpressionRef = 0;
       if (declaration.type) {
-        type = program.resolveType( // reports
+        type = resolver.resolveType( // reports
           declaration.type,
           flow.contextualTypeArguments
         );
@@ -2380,7 +2392,10 @@ export class Compiler extends DiagnosticEmitter {
         break;
       }
       default: {
-        assert(false);
+        this.error(
+          DiagnosticCode.Operation_not_supported,
+          expression.range
+        );
         expr = this.module.createUnreachable();
       }
     }
@@ -2612,7 +2627,7 @@ export class Compiler extends DiagnosticEmitter {
   }
 
   compileAssertionExpression(expression: AssertionExpression, contextualType: Type): ExpressionRef {
-    var toType = this.program.resolveType( // reports
+    var toType = this.resolver.resolveType( // reports
       expression.toType,
       this.currentFunction.flow.contextualTypeArguments
     );
@@ -3588,7 +3603,7 @@ export class Compiler extends DiagnosticEmitter {
               break;
             }
             assert(prototype.kind == ElementKind.FUNCTION_PROTOTYPE);
-            this.f32PowInstance = instance = (<FunctionPrototype>prototype).resolve();
+            this.f32PowInstance = instance = this.resolver.resolveFunction(<FunctionPrototype>prototype, null);
           }
 
         // Math.pow otherwise (result is f64)
@@ -3630,7 +3645,7 @@ export class Compiler extends DiagnosticEmitter {
               break;
             }
             assert(prototype.kind == ElementKind.FUNCTION_PROTOTYPE);
-            this.f64PowInstance = instance = (<FunctionPrototype>prototype).resolve();
+            this.f64PowInstance = instance = this.resolver.resolveFunction(<FunctionPrototype>prototype, null);
           }
         }
         if (!(instance && this.compileFunction(instance))) {
@@ -3880,7 +3895,7 @@ export class Compiler extends DiagnosticEmitter {
                 break;
               }
               assert(prototype.kind == ElementKind.FUNCTION_PROTOTYPE);
-              this.f32ModInstance = instance = (<FunctionPrototype>prototype).resolve();
+              this.f32ModInstance = instance = this.resolver.resolveFunction(<FunctionPrototype>prototype, null);
             }
             if (!(instance && this.compileFunction(instance))) {
               expr = module.createUnreachable();
@@ -3911,7 +3926,7 @@ export class Compiler extends DiagnosticEmitter {
                 break;
               }
               assert(prototype.kind == ElementKind.FUNCTION_PROTOTYPE);
-              this.f64ModInstance = instance = (<FunctionPrototype>prototype).resolve();
+              this.f64ModInstance = instance = this.resolver.resolveFunction(<FunctionPrototype>prototype, null);
             }
             if (!(instance && this.compileFunction(instance))) {
               expr = module.createUnreachable();
@@ -4580,8 +4595,9 @@ export class Compiler extends DiagnosticEmitter {
 
   compileAssignment(expression: Expression, valueExpression: Expression, contextualType: Type): ExpressionRef {
     var program = this.program;
+    var resolver = program.resolver;
     var currentFunction = this.currentFunction;
-    var target = program.resolveExpression(expression, currentFunction); // reports
+    var target = resolver.resolveExpression(expression, currentFunction); // reports
     if (!target) return this.module.createUnreachable();
 
     // to compile just the value, we need to know the target's type
@@ -4600,9 +4616,9 @@ export class Compiler extends DiagnosticEmitter {
         break;
       }
       case ElementKind.PROPERTY: {
-        let prototype = (<Property>target).setterPrototype;
-        if (prototype) {
-          let instance = prototype.resolve(); // reports
+        let setterPrototype = (<Property>target).setterPrototype;
+        if (setterPrototype) {
+          let instance = this.resolver.resolveFunction(setterPrototype, null);
           if (!instance) return this.module.createUnreachable();
           assert(instance.signature.parameterTypes.length == 1); // parser must guarantee this
           targetType = instance.signature.parameterTypes[0];
@@ -4615,7 +4631,7 @@ export class Compiler extends DiagnosticEmitter {
         return this.module.createUnreachable();
       }
       case ElementKind.CLASS: {
-        if (program.resolvedElementExpression) { // indexed access
+        if (resolver.currentElementExpression) { // indexed access
           let isUnchecked = currentFunction.flow.is(FlowFlags.UNCHECKED_CONTEXT);
           let indexedSet = (<Class>target).lookupOverload(OperatorKind.INDEXED_SET, isUnchecked);
           if (!indexedSet) {
@@ -4664,7 +4680,7 @@ export class Compiler extends DiagnosticEmitter {
     tee: bool = false
   ): ExpressionRef {
     var module = this.module;
-    var target = this.program.resolveExpression(expression, this.currentFunction); // reports
+    var target = this.resolver.resolveExpression(expression, this.currentFunction); // reports
     if (!target) return module.createUnreachable();
 
     switch (target.kind) {
@@ -4728,7 +4744,7 @@ export class Compiler extends DiagnosticEmitter {
           );
           return module.createUnreachable();
         }
-        let thisExpression = assert(this.program.resolvedThisExpression);
+        let thisExpression = assert(this.resolver.currentThisExpression);
         let thisExpr = this.compileExpressionRetainType(
           thisExpression,
           this.options.usizeType,
@@ -4774,13 +4790,13 @@ export class Compiler extends DiagnosticEmitter {
       case ElementKind.PROPERTY: {
         let setterPrototype = (<Property>target).setterPrototype;
         if (setterPrototype) {
-          let setterInstance = setterPrototype.resolve(); // reports
+          let setterInstance = this.resolver.resolveFunction(setterPrototype, null);
           if (!setterInstance) return module.createUnreachable();
 
           // call just the setter if the return value isn't of interest
           if (!tee) {
             if (setterInstance.is(CommonFlags.INSTANCE)) {
-              let thisExpression = assert(this.program.resolvedThisExpression);
+              let thisExpression = assert(this.resolver.currentThisExpression);
               let thisExpr = this.compileExpressionRetainType(
                 thisExpression,
                 this.options.usizeType,
@@ -4795,12 +4811,12 @@ export class Compiler extends DiagnosticEmitter {
           // otherwise call the setter first, then the getter
           let getterPrototype = (<Property>target).getterPrototype;
           assert(getterPrototype != null); // must have one if there is a setter
-          let getterInstance = (<FunctionPrototype>getterPrototype).resolve(); // reports
+          let getterInstance = this.resolver.resolveFunction(<FunctionPrototype>getterPrototype, null);
           if (!getterInstance) return module.createUnreachable();
           let returnType = getterInstance.signature.returnType;
           let nativeReturnType = returnType.toNativeType();
           if (setterInstance.is(CommonFlags.INSTANCE)) {
-            let thisExpression = assert(this.program.resolvedThisExpression);
+            let thisExpression = assert(this.resolver.currentThisExpression);
             let thisExpr = this.compileExpressionRetainType(
               thisExpression,
               this.options.usizeType,
@@ -4833,7 +4849,7 @@ export class Compiler extends DiagnosticEmitter {
         return module.createUnreachable();
       }
       case ElementKind.CLASS: {
-        let elementExpression = this.program.resolvedElementExpression;
+        let elementExpression = this.resolver.currentElementExpression;
         if (elementExpression) {
           let isUnchecked = this.currentFunction.flow.is(FlowFlags.UNCHECKED_CONTEXT);
           let indexedGet = (<Class>target).lookupOverload(OperatorKind.INDEXED_GET, isUnchecked);
@@ -4854,7 +4870,7 @@ export class Compiler extends DiagnosticEmitter {
             return module.createUnreachable();
           }
           let targetType = (<Class>target).type;
-          let thisExpression = assert(this.program.resolvedThisExpression);
+          let thisExpression = assert(this.resolver.currentThisExpression);
           let thisExpr = this.compileExpressionRetainType(
             thisExpression,
             this.options.usizeType,
@@ -4904,7 +4920,7 @@ export class Compiler extends DiagnosticEmitter {
   compileCallExpression(expression: CallExpression, contextualType: Type): ExpressionRef {
     var module = this.module;
     var currentFunction = this.currentFunction;
-    var target = this.program.resolveExpression(expression.expression, currentFunction); // reports
+    var target = this.resolver.resolveExpression(expression.expression, currentFunction); // reports
     if (!target) return module.createUnreachable();
 
     var signature: Signature | null;
@@ -4932,7 +4948,8 @@ export class Compiler extends DiagnosticEmitter {
             );
             return module.createUnreachable();
           }
-          instance = prototype.resolveUsingTypeArguments( // reports
+          instance = this.resolver.resolveFunctionInclTypeArguments(
+            prototype,
             typeArguments,
             this.currentFunction.flow.contextualTypeArguments,
             expression
@@ -4987,10 +5004,9 @@ export class Compiler extends DiagnosticEmitter {
               }
               inferredTypes.set(name, inferredType);
             } else {
-              let concreteType = this.program.resolveType(
+              let concreteType = this.resolver.resolveType(
                 parameterTypes[i].type,
-                this.currentFunction.flow.contextualTypeArguments,
-                true
+                this.currentFunction.flow.contextualTypeArguments
               );
               if (!concreteType) return module.createUnreachable();
               argumentExprs[i] = this.compileExpression(
@@ -5006,7 +5022,8 @@ export class Compiler extends DiagnosticEmitter {
             let inferredType = assert(inferredTypes.get(typeParameters[i].name.text)); // TODO
             resolvedTypeArguments[i] = inferredType;
           }
-          instance = prototype.resolve(
+          instance = this.resolver.resolveFunction(
+            prototype,
             resolvedTypeArguments,
             this.currentFunction.flow.contextualTypeArguments
           );
@@ -5018,7 +5035,8 @@ export class Compiler extends DiagnosticEmitter {
 
         // otherwise resolve the non-generic call as usual
         } else {
-          instance = prototype.resolve(
+          instance = this.resolver.resolveFunction(
+            prototype,
             null,
             this.currentFunction.flow.contextualTypeArguments
           );
@@ -5029,7 +5047,7 @@ export class Compiler extends DiagnosticEmitter {
         let thisExpr: ExpressionRef = 0;
         if (instance.is(CommonFlags.INSTANCE)) {
           thisExpr = this.compileExpressionRetainType(
-            assert(this.program.resolvedThisExpression),
+            assert(this.resolver.currentThisExpression),
             this.options.usizeType,
             WrapMode.NONE
           );
@@ -5072,7 +5090,7 @@ export class Compiler extends DiagnosticEmitter {
       case ElementKind.FIELD: {
         let type = (<Field>target).type;
         if (signature = type.signatureReference) {
-          let thisExpression = assert(this.program.resolvedThisExpression);
+          let thisExpression = assert(this.resolver.currentThisExpression);
           let thisExpr = this.compileExpressionRetainType(
             thisExpression,
             this.options.usizeType,
@@ -5128,13 +5146,31 @@ export class Compiler extends DiagnosticEmitter {
     expression: CallExpression,
     contextualType: Type
   ): ExpressionRef {
-    var expr = compileBuiltinCall( // reports
+    var typeArguments: Type[] | null = null;
+
+    // builtins handle omitted type arguments on their own. if present, however, resolve them here
+    // and pass them to the builtin, even if it's still up to the builtin how to handle them.
+    var typeArgumentNodes = expression.typeArguments;
+    if (expression.typeArguments) {
+      if (!prototype.is(CommonFlags.GENERIC)) {
+        this.error(
+          DiagnosticCode.Type_0_is_not_generic,
+          expression.range, prototype.internalName
+        );
+      }
+      typeArguments = this.resolver.resolveTypeArguments(
+        assert(prototype.declaration.typeParameters),
+        typeArgumentNodes,
+        this.currentFunction.flow.contextualTypeArguments,
+        expression
+      );
+    }
+
+    // now compile the builtin, which usually returns a block of code that replaces the call.
+    var expr = compileBuiltinCall(
       this,
       prototype,
-      prototype.resolveBuiltinTypeArguments(
-        expression.typeArguments,
-        this.currentFunction.flow.contextualTypeArguments
-      ),
+      typeArguments,
       expression.arguments,
       contextualType,
       expression
@@ -5229,7 +5265,17 @@ export class Compiler extends DiagnosticEmitter {
     // Inline if explicitly requested
     if (inline) {
       assert(!instance.is(CommonFlags.TRAMPOLINE)); // doesn't make sense
-      return this.compileCallInlineUnchecked(instance, argumentExpressions, reportNode, thisArg);
+      if (this.currentInlineFunctions.includes(instance)) {
+        this.warning(
+          DiagnosticCode.Function_0_cannot_be_inlined_into_itself,
+          reportNode.range, instance.internalName
+        );
+      } else {
+        this.currentInlineFunctions.push(instance);
+        let expr = this.compileCallInlineUnchecked(instance, argumentExpressions, reportNode, thisArg);
+        this.currentInlineFunctions.pop();
+        return expr;
+      }
     }
 
     // Otherwise compile to just a call
@@ -5736,7 +5782,7 @@ export class Compiler extends DiagnosticEmitter {
   }
 
   compileElementAccessExpression(expression: ElementAccessExpression, contextualType: Type): ExpressionRef {
-    var target = this.program.resolveElementAccess(expression, this.currentFunction); // reports
+    var target = this.resolver.resolveElementAccess(expression, this.currentFunction); // reports
     if (!target) return this.module.createUnreachable();
     switch (target.kind) {
       case ElementKind.CLASS: {
@@ -5898,7 +5944,7 @@ export class Compiler extends DiagnosticEmitter {
     }
 
     // otherwise resolve
-    var target = this.program.resolveIdentifier( // reports
+    var target = this.resolver.resolveIdentifier( // reports
       expression,
       this.currentEnum || currentFunction
     );
@@ -5943,7 +5989,8 @@ export class Compiler extends DiagnosticEmitter {
         return this.module.createGetGlobal((<EnumValue>target).internalName, NativeType.I32);
       }
       case ElementKind.FUNCTION_PROTOTYPE: {
-        let instance = (<FunctionPrototype>target).resolve(
+        let instance = this.resolver.resolveFunction(
+          <FunctionPrototype>target,
           null,
           currentFunction.flow.contextualTypeArguments
         );
@@ -5970,7 +6017,7 @@ export class Compiler extends DiagnosticEmitter {
     // possible in AS anyway.
     var expr = this.compileExpressionRetainType(expression.expression, this.options.usizeType, WrapMode.NONE);
     var type = this.currentType;
-    var isType = this.program.resolveType(expression.isType);
+    var isType = this.resolver.resolveType(expression.isType);
     this.currentType = Type.bool;
     if (!isType) return module.createUnreachable();
     return type.is(TypeFlags.NULLABLE) && !isType.is(TypeFlags.NULLABLE)
@@ -6116,7 +6163,10 @@ export class Compiler extends DiagnosticEmitter {
         assert(!implicitNegate);
         return this.compileStaticString((<StringLiteralExpression>expression).value);
       }
-      // case LiteralKind.OBJECT:
+      case LiteralKind.OBJECT: {
+        assert(!implicitNegate);
+        return this.compileObjectLiteral(<ObjectLiteralExpression>expression, contextualType);
+      }
       // case LiteralKind.REGEXP:
     }
     this.error(
@@ -6164,7 +6214,7 @@ export class Compiler extends DiagnosticEmitter {
     // obtain the array type
     var arrayPrototype = assert(this.program.arrayPrototype);
     if (!arrayPrototype || arrayPrototype.kind != ElementKind.CLASS_PROTOTYPE) return module.createUnreachable();
-    var arrayInstance = (<ClassPrototype>arrayPrototype).resolve([ elementType ]);
+    var arrayInstance = this.resolver.resolveClass(<ClassPrototype>arrayPrototype, [ elementType ]);
     if (!arrayInstance) return module.createUnreachable();
     var arrayType = arrayInstance.type;
 
@@ -6364,13 +6414,95 @@ export class Compiler extends DiagnosticEmitter {
     }
   }
 
+  compileObjectLiteral(expression: ObjectLiteralExpression, contextualType: Type): ExpressionRef {
+    var module = this.module;
+
+    // contextual type must be a class
+    var classReference = contextualType.classReference;
+    if (!classReference || classReference.is(CommonFlags.ABSTRACT)) {
+      this.error(
+        DiagnosticCode.Type_0_is_not_assignable_to_type_1,
+        expression.range, "<object>", contextualType.toString()
+      );
+      return module.createUnreachable();
+    }
+
+    // if present, check that the constructor is compatible with object literals
+    var ctor = classReference.constructorInstance;
+    if (ctor) {
+      if (ctor.signature.requiredParameters) {
+        this.error(
+          DiagnosticCode.Constructor_of_class_0_must_not_require_any_arguments,
+          expression.range, classReference.toString()
+        );
+        return module.createUnreachable();
+      }
+      if (ctor.is(CommonFlags.PRIVATE)) {
+        this.error(
+          DiagnosticCode.Constructor_of_class_0_is_private_and_only_accessible_within_the_class_declaration,
+          expression.range, classReference.toString()
+        );
+        return module.createUnreachable();
+      }
+      if (ctor.is(CommonFlags.PROTECTED)) {
+        this.error(
+          DiagnosticCode.Constructor_of_class_0_is_protected_and_only_accessible_within_the_class_declaration,
+          expression.range, classReference.toString()
+        );
+        return module.createUnreachable();
+      }
+    }
+
+    // check and compile field values
+    var names = expression.names;
+    var numNames = names.length;
+    var values = expression.values;
+    var members = classReference.members;
+    var hasErrors = false;
+    var exprs = new Array<ExpressionRef>(numNames + 2);
+    var tempLocal = this.currentFunction.getTempLocal(this.options.usizeType);
+    assert(numNames == values.length);
+    for (let i = 0, k = numNames; i < k; ++i) {
+      let member = members ? members.get(names[i].text) : null;
+      if (!member || member.kind != ElementKind.FIELD) {
+        this.error(
+          DiagnosticCode.Property_0_does_not_exist_on_type_1,
+          names[i].range, names[i].text, classReference.toString()
+        );
+        hasErrors = true;
+        continue;
+      }
+      let type = (<Field>member).type;
+      exprs[i + 1] = this.module.createStore( // TODO: handle setters as well
+        type.byteSize,
+        this.module.createGetLocal(tempLocal.index, this.options.nativeSizeType),
+        this.compileExpression(values[i], (<Field>member).type, ConversionKind.IMPLICIT, WrapMode.NONE),
+        type.toNativeType(),
+        (<Field>member).memoryOffset
+      );
+    }
+    this.currentType = classReference.type.nonNullableType;
+    if (hasErrors) return module.createUnreachable();
+
+    // allocate a new instance first and assign 'this' to the temp. local
+    exprs[0] = module.createSetLocal(
+      tempLocal.index,
+      compileBuiltinAllocate(this, classReference, expression)
+    );
+
+    // once all field values have been set, return 'this'
+    exprs[exprs.length - 1] = module.createGetLocal(tempLocal.index, this.options.nativeSizeType);
+
+    return module.createBlock(null, exprs, this.options.nativeSizeType);
+  }
+
   compileNewExpression(expression: NewExpression, contextualType: Type): ExpressionRef {
     var module = this.module;
     var options = this.options;
     var currentFunction = this.currentFunction;
 
     // obtain the class being instantiated
-    var target = this.program.resolveExpression( // reports
+    var target = this.resolver.resolveExpression( // reports
       expression.expression,
       currentFunction
     );
@@ -6391,12 +6523,14 @@ export class Compiler extends DiagnosticEmitter {
       (classReference = contextualType.classReference) !== null &&
       classReference.is(CommonFlags.GENERIC)
     ) {
-      classInstance = classPrototype.resolve(
+      classInstance = this.resolver.resolveClass(
+        classPrototype,
         classReference.typeArguments,
         currentFunction.flow.contextualTypeArguments
       );
     } else {
-      classInstance = classPrototype.resolveUsingTypeArguments( // reports
+      classInstance = this.resolver.resolveClassInclTypeArguments(
+        classPrototype,
         typeArguments,
         currentFunction.flow.contextualTypeArguments,
         expression
@@ -6451,10 +6585,9 @@ export class Compiler extends DiagnosticEmitter {
     contextualType: Type,
     retainConstantType: bool
   ): ExpressionRef {
-    var program = this.program;
     var module = this.module;
 
-    var target = program.resolvePropertyAccess(propertyAccess, this.currentFunction); // reports
+    var target = this.resolver.resolvePropertyAccess(propertyAccess, this.currentFunction); // reports
     if (!target) return module.createUnreachable();
 
     switch (target.kind) {
@@ -6483,7 +6616,7 @@ export class Compiler extends DiagnosticEmitter {
         return module.createGetGlobal((<EnumValue>target).internalName, NativeType.I32);
       }
       case ElementKind.FIELD: { // instance field
-        let thisExpression = assert(program.resolvedThisExpression);
+        let thisExpression = assert(this.resolver.currentThisExpression);
         assert((<Field>target).memoryOffset >= 0);
         let thisExpr = this.compileExpressionRetainType(
           thisExpression,
@@ -6502,7 +6635,7 @@ export class Compiler extends DiagnosticEmitter {
       case ElementKind.PROPERTY: { // instance property (here: getter)
         let prototype = (<Property>target).getterPrototype;
         if (prototype) {
-          let instance = prototype.resolve(null); // reports
+          let instance = this.resolver.resolveFunction(prototype, null);
           if (!instance) return module.createUnreachable();
           let signature = instance.signature;
           if (!this.checkCallSignature( // reports
@@ -6517,7 +6650,7 @@ export class Compiler extends DiagnosticEmitter {
           if (instance.is(CommonFlags.INSTANCE)) {
             let parent = assert(instance.parent);
             assert(parent.kind == ElementKind.CLASS);
-            let thisExpression = assert(program.resolvedThisExpression);
+            let thisExpression = assert(this.resolver.currentThisExpression);
             let thisExpr = this.compileExpressionRetainType(
               thisExpression,
               this.options.usizeType,

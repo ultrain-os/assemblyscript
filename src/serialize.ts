@@ -81,9 +81,9 @@ export class VariableDeclaration {
     /** Parameter name, u64 */
     declareType: string;
     /** Base Parameter type */
-    baseType:string;
+    baseType: string;
     /** The abi field type, eg:account_name */
-    abiType: string; 
+    abiType: string;
     /** The field fact type, eg: u64, u32 */
     factType: string;
     // /** Whether parameter or field is array  */
@@ -92,7 +92,7 @@ export class VariableDeclaration {
         this.program = program;
         this.commonTypeNode = commonTypeNode;
         this.abiTypeLookup = AbiHelper.abiTypeLookup;
-  
+
     }
 
     /**
@@ -277,29 +277,28 @@ class SerializeGenerator {
         serializePoint.needSerialize = this.needImplSerialize;
         serializePoint.needPrimaryKey = this.needImplPrimary;
 
-        if (!this.classPrototype.instanceMembers)
-            return serializePoint;
+        if (this.classPrototype.instanceMembers) {
+            for (let [fieldName, element] of this.classPrototype.instanceMembers) {
+                if (element.kind == ElementKind.FIELD_PROTOTYPE) {
 
-        for (let [fieldName, element] of this.classPrototype.instanceMembers) {
-            if (element.kind == ElementKind.FIELD_PROTOTYPE) {
+                    let fieldPrototype: FieldPrototype = <FieldPrototype>element;
+                    let fieldDeclaration: FieldDeclaration = fieldPrototype.declaration;
+                    let commonType: CommonTypeNode | null = fieldDeclaration.type;
 
-                let fieldPrototype: FieldPrototype = <FieldPrototype>element;
-                let fieldDeclaration: FieldDeclaration = fieldPrototype.declaration;
-                let commonType: CommonTypeNode | null = fieldDeclaration.type;
+                    if (commonType && commonType.kind == NodeKind.TYPE) {
 
-                if (commonType && commonType.kind == NodeKind.TYPE) {
+                        let typeNode = <TypeNode>commonType;
+                        if (this.needImplDeSerialize && this.checkFieldImplSerialize(commonType))
+                            serializePoint.addSerializeExpr(this.serializeField(fieldName, typeNode));
 
-                    let typeNode = <TypeNode>commonType;
-                    if (this.needImplDeSerialize && this.checkFieldImplSerialize(commonType))
-                        serializePoint.addSerializeExpr(this.serializeField(fieldName, typeNode));
-
-                    if (this.needImplSerialize && this.checkFieldImplSerialize(commonType))
-                        serializePoint.addDeserializeExpr(this.deserializeField(fieldName, typeNode));
+                        if (this.needImplSerialize && this.checkFieldImplSerialize(commonType))
+                            serializePoint.addDeserializeExpr(this.deserializeField(fieldName, typeNode));
+                    }
                 }
             }
         }
-        serializePoint.addDeserializeExpr(`   }`);
-        serializePoint.addSerializeExpr(`   }`);
+        serializePoint.addDeserializeExpr(`    }`);
+        serializePoint.addSerializeExpr(`    }`);
 
         return serializePoint;
     }
@@ -341,7 +340,7 @@ class SerializeGenerator {
         let typeNodeHelper: VariableDeclaration = new VariableDeclaration(this.classPrototype.program, type);
 
         let body: Array<string> = new Array<string>();
-        let variableType:VariableDeclaration = typeNodeHelper.resolveAbiParameterType();
+        let variableType: VariableDeclaration = typeNodeHelper.resolveAbiParameterType();
 
         if (variableType.isArray) {
             if (variableType.kind == VarialbeKind.NUMBER) {
@@ -399,7 +398,7 @@ export class SerializePoint {
         this.range = range;
         this.serialize.push(`    serialize(ds: DataStream): void {`);
         this.deserialize.push(`    deserialize(ds: DataStream): void {`);
-        
+
         this.primaryKey.push(`     primaryKey(): id_type {`);
         this.primaryKey.push(`       return 0;`)
         this.primaryKey.push(`    }`)
@@ -428,7 +427,7 @@ export class SerializePoint {
     }
 
     toPrimarykey(): string {
-        return  this.needPrimaryKey ? this.primaryKey.join("\n") : "";
+        return this.needPrimaryKey ? this.primaryKey.join("\n") : "";
     }
 }
 

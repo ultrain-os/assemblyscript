@@ -21,11 +21,16 @@ const colorsUtil = require("./util/colors");
 const optionsUtil = require("./util/options");
 const EOL = process.platform === "win32" ? "\r\n" : "\n";
 
+// Emscripten adds an `uncaughtException` listener to Binaryen that results in an additional
+// useless code fragment on top of an actual error. suppress this:
+if (process.removeAllListeners) process.removeAllListeners("uncaughtException");
+
 // Use distribution files if present, otherwise run the sources directly
 var assemblyscript, isDev = false;
 (() => {
   try { // `asc` on the command line
     assemblyscript = require("../dist/assemblyscript.js");
+    throw new Error();
   } catch (e) {
     try { // `asc` on the command line without dist files
       require("ts-node").register({ project: path.join(__dirname, "..", "src", "tsconfig.json") });
@@ -38,9 +43,6 @@ var assemblyscript, isDev = false;
       } catch (e) {
         // combine both errors that lead us here
         e.stack = e_ts.stack + "\n---\n" + e.stack;
-        // Emscripten adds an `uncaughtException` listener to Binaryen that results in an additional
-        // useless code fragment on top of the actual error. suppress this:
-        if (process.removeAllListeners) process.removeAllListeners("uncaughtException");
         throw e;
       }
     }
