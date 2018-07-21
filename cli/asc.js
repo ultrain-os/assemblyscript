@@ -30,6 +30,7 @@ var assemblyscript, isDev = false;
 (() => {
   try { // `asc` on the command line
     assemblyscript = require("../dist/assemblyscript.js");
+    throw new Error();
   } catch (e) {
     try { // `asc` on the command line without dist files
       require("ts-node").register({ project: path.join(__dirname, "..", "src", "tsconfig.json") });

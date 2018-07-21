@@ -256,7 +256,7 @@ class SerializeGenerator {
     }
 
 
-    checkFieldImplSerialize(typeNode: CommonTypeNode): void {
+    checkFieldImplSerialize(typeNode: CommonTypeNode): bool {
 
         let internalName = NodeUtil.getInternalName(typeNode);
         let element: Element | null = this.classPrototype.program.elementsLookup.get(internalName)
@@ -267,6 +267,7 @@ class SerializeGenerator {
                 throw new Error(`Class ${internalName} not implements the interface ${SerializeHelper.SERIALIZE_INTERFANCE}`);
             }
         }
+        return true;
     }
 
     /**Parse the class prototype and get serialize points */
