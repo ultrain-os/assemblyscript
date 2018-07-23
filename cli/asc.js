@@ -310,14 +310,14 @@ exports.main = function main(argv, options, callback, isDispatch) {
 
       // if <pre> isDispathch == true </pre>, reproduce the code 
       if (!isDispatch) {
-        sourceText = exports.resolveSourceText(sourceText, null, exports.libraryFiles);
+        sourceText = exports.resolveSourceText(sourceText, null, exports.libraryFiles, null);
         parser = assemblyscript.parseFile(sourceText, sourcePath, true, parser);
       } else {
         sourceText = exports.insertSerializeMethodText(sourcePath, sourceText);
-        sourceText = exports.resolveSourceText(sourceText, exports.applyText, exports.libraryFiles);
+        let elementPath =  sourcePath.split(".")[0];
+        sourceText = exports.resolveSourceText(sourceText, exports.applyText, exports.libraryFiles, exports.abiObj, elementPath);
         parser = assemblyscript.parseFile(sourceText, sourcePath, true, parser);
       }
-
     });
 
 
@@ -954,11 +954,28 @@ exports.tscOptions = {
   allowJs: false
 };
 
-function resolveSourceText(sourceText, applyText, library) {
+function resolveSourceText(sourceText, applyText, library, abiObj, filename) {
   let memoryLib = "allocate/arena";
   let resultTextBuffer = new Array();
   if (library[memoryLib] == undefined) {
     resultTextBuffer.push(`import "allocator/arena";`);
+  }
+
+  let importedLibrary = ["NEX", "N", "NameEx" ];
+  if(abiObj){
+
+    for(let library of importedLibrary){
+      let internalPath = path.join(filename, library);
+
+      // console.log(`internal path ${internalPath}`);
+
+      if(!abiObj.hasElement(internalPath)){
+
+        // console.log(`ddd internal path ${internalPath}`);
+
+        resultTextBuffer.push(`import { ${library} }from "../../src/name_ex";`);
+      }
+    }
   }
 
   resultTextBuffer.push(sourceText);

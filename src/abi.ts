@@ -304,8 +304,8 @@ export class Abi {
       return argu.substring(1, argu.length - 2);
     }
 
-    let internelName = NodeUtil.getInternalName(expr);
-    let element: Element | null = this.program.elementsLookup.get(internelName);
+    let internalName = NodeUtil.getInternalName(expr);
+    let element: Element | null = this.program.elementsLookup.get(internalName);
 
     if (element) {
       let declaration: VariableLikeDeclarationStatement | null = (<VariableLikeElement>element).declaration;
@@ -314,12 +314,8 @@ export class Abi {
         return literal.value;
       }
     }
-    throw new Error(`Cann't find constant ${internelName}`);
+    throw new Error(`Cann't find constant ${internalName}`);
   }
-
-
-
-
 
   /**
   *  Get struct from expression. 
@@ -422,8 +418,9 @@ export class Abi {
           let types = declaration.signature.parameters; // FunctionDeclaration parameter types
 
           // this.checkName(funcName);
-
-          body.push(`    if (action == N("${funcName}")){`);
+          //let action = new NameEx(actH, actL);
+          body.push(`    let action = new NameEx(actH, actL);`);
+          body.push(`    if (action == NEX("${funcName}")){`);
 
           let fields = new Array<string>();
           for (var index = 0; index < types.length; index++) {
@@ -566,12 +563,17 @@ export class Abi {
     this.dispatch = this.assemblyDispatch(dispatchBuffer);
   }
 
+  hasElement(name: string):bool{
+    let element:Element|null = this.program.elementsLookup.get(name);
+    console.log(`hasElement name ${name}    ${ element ? true: false} `);
+    return element ? true: false;
+  } 
 
   // Concat the dispatch message
-  assemblyDispatch(body: Array<string>): string {
+  private assemblyDispatch(body: Array<string>): string {
 
     let sb = new Array<string>();
-    sb.push("export function apply(receiver: u64, code: u64, action: u64): void {");
+    sb.push("export function apply(receiver: u64, code: u64, actH: u64, actL: u64): void {");
 
     body.forEach((value: string, index: number): void => {
       sb.push(value);
