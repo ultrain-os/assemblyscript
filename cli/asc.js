@@ -964,7 +964,7 @@ function resolveSourceText(sourceText, applyText, library, abiObj, filename) {
     resultTextBuffer.push(`import "allocator/arena";`);
   }
 
-  let importedLibrary = ["NEX", "N", "NameEx" ];
+  let importedLibrary = ["NEX", "NameEx" ];
   if(abiObj){
 
     for(let library of importedLibrary){
@@ -976,7 +976,7 @@ function resolveSourceText(sourceText, applyText, library, abiObj, filename) {
 
         // console.log(`ddd internal path ${internalPath}`);
 
-        resultTextBuffer.push(`import { ${library} }from "../../src/name_ex";`);
+        resultTextBuffer.push(`import { ${library} }from "../src/name_ex";`);
       }
     }
   }
@@ -1014,5 +1014,3 @@ function insertSerializeMethodText(sourcePath, sourceText) {
 }
 
 exports.insertSerializeMethodText = insertSerializeMethodText;
-
-

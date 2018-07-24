@@ -406,6 +406,7 @@ export class Abi {
       body.push(`  if (receiver == code) {`);
       body.push(`    let ${contractVarName} = new ${contractName}(receiver);`);
       body.push(`    let ds = ${contractVarName}.getDataStream();`);
+      body.push(`    let action = new NameEx(actH, actL);`);
 
       for (let instance of clzPrototype.instanceMembers.values()) {
         if (this.isActionFuncPrototype(instance)) {
@@ -419,7 +420,6 @@ export class Abi {
 
           // this.checkName(funcName);
           //let action = new NameEx(actH, actL);
-          body.push(`    let action = new NameEx(actH, actL);`);
           body.push(`    if (action == NEX("${funcName}")){`);
 
           let fields = new Array<string>();
