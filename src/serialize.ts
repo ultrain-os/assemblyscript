@@ -109,10 +109,13 @@ export class VariableDeclaration {
         this.declareType = variableType;
         let baseTypeName: string = this.getBaseTypeName(variableType);
         this.baseType = baseTypeName;
-        if (baseTypeName == "string") {
+        
+        if (baseTypeName == "string" || baseTypeName == "String") {
             this.kind = VarialbeKind.STRING;
             this.factType = "string";
+            return this;
         }
+
         this.abiType = this.findAbiType(baseTypeName);
         let factType: Type | null = this.findFactType(this.abiType);
 
