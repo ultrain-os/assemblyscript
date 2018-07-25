@@ -12,6 +12,7 @@
  (type $Iv (func (param i64)))
  (type $II (func (param i64) (result i64)))
  (type $iv (func (param i32)))
+ (type $iiiiii (func (param i32 i32 i32 i32 i32) (result i32)))
  (import "env" "abort" (func $~lib/env/abort))
  (import "JSMath" "random" (func $~lib/math/JSMath.random (result f64)))
  (global $~lib/allocator/arena/startOffset (mut i32) (i32.const 0))
@@ -5390,36 +5391,50 @@
    )
   )
  )
- (func $~lib/internal/string/compareUTF16 (; 90 ;) (; has Stack IR ;) (type $iiii) (param $0 i32) (param $1 i32) (param $2 i32) (result i32)
-  (local $3 i32)
+ (func $~lib/internal/string/compareUnsafe (; 90 ;) (; has Stack IR ;) (type $iiiiii) (param $0 i32) (param $1 i32) (param $2 i32) (param $3 i32) (param $4 i32) (result i32)
+  (local $5 i32)
+  (set_local $1
+   (i32.add
+    (get_local $0)
+    (i32.shl
+     (get_local $1)
+     (i32.const 1)
+    )
+   )
+  )
+  (set_local $2
+   (i32.add
+    (get_local $2)
+    (i32.shl
+     (get_local $3)
+     (i32.const 1)
+    )
+   )
+  )
   (loop $continue|0
    (if
-    (if (result i32)
-     (get_local $2)
-     (i32.eqz
-      (tee_local $3
-       (i32.sub
-        (i32.load16_u offset=4
-         (get_local $0)
-        )
-        (i32.load16_u offset=4
-         (get_local $1)
+    (tee_local $0
+     (if (result i32)
+      (get_local $4)
+      (i32.eqz
+       (tee_local $5
+        (i32.sub
+         (i32.load16_u offset=4
+          (get_local $1)
+         )
+         (i32.load16_u offset=4
+          (get_local $2)
+         )
         )
        )
       )
+      (get_local $4)
      )
-     (get_local $2)
     )
     (block
-     (set_local $2
+     (set_local $4
       (i32.sub
-       (get_local $2)
-       (i32.const 1)
-      )
-     )
-     (set_local $0
-      (i32.add
-       (get_local $0)
+       (get_local $4)
        (i32.const 1)
       )
      )
@@ -5429,11 +5444,17 @@
        (i32.const 1)
       )
      )
+     (set_local $2
+      (i32.add
+       (get_local $2)
+       (i32.const 1)
+      )
+     )
      (br $continue|0)
     )
    )
   )
-  (get_local $3)
+  (get_local $5)
  )
  (func $~lib/string/String.__gt (; 91 ;) (; has Stack IR ;) (type $iii) (param $0 i32) (param $1 i32) (result i32)
   (local $2 i32)
@@ -5495,9 +5516,11 @@
    )
   )
   (i32.gt_s
-   (call $~lib/internal/string/compareUTF16
+   (call $~lib/internal/string/compareUnsafe
     (get_local $0)
+    (i32.const 0)
     (get_local $1)
+    (i32.const 0)
     (select
      (get_local $2)
      (get_local $3)
@@ -5570,9 +5593,11 @@
    )
   )
   (i32.lt_s
-   (call $~lib/internal/string/compareUTF16
+   (call $~lib/internal/string/compareUnsafe
     (get_local $0)
+    (i32.const 0)
     (get_local $1)
+    (i32.const 0)
     (select
      (get_local $2)
      (get_local $3)
@@ -5644,9 +5669,11 @@
    )
   )
   (i32.eqz
-   (call $~lib/internal/string/compareUTF16
+   (call $~lib/internal/string/compareUnsafe
     (get_local $0)
+    (i32.const 0)
     (get_local $1)
+    (i32.const 0)
     (get_local $2)
    )
   )
@@ -5858,20 +5885,21 @@
     (get_local $0)
     (i32.const 4)
    )
-   (tee_local $0
-    (i32.shl
-     (get_local $3)
-     (i32.const 1)
-    )
+   (i32.shl
+    (get_local $3)
+    (i32.const 1)
    )
   )
   (call $~lib/memory/memory.copy
    (i32.add
     (i32.add
      (get_local $2)
-     (i32.const 4)
+     (i32.shl
+      (get_local $3)
+      (i32.const 1)
+     )
     )
-    (get_local $0)
+    (i32.const 4)
    )
    (i32.add
     (get_local $1)
