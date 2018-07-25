@@ -314,7 +314,7 @@ exports.main = function main(argv, options, callback, isDispatch) {
         parser = assemblyscript.parseFile(sourceText, sourcePath, true, parser);
       } else {
         sourceText = exports.insertSerializeMethodText(sourcePath, sourceText);
-        let elementPath =  sourcePath.split(".")[0];
+        let elementPath = sourcePath.split(".")[0];
         sourceText = exports.resolveSourceText(sourceText, exports.applyText, exports.libraryFiles, exports.abiObj, elementPath);
         parser = assemblyscript.parseFile(sourceText, sourcePath, true, parser);
       }
@@ -964,18 +964,12 @@ function resolveSourceText(sourceText, applyText, library, abiObj, filename) {
     resultTextBuffer.push(`import "allocator/arena";`);
   }
 
-  let importedLibrary = ["NEX", "NameEx" ];
-  if(abiObj){
+  let importedLibrary = ["NEX", "NameEx"];
+  if (abiObj) {
 
-    for(let library of importedLibrary){
+    for (let library of importedLibrary) {
       let internalPath = path.join(filename, library);
-
-      // console.log(`internal path ${internalPath}`);
-
-      if(!abiObj.hasElement(internalPath)){
-
-        // console.log(`ddd internal path ${internalPath}`);
-
+      if (!abiObj.hasElement(internalPath)) {
         resultTextBuffer.push(`import { ${library} }from "../src/name_ex";`);
       }
     }
