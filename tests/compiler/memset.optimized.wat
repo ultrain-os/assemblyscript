@@ -5,10 +5,11 @@
  (global $~lib/allocator/arena/startOffset (mut i32) (i32.const 0))
  (global $~lib/allocator/arena/offset (mut i32) (i32.const 0))
  (global $memset/dest (mut i32) (i32.const 0))
- (memory $0 0)
+ (memory $0 1)
+ (data (i32.const 8) "\t\00\00\00m\00e\00m\00s\00e\00t\00.\00t\00s")
  (export "memory" (memory $0))
  (start $start)
- (func $memset/memset (; 1 ;) (type $iiii) (param $0 i32) (param $1 i32) (param $2 i32) (result i32)
+ (func $memset/memset (; 1 ;) (; has Stack IR ;) (type $iiii) (param $0 i32) (param $1 i32) (param $2 i32) (result i32)
   (local $3 i32)
   (local $4 i32)
   (local $5 i64)
@@ -342,16 +343,16 @@
   )
   (get_local $3)
  )
- (func $start (; 2 ;) (type $v)
+ (func $start (; 2 ;) (; has Stack IR ;) (type $v)
   (block $folding-inner0
    (set_global $~lib/allocator/arena/startOffset
-    (i32.const 8)
+    (i32.const 32)
    )
    (set_global $~lib/allocator/arena/offset
     (get_global $~lib/allocator/arena/startOffset)
    )
    (set_global $memset/dest
-    (i32.const 8)
+    (i32.const 32)
    )
    (drop
     (call $memset/memset

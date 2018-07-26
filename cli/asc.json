@@ -60,12 +60,12 @@
     "alias": "t" 
   },
   "applyText": {
-    "description": "Print and  generated dispatch apply method.",
+    "description": "Generate and print the dispatch method.",
     "type": "b",
     "alias": "l" 
   },
   "abiFile": {
-    "desc": "Specifies the text output file (.abi).",
+    "description": "Specifies the text output file (.abi).",
     "type": "s",
     "alias": "g"
   },

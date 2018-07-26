@@ -132,6 +132,8 @@ declare function isArray<T>(value?: any): value is Array<any>;
 declare function isDefined(expression: any): bool;
 /** Tests if the specified expression evaluates to a constant value. Compiles to a constant. */
 declare function isConstant(expression: any): bool;
+/** Tests if the specified type *or* expression is of a managed type. Compiles to a constant. */
+declare function isManaged<T>(value?: any): bool;
 /** Traps if the specified value is not true-ish, otherwise returns the (non-nullable) value. */
 declare function assert<T>(isTrueish: T, message?: string): T & object; // any better way to model `: T != null`?
 /** Parses an integer string to a 64-bit float. */
@@ -354,10 +356,6 @@ declare namespace gc {
   export function allocate(size: usize, visitFn: (ref: usize) => void): usize;
   /** Performs a full garbage collection cycle. */
   export function collect(): void;
-  /** Must be called when a managed object becomes a child of another one. */
-  export function link(parentRef: usize, childRef: usize): void;
-  /** Must be called when a managed object is found reachable. */
-  export function mark(ref: usize): void;
 }
 
 /** Table operations. */
@@ -522,11 +520,14 @@ interface Number {}
 interface Object {}
 interface RegExp {}
 
-declare class Map<K,V> {
+declare class Map<K,V> implements Serializable{
   readonly size: i32;
   has(key: K): bool;
   set(key: K, value: V): void;
   keys(): K[];
+  values(): V[];
+  serialize(ds: DataStream): void;
+  deserialize(ds: DataStream): void;
   get(key: K): V;
   delete(key: K): bool;
   clear(): void;
@@ -689,25 +690,51 @@ declare function external(target: any, propertyKey: any, descriptor: any): any;
 
 // Decorators for the smart contract
 /** Annotates a method or function as contract */
-declare function action(target: any, propertyKey: any, descriptor: any): any;
+declare function action(target: any, propertyKey: any, descriptor: any): void;
 
 /** Annotates a class as database information */
-declare function database(target: Function, propertyKey: any, descriptor: any): any;
+declare function database(target: Function, propertyKey: any, descriptor: any): void;
 
-// declare type token_name = u64;
-// declare type region_id = u16;
-// declare type id_type = u64;
+/** Annotates for the serializable object */
+declare function ignore(target: Function, propertyKey: any, descriptor: any): void;
 
-// declare type asset_symbol = u64;
-// declare type share_type = i16;
+/** Object serializable interface */
+interface Serializable { }
 
-// declare type symbol_name = u64;
-// declare type account_name = u64;
-// declare type permission_name = u64;
-// declare type table_name = u64;
-// declare type time = u32;
-// declare type scope_name = u64;
-// // export  type action_name = NameEx;
-// declare type weight_type = u16;
+declare class DataStream {
 
+  static measure<T extends Serializable>(obj: T): u32;
+
+  constructor(buffer: u32, len: u32);
+  size(): u32;
+  readVarint32(): u32;
+  writeVarint32(value: u32): void;
+  write<T>(value: T): void;
+  read<T>(): T;
+  toArray<T>(): T[];
+  readStringVector():string[];
+  writeStringVector(arr: string[]):void;
+  readVector<T>(): T[];
+  writeVector<T>(arr: T[]): void;
+  readComplexVector<T extends Serializable>(): T[];
+  writeComplexVector<T extends Serializable>(arr: T[]): void;
+  readString(): string;
+  writeString(str: string): void;
+  writeDouble(d: f64): void;
+}
+
+declare class ArrayMap<K, V> implements Serializable {
+  constructor(len: u32);
+  set(key: K, val: V[]): void;
+  get(key: K): V[];
+  remove(key: K): boolean;
+  size(): i32;
+  keys(): K[];
+  values(): V[][];
+  clear(): void;
+  contains(key: K): boolean;
+  serialize(ds: DataStream): void;
+  deserialize(ds: DataStream): void;
+  primaryKey(): u64;
+}
 

@@ -5,10 +5,12 @@
  (import "env" "abort" (func $~lib/env/abort))
  (global $~lib/allocator/arena/startOffset (mut i32) (i32.const 0))
  (global $~lib/allocator/arena/offset (mut i32) (i32.const 0))
- (memory $0 0)
+ (memory $0 1)
+ (data (i32.const 8) "\11\00\00\00~\00l\00i\00b\00/\00p\00o\00l\00y\00f\00i\00l\00l\00s\00.\00t\00s")
+ (data (i32.const 48) "\10\00\00\00s\00t\00d\00/\00p\00o\00l\00y\00f\00i\00l\00l\00s\00.\00t\00s")
  (export "memory" (memory $0))
  (start $start)
- (func $~lib/polyfills/bswap16<u16> (; 1 ;) (type $ii) (param $0 i32) (result i32)
+ (func $~lib/polyfills/bswap16<u16> (; 1 ;) (; has Stack IR ;) (type $ii) (param $0 i32) (result i32)
   (local $1 i32)
   (if
    (i32.eqz
@@ -60,7 +62,7 @@
   )
   (get_local $0)
  )
- (func $~lib/polyfills/bswap<u16> (; 2 ;) (type $ii) (param $0 i32) (result i32)
+ (func $~lib/polyfills/bswap<u16> (; 2 ;) (; has Stack IR ;) (type $ii) (param $0 i32) (result i32)
   (local $1 i32)
   (if
    (i32.eqz
@@ -93,7 +95,7 @@
    (get_local $0)
   )
  )
- (func $~lib/polyfills/bswap16<i16> (; 3 ;) (type $ii) (param $0 i32) (result i32)
+ (func $~lib/polyfills/bswap16<i16> (; 3 ;) (; has Stack IR ;) (type $ii) (param $0 i32) (result i32)
   (local $1 i32)
   (if
    (i32.eqz
@@ -148,7 +150,7 @@
   )
   (get_local $0)
  )
- (func $~lib/polyfills/bswap<i16> (; 4 ;) (type $ii) (param $0 i32) (result i32)
+ (func $~lib/polyfills/bswap<i16> (; 4 ;) (; has Stack IR ;) (type $ii) (param $0 i32) (result i32)
   (local $1 i32)
   (if
    (i32.eqz
@@ -181,7 +183,7 @@
    (get_local $0)
   )
  )
- (func $~lib/polyfills/bswap<u32> (; 5 ;) (type $ii) (param $0 i32) (result i32)
+ (func $~lib/polyfills/bswap<u32> (; 5 ;) (; has Stack IR ;) (type $ii) (param $0 i32) (result i32)
   (local $1 i32)
   (if
    (i32.eqz
@@ -219,7 +221,7 @@
    )
   )
  )
- (func $~lib/polyfills/bswap<u64> (; 6 ;) (type $II) (param $0 i64) (result i64)
+ (func $~lib/polyfills/bswap<u64> (; 6 ;) (; has Stack IR ;) (type $II) (param $0 i64) (result i64)
   (i64.rotr
    (i64.or
     (i64.and
@@ -257,7 +259,7 @@
    (i64.const 32)
   )
  )
- (func $~lib/polyfills/bswap16<u32> (; 7 ;) (type $ii) (param $0 i32) (result i32)
+ (func $~lib/polyfills/bswap16<u32> (; 7 ;) (; has Stack IR ;) (type $ii) (param $0 i32) (result i32)
   (i32.or
    (i32.or
     (i32.and
@@ -281,7 +283,7 @@
    )
   )
  )
- (func $~lib/polyfills/bswap16<i32> (; 8 ;) (type $ii) (param $0 i32) (result i32)
+ (func $~lib/polyfills/bswap16<i32> (; 8 ;) (; has Stack IR ;) (type $ii) (param $0 i32) (result i32)
   (i32.or
    (i32.or
     (i32.and
@@ -305,10 +307,10 @@
    )
   )
  )
- (func $start (; 9 ;) (type $v)
+ (func $start (; 9 ;) (; has Stack IR ;) (type $v)
   (block $folding-inner0
    (set_global $~lib/allocator/arena/startOffset
-    (i32.const 8)
+    (i32.const 88)
    )
    (set_global $~lib/allocator/arena/offset
     (get_global $~lib/allocator/arena/startOffset)

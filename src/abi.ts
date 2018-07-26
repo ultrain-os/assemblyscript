@@ -1,10 +1,10 @@
 import {
-  SerializeHelper,
-  SerializePoint,
-  VariableDeclaration,
+  SerializeInserter,
+  InsertPoint,
+  TypeNodeInfo,
   VarialbeKind,
-  NodeUtil
-} from "./serialize";
+  SuperInserter
+} from "./inserter";
 
 import {
   Type,
@@ -16,7 +16,8 @@ import {
   ClassPrototype,
   FunctionPrototype,
   Program,
-  VariableLikeElement
+  VariableLikeElement,
+  DecoratorFlags
 } from "./program";
 
 import {
@@ -32,8 +33,13 @@ import {
   VariableLikeDeclarationStatement,
   StringLiteralExpression,
   ClassDeclaration,
-  MethodDeclaration
+  MethodDeclaration,
+  CommonTypeNode
 } from "./ast";
+
+import {
+  AstUtil
+} from "./util/astutil";
 
 class Struct {
 
@@ -99,7 +105,7 @@ class Table {
   constructor(name: string, type: string, indexType:string = "i64") {
     this.name = name;
     this.type = type;
-    this.index_type = indexType; 
+    this.index_type = indexType;
   }
 }
 
@@ -125,7 +131,7 @@ export class Abi {
 
   elementLookup: Map<string, Element> = new Map();
 
-  fileSerializeLookup: Map<string, Array<SerializePoint>> = new Map<string, Array<SerializePoint>>();
+  insertPointsLookup: Map<string, Array<InsertPoint>> = new Map<string, Array<InsertPoint>>();
 
   constructor(program: Program) {
 
@@ -145,29 +151,37 @@ export class Abi {
   /**
   *  Add abi struct for abi info.
   */
-  toAbiStruct(methodName: string, signature: SignatureNode): Struct {
+  resolveSignatureToAbiStruct(methodName: string, signature: SignatureNode): Struct {
 
     var struct = new Struct();
     struct.name = methodName;
     struct.base = "";
 
-    var types = signature.parameters;
-    if (types) {
-      for (let type of types) {
-        let typeKind = type.type.range.toString();
-        this.addAbiTypeAlias(typeKind);
-        struct.fields.push({ name: type.name.range.toString(), type: type.type.range.toString() });
-      }
+    var parameters: ParameterNode[] = signature.parameters; 
+    for (let parameter of parameters) {
+      let type: CommonTypeNode = parameter.type;
+      let typeInfo = new TypeNodeInfo(this.program, type);
+      let abiType = typeInfo.isArray ? `${typeInfo.ascBasicType}[]` : typeInfo.declareType;
+      this.addAbiTypeAlias(typeInfo);
+      struct.fields.push({ "name" : parameter.name.range.toString(), "type": abiType });
     }
     return struct;
   }
 
-  addAbiTypeAlias(typeKindName: string): void {
+  addAbiTypeAlias(typeNodeInfo: TypeNodeInfo): void {
+    var typeKindName = typeNodeInfo.ascBasicType;
+
+    var basicElement = typeNodeInfo.getAscBasicElement();
+    if (basicElement &&  basicElement.kind == ElementKind.CLASS_PROTOTYPE) {
+      let classPrototype = <ClassPrototype>basicElement;
+      this.parseClassPrototypeToStruct(classPrototype);
+    }
 
     if (!this.typeAliasSet.has(typeKindName)) {
       // It's the assemblyscript internal type
       let originalTypeName = this.findContractOriginalType(typeKindName);
       let wasmType = this.abiTypeLookup.get(originalTypeName);
+      // console.log(`addAbiTypeAlias: ${typeKindName}`);
       if (wasmType) {
         this.abiInfo.types.push(new AbiTypeAlias(typeKindName, wasmType));
       }
@@ -224,20 +238,6 @@ export class Abi {
     return scriptType;
   }
 
-  // Check the FunctionPrototype weather has decoratorKind
-  checkFuncPrototypeDecorator(funcPrototype: FunctionPrototype, decoratorKind: DecoratorKind): bool {
-    var decorators = funcPrototype.declaration.decorators;
-    var isActionDecorator = false;
-    if (decorators) {
-      for (let decorator of decorators) {
-        if (decorator.decoratorKind == decoratorKind) {
-          isActionDecorator = true;
-        }
-      }
-    }
-    return isActionDecorator;
-  }
-
   isWrapWithQutation(str: string): bool {
 
     if (str == undefined || str == null) {
@@ -252,10 +252,9 @@ export class Abi {
   *
   */
   isActionFuncPrototype(element: Element): bool {
-
     if (element.kind == ElementKind.FUNCTION_PROTOTYPE) {
       let funcType = <FunctionPrototype>element;
-      return this.checkFuncPrototypeDecorator(funcType, DecoratorKind.ACTION);
+      return AstUtil.haveSpecifyDecorator(funcType.declaration, DecoratorKind.ACTION);
     }
     return false;
   }
@@ -263,55 +262,35 @@ export class Abi {
   /**
   * Resolve the class database decoreator
   */
-  resolveClassDecorator(decorators: DecoratorNode[]): void {
-    for (let decorator of decorators) {
+  resolveDatabaseDecorator(statement : DeclarationStatement): void {
+    if (!statement.decorators) {
+      return ;
+    }
+    for (let decorator of statement.decorators) {
       if (decorator.decoratorKind == DecoratorKind.DATABASE && decorator.arguments) {
         // Decorator argument must have two arguments
         if (decorator.arguments.length < 2) {
           throw new Error("Database decorator must have two arguments");
         }
-
         let type = decorator.arguments[0].range.toString();
-        let name = this.retrieveArgumentText(decorator.arguments[1]);
-
-        // let classPrototype:ClassPrototype = <ClassPrototype>this.resolveExpressionToElement(decorator.arguments[0]);
-        // let indexType = this.getClassPrimaryKey(classPrototype.declaration);
+        let name = this.getExprValue(decorator.arguments[1]);
         this.abiInfo.tables.push(new Table(name, type));
         this.resolveExpressionToStruct(decorator.arguments[0]);
       }
     }
   }
 
-  getClassPrimaryKey(classDeclaration: ClassDeclaration ): string {
-
-    if (!classDeclaration.members) {
-      throw new Error(`Class:${classDeclaration.name} not have primary key.`);
-    }
-    const primaryMethodName = "primaryKey";
-    for (let member of classDeclaration.members) {
-      if (member.kind == NodeKind.METHODDECLARATION && member.name.range.toString() == primaryMethodName) {
-        let method:MethodDeclaration = <MethodDeclaration>member;
-        let returnType =  method.signature.returnType; 
-        if (returnType.isNullable) {
-          throw new Error(`The primaryKey method of class:${classDeclaration.name} must return value.`);
-        } else {
-          return this.findScriptOriginalTypeName(returnType.range.toString());
-        }
-      }
-    }
-    throw new Error(`Class:${classDeclaration.name} not have primary key.`);
-  }
-
-  retrieveArgumentText(expr: Expression): string {
+  /**
+   * Get the expression value
+   * @param expr
+   */
+  getExprValue(expr: Expression): string {
     var argu: string = expr.range.toString();
-
     if (this.isWrapWithQutation(argu)) {
       return argu.substring(1, argu.length - 1);
     }
-
-    var internalName = NodeUtil.getInternalName(expr);
+    var internalName = AstUtil.getInternalName(expr);
     var element: Element | null = this.program.elementsLookup.get(internalName);
-
     if (element) {
       let declaration: VariableLikeDeclarationStatement | null = (<VariableLikeElement>element).declaration;
       if (declaration && declaration.initializer) {
@@ -322,10 +301,7 @@ export class Abi {
     throw new Error(`Cann't find constant ${internalName}`);
   }
 
-
-
   resolveExpressionToElement(expr: Expression): Element {
-
     var internalPath = expr.range.source.internalPath;
     var name = expr.range.toString();
     var internalName = `${internalPath}/${name}`;
@@ -340,46 +316,46 @@ export class Abi {
   *  Get struct from expression.
   */
   resolveExpressionToStruct(expr: Expression): void {
-
-    var internalPath = expr.range.source.internalPath;
-    var name = expr.range.toString();
-    var internalName = `${internalPath}/${name}`;
+    var internalName = AstUtil.getInternalName(expr);
     this.retrieveStructByInternalName(internalName);
   }
 
   retrieveStructByInternalName(internalName: string): void {
-
     var element = this.program.elementsLookup.get(internalName);
     if (!element || element.kind != ElementKind.CLASS_PROTOTYPE) {
       throw new Error(`Element ${internalName} not found, pleasure make sure that class ${internalName} was existed.`);
     }
     var classPrototype = <ClassPrototype>element;
-    this.resolveClassPrototypeToStruct(classPrototype);
+    this.parseClassPrototypeToStruct(classPrototype);
   }
 
-  resolveClassPrototypeToStruct(classPrototype: ClassPrototype): void {
-
+  parseClassPrototypeToStruct(classPrototype: ClassPrototype): Struct | null {
     var members: DeclarationStatement[] = classPrototype.declaration.members;
     var struct = new Struct();
     struct.name = classPrototype.simpleName;
-
     if (this.abiTypeLookup.get(struct.name)) {
-      return;
+      return null;
     }
-
     struct.base = "";
     for (let member of members) {
       if (member.kind == NodeKind.FIELDDECLARATION) {
-        let filedDeclare: FieldDeclaration = <FieldDeclaration>member;
-        let filedName = member.name.range.toString();
-        let filedType = filedDeclare.type;
+        let fieldDeclare: FieldDeclaration = <FieldDeclaration>member;
+        let fieldName = member.name.range.toString();
+        let fieldType: CommonTypeNode | null = fieldDeclare.type;
 
-        if (filedType) {
-          struct.fields.push({ name: filedName, type: filedType.range.toString() });
+        if (fieldType && !AstUtil.haveSpecifyDecorator(fieldDeclare, DecoratorKind.IGNORE)) {
+          let declaration: TypeNodeInfo = new TypeNodeInfo(this.program, fieldType);
+          let fieldTypeName = fieldType.range.toString();
+          if (declaration.isIgnore()) {
+            continue;
+          }
+          let type =  declaration.isArray ? `${AstUtil.getBasicTypeName(fieldTypeName)}[]` : fieldTypeName;
+          struct.fields.push({"name": fieldName, "type": type });
         }
       }
     }
     this.addStruct(struct);
+    return struct;
   }
 
   addStruct(struct: Struct): void {
@@ -390,11 +366,8 @@ export class Abi {
     }
   }
 
-  static nameMap: string = "._0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-
   checkName(str: string): void {
-
-    assert(str.length > 0, `Action name should not empty`);
+    assert(str.length > 0, `Action name should not empty.`);
     assert(str.length <= 21, `Action Name:${str} should be less than 21 characters.`);
   }
 
@@ -402,32 +375,30 @@ export class Abi {
   *  Resolve ClassPrototype to dispatcher
   */
   resolveClassDispatcher(clzPrototype: ClassPrototype): Array<string> {
-
-    var body = new Array<string>();
-    var hasActionDecorator = false;
-    if (clzPrototype.instanceMembers) {
-
+    if (clzPrototype.instanceMembers && AstUtil.extendedContract(clzPrototype)) {
+      let body = new Array<string>();
+      let hasActionDecorators = false;
       let contractName = clzPrototype.simpleName; //
       let contractVarName = "_" + contractName; // TODO To enhancement the code
 
       body.push(`  if (receiver == code) {`);
       body.push(`    let ${contractVarName} = new ${contractName}(receiver);`);
       body.push(`    let ds = ${contractVarName}.getDataStream();`);
-      body.push(`    let action = new NameEx(actH, actL);`);
+      body.push(`    ${contractVarName}.setActionName(actH, actL);`);
+      body.push(`    ${contractVarName}.onInit();`);
 
       for (let instance of clzPrototype.instanceMembers.values()) {
-        if (this.isActionFuncPrototype(instance)) {
-
+        // if (instance.kind == ElementKind.FUNCTION_PROTOTYPE && instance.hasDecorator(DecoratorFlags.ACTION)) {
+          if (instance.kind == ElementKind.FUNCTION_PROTOTYPE && this.isActionFuncPrototype(instance)) {
           this.resolveFunctionPrototype(<FunctionPrototype>instance);
-          hasActionDecorator = true;
+          hasActionDecorators = true;
           let declaration: FunctionDeclaration = (<FunctionPrototype>instance).declaration; // FunctionDeclaration
 
           let funcName = declaration.name.range.toString();
           let types = declaration.signature.parameters; // FunctionDeclaration parameter types
 
           this.checkName(funcName);
-          //let action = new NameEx(actH, actL);
-          body.push(`    if (action == NEX("${funcName}")){`);
+          body.push(`    if (${contractVarName}.isAction("${funcName}")){`);
 
           let fields = new Array<string>();
           for (let index = 0; index < types.length; index++) {
@@ -435,18 +406,17 @@ export class Abi {
             let parameterType = type.type.range.toString();
             let parameterName = type.name.range.toString();
 
-            let variableDeclaration: VariableDeclaration = new VariableDeclaration(this.program, type.type);
-            let abiType = variableDeclaration.resolveAbiParameterType();
+            let abiType: TypeNodeInfo = new TypeNodeInfo(this.program, type.type);
 
             if (abiType.isArray) {
               if (abiType.kind == VarialbeKind.NUMBER) {
-                body.push(`      let ${parameterName} = ds.readVector<${abiType.factType}>();`);
+                body.push(`      let ${parameterName} = ds.readVector<${abiType.ascFactType}>();`);
               } else if (abiType.kind == VarialbeKind.BOOL) {
                 body.push(`      let ${parameterName} = ds.readVector<u8>();`);
               } else if (abiType.kind == VarialbeKind.STRING) {
                 body.push(`      let ${parameterName} = ds.readStringVector();`);
               } else {
-                body.push(`      let ${parameterName} = ds.readComplexVector<${abiType.baseType}>();`);
+                body.push(`      let ${parameterName} = ds.readComplexVector<${abiType.ascBasicType}>();`);
               }
             } else {
               if (abiType.kind == VarialbeKind.STRING) {
@@ -454,9 +424,9 @@ export class Abi {
               } else if (abiType.kind == VarialbeKind.BOOL) {
                 body.push(`      let ${parameterName} = ds.read<u8>() != 0;`);
               } else if (abiType.kind == VarialbeKind.NUMBER) {
-                body.push(`      let ${parameterName} = ds.read<${abiType.factType}>();`);
+                body.push(`      let ${parameterName} = ds.read<${abiType.ascFactType}>();`);
               } else {
-                let internalName = NodeUtil.getInternalName(type.type);
+                let internalName = AstUtil.getInternalName(type.type);
                 this.retrieveStructByInternalName(internalName);
                 body.push(`      let ${parameterName} = new ${parameterType}();`);
                 body.push(`      ${parameterName}.deserialize(ds);`);
@@ -468,15 +438,14 @@ export class Abi {
           body.push("    }");
         }
       }
+      body.push(`    ${contractVarName}.onStop();`);
       body.push("  }");
-
-      if (hasActionDecorator) {
-        if (clzPrototype.declaration.decorators) {
-          this.resolveClassDecorator(clzPrototype.declaration.decorators);
-        }
+      this.resolveDatabaseDecorator(clzPrototype.declaration);
+      if (hasActionDecorators) {
+        return body;
       }
     }
-    return hasActionDecorator ? body : new Array();
+    return new Array();
   }
 
   resolveFunctionPrototype(funcPrototype: FunctionPrototype): void {
@@ -484,7 +453,7 @@ export class Abi {
     var declaration: FunctionDeclaration = funcPrototype.declaration;
     var funcName = declaration.name.range.toString();
     var signature = funcPrototype.declaration.signature;
-    var struct = this.toAbiStruct(funcName, signature);
+    var struct = this.resolveSignatureToAbiStruct(funcName, signature);
 
     this.addStruct(struct);
     this.abiInfo.actions.push(new Action(funcName, funcName));
@@ -514,7 +483,7 @@ export class Abi {
     for (let key of keys) {
       let value = this.program.elementsLookup.get(key);
       if (value) {
-        console.log(`Element lookup key:${key}.Kind:${value.kind}`);
+        console.log(`Element lookup key:${key}.Kind:${ElementKind[value.kind]}`);
       }
     }
   }
@@ -530,7 +499,6 @@ export class Abi {
           console.log(`Element lookup key:${key}. Base prototype:${classPrototype.basePrototype.simpleName}`);
         }
       }
-
     }
   }
 
@@ -538,17 +506,21 @@ export class Abi {
 
     // this.printTypeAliasInfo();
     // this.printElementLookUpInfo();
-    // this.findDBManager();
     // this.printClassProtoTypeInfo();
 
-    var serializeHelper: SerializeHelper = new SerializeHelper(this.program);
-    serializeHelper.resolve();
-    this.fileSerializeLookup = serializeHelper.fileSerializeLookup;
+    var serializeInserter: SerializeInserter = new SerializeInserter(this.program);
+    var superInserter: SuperInserter = new SuperInserter(this.program);
+    var serializePoints = serializeInserter.getInsertPoints();
+    var superPoints = superInserter.getInsertPoints();
 
+    for (let _points of superPoints) {
+      serializePoints.push(_points);
+    }
+
+    this.insertPointsLookup = InsertPoint.toSortedMap(serializePoints);
     var dispatchBuffer = new Array<string>();
 
     for (let element of this.program.elementsLookup.values()) {
-      // The element is ClassPrototype
       if (element.kind == ElementKind.CLASS_PROTOTYPE) {
         let clzPrototype = <ClassPrototype>element;
         if (!this.elementLookup.has(clzPrototype.internalName)) {

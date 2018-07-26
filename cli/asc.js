@@ -19,6 +19,7 @@ const path = require("path");
 const utf8 = require("@protobufjs/utf8");
 const colorsUtil = require("./util/colors");
 const optionsUtil = require("./util/options");
+const mkdirp = require("./util/mkdirp");
 const EOL = process.platform === "win32" ? "\r\n" : "\n";
 
 // Emscripten adds an `uncaughtException` listener to Binaryen that results in an additional
@@ -29,7 +30,8 @@ if (process.removeAllListeners) process.removeAllListeners("uncaughtException");
 var assemblyscript, isDev = false;
 (() => {
   try { // `asc` on the command line
-    assemblyscript = require("../dist/assemblyscript.js");
+    assemblyscript = require("../dist/assemblyscript");
+    // throw new Error();
   } catch (e) {
     try { // `asc` on the command line without dist files
       require("ts-node").register({ project: path.join(__dirname, "..", "src", "tsconfig.json") });
@@ -309,12 +311,14 @@ exports.main = function main(argv, options, callback, isDispatch) {
 
       // if <pre> isDispathch == true </pre>, reproduce the code 
       if (!isDispatch) {
-        sourceText = exports.resolveSourceText(sourceText, null, exports.libraryFiles, null);
+        sourceText = exports.preParseFile(sourcePath, sourceText);
+        sourceText = exports.resolveSourceText(sourceText, null, null);
         parser = assemblyscript.parseFile(sourceText, sourcePath, true, parser);
       } else {
-        sourceText = exports.insertSerializeMethodText(sourcePath, sourceText);
-        let elementPath = sourcePath.split(".").slice(0,-1).join(".");
-        sourceText = exports.resolveSourceText(sourceText, exports.applyText, exports.libraryFiles, exports.abiObj, elementPath);
+        sourceText = exports.preParseFile(sourcePath, sourceText);
+        sourceText = exports.insertCodes(sourcePath, sourceText);
+        let elementPath = sourcePath.split(".").slice(0, -1).join(".");
+        sourceText = exports.resolveSourceText(sourceText, exports.applyText, exports.abiObj, elementPath);
         parser = assemblyscript.parseFile(sourceText, sourcePath, true, parser);
       }
     });
@@ -393,13 +397,15 @@ exports.main = function main(argv, options, callback, isDispatch) {
       if (sourceText == null) {
         return callback(Error("Import file '" + sourcePath + ".ts' not found."));
       }
+
       stats.parseCount++;
       stats.parseTime += measure(() => {
-        // console.log(`source Text: ${sourceText}`);
 
+        if (isDispatch != undefined) {
+          sourceText = exports.preParseFile(sourcePath, sourceText);
+        }
         if (isDispatch) {
-          // console.log(`SourcePath :${sourcePath}`);
-          sourceText = exports.insertSerializeMethodText(sourcePath, sourceText);
+          sourceText = exports.insertCodes(sourcePath, sourceText);
         }
         assemblyscript.parseFile(sourceText, sourcePath, false, parser);
       });
@@ -565,6 +571,10 @@ exports.main = function main(argv, options, callback, isDispatch) {
   if (args.applyText && isDispatch) {
     console.log("The generated apply text:");
     console.log(exports.applyText);
+  }
+
+  if (isDispatch == undefined) {
+    return ;
   }
 
   // Prepare output
@@ -766,6 +776,7 @@ exports.main = function main(argv, options, callback, isDispatch) {
     try {
       stats.writeCount++;
       stats.writeTime += measure(() => {
+        mkdirp(path.dirname(filename));
         if (typeof contents === "string") {
           fs.writeFileSync(filename, contents, { encoding: "utf8" });
         } else {
@@ -956,31 +967,13 @@ exports.tscOptions = {
   allowJs: false
 };
 
-function resolveSourceText(sourceText, applyText, library, abiObj, filename) {
-
+function resolveSourceText(sourceText, applyText) {
   let memoryLib = "allocate/arena";
   let resultTextBuffer = new Array();
-  if (library[memoryLib] == undefined) {
-    resultTextBuffer.push(`import "allocator/arena";`);
+  if (exports.libraryFiles[memoryLib] == undefined) {
+    // resultTextBuffer.push(`import "allocator/arena";`);
   }
-
-  if (abiObj) {
-
-    let importedLibrary = ["NEX", "NameEx"];
-    let nameSdkPath = "ContractSdk/src/name_ex";
-    for (let lib of importedLibrary) {
-      let internalPath = path.join(filename, lib);
-      if (!abiObj.hasElement(internalPath)) {
-        if(library[nameSdkPath] == undefined){
-          throw new Error(`The Name, NameEx not existed on the default path, please imported explicit.`);
-        }
-        resultTextBuffer.push(`import { ${lib} }from "${nameSdkPath}";`);
-      }
-    }
-  }
-
   resultTextBuffer.push(sourceText);
-
   if (applyText) {
     resultTextBuffer.push(applyText);
   }
@@ -989,26 +982,38 @@ function resolveSourceText(sourceText, applyText, library, abiObj, filename) {
 
 exports.resolveSourceText = resolveSourceText;
 
-function insertSerializeMethodText(sourcePath, sourceText) {
-  let serializeLookup = exports.abiObj.fileSerializeLookup;
-  if (serializeLookup.has(sourcePath)) {
+function insertCodes(sourcePath, sourceText) {
 
-    let serializeArray = serializeLookup.get(sourcePath);
+  if (!exports.abiObj) {
+    throw new Error(colorsUtil.stderr.yellow("WARN: ") + "unknown abi information" + EOL);
+  }
+
+  let insertPointsLookup = exports.abiObj.insertPointsLookup;
+  if (insertPointsLookup.has(sourcePath)) {
+    let serializeArray = insertPointsLookup.get(sourcePath);
     let data = sourceText.split(EOL);
-    // console.log(`data.length :${data.length}`);
     for (let serialize of serializeArray) {
-      data.splice(serialize.line, 0, serialize.toSerialize());
-      // data.splice(serialize.line, 0, EOL);
-      data.splice(serialize.line, 0, serialize.toDeserialize());
-      // data.splice(serialize.line, 0, EOL);
-      data.splice(serialize.line, 0, serialize.toPrimarykey());
-      // console.log( `${serialize.line}`);
+      data.splice(serialize.line , 0, serialize.getInsertCode());
+      // console.log(`insert code: ${sourcePath}.line: ${serialize.line}, data: ${serialize.getInsertCode()}. Original data:${serialize.toString()}`);
+      // console.log(`${serialize.getInsertCode()}`);
+      // console.log(data.join(EOL));
     }
-    console.log(`return sourceText: ${data.join(EOL)}`);
+    // console.log("=============");
+    // console.log(data.join(EOL));
     return data.join(EOL);
   } else {
     return sourceText;
   }
 }
 
-exports.insertSerializeMethodText = insertSerializeMethodText;
+exports.insertCodes = insertCodes;
+
+function preParseFile(sourcePath, sourceText) {
+  if (sourcePath.indexOf("/dbmanager") != -1) {
+    let res = fs.readFileSync(path.join( __dirname, "./contract/dbmanager.ts"), { encoding: "utf8" });
+    return res;
+  }
+  return sourceText;
+}
+
+exports.preParseFile = preParseFile;

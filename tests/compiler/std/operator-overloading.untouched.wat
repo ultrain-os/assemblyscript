@@ -79,8 +79,9 @@
  (global $std/operator-overloading/aii1 (mut i32) (i32.const 0))
  (global $std/operator-overloading/aii2 (mut i32) (i32.const 0))
  (global $std/operator-overloading/aii (mut i32) (i32.const 0))
- (global $HEAP_BASE i32 (i32.const 8))
- (memory $0 0)
+ (global $HEAP_BASE i32 (i32.const 68))
+ (memory $0 1)
+ (data (i32.const 8) "\1b\00\00\00s\00t\00d\00/\00o\00p\00e\00r\00a\00t\00o\00r\00-\00o\00v\00e\00r\00l\00o\00a\00d\00i\00n\00g\00.\00t\00s\00")
  (export "memory" (memory $0))
  (start $start)
  (func $~lib/allocator/arena/__memory_allocate (; 1 ;) (type $ii) (param $0 i32) (result i32)
@@ -91,105 +92,108 @@
   (local $5 i32)
   (local $6 i32)
   (if
-   (get_local $0)
-   (block
-    (if
-     (i32.gt_u
-      (get_local $0)
-      (get_global $~lib/internal/allocator/MAX_SIZE_32)
-     )
-     (unreachable)
-    )
-    (set_local $1
-     (get_global $~lib/allocator/arena/offset)
-    )
-    (set_local $2
-     (i32.and
-      (i32.add
-       (i32.add
-        (get_local $1)
+   (i32.gt_u
+    (get_local $0)
+    (get_global $~lib/internal/allocator/MAX_SIZE_32)
+   )
+   (unreachable)
+  )
+  (set_local $1
+   (get_global $~lib/allocator/arena/offset)
+  )
+  (set_local $4
+   (i32.and
+    (i32.add
+     (i32.add
+      (get_local $1)
+      (select
+       (tee_local $2
         (get_local $0)
        )
-       (get_global $~lib/internal/allocator/AL_MASK)
-      )
-      (i32.xor
-       (get_global $~lib/internal/allocator/AL_MASK)
-       (i32.const -1)
-      )
-     )
-    )
-    (set_local $3
-     (current_memory)
-    )
-    (if
-     (i32.gt_u
-      (get_local $2)
-      (i32.shl
-       (get_local $3)
-       (i32.const 16)
-      )
-     )
-     (block
-      (set_local $4
-       (i32.shr_u
-        (i32.and
-         (i32.add
-          (i32.sub
-           (get_local $2)
-           (get_local $1)
-          )
-          (i32.const 65535)
-         )
-         (i32.xor
-          (i32.const 65535)
-          (i32.const -1)
-         )
-        )
-        (i32.const 16)
+       (tee_local $3
+        (i32.const 1)
        )
-      )
-      (set_local $5
-       (select
-        (tee_local $5
-         (get_local $3)
-        )
-        (tee_local $6
-         (get_local $4)
-        )
-        (i32.gt_s
-         (get_local $5)
-         (get_local $6)
-        )
-       )
-      )
-      (if
-       (i32.lt_s
-        (grow_memory
-         (get_local $5)
-        )
-        (i32.const 0)
-       )
-       (if
-        (i32.lt_s
-         (grow_memory
-          (get_local $4)
-         )
-         (i32.const 0)
-        )
-        (unreachable)
+       (i32.gt_u
+        (get_local $2)
+        (get_local $3)
        )
       )
      )
+     (get_global $~lib/internal/allocator/AL_MASK)
     )
-    (set_global $~lib/allocator/arena/offset
-     (get_local $2)
-    )
-    (return
-     (get_local $1)
+    (i32.xor
+     (get_global $~lib/internal/allocator/AL_MASK)
+     (i32.const -1)
     )
    )
   )
-  (i32.const 0)
+  (set_local $5
+   (current_memory)
+  )
+  (if
+   (i32.gt_u
+    (get_local $4)
+    (i32.shl
+     (get_local $5)
+     (i32.const 16)
+    )
+   )
+   (block
+    (set_local $2
+     (i32.shr_u
+      (i32.and
+       (i32.add
+        (i32.sub
+         (get_local $4)
+         (get_local $1)
+        )
+        (i32.const 65535)
+       )
+       (i32.xor
+        (i32.const 65535)
+        (i32.const -1)
+       )
+      )
+      (i32.const 16)
+     )
+    )
+    (set_local $3
+     (select
+      (tee_local $3
+       (get_local $5)
+      )
+      (tee_local $6
+       (get_local $2)
+      )
+      (i32.gt_s
+       (get_local $3)
+       (get_local $6)
+      )
+     )
+    )
+    (if
+     (i32.lt_s
+      (grow_memory
+       (get_local $3)
+      )
+      (i32.const 0)
+     )
+     (if
+      (i32.lt_s
+       (grow_memory
+        (get_local $2)
+       )
+       (i32.const 0)
+      )
+      (unreachable)
+     )
+    )
+   )
+  )
+  (set_global $~lib/allocator/arena/offset
+   (get_local $4)
+  )
+  (get_local $1)
  )
  (func $~lib/memory/memory.allocate (; 2 ;) (type $ii) (param $0 i32) (result i32)
   (return
@@ -725,48 +729,51 @@
       (get_local $8)
       (i32.const 2146435072)
      )
-     (if
-      (i32.eq
-       (i32.or
-        (i32.sub
+     (block
+      (if
+       (i32.eq
+        (i32.or
+         (i32.sub
+          (get_local $7)
+          (i32.const 1072693248)
+         )
+         (get_local $4)
+        )
+        (i32.const 0)
+       )
+       (return
+        (f64.const nan:0x8000000000000)
+       )
+       (if
+        (i32.ge_s
          (get_local $7)
          (i32.const 1072693248)
         )
-        (get_local $4)
-       )
-       (i32.const 0)
-      )
-      (return
-       (f64.const nan:0x8000000000000)
-      )
-      (if
-       (i32.ge_s
-        (get_local $7)
-        (i32.const 1072693248)
-       )
-       (return
-        (if (result f64)
-         (i32.ge_s
-          (get_local $5)
-          (i32.const 0)
-         )
-         (get_local $1)
-         (f64.const 0)
-        )
-       )
-       (return
-        (if (result f64)
-         (i32.ge_s
-          (get_local $5)
-          (i32.const 0)
-         )
-         (f64.const 0)
-         (f64.neg
+        (return
+         (if (result f64)
+          (i32.ge_s
+           (get_local $5)
+           (i32.const 0)
+          )
           (get_local $1)
+          (f64.const 0)
+         )
+        )
+        (return
+         (if (result f64)
+          (i32.ge_s
+           (get_local $5)
+           (i32.const 0)
+          )
+          (f64.const 0)
+          (f64.neg
+           (get_local $1)
+          )
          )
         )
        )
       )
+      (unreachable)
      )
     )
     (if

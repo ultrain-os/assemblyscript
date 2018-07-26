@@ -8,6 +8,7 @@
  (global $~lib/internal/allocator/MAX_SIZE_32 i32 (i32.const 1073741824))
  (global $~lib/allocator/arena/startOffset (mut i32) (i32.const 0))
  (global $~lib/allocator/arena/offset (mut i32) (i32.const 0))
+ (global $builtins/a (mut i32) (i32.const 0))
  (global $builtins/b (mut i32) (i32.const 0))
  (global $builtins/i (mut i32) (i32.const 0))
  (global $builtins/I (mut i64) (i64.const 0))
@@ -48,22 +49,45 @@
  (global $~lib/builtins/f64.MIN_SAFE_INTEGER f64 (f64.const -9007199254740991))
  (global $~lib/builtins/f64.MAX_SAFE_INTEGER f64 (f64.const 9007199254740991))
  (global $~lib/builtins/f64.EPSILON f64 (f64.const 2.220446049250313e-16))
- (global $HEAP_BASE i32 (i32.const 16))
+ (global $HEAP_BASE i32 (i32.const 48))
  (table 1 1 anyfunc)
  (elem (i32.const 0) $start~anonymous|0)
  (memory $0 1)
- (data (i32.const 8) "\01\00\00\001\00")
+ (data (i32.const 8) "\0b\00\00\00b\00u\00i\00l\00t\00i\00n\00s\00.\00t\00s\00")
+ (data (i32.const 40) "\01\00\00\001\00")
  (export "memory" (memory $0))
  (export "table" (table $0))
  (export "test" (func $builtins/test))
  (start $start)
- (func $start~anonymous|0 (; 1 ;) (type $iiv) (param $0 i32) (param $1 i32)
+ (func $builtins/checkGeneric<String> (; 1 ;) (type $v)
+  (if
+   (i32.eqz
+    (i32.const 1)
+   )
+   (block
+    (call $~lib/env/abort)
+    (unreachable)
+   )
+  )
+ )
+ (func $builtins/checkGeneric<Array<i32>> (; 2 ;) (type $v)
+  (if
+   (i32.eqz
+    (i32.const 1)
+   )
+   (block
+    (call $~lib/env/abort)
+    (unreachable)
+   )
+  )
+ )
+ (func $start~anonymous|0 (; 3 ;) (type $iiv) (param $0 i32) (param $1 i32)
   (nop)
  )
- (func $builtins/test (; 2 ;) (type $v)
+ (func $builtins/test (; 4 ;) (type $v)
   (nop)
  )
- (func $start (; 3 ;) (type $v)
+ (func $start (; 5 ;) (type $v)
   (local $0 i32)
   (local $1 i32)
   (local $2 i64)
@@ -96,9 +120,181 @@
   )
   (if
    (i32.eqz
+    (i32.const 1)
+   )
+   (block
+    (call $~lib/env/abort)
+    (unreachable)
+   )
+  )
+  (if
+   (i32.eqz
     (i32.eqz
      (i32.const 0)
     )
+   )
+   (block
+    (call $~lib/env/abort)
+    (unreachable)
+   )
+  )
+  (if
+   (i32.eqz
+    (i32.const 1)
+   )
+   (block
+    (call $~lib/env/abort)
+    (unreachable)
+   )
+  )
+  (if
+   (i32.eqz
+    (i32.eqz
+     (i32.const 0)
+    )
+   )
+   (block
+    (call $~lib/env/abort)
+    (unreachable)
+   )
+  )
+  (if
+   (i32.eqz
+    (i32.const 1)
+   )
+   (block
+    (call $~lib/env/abort)
+    (unreachable)
+   )
+  )
+  (if
+   (i32.eqz
+    (i32.const 1)
+   )
+   (block
+    (call $~lib/env/abort)
+    (unreachable)
+   )
+  )
+  (if
+   (i32.eqz
+    (i32.eqz
+     (i32.const 0)
+    )
+   )
+   (block
+    (call $~lib/env/abort)
+    (unreachable)
+   )
+  )
+  (if
+   (i32.eqz
+    (i32.const 1)
+   )
+   (block
+    (call $~lib/env/abort)
+    (unreachable)
+   )
+  )
+  (if
+   (i32.eqz
+    (i32.const 1)
+   )
+   (block
+    (call $~lib/env/abort)
+    (unreachable)
+   )
+  )
+  (if
+   (i32.eqz
+    (i32.eqz
+     (i32.const 0)
+    )
+   )
+   (block
+    (call $~lib/env/abort)
+    (unreachable)
+   )
+  )
+  (if
+   (i32.eqz
+    (if (result i32)
+     (i32.const 1)
+     (i32.eq
+      (i32.const 1)
+      (i32.const 1)
+     )
+     (i32.const 1)
+    )
+   )
+   (block
+    (call $~lib/env/abort)
+    (unreachable)
+   )
+  )
+  (if
+   (i32.eqz
+    (i32.eqz
+     (i32.const 0)
+    )
+   )
+   (block
+    (call $~lib/env/abort)
+    (unreachable)
+   )
+  )
+  (if
+   (i32.eqz
+    (i32.const 1)
+   )
+   (block
+    (call $~lib/env/abort)
+    (unreachable)
+   )
+  )
+  (if
+   (i32.eqz
+    (i32.eqz
+     (i32.const 0)
+    )
+   )
+   (block
+    (call $~lib/env/abort)
+    (unreachable)
+   )
+  )
+  (if
+   (i32.eqz
+    (i32.const 1)
+   )
+   (block
+    (call $~lib/env/abort)
+    (unreachable)
+   )
+  )
+  (if
+   (i32.eqz
+    (i32.const 1)
+   )
+   (block
+    (call $~lib/env/abort)
+    (unreachable)
+   )
+  )
+  (if
+   (i32.eqz
+    (i32.eqz
+     (i32.const 0)
+    )
+   )
+   (block
+    (call $~lib/env/abort)
+    (unreachable)
+   )
+  )
+  (if
+   (i32.eqz
+    (i32.const 1)
    )
    (block
     (call $~lib/env/abort)
@@ -205,66 +401,8 @@
     (unreachable)
    )
   )
-  (if
-   (i32.eqz
-    (i32.const 1)
-   )
-   (block
-    (call $~lib/env/abort)
-    (unreachable)
-   )
-  )
-  (if
-   (i32.eqz
-    (i32.eqz
-     (i32.const 0)
-    )
-   )
-   (block
-    (call $~lib/env/abort)
-    (unreachable)
-   )
-  )
-  (if
-   (i32.eqz
-    (i32.const 1)
-   )
-   (block
-    (call $~lib/env/abort)
-    (unreachable)
-   )
-  )
-  (if
-   (i32.eqz
-    (i32.eqz
-     (i32.const 0)
-    )
-   )
-   (block
-    (call $~lib/env/abort)
-    (unreachable)
-   )
-  )
-  (if
-   (i32.eqz
-    (i32.const 1)
-   )
-   (block
-    (call $~lib/env/abort)
-    (unreachable)
-   )
-  )
-  (if
-   (i32.eqz
-    (i32.eqz
-     (i32.const 0)
-    )
-   )
-   (block
-    (call $~lib/env/abort)
-    (unreachable)
-   )
-  )
+  (call $builtins/checkGeneric<String>)
+  (call $builtins/checkGeneric<Array<i32>>)
   (if
    (i32.eqz
     (i32.const 1)

@@ -41,13 +41,13 @@
  (export "ge_s" (func $../../examples/i64-polyfill/assembly/i64/ge_s))
  (export "ge_u" (func $../../examples/i64-polyfill/assembly/i64/ge_u))
  (start $start)
- (func $../../examples/i64-polyfill/assembly/i64/getHi (; 0 ;) (type $i) (result i32)
+ (func $../../examples/i64-polyfill/assembly/i64/getHi (; 0 ;) (; has Stack IR ;) (type $i) (result i32)
   (get_global $../../examples/i64-polyfill/assembly/i64/hi)
  )
- (func $../../examples/i64-polyfill/assembly/i64/getLo (; 1 ;) (type $i) (result i32)
+ (func $../../examples/i64-polyfill/assembly/i64/getLo (; 1 ;) (; has Stack IR ;) (type $i) (result i32)
   (get_global $../../examples/i64-polyfill/assembly/i64/lo)
  )
- (func $../../examples/i64-polyfill/assembly/i64/clz (; 2 ;) (type $iiv) (param $0 i32) (param $1 i32)
+ (func $../../examples/i64-polyfill/assembly/i64/clz (; 2 ;) (; has Stack IR ;) (type $iiv) (param $0 i32) (param $1 i32)
   (set_global $../../examples/i64-polyfill/assembly/i64/lo
    (i32.wrap/i64
     (i64.clz
@@ -69,7 +69,7 @@
    (i32.const 0)
   )
  )
- (func $../../examples/i64-polyfill/assembly/i64/ctz (; 3 ;) (type $iiv) (param $0 i32) (param $1 i32)
+ (func $../../examples/i64-polyfill/assembly/i64/ctz (; 3 ;) (; has Stack IR ;) (type $iiv) (param $0 i32) (param $1 i32)
   (set_global $../../examples/i64-polyfill/assembly/i64/lo
    (i32.wrap/i64
     (i64.ctz
@@ -91,7 +91,7 @@
    (i32.const 0)
   )
  )
- (func $../../examples/i64-polyfill/assembly/i64/popcnt (; 4 ;) (type $iiv) (param $0 i32) (param $1 i32)
+ (func $../../examples/i64-polyfill/assembly/i64/popcnt (; 4 ;) (; has Stack IR ;) (type $iiv) (param $0 i32) (param $1 i32)
   (set_global $../../examples/i64-polyfill/assembly/i64/lo
    (i32.wrap/i64
     (i64.popcnt
@@ -113,7 +113,7 @@
    (i32.const 0)
   )
  )
- (func $../../examples/i64-polyfill/assembly/i64/eqz (; 5 ;) (type $iiv) (param $0 i32) (param $1 i32)
+ (func $../../examples/i64-polyfill/assembly/i64/eqz (; 5 ;) (; has Stack IR ;) (type $iiv) (param $0 i32) (param $1 i32)
   (set_global $../../examples/i64-polyfill/assembly/i64/lo
    (i64.eqz
     (i64.or
@@ -133,7 +133,7 @@
    (i32.const 0)
   )
  )
- (func $../../examples/i64-polyfill/assembly/i64/add (; 6 ;) (type $iiiiv) (param $0 i32) (param $1 i32) (param $2 i32) (param $3 i32)
+ (func $../../examples/i64-polyfill/assembly/i64/add (; 6 ;) (; has Stack IR ;) (type $iiiiv) (param $0 i32) (param $1 i32) (param $2 i32) (param $3 i32)
   (local $4 i64)
   (set_global $../../examples/i64-polyfill/assembly/i64/lo
    (i32.wrap/i64
@@ -174,7 +174,7 @@
    )
   )
  )
- (func $../../examples/i64-polyfill/assembly/i64/sub (; 7 ;) (type $iiiiv) (param $0 i32) (param $1 i32) (param $2 i32) (param $3 i32)
+ (func $../../examples/i64-polyfill/assembly/i64/sub (; 7 ;) (; has Stack IR ;) (type $iiiiv) (param $0 i32) (param $1 i32) (param $2 i32) (param $3 i32)
   (local $4 i64)
   (set_global $../../examples/i64-polyfill/assembly/i64/lo
    (i32.wrap/i64
@@ -215,7 +215,7 @@
    )
   )
  )
- (func $../../examples/i64-polyfill/assembly/i64/mul (; 8 ;) (type $iiiiv) (param $0 i32) (param $1 i32) (param $2 i32) (param $3 i32)
+ (func $../../examples/i64-polyfill/assembly/i64/mul (; 8 ;) (; has Stack IR ;) (type $iiiiv) (param $0 i32) (param $1 i32) (param $2 i32) (param $3 i32)
   (local $4 i64)
   (set_global $../../examples/i64-polyfill/assembly/i64/lo
    (i32.wrap/i64
@@ -256,7 +256,7 @@
    )
   )
  )
- (func $../../examples/i64-polyfill/assembly/i64/div_s (; 9 ;) (type $iiiiv) (param $0 i32) (param $1 i32) (param $2 i32) (param $3 i32)
+ (func $../../examples/i64-polyfill/assembly/i64/div_s (; 9 ;) (; has Stack IR ;) (type $iiiiv) (param $0 i32) (param $1 i32) (param $2 i32) (param $3 i32)
   (local $4 i64)
   (set_global $../../examples/i64-polyfill/assembly/i64/lo
    (i32.wrap/i64
@@ -297,7 +297,7 @@
    )
   )
  )
- (func $../../examples/i64-polyfill/assembly/i64/div_u (; 10 ;) (type $iiiiv) (param $0 i32) (param $1 i32) (param $2 i32) (param $3 i32)
+ (func $../../examples/i64-polyfill/assembly/i64/div_u (; 10 ;) (; has Stack IR ;) (type $iiiiv) (param $0 i32) (param $1 i32) (param $2 i32) (param $3 i32)
   (local $4 i64)
   (set_global $../../examples/i64-polyfill/assembly/i64/lo
    (i32.wrap/i64
@@ -338,7 +338,7 @@
    )
   )
  )
- (func $../../examples/i64-polyfill/assembly/i64/rem_s (; 11 ;) (type $iiiiv) (param $0 i32) (param $1 i32) (param $2 i32) (param $3 i32)
+ (func $../../examples/i64-polyfill/assembly/i64/rem_s (; 11 ;) (; has Stack IR ;) (type $iiiiv) (param $0 i32) (param $1 i32) (param $2 i32) (param $3 i32)
   (local $4 i64)
   (set_global $../../examples/i64-polyfill/assembly/i64/lo
    (i32.wrap/i64
@@ -379,7 +379,7 @@
    )
   )
  )
- (func $../../examples/i64-polyfill/assembly/i64/rem_u (; 12 ;) (type $iiiiv) (param $0 i32) (param $1 i32) (param $2 i32) (param $3 i32)
+ (func $../../examples/i64-polyfill/assembly/i64/rem_u (; 12 ;) (; has Stack IR ;) (type $iiiiv) (param $0 i32) (param $1 i32) (param $2 i32) (param $3 i32)
   (local $4 i64)
   (set_global $../../examples/i64-polyfill/assembly/i64/lo
    (i32.wrap/i64
@@ -420,7 +420,7 @@
    )
   )
  )
- (func $../../examples/i64-polyfill/assembly/i64/and (; 13 ;) (type $iiiiv) (param $0 i32) (param $1 i32) (param $2 i32) (param $3 i32)
+ (func $../../examples/i64-polyfill/assembly/i64/and (; 13 ;) (; has Stack IR ;) (type $iiiiv) (param $0 i32) (param $1 i32) (param $2 i32) (param $3 i32)
   (local $4 i64)
   (set_global $../../examples/i64-polyfill/assembly/i64/lo
    (i32.wrap/i64
@@ -461,7 +461,7 @@
    )
   )
  )
- (func $../../examples/i64-polyfill/assembly/i64/or (; 14 ;) (type $iiiiv) (param $0 i32) (param $1 i32) (param $2 i32) (param $3 i32)
+ (func $../../examples/i64-polyfill/assembly/i64/or (; 14 ;) (; has Stack IR ;) (type $iiiiv) (param $0 i32) (param $1 i32) (param $2 i32) (param $3 i32)
   (local $4 i64)
   (set_global $../../examples/i64-polyfill/assembly/i64/lo
    (i32.wrap/i64
@@ -502,7 +502,7 @@
    )
   )
  )
- (func $../../examples/i64-polyfill/assembly/i64/xor (; 15 ;) (type $iiiiv) (param $0 i32) (param $1 i32) (param $2 i32) (param $3 i32)
+ (func $../../examples/i64-polyfill/assembly/i64/xor (; 15 ;) (; has Stack IR ;) (type $iiiiv) (param $0 i32) (param $1 i32) (param $2 i32) (param $3 i32)
   (local $4 i64)
   (set_global $../../examples/i64-polyfill/assembly/i64/lo
    (i32.wrap/i64
@@ -543,7 +543,7 @@
    )
   )
  )
- (func $../../examples/i64-polyfill/assembly/i64/shl (; 16 ;) (type $iiiiv) (param $0 i32) (param $1 i32) (param $2 i32) (param $3 i32)
+ (func $../../examples/i64-polyfill/assembly/i64/shl (; 16 ;) (; has Stack IR ;) (type $iiiiv) (param $0 i32) (param $1 i32) (param $2 i32) (param $3 i32)
   (local $4 i64)
   (set_global $../../examples/i64-polyfill/assembly/i64/lo
    (i32.wrap/i64
@@ -584,7 +584,7 @@
    )
   )
  )
- (func $../../examples/i64-polyfill/assembly/i64/shr_s (; 17 ;) (type $iiiiv) (param $0 i32) (param $1 i32) (param $2 i32) (param $3 i32)
+ (func $../../examples/i64-polyfill/assembly/i64/shr_s (; 17 ;) (; has Stack IR ;) (type $iiiiv) (param $0 i32) (param $1 i32) (param $2 i32) (param $3 i32)
   (local $4 i64)
   (set_global $../../examples/i64-polyfill/assembly/i64/lo
    (i32.wrap/i64
@@ -625,7 +625,7 @@
    )
   )
  )
- (func $../../examples/i64-polyfill/assembly/i64/shr_u (; 18 ;) (type $iiiiv) (param $0 i32) (param $1 i32) (param $2 i32) (param $3 i32)
+ (func $../../examples/i64-polyfill/assembly/i64/shr_u (; 18 ;) (; has Stack IR ;) (type $iiiiv) (param $0 i32) (param $1 i32) (param $2 i32) (param $3 i32)
   (local $4 i64)
   (set_global $../../examples/i64-polyfill/assembly/i64/lo
    (i32.wrap/i64
@@ -666,7 +666,7 @@
    )
   )
  )
- (func $../../examples/i64-polyfill/assembly/i64/rotl (; 19 ;) (type $iiiiv) (param $0 i32) (param $1 i32) (param $2 i32) (param $3 i32)
+ (func $../../examples/i64-polyfill/assembly/i64/rotl (; 19 ;) (; has Stack IR ;) (type $iiiiv) (param $0 i32) (param $1 i32) (param $2 i32) (param $3 i32)
   (local $4 i64)
   (set_global $../../examples/i64-polyfill/assembly/i64/lo
    (i32.wrap/i64
@@ -707,7 +707,7 @@
    )
   )
  )
- (func $../../examples/i64-polyfill/assembly/i64/rotr (; 20 ;) (type $iiiiv) (param $0 i32) (param $1 i32) (param $2 i32) (param $3 i32)
+ (func $../../examples/i64-polyfill/assembly/i64/rotr (; 20 ;) (; has Stack IR ;) (type $iiiiv) (param $0 i32) (param $1 i32) (param $2 i32) (param $3 i32)
   (local $4 i64)
   (set_global $../../examples/i64-polyfill/assembly/i64/lo
    (i32.wrap/i64
@@ -748,7 +748,7 @@
    )
   )
  )
- (func $../../examples/i64-polyfill/assembly/i64/eq (; 21 ;) (type $iiiiv) (param $0 i32) (param $1 i32) (param $2 i32) (param $3 i32)
+ (func $../../examples/i64-polyfill/assembly/i64/eq (; 21 ;) (; has Stack IR ;) (type $iiiiv) (param $0 i32) (param $1 i32) (param $2 i32) (param $3 i32)
   (set_global $../../examples/i64-polyfill/assembly/i64/lo
    (i64.eq
     (i64.or
@@ -779,7 +779,7 @@
    (i32.const 0)
   )
  )
- (func $../../examples/i64-polyfill/assembly/i64/ne (; 22 ;) (type $iiiiv) (param $0 i32) (param $1 i32) (param $2 i32) (param $3 i32)
+ (func $../../examples/i64-polyfill/assembly/i64/ne (; 22 ;) (; has Stack IR ;) (type $iiiiv) (param $0 i32) (param $1 i32) (param $2 i32) (param $3 i32)
   (set_global $../../examples/i64-polyfill/assembly/i64/lo
    (i64.ne
     (i64.or
@@ -810,7 +810,7 @@
    (i32.const 0)
   )
  )
- (func $../../examples/i64-polyfill/assembly/i64/lt_s (; 23 ;) (type $iiiiv) (param $0 i32) (param $1 i32) (param $2 i32) (param $3 i32)
+ (func $../../examples/i64-polyfill/assembly/i64/lt_s (; 23 ;) (; has Stack IR ;) (type $iiiiv) (param $0 i32) (param $1 i32) (param $2 i32) (param $3 i32)
   (set_global $../../examples/i64-polyfill/assembly/i64/lo
    (i64.lt_s
     (i64.or
@@ -841,7 +841,7 @@
    (i32.const 0)
   )
  )
- (func $../../examples/i64-polyfill/assembly/i64/lt_u (; 24 ;) (type $iiiiv) (param $0 i32) (param $1 i32) (param $2 i32) (param $3 i32)
+ (func $../../examples/i64-polyfill/assembly/i64/lt_u (; 24 ;) (; has Stack IR ;) (type $iiiiv) (param $0 i32) (param $1 i32) (param $2 i32) (param $3 i32)
   (set_global $../../examples/i64-polyfill/assembly/i64/lo
    (i64.lt_u
     (i64.or
@@ -872,7 +872,7 @@
    (i32.const 0)
   )
  )
- (func $../../examples/i64-polyfill/assembly/i64/le_s (; 25 ;) (type $iiiiv) (param $0 i32) (param $1 i32) (param $2 i32) (param $3 i32)
+ (func $../../examples/i64-polyfill/assembly/i64/le_s (; 25 ;) (; has Stack IR ;) (type $iiiiv) (param $0 i32) (param $1 i32) (param $2 i32) (param $3 i32)
   (set_global $../../examples/i64-polyfill/assembly/i64/lo
    (i64.le_s
     (i64.or
@@ -903,7 +903,7 @@
    (i32.const 0)
   )
  )
- (func $../../examples/i64-polyfill/assembly/i64/le_u (; 26 ;) (type $iiiiv) (param $0 i32) (param $1 i32) (param $2 i32) (param $3 i32)
+ (func $../../examples/i64-polyfill/assembly/i64/le_u (; 26 ;) (; has Stack IR ;) (type $iiiiv) (param $0 i32) (param $1 i32) (param $2 i32) (param $3 i32)
   (set_global $../../examples/i64-polyfill/assembly/i64/lo
    (i64.le_u
     (i64.or
@@ -934,7 +934,7 @@
    (i32.const 0)
   )
  )
- (func $../../examples/i64-polyfill/assembly/i64/gt_s (; 27 ;) (type $iiiiv) (param $0 i32) (param $1 i32) (param $2 i32) (param $3 i32)
+ (func $../../examples/i64-polyfill/assembly/i64/gt_s (; 27 ;) (; has Stack IR ;) (type $iiiiv) (param $0 i32) (param $1 i32) (param $2 i32) (param $3 i32)
   (set_global $../../examples/i64-polyfill/assembly/i64/lo
    (i64.gt_s
     (i64.or
@@ -965,7 +965,7 @@
    (i32.const 0)
   )
  )
- (func $../../examples/i64-polyfill/assembly/i64/gt_u (; 28 ;) (type $iiiiv) (param $0 i32) (param $1 i32) (param $2 i32) (param $3 i32)
+ (func $../../examples/i64-polyfill/assembly/i64/gt_u (; 28 ;) (; has Stack IR ;) (type $iiiiv) (param $0 i32) (param $1 i32) (param $2 i32) (param $3 i32)
   (set_global $../../examples/i64-polyfill/assembly/i64/lo
    (i64.gt_u
     (i64.or
@@ -996,7 +996,7 @@
    (i32.const 0)
   )
  )
- (func $../../examples/i64-polyfill/assembly/i64/ge_s (; 29 ;) (type $iiiiv) (param $0 i32) (param $1 i32) (param $2 i32) (param $3 i32)
+ (func $../../examples/i64-polyfill/assembly/i64/ge_s (; 29 ;) (; has Stack IR ;) (type $iiiiv) (param $0 i32) (param $1 i32) (param $2 i32) (param $3 i32)
   (set_global $../../examples/i64-polyfill/assembly/i64/lo
    (i64.ge_s
     (i64.or
@@ -1027,7 +1027,7 @@
    (i32.const 0)
   )
  )
- (func $../../examples/i64-polyfill/assembly/i64/ge_u (; 30 ;) (type $iiiiv) (param $0 i32) (param $1 i32) (param $2 i32) (param $3 i32)
+ (func $../../examples/i64-polyfill/assembly/i64/ge_u (; 30 ;) (; has Stack IR ;) (type $iiiiv) (param $0 i32) (param $1 i32) (param $2 i32) (param $3 i32)
   (set_global $../../examples/i64-polyfill/assembly/i64/lo
    (i64.ge_u
     (i64.or
@@ -1058,7 +1058,7 @@
    (i32.const 0)
   )
  )
- (func $start (; 31 ;) (type $v)
+ (func $start (; 31 ;) (; has Stack IR ;) (type $v)
   (set_global $~lib/allocator/arena/startOffset
    (i32.const 8)
   )

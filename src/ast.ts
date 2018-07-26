@@ -116,6 +116,7 @@ export function nodeIsCallable(kind: NodeKind): bool {
   switch (kind) {
     case NodeKind.IDENTIFIER:
     case NodeKind.CALL:
+    case NodeKind.SUPER: // TODO
     case NodeKind.ELEMENTACCESS:
     case NodeKind.PROPERTYACCESS: return true;
   }
@@ -1124,6 +1125,7 @@ export enum DecoratorKind {
   INLINE,
   ACTION,
   DATABASE,
+  IGNORE,
   EXTERNAL,
   BUILTIN
 }
@@ -1156,6 +1158,7 @@ export function decoratorNameToKind(name: Expression): DecoratorKind {
       }
       case CharCode.i: {
         if (nameStr == "inline") return DecoratorKind.INLINE;
+        if (nameStr == "ignore") return DecoratorKind.IGNORE;
         break;
       }
       case CharCode.o: {
@@ -1451,6 +1454,12 @@ export class StringLiteralExpression extends LiteralExpression {
 export class SuperExpression extends IdentifierExpression {
   kind = NodeKind.SUPER;
   text = "super";
+  /** Called expression. Usually an identifier or property access expression. */
+  expression: Expression;
+  /** Provided type arguments. */
+  typeArguments: CommonTypeNode[] | null;
+  /** Provided arguments. */
+  arguments: Expression[];
 }
 
 /** Represents a `this` expression. */

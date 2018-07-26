@@ -6,6 +6,10 @@ import {
   hash
 } from "./internal/hash";
 
+import { DataStream } from "./datastream";
+import { Serializable} from "./serializable";
+import { GenericUtil } from "./internal/generic";
+
 // A deterministic hash map based on CloseTable from https://github.com/jorendorff/dht
 
 const INITIAL_CAPACITY = 4;
@@ -40,7 +44,8 @@ const BUCKET_SIZE = sizeof<usize>();
   return size;
 }
 
-export class Map<K,V> {
+@ignore
+export class Map<K,V> implements Serializable{
 
   // buckets holding references to the respective first entry within
   private buckets: ArrayBuffer; // usize[bucketsMask + 1]
@@ -89,7 +94,7 @@ export class Map<K,V> {
   }
   
   keys(): K[]{
-    let _keys = new Array<K>();
+    var _keys = new Array<K>();
     var startPtr = changetype<usize>(this.entries) + HEADER_SIZE_AB;
     var endPtr = startPtr + <usize>this.entriesOffset * ENTRY_SIZE<K,V>();
     while (startPtr != endPtr) {
@@ -100,6 +105,20 @@ export class Map<K,V> {
       startPtr += ENTRY_SIZE<K,V>();
     }
     return _keys;
+  }
+
+  values(): V[] {
+    var _values = new Array<V>();
+    var startPtr = changetype<usize>(this.entries) + HEADER_SIZE_AB;
+    var endPtr = startPtr + <usize>this.entriesOffset * ENTRY_SIZE<K,V>();
+    while (startPtr != endPtr) {
+      let oldEntry = changetype<MapEntry<K,V>>(startPtr);
+      if (!(oldEntry.taggedNext & EMPTY)) {
+        _values.push(oldEntry.value);
+      }
+      startPtr += ENTRY_SIZE<K,V>();
+    }
+    return _values;
   }
 
   set(key: K, value: V): void {
@@ -128,6 +147,8 @@ export class Map<K,V> {
       let bucketPtrBase = changetype<usize>(this.buckets) + <usize>(hashCode & this.bucketsMask) * BUCKET_SIZE;
       entry.taggedNext = load<usize>(bucketPtrBase, HEADER_SIZE_AB);
       store<usize>(bucketPtrBase, changetype<usize>(entry), HEADER_SIZE_AB);
+      if (isManaged<K>()) __gc_link(changetype<usize>(this), changetype<usize>(key)); // tslint:disable-line
+      if (isManaged<V>()) __gc_link(changetype<usize>(this), changetype<usize>(value)); // tslint:disable-line
     }
   }
 
@@ -143,6 +164,60 @@ export class Map<K,V> {
       this.entriesCount < <i32>(this.entriesCapacity * FREE_FACTOR)
     ) this.rehash(halfBucketsMask);
     return true;
+  }
+
+  private serializeItem<T> (val: T, ds: DataStream): void {
+    if (isInteger<T>(val)) {
+        ds.write<T>(val);
+    } else if (isString<T>(val)) {
+        ds.writeString(changetype<string>(val));
+    } else if (isReference<T>(val)) {
+        val.serialize(ds);
+    } else {
+        assert(false, "unsupport value type for serializable map.");
+    }
+  }
+
+  serialize(ds: DataStream): void {
+    var keys = this.keys();
+    var length = <u32>keys.length;
+    ds.writeVarint32(length);
+    for (let index:u32 = 0; index < length; index ++) {
+      let key = keys[index];
+      let value = this.get(key);
+      this.serializeItem<K>(key, ds);
+      this.serializeItem<V>(value,ds);
+    }
+  }
+  
+  private deserializeItem<T>(ds: DataStream): T {
+    var arr = new Array<T>(1);
+    var v0 = arr[0];
+    if (isInteger(v0)) {
+        return ds.read<T>();
+    } else if (isString(v0)) {
+        return changetype<T>(ds.readString());
+    } else if (isReference(v0)) {
+        let rst = {} as T;
+        rst.deserialize(ds);
+        return <T>rst;
+    } 
+    assert(false, "key type is not support.");
+    return {} as T;
+  }
+
+  deserialize(ds: DataStream): void {
+    this.clear();
+    var len = ds.readVarint32();
+    for (let index:u32 = 0; index < len; index ++) {
+      let key = this.deserializeItem<K>(ds);
+      let value = this.deserializeItem<V>(ds);
+      this.set(key, value);
+    }
+  }
+
+  primaryKey(): u64 {
+    return 0;
   }
 
   private rehash(newBucketsMask: u32): void {
@@ -175,5 +250,25 @@ export class Map<K,V> {
     this.entries = newEntries;
     this.entriesCapacity = newEntriesCapacity;
     this.entriesOffset = this.entriesCount;
+  }
+
+  private __gc(): void {
+    __gc_mark(changetype<usize>(this.buckets)); // tslint:disable-line
+    var entries = this.entries;
+    __gc_mark(changetype<usize>(entries)); // tslint:disable-line
+    if (isManaged<K>() || isManaged<V>()) {
+      let offset: usize = 0;
+      let end: usize = this.entriesOffset * ENTRY_SIZE<K,V>();
+      while (offset < end) {
+        let entry = changetype<MapEntry<K,V>>(
+          changetype<usize>(entries) + HEADER_SIZE_AB + offset * ENTRY_SIZE<K,V>()
+        );
+        if (!(entry.taggedNext & EMPTY)) {
+          if (isManaged<K>()) __gc_mark(changetype<usize>(entry.key)); // tslint:disable-line
+          if (isManaged<V>()) __gc_mark(changetype<usize>(entry.value)); // tslint:disable-line
+        }
+        offset += ENTRY_SIZE<K,V>();
+      }
+    }
   }
 }
