@@ -375,7 +375,10 @@ export class Abi {
         let filedType = filedDeclare.type;
 
         if (filedType) {
-          struct.fields.push({ name: filedName, type: filedType.range.toString() });
+          let declaration:VariableDeclaration = new VariableDeclaration(this.program, filedType).resolveAbiParameterType();
+          let fieldTypeName = filedType.range.toString();
+          let type =  !declaration.isArray ? fieldTypeName :  `${declaration.getBasicTypeName(fieldTypeName)}[]`;
+          struct.fields.push({ name: filedName, type:type });
         }
       }
     }
@@ -414,6 +417,8 @@ export class Abi {
       body.push(`    let ${contractVarName} = new ${contractName}(receiver);`);
       body.push(`    let ds = ${contractVarName}.getDataStream();`);
       body.push(`    let action = new NameEx(actH, actL);`);
+      // body.push(`    ${contractVarName}.onInit();`);
+
 
       for (let instance of clzPrototype.instanceMembers.values()) {
         if (this.isActionFuncPrototype(instance)) {
@@ -468,6 +473,7 @@ export class Abi {
           body.push("    }");
         }
       }
+      // body.push(`    ${contractVarName}.onStop();`);
       body.push("  }");
 
       if (hasActionDecorator) {

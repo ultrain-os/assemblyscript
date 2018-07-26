@@ -7,10 +7,10 @@
  (export "memory" (memory $0))
  (export "default" (func $named-export-default/get3))
  (start $start)
- (func $named-export-default/get3 (; 0 ;) (type $i) (result i32)
+ (func $named-export-default/get3 (; 0 ;) (; has Stack IR ;) (type $i) (result i32)
   (i32.const 3)
  )
- (func $start (; 1 ;) (type $v)
+ (func $start (; 1 ;) (; has Stack IR ;) (type $v)
   (set_global $~lib/allocator/arena/startOffset
    (i32.const 8)
   )

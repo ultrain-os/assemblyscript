@@ -8,11 +8,12 @@
  (global $call-optional/optIndirect (mut i32) (i32.const 0))
  (table 1 1 anyfunc)
  (elem (i32.const 0) $call-optional/opt|trampoline)
- (memory $0 0)
+ (memory $0 1)
+ (data (i32.const 8) "\10\00\00\00c\00a\00l\00l\00-\00o\00p\00t\00i\00o\00n\00a\00l\00.\00t\00s")
  (export "memory" (memory $0))
  (export "table" (table $0))
  (start $start)
- (func $call-optional/opt (; 1 ;) (type $iiii) (param $0 i32) (param $1 i32) (param $2 i32) (result i32)
+ (func $call-optional/opt (; 1 ;) (; has Stack IR ;) (type $iiii) (param $0 i32) (param $1 i32) (param $2 i32) (result i32)
   (i32.add
    (i32.add
     (get_local $0)
@@ -21,7 +22,7 @@
    (get_local $2)
   )
  )
- (func $call-optional/opt|trampoline (; 2 ;) (type $iiii) (param $0 i32) (param $1 i32) (param $2 i32) (result i32)
+ (func $call-optional/opt|trampoline (; 2 ;) (; has Stack IR ;) (type $iiii) (param $0 i32) (param $1 i32) (param $2 i32) (result i32)
   (block $2of2
    (block $1of2
     (block $0of2
@@ -49,10 +50,10 @@
    (get_local $2)
   )
  )
- (func $start (; 3 ;) (type $v)
+ (func $start (; 3 ;) (; has Stack IR ;) (type $v)
   (block $folding-inner0
    (set_global $~lib/allocator/arena/startOffset
-    (i32.const 8)
+    (i32.const 48)
    )
    (set_global $~lib/allocator/arena/offset
     (get_global $~lib/allocator/arena/startOffset)

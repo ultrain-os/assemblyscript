@@ -85,7 +85,7 @@ export class VariableDeclaration {
             variableType = typeAlias.type.range.toString();
         }
         this.declareType = variableType;
-        var baseTypeName: string = this.getBaseTypeName(variableType);
+        var baseTypeName: string = this.getBasicTypeName(variableType);
         this.baseType = baseTypeName;
         if (baseTypeName == "string" || baseTypeName == "String") {
             this.kind = VarialbeKind.STRING;
@@ -134,15 +134,17 @@ export class VariableDeclaration {
     }
 
     get isArray(): bool {
-        return this.declareType.includes("[");
+        return this.declareType.includes("[") || 
+            (this.declareType.includes("Array") && this.declareType.includes("<"));
     }
 
+
     /**
-     * Get the base type name
-     * If the type name is string[], so the base type name is string
+     * Get the basic type name
+     * If the type name is string[], so the basic type name is string
      * @param typeName
      */
-    getBaseTypeName(typeName: string): string {
+    getBasicTypeName(typeName: string): string {
 
         var bracketIndex = typeName.indexOf("[");
         if (bracketIndex != -1) {
@@ -150,6 +152,13 @@ export class VariableDeclaration {
             let baseTypeName = typeName.substring(0, index);
             return baseTypeName;
         }
+
+        bracketIndex = typeName.indexOf("<");
+        if (bracketIndex != -1) {
+            let endIndex = typeName.indexOf(">");
+            return typeName.substring(bracketIndex + 1, endIndex);
+        }
+
         return typeName;
     }
 

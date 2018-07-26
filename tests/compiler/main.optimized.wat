@@ -8,7 +8,7 @@
  (memory $0 0)
  (export "memory" (memory $0))
  (export "main" (func $main/main))
- (func $main/main (; 0 ;) (type $iii) (param $0 i32) (param $1 i32) (result i32)
+ (func $main/main (; 0 ;) (; has Stack IR ;) (type $iii) (param $0 i32) (param $1 i32) (result i32)
   (if
    (i32.eqz
     (get_global $~started)
@@ -22,7 +22,7 @@
   )
   (get_global $main/code)
  )
- (func $start (; 1 ;) (type $v)
+ (func $start (; 1 ;) (; has Stack IR ;) (type $v)
   (set_global $~lib/allocator/arena/startOffset
    (i32.const 8)
   )

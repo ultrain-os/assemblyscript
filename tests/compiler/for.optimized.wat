@@ -4,14 +4,15 @@
  (global $~lib/allocator/arena/startOffset (mut i32) (i32.const 0))
  (global $~lib/allocator/arena/offset (mut i32) (i32.const 0))
  (global $for/i (mut i32) (i32.const 0))
- (memory $0 0)
+ (memory $0 1)
+ (data (i32.const 8) "\06\00\00\00f\00o\00r\00.\00t\00s")
  (export "memory" (memory $0))
  (start $start)
- (func $start (; 1 ;) (type $v)
+ (func $start (; 1 ;) (; has Stack IR ;) (type $v)
   (local $0 i32)
   (local $1 i32)
   (set_global $~lib/allocator/arena/startOffset
-   (i32.const 8)
+   (i32.const 24)
   )
   (set_global $~lib/allocator/arena/offset
    (get_global $~lib/allocator/arena/startOffset)

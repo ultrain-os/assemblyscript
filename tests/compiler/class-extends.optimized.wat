@@ -7,7 +7,7 @@
  (export "memory" (memory $0))
  (export "test" (func $class-extends/test))
  (start $start)
- (func $class-extends/test (; 0 ;) (type $iv) (param $0 i32)
+ (func $class-extends/test (; 0 ;) (; has Stack IR ;) (type $iv) (param $0 i32)
   (drop
    (i32.load
     (get_local $0)
@@ -27,7 +27,7 @@
    (i32.const 3)
   )
  )
- (func $start (; 1 ;) (type $v)
+ (func $start (; 1 ;) (; has Stack IR ;) (type $v)
   (set_global $~lib/allocator/arena/startOffset
    (i32.const 8)
   )

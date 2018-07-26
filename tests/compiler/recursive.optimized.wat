@@ -7,7 +7,7 @@
  (export "memory" (memory $0))
  (export "fib" (func $recursive/fib))
  (start $start)
- (func $recursive/fib (; 0 ;) (type $ii) (param $0 i32) (result i32)
+ (func $recursive/fib (; 0 ;) (; has Stack IR ;) (type $ii) (param $0 i32) (result i32)
   (if
    (i32.le_s
     (get_local $0)
@@ -32,7 +32,7 @@
    )
   )
  )
- (func $start (; 1 ;) (type $v)
+ (func $start (; 1 ;) (; has Stack IR ;) (type $v)
   (set_global $~lib/allocator/arena/startOffset
    (i32.const 8)
   )

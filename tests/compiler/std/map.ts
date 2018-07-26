@@ -60,7 +60,7 @@ test<f64,i32>();
 var map = new Map<u64, u64>();
 map.set(12, 12);
 
-var keys = map.keys();
+var keys: Array<u64> = map.keys();
 assert(keys.length == 1);
 
 for (let index = 0; index < keys.length; index ++) {
@@ -73,6 +73,9 @@ map.set(24,44);
 
 keys = map.keys();
 assert(keys.length == 2);
+
+assert(keys.includes(12));
+assert(keys.includes(24));
 
 for (let index = 0; index < keys.length; index ++) {
   assert(map.has(keys[index]));

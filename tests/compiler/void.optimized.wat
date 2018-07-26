@@ -6,10 +6,10 @@
  (memory $0 0)
  (export "memory" (memory $0))
  (start $start)
- (func $void/anInt (; 0 ;) (type $i) (result i32)
+ (func $void/anInt (; 0 ;) (; has Stack IR ;) (type $i) (result i32)
   (i32.const 2)
  )
- (func $start (; 1 ;) (type $v)
+ (func $start (; 1 ;) (; has Stack IR ;) (type $v)
   (set_global $~lib/allocator/arena/startOffset
    (i32.const 8)
   )

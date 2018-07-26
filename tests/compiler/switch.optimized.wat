@@ -4,10 +4,11 @@
  (import "env" "abort" (func $~lib/env/abort))
  (global $~lib/allocator/arena/startOffset (mut i32) (i32.const 0))
  (global $~lib/allocator/arena/offset (mut i32) (i32.const 0))
- (memory $0 0)
+ (memory $0 1)
+ (data (i32.const 8) "\t\00\00\00s\00w\00i\00t\00c\00h\00.\00t\00s")
  (export "memory" (memory $0))
  (start $start)
- (func $switch/doSwitch (; 1 ;) (type $ii) (param $0 i32) (result i32)
+ (func $switch/doSwitch (; 1 ;) (; has Stack IR ;) (type $ii) (param $0 i32) (result i32)
   (local $1 i32)
   (block $case4|0
    (block $case2|0
@@ -49,7 +50,7 @@
   )
   (i32.const 23)
  )
- (func $switch/doSwitchDefaultOmitted (; 2 ;) (type $ii) (param $0 i32) (result i32)
+ (func $switch/doSwitchDefaultOmitted (; 2 ;) (; has Stack IR ;) (type $ii) (param $0 i32) (result i32)
   (local $1 i32)
   (block $break|0
    (block $case2|0
@@ -86,7 +87,7 @@
   )
   (i32.const 0)
  )
- (func $switch/doSwitchBreakCase (; 3 ;) (type $ii) (param $0 i32) (result i32)
+ (func $switch/doSwitchBreakCase (; 3 ;) (; has Stack IR ;) (type $ii) (param $0 i32) (result i32)
   (block $break|0
    (br_if $break|0
     (i32.eq
@@ -100,7 +101,7 @@
   )
   (i32.const 1)
  )
- (func $switch/doSwitchBreakDefault (; 4 ;) (type $ii) (param $0 i32) (result i32)
+ (func $switch/doSwitchBreakDefault (; 4 ;) (; has Stack IR ;) (type $ii) (param $0 i32) (result i32)
   (block $break|0
    (block $case1|0
     (br_if $break|0
@@ -116,7 +117,7 @@
   )
   (i32.const 2)
  )
- (func $switch/doSwitchFallThroughCase (; 5 ;) (type $ii) (param $0 i32) (result i32)
+ (func $switch/doSwitchFallThroughCase (; 5 ;) (; has Stack IR ;) (type $ii) (param $0 i32) (result i32)
   (if
    (i32.ne
     (get_local $0)
@@ -128,7 +129,7 @@
   )
   (i32.const 1)
  )
- (func $switch/doSwitchFallThroughDefault (; 6 ;) (type $ii) (param $0 i32) (result i32)
+ (func $switch/doSwitchFallThroughDefault (; 6 ;) (; has Stack IR ;) (type $ii) (param $0 i32) (result i32)
   (if
    (i32.eq
     (get_local $0)
@@ -140,13 +141,13 @@
   )
   (i32.const 2)
  )
- (func $switch/doSwitchEmpty (; 7 ;) (type $ii) (param $0 i32) (result i32)
+ (func $switch/doSwitchEmpty (; 7 ;) (; has Stack IR ;) (type $ii) (param $0 i32) (result i32)
   (i32.const 2)
  )
- (func $start (; 8 ;) (type $v)
+ (func $start (; 8 ;) (; has Stack IR ;) (type $v)
   (block $folding-inner0
    (set_global $~lib/allocator/arena/startOffset
-    (i32.const 8)
+    (i32.const 32)
    )
    (set_global $~lib/allocator/arena/offset
     (get_global $~lib/allocator/arena/startOffset)

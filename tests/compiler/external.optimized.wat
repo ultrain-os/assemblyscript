@@ -15,7 +15,7 @@
  (export "three" (func $external/three))
  (export "var_" (global $external/var_))
  (start $start)
- (func $start (; 4 ;) (type $v)
+ (func $start (; 4 ;) (; has Stack IR ;) (type $v)
   (set_global $~lib/allocator/arena/startOffset
    (i32.const 8)
   )
