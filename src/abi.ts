@@ -374,18 +374,17 @@ export class Abi {
   }
 
 
-  static nameMap = ".12345abcdefghijklmnopqrstuvwxyz";
-
+  static nameMap:string = "._0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
   checkName(str: string): void {
 
-    if (str.length > 13) {
-      throw new Error(`Action Name:${str} should be less than 13 characters.`);
-    }
+    assert(str.length > 0, `Action name should not empty`);
+    assert(str.length <= 21, `Action Name:${str} should be less than 21 characters.`);
+    assert(!str.includes("."), `Action name should not end up with '.'`);
 
     for (let ch of str) {
       if (Abi.nameMap.indexOf(ch) == -1) {
-        throw new Error(`Action Name:${str} should only contains the following symbol .12345abcdefghijklmnopqrstuvwxyz`);
+        throw new Error(`Action Name:${str} should only contains the following symbol ${Abi.nameMap}`);
       }
     }
   }
@@ -418,7 +417,7 @@ export class Abi {
           let funcName = declaration.name.range.toString();
           let types = declaration.signature.parameters; // FunctionDeclaration parameter types
 
-          // this.checkName(funcName);
+          this.checkName(funcName);
           //let action = new NameEx(actH, actL);
           body.push(`    if (action == NEX("${funcName}")){`);
 
