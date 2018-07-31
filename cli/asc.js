@@ -30,7 +30,6 @@ var assemblyscript, isDev = false;
 (() => {
   try { // `asc` on the command line
     assemblyscript = require("../dist/assemblyscript.js");
-    throw new Error();
   } catch (e) {
     try { // `asc` on the command line without dist files
       require("ts-node").register({ project: path.join(__dirname, "..", "src", "tsconfig.json") });
@@ -314,7 +313,7 @@ exports.main = function main(argv, options, callback, isDispatch) {
         parser = assemblyscript.parseFile(sourceText, sourcePath, true, parser);
       } else {
         sourceText = exports.insertSerializeMethodText(sourcePath, sourceText);
-        let elementPath = sourcePath.split(".")[0];
+        let elementPath = sourcePath.split(".").slice(0,-1).join(".");
         sourceText = exports.resolveSourceText(sourceText, exports.applyText, exports.libraryFiles, exports.abiObj, elementPath);
         parser = assemblyscript.parseFile(sourceText, sourcePath, true, parser);
       }
@@ -958,19 +957,21 @@ exports.tscOptions = {
 };
 
 function resolveSourceText(sourceText, applyText, library, abiObj, filename) {
+  
   let memoryLib = "allocate/arena";
   let resultTextBuffer = new Array();
   if (library[memoryLib] == undefined) {
     resultTextBuffer.push(`import "allocator/arena";`);
   }
 
-  let importedLibrary = ["NEX", "NameEx"];
   if (abiObj) {
 
+    let importedLibrary = ["NEX", "NameEx"];
+    let nameSdkPath = "ContractSdk/src/name_ex";
     for (let library of importedLibrary) {
       let internalPath = path.join(filename, library);
       if (!abiObj.hasElement(internalPath)) {
-        resultTextBuffer.push(`import { ${library} }from "../src/name_ex";`);
+        resultTextBuffer.push(`import { ${library} }from "${nameSdkPath}";`);
       }
     }
   }
