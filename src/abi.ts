@@ -430,7 +430,7 @@ export class Abi {
               } else if (abiType.kind == VarialbeKind.BOOL) {
                 body.push(`      let ${parameterName} = ds.readVector<u8>();`);
               } else if (abiType.kind == VarialbeKind.STRING) {
-
+                body.push(`      let ${parameterName} = ds.readStringVector();`);
               } else {
                 body.push(`      let ${parameterName} = ds.readComplexVector<${abiType.baseType}>();`);
               }
