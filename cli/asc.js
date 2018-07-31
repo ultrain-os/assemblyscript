@@ -957,7 +957,7 @@ exports.tscOptions = {
 };
 
 function resolveSourceText(sourceText, applyText, library, abiObj, filename) {
-  
+
   let memoryLib = "allocate/arena";
   let resultTextBuffer = new Array();
   if (library[memoryLib] == undefined) {
@@ -968,10 +968,13 @@ function resolveSourceText(sourceText, applyText, library, abiObj, filename) {
 
     let importedLibrary = ["NEX", "NameEx"];
     let nameSdkPath = "ContractSdk/src/name_ex";
-    for (let library of importedLibrary) {
-      let internalPath = path.join(filename, library);
+    for (let lib of importedLibrary) {
+      let internalPath = path.join(filename, lib);
       if (!abiObj.hasElement(internalPath)) {
-        resultTextBuffer.push(`import { ${library} }from "${nameSdkPath}";`);
+        if(library[nameSdkPath] == undefined){
+          throw new Error(`The Name, NameEx not existed on the default path, please imported explicit.`);
+        }
+        resultTextBuffer.push(`import { ${lib} }from "${nameSdkPath}";`);
       }
     }
   }
