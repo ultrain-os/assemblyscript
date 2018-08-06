@@ -1,10 +1,9 @@
 (module
  (type $iiii (func (param i32 i32 i32) (result i32)))
- (type $iiiiv (func (param i32 i32 i32 i32)))
+ (type $v (func))
  (type $ii (func (param i32) (result i32)))
  (type $iiiv (func (param i32 i32 i32)))
- (type $v (func))
- (import "env" "abort" (func $~lib/env/abort (param i32 i32 i32 i32)))
+ (import "env" "abort" (func $~lib/env/abort))
  (global $~lib/allocator/arena/startOffset (mut i32) (i32.const 0))
  (global $~lib/allocator/arena/offset (mut i32) (i32.const 0))
  (global $std/arraybuffer/buffer (mut i32) (i32.const 0))
@@ -129,12 +128,7 @@
     (i32.const 1073741816)
    )
    (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 52)
-     (i32.const 22)
-     (i32.const 2)
-    )
+    (call $~lib/env/abort)
     (unreachable)
    )
   )
@@ -495,12 +489,7 @@
     (i32.const 1073741816)
    )
    (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 8)
-     (i32.const 13)
-     (i32.const 40)
-    )
+    (call $~lib/env/abort)
     (unreachable)
    )
   )
@@ -2341,265 +2330,182 @@
   )
  )
  (func $start (; 13 ;) (type $v)
-  (set_global $~lib/allocator/arena/startOffset
-   (i32.const 152)
-  )
-  (set_global $~lib/allocator/arena/offset
-   (get_global $~lib/allocator/arena/startOffset)
-  )
-  (set_global $std/arraybuffer/buffer
-   (call $~lib/arraybuffer/ArrayBuffer#constructor
-    (i32.const 0)
-    (i32.const 8)
+  (block $folding-inner0
+   (set_global $~lib/allocator/arena/startOffset
+    (i32.const 152)
+   )
+   (set_global $~lib/allocator/arena/offset
+    (get_global $~lib/allocator/arena/startOffset)
+   )
+   (set_global $std/arraybuffer/buffer
+    (call $~lib/arraybuffer/ArrayBuffer#constructor
+     (i32.const 0)
+     (i32.const 8)
+     (i32.const 0)
+    )
+   )
+   (if
+    (i32.ne
+     (i32.load
+      (get_global $std/arraybuffer/buffer)
+     )
+     (i32.const 8)
+    )
+    (br $folding-inner0)
+   )
+   (set_global $~argc
     (i32.const 0)
    )
-  )
-  (if
-   (i32.ne
-    (i32.load
+   (set_global $std/arraybuffer/sliced
+    (call $~lib/arraybuffer/ArrayBuffer#slice|trampoline
+     (get_global $std/arraybuffer/buffer)
+     (i32.const 0)
+     (i32.const 0)
+    )
+   )
+   (if
+    (i32.ne
+     (i32.load
+      (get_global $std/arraybuffer/sliced)
+     )
+     (i32.const 8)
+    )
+    (br $folding-inner0)
+   )
+   (if
+    (i32.eq
+     (get_global $std/arraybuffer/sliced)
      (get_global $std/arraybuffer/buffer)
     )
-    (i32.const 8)
+    (br $folding-inner0)
    )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 112)
-     (i32.const 5)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (set_global $~argc
-   (i32.const 0)
-  )
-  (set_global $std/arraybuffer/sliced
-   (call $~lib/arraybuffer/ArrayBuffer#slice|trampoline
-    (get_global $std/arraybuffer/buffer)
-    (i32.const 0)
-    (i32.const 0)
-   )
-  )
-  (if
-   (i32.ne
-    (i32.load
-     (get_global $std/arraybuffer/sliced)
-    )
-    (i32.const 8)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 112)
-     (i32.const 9)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (if
-   (i32.eq
-    (get_global $std/arraybuffer/sliced)
-    (get_global $std/arraybuffer/buffer)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 112)
-     (i32.const 10)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (set_global $~argc
-   (i32.const 1)
-  )
-  (set_global $std/arraybuffer/sliced
-   (call $~lib/arraybuffer/ArrayBuffer#slice|trampoline
-    (get_global $std/arraybuffer/buffer)
-    (i32.const 1)
-    (i32.const 0)
-   )
-  )
-  (if
-   (i32.ne
-    (i32.load
-     (get_global $std/arraybuffer/sliced)
-    )
-    (i32.const 7)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 112)
-     (i32.const 14)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (set_global $~argc
-   (i32.const 1)
-  )
-  (set_global $std/arraybuffer/sliced
-   (call $~lib/arraybuffer/ArrayBuffer#slice|trampoline
-    (get_global $std/arraybuffer/buffer)
-    (i32.const -1)
-    (i32.const 0)
-   )
-  )
-  (if
-   (i32.ne
-    (i32.load
-     (get_global $std/arraybuffer/sliced)
-    )
+   (set_global $~argc
     (i32.const 1)
    )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 112)
-     (i32.const 18)
+   (set_global $std/arraybuffer/sliced
+    (call $~lib/arraybuffer/ArrayBuffer#slice|trampoline
+     (get_global $std/arraybuffer/buffer)
+     (i32.const 1)
      (i32.const 0)
     )
-    (unreachable)
    )
-  )
-  (set_global $std/arraybuffer/sliced
-   (call $~lib/arraybuffer/ArrayBuffer#slice
-    (get_global $std/arraybuffer/buffer)
+   (if
+    (i32.ne
+     (i32.load
+      (get_global $std/arraybuffer/sliced)
+     )
+     (i32.const 7)
+    )
+    (br $folding-inner0)
+   )
+   (set_global $~argc
     (i32.const 1)
-    (i32.const 3)
    )
-  )
-  (if
-   (i32.ne
-    (i32.load
-     (get_global $std/arraybuffer/sliced)
-    )
-    (i32.const 2)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 112)
-     (i32.const 22)
+   (set_global $std/arraybuffer/sliced
+    (call $~lib/arraybuffer/ArrayBuffer#slice|trampoline
+     (get_global $std/arraybuffer/buffer)
+     (i32.const -1)
      (i32.const 0)
     )
-    (unreachable)
    )
-  )
-  (set_global $std/arraybuffer/sliced
-   (call $~lib/arraybuffer/ArrayBuffer#slice
-    (get_global $std/arraybuffer/buffer)
+   (if
+    (i32.ne
+     (i32.load
+      (get_global $std/arraybuffer/sliced)
+     )
+     (i32.const 1)
+    )
+    (br $folding-inner0)
+   )
+   (set_global $std/arraybuffer/sliced
+    (call $~lib/arraybuffer/ArrayBuffer#slice
+     (get_global $std/arraybuffer/buffer)
+     (i32.const 1)
+     (i32.const 3)
+    )
+   )
+   (if
+    (i32.ne
+     (i32.load
+      (get_global $std/arraybuffer/sliced)
+     )
+     (i32.const 2)
+    )
+    (br $folding-inner0)
+   )
+   (set_global $std/arraybuffer/sliced
+    (call $~lib/arraybuffer/ArrayBuffer#slice
+     (get_global $std/arraybuffer/buffer)
+     (i32.const 1)
+     (i32.const -1)
+    )
+   )
+   (if
+    (i32.ne
+     (i32.load
+      (get_global $std/arraybuffer/sliced)
+     )
+     (i32.const 6)
+    )
+    (br $folding-inner0)
+   )
+   (set_global $std/arraybuffer/sliced
+    (call $~lib/arraybuffer/ArrayBuffer#slice
+     (get_global $std/arraybuffer/buffer)
+     (i32.const -3)
+     (i32.const -1)
+    )
+   )
+   (if
+    (i32.ne
+     (i32.load
+      (get_global $std/arraybuffer/sliced)
+     )
+     (i32.const 2)
+    )
+    (br $folding-inner0)
+   )
+   (set_global $std/arraybuffer/sliced
+    (call $~lib/arraybuffer/ArrayBuffer#slice
+     (get_global $std/arraybuffer/buffer)
+     (i32.const -4)
+     (i32.const 42)
+    )
+   )
+   (if
+    (i32.ne
+     (i32.load
+      (get_global $std/arraybuffer/sliced)
+     )
+     (i32.const 4)
+    )
+    (br $folding-inner0)
+   )
+   (set_global $~argc
     (i32.const 1)
-    (i32.const -1)
    )
-  )
-  (if
-   (i32.ne
+   (set_global $std/arraybuffer/sliced
+    (call $~lib/arraybuffer/ArrayBuffer#slice|trampoline
+     (get_global $std/arraybuffer/buffer)
+     (i32.const 42)
+     (i32.const 0)
+    )
+   )
+   (if
     (i32.load
      (get_global $std/arraybuffer/sliced)
     )
-    (i32.const 6)
+    (br $folding-inner0)
    )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 112)
-     (i32.const 26)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (set_global $std/arraybuffer/sliced
-   (call $~lib/arraybuffer/ArrayBuffer#slice
-    (get_global $std/arraybuffer/buffer)
-    (i32.const -3)
-    (i32.const -1)
-   )
-  )
-  (if
-   (i32.ne
-    (i32.load
+   (if
+    (i32.eqz
      (get_global $std/arraybuffer/sliced)
     )
-    (i32.const 2)
+    (br $folding-inner0)
    )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 112)
-     (i32.const 30)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
+   (return)
   )
-  (set_global $std/arraybuffer/sliced
-   (call $~lib/arraybuffer/ArrayBuffer#slice
-    (get_global $std/arraybuffer/buffer)
-    (i32.const -4)
-    (i32.const 42)
-   )
-  )
-  (if
-   (i32.ne
-    (i32.load
-     (get_global $std/arraybuffer/sliced)
-    )
-    (i32.const 4)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 112)
-     (i32.const 34)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (set_global $~argc
-   (i32.const 1)
-  )
-  (set_global $std/arraybuffer/sliced
-   (call $~lib/arraybuffer/ArrayBuffer#slice|trampoline
-    (get_global $std/arraybuffer/buffer)
-    (i32.const 42)
-    (i32.const 0)
-   )
-  )
-  (if
-   (i32.load
-    (get_global $std/arraybuffer/sliced)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 112)
-     (i32.const 38)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (if
-   (i32.eqz
-    (get_global $std/arraybuffer/sliced)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 112)
-     (i32.const 39)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
+  (call $~lib/env/abort)
+  (unreachable)
  )
 )

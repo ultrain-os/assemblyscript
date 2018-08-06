@@ -1,8 +1,9 @@
 (module
  (type $iiii (func (param i32 i32 i32) (result i32)))
- (type $iiiiv (func (param i32 i32 i32 i32)))
  (type $v (func))
- (import "env" "abort" (func $~lib/env/abort (param i32 i32 i32 i32)))
+ (import "env" "abort" (func $~lib/env/abort))
+ (global $~lib/allocator/arena/startOffset (mut i32) (i32.const 0))
+ (global $~lib/allocator/arena/offset (mut i32) (i32.const 0))
  (global $memcpy/dest (mut i32) (i32.const 0))
  (memory $0 1)
  (data (i32.const 8) "\t\00\00\00m\00e\00m\00c\00p\00y\00.\00t\00s")
@@ -1403,249 +1404,164 @@
   (get_local $6)
  )
  (func $start (; 2 ;) (type $v)
-  (i64.store
-   (i32.const 8)
-   (i64.const 1229782938247303441)
-  )
-  (i64.store
-   (i32.const 16)
-   (i64.const 2459565876494606882)
-  )
-  (i64.store
-   (i32.const 24)
-   (i64.const 3689348814741910323)
-  )
-  (i64.store
-   (i32.const 32)
-   (i64.const 4919131752989213764)
-  )
-  (set_global $memcpy/dest
-   (call $memcpy/memcpy
-    (i32.const 9)
-    (i32.const 24)
-    (i32.const 4)
-   )
-  )
-  (if
-   (i32.ne
-    (get_global $memcpy/dest)
-    (i32.const 9)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 8)
-     (i32.const 151)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (if
-   (i64.ne
-    (i64.load
-     (i32.const 8)
-    )
-    (i64.const 1229783084848853777)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 8)
-     (i32.const 152)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (set_global $memcpy/dest
-   (call $memcpy/memcpy
-    (i32.const 8)
-    (i32.const 8)
+  (block $folding-inner0
+   (set_global $~lib/allocator/arena/startOffset
     (i32.const 32)
    )
-  )
-  (if
-   (i32.ne
-    (get_global $memcpy/dest)
+   (set_global $~lib/allocator/arena/offset
+    (get_global $~lib/allocator/arena/startOffset)
+   )
+   (i64.store
     (i32.const 8)
+    (i64.const 1229782938247303441)
    )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 8)
-     (i32.const 155)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (if
-   (i64.ne
-    (i64.load
-     (i32.const 8)
-    )
-    (i64.const 1229783084848853777)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 8)
-     (i32.const 156)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (if
-   (i64.ne
-    (i64.load
-     (i32.const 16)
-    )
+   (i64.store
+    (i32.const 16)
     (i64.const 2459565876494606882)
    )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 8)
-     (i32.const 157)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (if
-   (i64.ne
-    (i64.load
-     (i32.const 24)
-    )
-    (i64.const 3689348814741910323)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 8)
-     (i32.const 158)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (if
-   (i64.ne
-    (i64.load
-     (i32.const 32)
-    )
-    (i64.const 4919131752989213764)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 8)
-     (i32.const 159)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (set_global $memcpy/dest
-   (call $memcpy/memcpy
-    (i32.const 13)
-    (i32.const 36)
-    (i32.const 3)
-   )
-  )
-  (if
-   (i64.ne
-    (i64.load
-     (i32.const 8)
-    )
-    (i64.const 4919131679688438545)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 8)
-     (i32.const 162)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (set_global $memcpy/dest
-   (call $memcpy/memcpy
-    (i32.const 16)
+   (i64.store
     (i32.const 24)
-    (i32.const 15)
-   )
-  )
-  (if
-   (i64.ne
-    (i64.load
-     (i32.const 8)
-    )
-    (i64.const 4919131679688438545)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 8)
-     (i32.const 165)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (if
-   (i64.ne
-    (i64.load
-     (i32.const 16)
-    )
     (i64.const 3689348814741910323)
    )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 8)
-     (i32.const 166)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (if
-   (i64.ne
-    (i64.load
-     (i32.const 24)
-    )
-    (i64.const 3694152654344438852)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 8)
-     (i32.const 167)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (if
-   (i64.ne
-    (i64.load
-     (i32.const 32)
-    )
+   (i64.store
+    (i32.const 32)
     (i64.const 4919131752989213764)
    )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 8)
-     (i32.const 168)
-     (i32.const 0)
+   (set_global $memcpy/dest
+    (call $memcpy/memcpy
+     (i32.const 9)
+     (i32.const 24)
+     (i32.const 4)
     )
-    (unreachable)
    )
+   (if
+    (i32.ne
+     (get_global $memcpy/dest)
+     (i32.const 9)
+    )
+    (br $folding-inner0)
+   )
+   (if
+    (i64.ne
+     (i64.load
+      (i32.const 8)
+     )
+     (i64.const 1229783084848853777)
+    )
+    (br $folding-inner0)
+   )
+   (set_global $memcpy/dest
+    (call $memcpy/memcpy
+     (i32.const 8)
+     (i32.const 8)
+     (i32.const 32)
+    )
+   )
+   (if
+    (i32.ne
+     (get_global $memcpy/dest)
+     (i32.const 8)
+    )
+    (br $folding-inner0)
+   )
+   (if
+    (i64.ne
+     (i64.load
+      (i32.const 8)
+     )
+     (i64.const 1229783084848853777)
+    )
+    (br $folding-inner0)
+   )
+   (if
+    (i64.ne
+     (i64.load
+      (i32.const 16)
+     )
+     (i64.const 2459565876494606882)
+    )
+    (br $folding-inner0)
+   )
+   (if
+    (i64.ne
+     (i64.load
+      (i32.const 24)
+     )
+     (i64.const 3689348814741910323)
+    )
+    (br $folding-inner0)
+   )
+   (if
+    (i64.ne
+     (i64.load
+      (i32.const 32)
+     )
+     (i64.const 4919131752989213764)
+    )
+    (br $folding-inner0)
+   )
+   (set_global $memcpy/dest
+    (call $memcpy/memcpy
+     (i32.const 13)
+     (i32.const 36)
+     (i32.const 3)
+    )
+   )
+   (if
+    (i64.ne
+     (i64.load
+      (i32.const 8)
+     )
+     (i64.const 4919131679688438545)
+    )
+    (br $folding-inner0)
+   )
+   (set_global $memcpy/dest
+    (call $memcpy/memcpy
+     (i32.const 16)
+     (i32.const 24)
+     (i32.const 15)
+    )
+   )
+   (if
+    (i64.ne
+     (i64.load
+      (i32.const 8)
+     )
+     (i64.const 4919131679688438545)
+    )
+    (br $folding-inner0)
+   )
+   (if
+    (i64.ne
+     (i64.load
+      (i32.const 16)
+     )
+     (i64.const 3689348814741910323)
+    )
+    (br $folding-inner0)
+   )
+   (if
+    (i64.ne
+     (i64.load
+      (i32.const 24)
+     )
+     (i64.const 3694152654344438852)
+    )
+    (br $folding-inner0)
+   )
+   (if
+    (i64.ne
+     (i64.load
+      (i32.const 32)
+     )
+     (i64.const 4919131752989213764)
+    )
+    (br $folding-inner0)
+   )
+   (return)
   )
+  (call $~lib/env/abort)
+  (unreachable)
  )
 )

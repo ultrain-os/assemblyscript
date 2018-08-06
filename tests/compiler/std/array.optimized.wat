@@ -1,6 +1,6 @@
 (module
  (type $iii (func (param i32 i32) (result i32)))
- (type $iiiiv (func (param i32 i32 i32 i32)))
+ (type $v (func))
  (type $ii (func (param i32) (result i32)))
  (type $iiiv (func (param i32 i32 i32)))
  (type $iiii (func (param i32 i32 i32) (result i32)))
@@ -12,8 +12,7 @@
  (type $Iv (func (param i64)))
  (type $II (func (param i64) (result i64)))
  (type $iv (func (param i32)))
- (type $v (func))
- (import "env" "abort" (func $~lib/env/abort (param i32 i32 i32 i32)))
+ (import "env" "abort" (func $~lib/env/abort))
  (import "JSMath" "random" (func $~lib/math/JSMath.random (result f64)))
  (global $~lib/allocator/arena/startOffset (mut i32) (i32.const 0))
  (global $~lib/allocator/arena/offset (mut i32) (i32.const 0))
@@ -187,12 +186,7 @@
     (i32.const 1073741816)
    )
    (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 40)
-     (i32.const 22)
-     (i32.const 2)
-    )
+    (call $~lib/env/abort)
     (unreachable)
    )
   )
@@ -554,12 +548,7 @@
     (i32.const 268435454)
    )
    (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 8)
-     (i32.const 23)
-     (i32.const 39)
-    )
+    (call $~lib/env/abort)
     (unreachable)
    )
   )
@@ -2329,12 +2318,7 @@
       (i32.const 1073741816)
      )
      (block
-      (call $~lib/env/abort
-       (i32.const 0)
-       (i32.const 40)
-       (i32.const 32)
-       (i32.const 4)
-      )
+      (call $~lib/env/abort)
       (unreachable)
      )
     )
@@ -2416,12 +2400,7 @@
        (i32.const 0)
       )
       (block
-       (call $~lib/env/abort
-        (i32.const 0)
-        (i32.const 40)
-        (i32.const 56)
-        (i32.const 4)
-       )
+       (call $~lib/env/abort)
        (unreachable)
       )
      )
@@ -2469,12 +2448,7 @@
       (i32.const 268435454)
      )
      (block
-      (call $~lib/env/abort
-       (i32.const 0)
-       (i32.const 8)
-       (i32.const 143)
-       (i32.const 42)
-      )
+      (call $~lib/env/abort)
       (unreachable)
      )
     )
@@ -2550,12 +2524,7 @@
     (i32.const 1)
    )
    (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 8)
-     (i32.const 154)
-     (i32.const 20)
-    )
+    (call $~lib/env/abort)
     (unreachable)
    )
   )
@@ -2621,12 +2590,7 @@
       (i32.const 268435454)
      )
      (block
-      (call $~lib/env/abort
-       (i32.const 0)
-       (i32.const 8)
-       (i32.const 244)
-       (i32.const 42)
-      )
+      (call $~lib/env/abort)
       (unreachable)
      )
     )
@@ -2694,12 +2658,7 @@
     (i32.const 1)
    )
    (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 8)
-     (i32.const 215)
-     (i32.const 20)
-    )
+    (call $~lib/env/abort)
     (unreachable)
    )
   )
@@ -3133,12 +3092,7 @@
       (i32.const 268435454)
      )
      (block
-      (call $~lib/env/abort
-       (i32.const 0)
-       (i32.const 8)
-       (i32.const 86)
-       (i32.const 41)
-      )
+      (call $~lib/env/abort)
       (unreachable)
      )
     )
@@ -4224,12 +4178,7 @@
     (get_local $0)
    )
    (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 128)
-     (i32.const 1000)
-     (i32.const 4)
-    )
+    (call $~lib/env/abort)
     (unreachable)
    )
   )
@@ -4300,12 +4249,7 @@
     (get_global $~lib/math/random_seeded)
    )
    (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 128)
-     (i32.const 1007)
-     (i32.const 24)
-    )
+    (call $~lib/env/abort)
     (unreachable)
    )
   )
@@ -4964,12 +4908,7 @@
     (get_local $1)
    )
    (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 8)
-     (i32.const 306)
-     (i32.const 4)
-    )
+    (call $~lib/env/abort)
     (unreachable)
    )
   )
@@ -5127,12 +5066,7 @@
     )
    )
    (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 605)
-     (i32.const 2)
-    )
+    (call $~lib/env/abort)
     (unreachable)
    )
   )
@@ -5295,12 +5229,7 @@
     (get_local $1)
    )
    (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 8)
-     (i32.const 306)
-     (i32.const 4)
-    )
+    (call $~lib/env/abort)
     (unreachable)
    )
   )
@@ -5389,12 +5318,7 @@
     )
    )
    (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 605)
-     (i32.const 2)
-    )
+    (call $~lib/env/abort)
     (unreachable)
    )
   )
@@ -5885,12 +5809,7 @@
     (get_local $1)
    )
    (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 728)
-     (i32.const 25)
-     (i32.const 2)
-    )
+    (call $~lib/env/abort)
     (unreachable)
    )
   )
@@ -5917,12 +5836,7 @@
     (get_local $0)
    )
    (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 696)
-     (i32.const 29)
-     (i32.const 4)
-    )
+    (call $~lib/env/abort)
     (unreachable)
    )
   )
@@ -5964,12 +5878,7 @@
     (get_local $0)
    )
    (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 696)
-     (i32.const 85)
-     (i32.const 4)
-    )
+    (call $~lib/env/abort)
     (unreachable)
    )
   )
@@ -6145,3223 +6054,2092 @@
   (get_local $1)
  )
  (func $start (; 104 ;) (type $v)
-  (set_global $~lib/allocator/arena/startOffset
-   (i32.const 792)
-  )
-  (set_global $~lib/allocator/arena/offset
-   (get_global $~lib/allocator/arena/startOffset)
-  )
-  (set_global $std/array/arr
-   (call $~lib/array/Array<i32>#constructor
-    (i32.const 0)
-    (i32.const 0)
+  (block $folding-inner0
+   (set_global $~lib/allocator/arena/startOffset
+    (i32.const 792)
    )
-  )
-  (if
-   (call $~lib/array/Array<i32>#get:length
-    (get_global $std/array/arr)
+   (set_global $~lib/allocator/arena/offset
+    (get_global $~lib/allocator/arena/startOffset)
    )
-   (block
-    (call $~lib/env/abort
+   (set_global $std/array/arr
+    (call $~lib/array/Array<i32>#constructor
      (i32.const 0)
-     (i32.const 100)
-     (i32.const 17)
      (i32.const 0)
     )
-    (unreachable)
    )
-  )
-  (if
-   (call $std/array/internalCapacity<i32>
-    (get_global $std/array/arr)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 18)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (drop
-   (call $~lib/array/Array<i32>#push
-    (get_global $std/array/arr)
-    (i32.const 42)
-   )
-  )
-  (if
-   (i32.ne
-    (call $~lib/array/Array<i32>#__get
-     (get_global $std/array/arr)
-     (i32.const 0)
-    )
-    (i32.const 42)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 22)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (if
-   (i32.ne
+   (if
     (call $~lib/array/Array<i32>#get:length
      (get_global $std/array/arr)
     )
-    (i32.const 1)
+    (br $folding-inner0)
    )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 23)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (if
-   (i32.ne
+   (if
     (call $std/array/internalCapacity<i32>
      (get_global $std/array/arr)
     )
-    (i32.const 1)
+    (br $folding-inner0)
    )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 24)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (set_global $std/array/i
-   (call $~lib/array/Array<i32>#pop
-    (get_global $std/array/arr)
-   )
-  )
-  (if
-   (i32.ne
-    (get_global $std/array/i)
-    (i32.const 42)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 28)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (if
-   (call $~lib/array/Array<i32>#get:length
-    (get_global $std/array/arr)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 29)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (if
-   (i32.ne
-    (call $std/array/internalCapacity<i32>
+   (drop
+    (call $~lib/array/Array<i32>#push
      (get_global $std/array/arr)
-    )
-    (i32.const 1)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 30)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (drop
-   (call $~lib/array/Array<i32>#push
-    (get_global $std/array/arr)
-    (i32.const 43)
-   )
-  )
-  (if
-   (i32.ne
-    (call $~lib/array/Array<i32>#get:length
-     (get_global $std/array/arr)
-    )
-    (i32.const 1)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 34)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (if
-   (i32.ne
-    (call $std/array/internalCapacity<i32>
-     (get_global $std/array/arr)
-    )
-    (i32.const 1)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 35)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (if
-   (i32.ne
-    (call $~lib/array/Array<i32>#__get
-     (get_global $std/array/arr)
-     (i32.const 0)
-    )
-    (i32.const 43)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 36)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (drop
-   (call $~lib/array/Array<i32>#push
-    (get_global $std/array/arr)
-    (i32.const 44)
-   )
-  )
-  (if
-   (i32.ne
-    (call $~lib/array/Array<i32>#get:length
-     (get_global $std/array/arr)
-    )
-    (i32.const 2)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 40)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (if
-   (i32.ne
-    (call $std/array/internalCapacity<i32>
-     (get_global $std/array/arr)
-    )
-    (i32.const 2)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 41)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (if
-   (i32.ne
-    (call $~lib/array/Array<i32>#__get
-     (get_global $std/array/arr)
-     (i32.const 0)
-    )
-    (i32.const 43)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
      (i32.const 42)
-     (i32.const 0)
     )
-    (unreachable)
    )
-  )
-  (if
-   (i32.ne
-    (call $~lib/array/Array<i32>#__get
-     (get_global $std/array/arr)
-     (i32.const 1)
-    )
-    (i32.const 44)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 43)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (drop
-   (call $~lib/array/Array<i32>#push
-    (get_global $std/array/arr)
-    (i32.const 45)
-   )
-  )
-  (if
-   (i32.ne
-    (call $~lib/array/Array<i32>#get:length
-     (get_global $std/array/arr)
-    )
-    (i32.const 3)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 47)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (if
-   (i32.ne
-    (call $std/array/internalCapacity<i32>
-     (get_global $std/array/arr)
-    )
-    (i32.const 3)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 48)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (if
-   (i32.ne
-    (call $~lib/array/Array<i32>#__get
-     (get_global $std/array/arr)
-     (i32.const 0)
-    )
-    (i32.const 43)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 49)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (if
-   (i32.ne
-    (call $~lib/array/Array<i32>#__get
-     (get_global $std/array/arr)
-     (i32.const 1)
-    )
-    (i32.const 44)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 50)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (if
-   (i32.ne
-    (call $~lib/array/Array<i32>#__get
-     (get_global $std/array/arr)
-     (i32.const 2)
-    )
-    (i32.const 45)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 51)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (drop
-   (call $~lib/array/Array<i32>#unshift
-    (get_global $std/array/arr)
-    (i32.const 42)
-   )
-  )
-  (if
-   (i32.ne
-    (call $~lib/array/Array<i32>#get:length
-     (get_global $std/array/arr)
-    )
-    (i32.const 4)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 57)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (if
-   (i32.ne
-    (call $std/array/internalCapacity<i32>
-     (get_global $std/array/arr)
-    )
-    (i32.const 4)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 58)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (if
-   (i32.ne
-    (call $~lib/array/Array<i32>#__get
-     (get_global $std/array/arr)
-     (i32.const 0)
-    )
-    (i32.const 42)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 59)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (if
-   (i32.ne
-    (call $~lib/array/Array<i32>#__get
-     (get_global $std/array/arr)
-     (i32.const 1)
-    )
-    (i32.const 43)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 60)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (if
-   (i32.ne
-    (call $~lib/array/Array<i32>#__get
-     (get_global $std/array/arr)
-     (i32.const 2)
-    )
-    (i32.const 44)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 61)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (if
-   (i32.ne
-    (call $~lib/array/Array<i32>#__get
-     (get_global $std/array/arr)
-     (i32.const 3)
-    )
-    (i32.const 45)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 62)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (drop
-   (call $~lib/array/Array<i32>#unshift
-    (get_global $std/array/arr)
-    (i32.const 41)
-   )
-  )
-  (if
-   (i32.ne
-    (call $~lib/array/Array<i32>#get:length
-     (get_global $std/array/arr)
-    )
-    (i32.const 5)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 66)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (if
-   (i32.ne
-    (call $std/array/internalCapacity<i32>
-     (get_global $std/array/arr)
-    )
-    (i32.const 5)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 67)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (if
-   (i32.ne
-    (call $~lib/array/Array<i32>#__get
-     (get_global $std/array/arr)
-     (i32.const 0)
-    )
-    (i32.const 41)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 68)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (if
-   (i32.ne
-    (call $~lib/array/Array<i32>#__get
-     (get_global $std/array/arr)
-     (i32.const 1)
-    )
-    (i32.const 42)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 69)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (if
-   (i32.ne
-    (call $~lib/array/Array<i32>#__get
-     (get_global $std/array/arr)
-     (i32.const 2)
-    )
-    (i32.const 43)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 70)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (if
-   (i32.ne
-    (call $~lib/array/Array<i32>#__get
-     (get_global $std/array/arr)
-     (i32.const 3)
-    )
-    (i32.const 44)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 71)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (if
-   (i32.ne
-    (call $~lib/array/Array<i32>#__get
-     (get_global $std/array/arr)
-     (i32.const 4)
-    )
-    (i32.const 45)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 72)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (set_global $std/array/i
-   (call $~lib/array/Array<i32>#shift
-    (get_global $std/array/arr)
-   )
-  )
-  (if
-   (i32.ne
-    (get_global $std/array/i)
-    (i32.const 41)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 78)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (if
-   (i32.ne
-    (call $~lib/array/Array<i32>#get:length
-     (get_global $std/array/arr)
-    )
-    (i32.const 4)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 79)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (if
-   (i32.ne
-    (call $std/array/internalCapacity<i32>
-     (get_global $std/array/arr)
-    )
-    (i32.const 5)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 80)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (if
-   (i32.ne
-    (call $~lib/array/Array<i32>#__get
-     (get_global $std/array/arr)
-     (i32.const 0)
-    )
-    (i32.const 42)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 81)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (if
-   (i32.ne
-    (call $~lib/array/Array<i32>#__get
-     (get_global $std/array/arr)
-     (i32.const 1)
-    )
-    (i32.const 43)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 82)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (if
-   (i32.ne
-    (call $~lib/array/Array<i32>#__get
-     (get_global $std/array/arr)
-     (i32.const 2)
-    )
-    (i32.const 44)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 83)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (if
-   (i32.ne
-    (call $~lib/array/Array<i32>#__get
-     (get_global $std/array/arr)
-     (i32.const 3)
-    )
-    (i32.const 45)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 84)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (set_global $std/array/i
-   (call $~lib/array/Array<i32>#pop
-    (get_global $std/array/arr)
-   )
-  )
-  (if
-   (i32.ne
-    (get_global $std/array/i)
-    (i32.const 45)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 88)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (if
-   (i32.ne
-    (call $~lib/array/Array<i32>#get:length
-     (get_global $std/array/arr)
-    )
-    (i32.const 3)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 89)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (if
-   (i32.ne
-    (call $std/array/internalCapacity<i32>
-     (get_global $std/array/arr)
-    )
-    (i32.const 5)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 90)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (if
-   (i32.ne
-    (call $~lib/array/Array<i32>#__get
-     (get_global $std/array/arr)
-     (i32.const 0)
-    )
-    (i32.const 42)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 91)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (if
-   (i32.ne
-    (call $~lib/array/Array<i32>#__get
-     (get_global $std/array/arr)
-     (i32.const 1)
-    )
-    (i32.const 43)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 92)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (if
-   (i32.ne
-    (call $~lib/array/Array<i32>#__get
-     (get_global $std/array/arr)
-     (i32.const 2)
-    )
-    (i32.const 44)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 93)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (drop
-   (call $~lib/array/Array<i32>#reverse
-    (get_global $std/array/arr)
-   )
-  )
-  (if
-   (i32.ne
-    (call $~lib/array/Array<i32>#get:length
-     (get_global $std/array/arr)
-    )
-    (i32.const 3)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 99)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (if
-   (i32.ne
-    (call $std/array/internalCapacity<i32>
-     (get_global $std/array/arr)
-    )
-    (i32.const 5)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 100)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (if
-   (i32.ne
-    (call $~lib/array/Array<i32>#__get
-     (get_global $std/array/arr)
-     (i32.const 0)
-    )
-    (i32.const 44)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 101)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (if
-   (i32.ne
-    (call $~lib/array/Array<i32>#__get
-     (get_global $std/array/arr)
-     (i32.const 1)
-    )
-    (i32.const 43)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 102)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (if
-   (i32.ne
-    (call $~lib/array/Array<i32>#__get
-     (get_global $std/array/arr)
-     (i32.const 2)
-    )
-    (i32.const 42)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 103)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (drop
-   (call $~lib/array/Array<i32>#push
-    (get_global $std/array/arr)
-    (i32.const 43)
-   )
-  )
-  (drop
-   (call $~lib/array/Array<i32>#push
-    (get_global $std/array/arr)
-    (i32.const 44)
-   )
-  )
-  (set_global $std/array/i
-   (call $~lib/array/Array<i32>#indexOf
-    (get_global $std/array/arr)
-    (i32.const 44)
-    (i32.const 0)
-   )
-  )
-  (if
-   (get_global $std/array/i)
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 112)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (set_global $std/array/i
-   (call $~lib/array/Array<i32>#indexOf
-    (get_global $std/array/arr)
-    (i32.const 42)
-    (i32.const 0)
-   )
-  )
-  (if
-   (i32.ne
-    (get_global $std/array/i)
-    (i32.const 2)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 116)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (set_global $std/array/i
-   (call $~lib/array/Array<i32>#indexOf
-    (get_global $std/array/arr)
-    (i32.const 45)
-    (i32.const 0)
-   )
-  )
-  (if
-   (i32.ne
-    (get_global $std/array/i)
-    (i32.const -1)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 120)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (set_global $std/array/i
-   (call $~lib/array/Array<i32>#indexOf
-    (get_global $std/array/arr)
-    (i32.const 43)
-    (i32.const 100)
-   )
-  )
-  (if
-   (i32.ne
-    (get_global $std/array/i)
-    (i32.const -1)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 124)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (set_global $std/array/i
-   (call $~lib/array/Array<i32>#indexOf
-    (get_global $std/array/arr)
-    (i32.const 43)
-    (i32.const -100)
-   )
-  )
-  (if
-   (i32.ne
-    (get_global $std/array/i)
-    (i32.const 1)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 128)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (set_global $std/array/i
-   (call $~lib/array/Array<i32>#indexOf
-    (get_global $std/array/arr)
-    (i32.const 43)
-    (i32.const -2)
-   )
-  )
-  (if
-   (i32.ne
-    (get_global $std/array/i)
-    (i32.const 3)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 132)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (set_global $std/array/i
-   (call $~lib/array/Array<i32>#indexOf
-    (get_global $std/array/arr)
-    (i32.const 43)
-    (i32.const -4)
-   )
-  )
-  (if
-   (i32.ne
-    (get_global $std/array/i)
-    (i32.const 1)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 136)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (set_global $std/array/i
-   (call $~lib/array/Array<i32>#indexOf
-    (get_global $std/array/arr)
-    (i32.const 43)
-    (i32.const 0)
-   )
-  )
-  (if
-   (i32.ne
-    (get_global $std/array/i)
-    (i32.const 1)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 140)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (set_global $std/array/i
-   (call $~lib/array/Array<i32>#indexOf
-    (get_global $std/array/arr)
-    (i32.const 43)
-    (i32.const 1)
-   )
-  )
-  (if
-   (i32.ne
-    (get_global $std/array/i)
-    (i32.const 1)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 144)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (set_global $std/array/i
-   (call $~lib/array/Array<i32>#indexOf
-    (get_global $std/array/arr)
-    (i32.const 43)
-    (i32.const 2)
-   )
-  )
-  (if
-   (i32.ne
-    (get_global $std/array/i)
-    (i32.const 3)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 148)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (set_global $std/array/includes
-   (call $~lib/array/Array<i32>#includes
-    (get_global $std/array/arr)
-    (i32.const 44)
-    (i32.const 0)
-   )
-  )
-  (if
-   (i32.ne
-    (get_global $std/array/includes)
-    (i32.const 1)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 154)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (set_global $std/array/includes
-   (call $~lib/array/Array<i32>#includes
-    (get_global $std/array/arr)
-    (i32.const 42)
-    (i32.const 0)
-   )
-  )
-  (if
-   (i32.ne
-    (get_global $std/array/includes)
-    (i32.const 1)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 158)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (set_global $std/array/includes
-   (call $~lib/array/Array<i32>#includes
-    (get_global $std/array/arr)
-    (i32.const 45)
-    (i32.const 0)
-   )
-  )
-  (if
-   (get_global $std/array/includes)
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 162)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (set_global $std/array/includes
-   (call $~lib/array/Array<i32>#includes
-    (get_global $std/array/arr)
-    (i32.const 43)
-    (i32.const 100)
-   )
-  )
-  (if
-   (get_global $std/array/includes)
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 166)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (set_global $std/array/includes
-   (call $~lib/array/Array<i32>#includes
-    (get_global $std/array/arr)
-    (i32.const 43)
-    (i32.const -100)
-   )
-  )
-  (if
-   (i32.ne
-    (get_global $std/array/includes)
-    (i32.const 1)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 170)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (set_global $std/array/includes
-   (call $~lib/array/Array<i32>#includes
-    (get_global $std/array/arr)
-    (i32.const 43)
-    (i32.const -2)
-   )
-  )
-  (if
-   (i32.ne
-    (get_global $std/array/includes)
-    (i32.const 1)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 174)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (set_global $std/array/includes
-   (call $~lib/array/Array<i32>#includes
-    (get_global $std/array/arr)
-    (i32.const 43)
-    (i32.const -4)
-   )
-  )
-  (if
-   (i32.ne
-    (get_global $std/array/includes)
-    (i32.const 1)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 178)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (set_global $std/array/includes
-   (call $~lib/array/Array<i32>#includes
-    (get_global $std/array/arr)
-    (i32.const 43)
-    (i32.const 0)
-   )
-  )
-  (if
-   (i32.ne
-    (get_global $std/array/includes)
-    (i32.const 1)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 182)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (set_global $std/array/includes
-   (call $~lib/array/Array<i32>#includes
-    (get_global $std/array/arr)
-    (i32.const 43)
-    (i32.const 1)
-   )
-  )
-  (if
-   (i32.ne
-    (get_global $std/array/includes)
-    (i32.const 1)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 186)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (set_global $std/array/includes
-   (call $~lib/array/Array<i32>#includes
-    (get_global $std/array/arr)
-    (i32.const 43)
-    (i32.const 2)
-   )
-  )
-  (if
-   (i32.ne
-    (get_global $std/array/includes)
-    (i32.const 1)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 190)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (call $~lib/array/Array<i32>#splice
-   (get_global $std/array/arr)
-   (i32.const 1)
-   (i32.const 1)
-  )
-  (if
-   (i32.ne
-    (call $~lib/array/Array<i32>#get:length
-     (get_global $std/array/arr)
-    )
-    (i32.const 4)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 194)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (if
-   (i32.ne
-    (call $std/array/internalCapacity<i32>
-     (get_global $std/array/arr)
-    )
-    (i32.const 5)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 195)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (if
-   (i32.ne
-    (call $~lib/array/Array<i32>#__get
-     (get_global $std/array/arr)
-     (i32.const 0)
-    )
-    (i32.const 44)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 196)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (if
-   (i32.ne
-    (call $~lib/array/Array<i32>#__get
-     (get_global $std/array/arr)
-     (i32.const 1)
-    )
-    (i32.const 42)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 197)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (call $~lib/array/Array<i32>#__set
-   (get_global $std/array/arr)
-   (i32.const 0)
-   (i32.const 0)
-  )
-  (call $~lib/array/Array<i32>#__set
-   (get_global $std/array/arr)
-   (i32.const 1)
-   (i32.const 1)
-  )
-  (call $~lib/array/Array<i32>#__set
-   (get_global $std/array/arr)
-   (i32.const 2)
-   (i32.const 2)
-  )
-  (call $~lib/array/Array<i32>#__set
-   (get_global $std/array/arr)
-   (i32.const 3)
-   (i32.const 3)
-  )
-  (set_global $std/array/i
-   (call $~lib/array/Array<i32>#findIndex
-    (get_global $std/array/arr)
-    (i32.const 0)
-   )
-  )
-  (if
-   (get_global $std/array/i)
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 207)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (set_global $std/array/i
-   (call $~lib/array/Array<i32>#findIndex
-    (get_global $std/array/arr)
-    (i32.const 1)
-   )
-  )
-  (if
-   (i32.ne
-    (get_global $std/array/i)
-    (i32.const 1)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 210)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (set_global $std/array/i
-   (call $~lib/array/Array<i32>#findIndex
-    (get_global $std/array/arr)
-    (i32.const 2)
-   )
-  )
-  (if
-   (i32.ne
-    (get_global $std/array/i)
-    (i32.const -1)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 213)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (set_global $std/array/i
-   (call $~lib/array/Array<i32>#findIndex
-    (get_global $std/array/arr)
-    (i32.const 3)
-   )
-  )
-  (if
-   (i32.ne
-    (get_global $std/array/i)
-    (i32.const -1)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 221)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (if
-   (i32.ne
-    (call $~lib/array/Array<i32>#get:length
-     (get_global $std/array/arr)
-    )
-    (i32.const 8)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 222)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (set_global $std/array/i
-   (call $~lib/array/Array<i32>#findIndex
-    (get_global $std/array/arr)
-    (i32.const 4)
-   )
-  )
-  (if
-   (i32.eq
-    (get_global $std/array/i)
-    (i32.const -1)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 224)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (drop
-   (call $~lib/array/Array<i32>#pop
-    (get_global $std/array/arr)
-   )
-  )
-  (drop
-   (call $~lib/array/Array<i32>#pop
-    (get_global $std/array/arr)
-   )
-  )
-  (drop
-   (call $~lib/array/Array<i32>#pop
-    (get_global $std/array/arr)
-   )
-  )
-  (drop
-   (call $~lib/array/Array<i32>#pop
-    (get_global $std/array/arr)
-   )
-  )
-  (set_global $std/array/i
-   (call $~lib/array/Array<i32>#findIndex
-    (get_global $std/array/arr)
-    (i32.const 5)
-   )
-  )
-  (if
-   (i32.ne
-    (get_global $std/array/i)
-    (i32.const -1)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 237)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (if
-   (i32.ne
-    (call $~lib/array/Array<i32>#get:length
-     (get_global $std/array/arr)
-    )
-    (i32.const 2)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 238)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (drop
-   (call $~lib/array/Array<i32>#push
-    (get_global $std/array/arr)
-    (i32.const 2)
-   )
-  )
-  (drop
-   (call $~lib/array/Array<i32>#push
-    (get_global $std/array/arr)
-    (i32.const 3)
-   )
-  )
-  (set_global $std/array/every
-   (call $~lib/array/Array<i32>#every
-    (get_global $std/array/arr)
-    (i32.const 6)
-   )
-  )
-  (if
-   (i32.ne
-    (get_global $std/array/every)
-    (i32.const 1)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 246)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (set_global $std/array/every
-   (call $~lib/array/Array<i32>#every
-    (get_global $std/array/arr)
-    (i32.const 7)
-   )
-  )
-  (if
-   (get_global $std/array/every)
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 249)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (set_global $std/array/every
-   (call $~lib/array/Array<i32>#every
-    (get_global $std/array/arr)
-    (i32.const 8)
-   )
-  )
-  (if
-   (i32.ne
-    (get_global $std/array/every)
-    (i32.const 1)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 257)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (if
-   (i32.ne
-    (call $~lib/array/Array<i32>#get:length
-     (get_global $std/array/arr)
-    )
-    (i32.const 8)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 258)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (set_global $std/array/every
-   (call $~lib/array/Array<i32>#every
-    (get_global $std/array/arr)
-    (i32.const 9)
-   )
-  )
-  (if
-   (get_global $std/array/every)
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 260)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (drop
-   (call $~lib/array/Array<i32>#pop
-    (get_global $std/array/arr)
-   )
-  )
-  (drop
-   (call $~lib/array/Array<i32>#pop
-    (get_global $std/array/arr)
-   )
-  )
-  (drop
-   (call $~lib/array/Array<i32>#pop
-    (get_global $std/array/arr)
-   )
-  )
-  (drop
-   (call $~lib/array/Array<i32>#pop
-    (get_global $std/array/arr)
-   )
-  )
-  (set_global $std/array/every
-   (call $~lib/array/Array<i32>#every
-    (get_global $std/array/arr)
-    (i32.const 10)
-   )
-  )
-  (if
-   (i32.ne
-    (get_global $std/array/every)
-    (i32.const 1)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 273)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (if
-   (i32.ne
-    (call $~lib/array/Array<i32>#get:length
-     (get_global $std/array/arr)
-    )
-    (i32.const 2)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 274)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (drop
-   (call $~lib/array/Array<i32>#push
-    (get_global $std/array/arr)
-    (i32.const 2)
-   )
-  )
-  (drop
-   (call $~lib/array/Array<i32>#push
-    (get_global $std/array/arr)
-    (i32.const 3)
-   )
-  )
-  (set_global $std/array/some
-   (call $~lib/array/Array<i32>#some
-    (get_global $std/array/arr)
-    (i32.const 11)
-   )
-  )
-  (if
-   (i32.ne
-    (get_global $std/array/some)
-    (i32.const 1)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 282)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (set_global $std/array/some
-   (call $~lib/array/Array<i32>#some
-    (get_global $std/array/arr)
-    (i32.const 12)
-   )
-  )
-  (if
-   (get_global $std/array/some)
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 285)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (set_global $std/array/some
-   (call $~lib/array/Array<i32>#some
-    (get_global $std/array/arr)
-    (i32.const 13)
-   )
-  )
-  (if
-   (get_global $std/array/some)
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 293)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (if
-   (i32.ne
-    (call $~lib/array/Array<i32>#get:length
-     (get_global $std/array/arr)
-    )
-    (i32.const 8)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 294)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (set_global $std/array/some
-   (call $~lib/array/Array<i32>#some
-    (get_global $std/array/arr)
-    (i32.const 14)
-   )
-  )
-  (if
-   (i32.ne
-    (get_global $std/array/some)
-    (i32.const 1)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 296)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (drop
-   (call $~lib/array/Array<i32>#pop
-    (get_global $std/array/arr)
-   )
-  )
-  (drop
-   (call $~lib/array/Array<i32>#pop
-    (get_global $std/array/arr)
-   )
-  )
-  (drop
-   (call $~lib/array/Array<i32>#pop
-    (get_global $std/array/arr)
-   )
-  )
-  (drop
-   (call $~lib/array/Array<i32>#pop
-    (get_global $std/array/arr)
-   )
-  )
-  (set_global $std/array/some
-   (call $~lib/array/Array<i32>#some
-    (get_global $std/array/arr)
-    (i32.const 15)
-   )
-  )
-  (if
-   (get_global $std/array/some)
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 309)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (if
-   (i32.ne
-    (call $~lib/array/Array<i32>#get:length
-     (get_global $std/array/arr)
-    )
-    (i32.const 2)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 310)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (drop
-   (call $~lib/array/Array<i32>#push
-    (get_global $std/array/arr)
-    (i32.const 2)
-   )
-  )
-  (drop
-   (call $~lib/array/Array<i32>#push
-    (get_global $std/array/arr)
-    (i32.const 3)
-   )
-  )
-  (set_global $std/array/i
-   (i32.const 0)
-  )
-  (call $~lib/array/Array<i32>#forEach
-   (get_global $std/array/arr)
-   (i32.const 16)
-  )
-  (if
-   (i32.ne
-    (get_global $std/array/i)
-    (i32.const 6)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 319)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (set_global $std/array/i
-   (i32.const 0)
-  )
-  (call $~lib/array/Array<i32>#forEach
-   (get_global $std/array/arr)
-   (i32.const 17)
-  )
-  (if
-   (i32.ne
-    (get_global $std/array/i)
-    (i32.const 6)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 328)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (if
-   (i32.ne
-    (call $~lib/array/Array<i32>#get:length
-     (get_global $std/array/arr)
-    )
-    (i32.const 8)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 329)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (set_global $std/array/i
-   (i32.const 0)
-  )
-  (call $~lib/array/Array<i32>#forEach
-   (get_global $std/array/arr)
-   (i32.const 18)
-  )
-  (if
-   (i32.ne
-    (get_global $std/array/i)
-    (i32.const 406)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 332)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (drop
-   (call $~lib/array/Array<i32>#pop
-    (get_global $std/array/arr)
-   )
-  )
-  (drop
-   (call $~lib/array/Array<i32>#pop
-    (get_global $std/array/arr)
-   )
-  )
-  (drop
-   (call $~lib/array/Array<i32>#pop
-    (get_global $std/array/arr)
-   )
-  )
-  (drop
-   (call $~lib/array/Array<i32>#pop
-    (get_global $std/array/arr)
-   )
-  )
-  (set_global $std/array/i
-   (i32.const 0)
-  )
-  (call $~lib/array/Array<i32>#forEach
-   (get_global $std/array/arr)
-   (i32.const 19)
-  )
-  (if
-   (i32.ne
-    (get_global $std/array/i)
-    (i32.const 1)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 346)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (if
-   (i32.ne
-    (call $~lib/array/Array<i32>#get:length
-     (get_global $std/array/arr)
-    )
-    (i32.const 2)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 347)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (drop
-   (call $~lib/array/Array<i32>#push
-    (get_global $std/array/arr)
-    (i32.const 2)
-   )
-  )
-  (drop
-   (call $~lib/array/Array<i32>#push
-    (get_global $std/array/arr)
-    (i32.const 3)
-   )
-  )
-  (set_global $std/array/newArr
-   (call $~lib/array/Array<i32>#map<f32>
-    (get_global $std/array/arr)
-    (i32.const 20)
-   )
-  )
-  (if
-   (i32.ne
-    (call $~lib/array/Array<i32>#get:length
-     (get_global $std/array/newArr)
-    )
-    (i32.const 4)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 356)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (if
-   (f32.ne
-    (call $~lib/array/Array<f32>#__get
-     (get_global $std/array/newArr)
-     (i32.const 0)
-    )
-    (f32.convert_s/i32
+   (if
+    (i32.ne
      (call $~lib/array/Array<i32>#__get
       (get_global $std/array/arr)
       (i32.const 0)
      )
+     (i32.const 42)
+    )
+    (br $folding-inner0)
+   )
+   (if
+    (i32.ne
+     (call $~lib/array/Array<i32>#get:length
+      (get_global $std/array/arr)
+     )
+     (i32.const 1)
+    )
+    (br $folding-inner0)
+   )
+   (if
+    (i32.ne
+     (call $std/array/internalCapacity<i32>
+      (get_global $std/array/arr)
+     )
+     (i32.const 1)
+    )
+    (br $folding-inner0)
+   )
+   (set_global $std/array/i
+    (call $~lib/array/Array<i32>#pop
+     (get_global $std/array/arr)
     )
    )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 357)
-     (i32.const 0)
+   (if
+    (i32.ne
+     (get_global $std/array/i)
+     (i32.const 42)
     )
-    (unreachable)
+    (br $folding-inner0)
    )
-  )
-  (set_global $std/array/i
-   (i32.const 0)
-  )
-  (drop
-   (call $~lib/array/Array<i32>#map<i32>
-    (get_global $std/array/arr)
-    (i32.const 21)
-   )
-  )
-  (if
-   (i32.ne
-    (get_global $std/array/i)
-    (i32.const 6)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 366)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (if
-   (i32.ne
+   (if
     (call $~lib/array/Array<i32>#get:length
      (get_global $std/array/arr)
     )
-    (i32.const 8)
+    (br $folding-inner0)
    )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 367)
+   (if
+    (i32.ne
+     (call $std/array/internalCapacity<i32>
+      (get_global $std/array/arr)
+     )
+     (i32.const 1)
+    )
+    (br $folding-inner0)
+   )
+   (drop
+    (call $~lib/array/Array<i32>#push
+     (get_global $std/array/arr)
+     (i32.const 43)
+    )
+   )
+   (if
+    (i32.ne
+     (call $~lib/array/Array<i32>#get:length
+      (get_global $std/array/arr)
+     )
+     (i32.const 1)
+    )
+    (br $folding-inner0)
+   )
+   (if
+    (i32.ne
+     (call $std/array/internalCapacity<i32>
+      (get_global $std/array/arr)
+     )
+     (i32.const 1)
+    )
+    (br $folding-inner0)
+   )
+   (if
+    (i32.ne
+     (call $~lib/array/Array<i32>#__get
+      (get_global $std/array/arr)
+      (i32.const 0)
+     )
+     (i32.const 43)
+    )
+    (br $folding-inner0)
+   )
+   (drop
+    (call $~lib/array/Array<i32>#push
+     (get_global $std/array/arr)
+     (i32.const 44)
+    )
+   )
+   (if
+    (i32.ne
+     (call $~lib/array/Array<i32>#get:length
+      (get_global $std/array/arr)
+     )
+     (i32.const 2)
+    )
+    (br $folding-inner0)
+   )
+   (if
+    (i32.ne
+     (call $std/array/internalCapacity<i32>
+      (get_global $std/array/arr)
+     )
+     (i32.const 2)
+    )
+    (br $folding-inner0)
+   )
+   (if
+    (i32.ne
+     (call $~lib/array/Array<i32>#__get
+      (get_global $std/array/arr)
+      (i32.const 0)
+     )
+     (i32.const 43)
+    )
+    (br $folding-inner0)
+   )
+   (if
+    (i32.ne
+     (call $~lib/array/Array<i32>#__get
+      (get_global $std/array/arr)
+      (i32.const 1)
+     )
+     (i32.const 44)
+    )
+    (br $folding-inner0)
+   )
+   (drop
+    (call $~lib/array/Array<i32>#push
+     (get_global $std/array/arr)
+     (i32.const 45)
+    )
+   )
+   (if
+    (i32.ne
+     (call $~lib/array/Array<i32>#get:length
+      (get_global $std/array/arr)
+     )
+     (i32.const 3)
+    )
+    (br $folding-inner0)
+   )
+   (if
+    (i32.ne
+     (call $std/array/internalCapacity<i32>
+      (get_global $std/array/arr)
+     )
+     (i32.const 3)
+    )
+    (br $folding-inner0)
+   )
+   (if
+    (i32.ne
+     (call $~lib/array/Array<i32>#__get
+      (get_global $std/array/arr)
+      (i32.const 0)
+     )
+     (i32.const 43)
+    )
+    (br $folding-inner0)
+   )
+   (if
+    (i32.ne
+     (call $~lib/array/Array<i32>#__get
+      (get_global $std/array/arr)
+      (i32.const 1)
+     )
+     (i32.const 44)
+    )
+    (br $folding-inner0)
+   )
+   (if
+    (i32.ne
+     (call $~lib/array/Array<i32>#__get
+      (get_global $std/array/arr)
+      (i32.const 2)
+     )
+     (i32.const 45)
+    )
+    (br $folding-inner0)
+   )
+   (drop
+    (call $~lib/array/Array<i32>#unshift
+     (get_global $std/array/arr)
+     (i32.const 42)
+    )
+   )
+   (if
+    (i32.ne
+     (call $~lib/array/Array<i32>#get:length
+      (get_global $std/array/arr)
+     )
+     (i32.const 4)
+    )
+    (br $folding-inner0)
+   )
+   (if
+    (i32.ne
+     (call $std/array/internalCapacity<i32>
+      (get_global $std/array/arr)
+     )
+     (i32.const 4)
+    )
+    (br $folding-inner0)
+   )
+   (if
+    (i32.ne
+     (call $~lib/array/Array<i32>#__get
+      (get_global $std/array/arr)
+      (i32.const 0)
+     )
+     (i32.const 42)
+    )
+    (br $folding-inner0)
+   )
+   (if
+    (i32.ne
+     (call $~lib/array/Array<i32>#__get
+      (get_global $std/array/arr)
+      (i32.const 1)
+     )
+     (i32.const 43)
+    )
+    (br $folding-inner0)
+   )
+   (if
+    (i32.ne
+     (call $~lib/array/Array<i32>#__get
+      (get_global $std/array/arr)
+      (i32.const 2)
+     )
+     (i32.const 44)
+    )
+    (br $folding-inner0)
+   )
+   (if
+    (i32.ne
+     (call $~lib/array/Array<i32>#__get
+      (get_global $std/array/arr)
+      (i32.const 3)
+     )
+     (i32.const 45)
+    )
+    (br $folding-inner0)
+   )
+   (drop
+    (call $~lib/array/Array<i32>#unshift
+     (get_global $std/array/arr)
+     (i32.const 41)
+    )
+   )
+   (if
+    (i32.ne
+     (call $~lib/array/Array<i32>#get:length
+      (get_global $std/array/arr)
+     )
+     (i32.const 5)
+    )
+    (br $folding-inner0)
+   )
+   (if
+    (i32.ne
+     (call $std/array/internalCapacity<i32>
+      (get_global $std/array/arr)
+     )
+     (i32.const 5)
+    )
+    (br $folding-inner0)
+   )
+   (if
+    (i32.ne
+     (call $~lib/array/Array<i32>#__get
+      (get_global $std/array/arr)
+      (i32.const 0)
+     )
+     (i32.const 41)
+    )
+    (br $folding-inner0)
+   )
+   (if
+    (i32.ne
+     (call $~lib/array/Array<i32>#__get
+      (get_global $std/array/arr)
+      (i32.const 1)
+     )
+     (i32.const 42)
+    )
+    (br $folding-inner0)
+   )
+   (if
+    (i32.ne
+     (call $~lib/array/Array<i32>#__get
+      (get_global $std/array/arr)
+      (i32.const 2)
+     )
+     (i32.const 43)
+    )
+    (br $folding-inner0)
+   )
+   (if
+    (i32.ne
+     (call $~lib/array/Array<i32>#__get
+      (get_global $std/array/arr)
+      (i32.const 3)
+     )
+     (i32.const 44)
+    )
+    (br $folding-inner0)
+   )
+   (if
+    (i32.ne
+     (call $~lib/array/Array<i32>#__get
+      (get_global $std/array/arr)
+      (i32.const 4)
+     )
+     (i32.const 45)
+    )
+    (br $folding-inner0)
+   )
+   (set_global $std/array/i
+    (call $~lib/array/Array<i32>#shift
+     (get_global $std/array/arr)
+    )
+   )
+   (if
+    (i32.ne
+     (get_global $std/array/i)
+     (i32.const 41)
+    )
+    (br $folding-inner0)
+   )
+   (if
+    (i32.ne
+     (call $~lib/array/Array<i32>#get:length
+      (get_global $std/array/arr)
+     )
+     (i32.const 4)
+    )
+    (br $folding-inner0)
+   )
+   (if
+    (i32.ne
+     (call $std/array/internalCapacity<i32>
+      (get_global $std/array/arr)
+     )
+     (i32.const 5)
+    )
+    (br $folding-inner0)
+   )
+   (if
+    (i32.ne
+     (call $~lib/array/Array<i32>#__get
+      (get_global $std/array/arr)
+      (i32.const 0)
+     )
+     (i32.const 42)
+    )
+    (br $folding-inner0)
+   )
+   (if
+    (i32.ne
+     (call $~lib/array/Array<i32>#__get
+      (get_global $std/array/arr)
+      (i32.const 1)
+     )
+     (i32.const 43)
+    )
+    (br $folding-inner0)
+   )
+   (if
+    (i32.ne
+     (call $~lib/array/Array<i32>#__get
+      (get_global $std/array/arr)
+      (i32.const 2)
+     )
+     (i32.const 44)
+    )
+    (br $folding-inner0)
+   )
+   (if
+    (i32.ne
+     (call $~lib/array/Array<i32>#__get
+      (get_global $std/array/arr)
+      (i32.const 3)
+     )
+     (i32.const 45)
+    )
+    (br $folding-inner0)
+   )
+   (set_global $std/array/i
+    (call $~lib/array/Array<i32>#pop
+     (get_global $std/array/arr)
+    )
+   )
+   (if
+    (i32.ne
+     (get_global $std/array/i)
+     (i32.const 45)
+    )
+    (br $folding-inner0)
+   )
+   (if
+    (i32.ne
+     (call $~lib/array/Array<i32>#get:length
+      (get_global $std/array/arr)
+     )
+     (i32.const 3)
+    )
+    (br $folding-inner0)
+   )
+   (if
+    (i32.ne
+     (call $std/array/internalCapacity<i32>
+      (get_global $std/array/arr)
+     )
+     (i32.const 5)
+    )
+    (br $folding-inner0)
+   )
+   (if
+    (i32.ne
+     (call $~lib/array/Array<i32>#__get
+      (get_global $std/array/arr)
+      (i32.const 0)
+     )
+     (i32.const 42)
+    )
+    (br $folding-inner0)
+   )
+   (if
+    (i32.ne
+     (call $~lib/array/Array<i32>#__get
+      (get_global $std/array/arr)
+      (i32.const 1)
+     )
+     (i32.const 43)
+    )
+    (br $folding-inner0)
+   )
+   (if
+    (i32.ne
+     (call $~lib/array/Array<i32>#__get
+      (get_global $std/array/arr)
+      (i32.const 2)
+     )
+     (i32.const 44)
+    )
+    (br $folding-inner0)
+   )
+   (drop
+    (call $~lib/array/Array<i32>#reverse
+     (get_global $std/array/arr)
+    )
+   )
+   (if
+    (i32.ne
+     (call $~lib/array/Array<i32>#get:length
+      (get_global $std/array/arr)
+     )
+     (i32.const 3)
+    )
+    (br $folding-inner0)
+   )
+   (if
+    (i32.ne
+     (call $std/array/internalCapacity<i32>
+      (get_global $std/array/arr)
+     )
+     (i32.const 5)
+    )
+    (br $folding-inner0)
+   )
+   (if
+    (i32.ne
+     (call $~lib/array/Array<i32>#__get
+      (get_global $std/array/arr)
+      (i32.const 0)
+     )
+     (i32.const 44)
+    )
+    (br $folding-inner0)
+   )
+   (if
+    (i32.ne
+     (call $~lib/array/Array<i32>#__get
+      (get_global $std/array/arr)
+      (i32.const 1)
+     )
+     (i32.const 43)
+    )
+    (br $folding-inner0)
+   )
+   (if
+    (i32.ne
+     (call $~lib/array/Array<i32>#__get
+      (get_global $std/array/arr)
+      (i32.const 2)
+     )
+     (i32.const 42)
+    )
+    (br $folding-inner0)
+   )
+   (drop
+    (call $~lib/array/Array<i32>#push
+     (get_global $std/array/arr)
+     (i32.const 43)
+    )
+   )
+   (drop
+    (call $~lib/array/Array<i32>#push
+     (get_global $std/array/arr)
+     (i32.const 44)
+    )
+   )
+   (set_global $std/array/i
+    (call $~lib/array/Array<i32>#indexOf
+     (get_global $std/array/arr)
+     (i32.const 44)
      (i32.const 0)
     )
-    (unreachable)
    )
-  )
-  (set_global $std/array/i
-   (i32.const 0)
-  )
-  (drop
-   (call $~lib/array/Array<i32>#map<i32>
-    (get_global $std/array/arr)
-    (i32.const 22)
-   )
-  )
-  (if
-   (i32.ne
+   (if
     (get_global $std/array/i)
-    (i32.const 406)
+    (br $folding-inner0)
    )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 374)
+   (set_global $std/array/i
+    (call $~lib/array/Array<i32>#indexOf
+     (get_global $std/array/arr)
+     (i32.const 42)
      (i32.const 0)
     )
-    (unreachable)
    )
-  )
-  (drop
-   (call $~lib/array/Array<i32>#pop
+   (if
+    (i32.ne
+     (get_global $std/array/i)
+     (i32.const 2)
+    )
+    (br $folding-inner0)
+   )
+   (set_global $std/array/i
+    (call $~lib/array/Array<i32>#indexOf
+     (get_global $std/array/arr)
+     (i32.const 45)
+     (i32.const 0)
+    )
+   )
+   (if
+    (i32.ne
+     (get_global $std/array/i)
+     (i32.const -1)
+    )
+    (br $folding-inner0)
+   )
+   (set_global $std/array/i
+    (call $~lib/array/Array<i32>#indexOf
+     (get_global $std/array/arr)
+     (i32.const 43)
+     (i32.const 100)
+    )
+   )
+   (if
+    (i32.ne
+     (get_global $std/array/i)
+     (i32.const -1)
+    )
+    (br $folding-inner0)
+   )
+   (set_global $std/array/i
+    (call $~lib/array/Array<i32>#indexOf
+     (get_global $std/array/arr)
+     (i32.const 43)
+     (i32.const -100)
+    )
+   )
+   (if
+    (i32.ne
+     (get_global $std/array/i)
+     (i32.const 1)
+    )
+    (br $folding-inner0)
+   )
+   (set_global $std/array/i
+    (call $~lib/array/Array<i32>#indexOf
+     (get_global $std/array/arr)
+     (i32.const 43)
+     (i32.const -2)
+    )
+   )
+   (if
+    (i32.ne
+     (get_global $std/array/i)
+     (i32.const 3)
+    )
+    (br $folding-inner0)
+   )
+   (set_global $std/array/i
+    (call $~lib/array/Array<i32>#indexOf
+     (get_global $std/array/arr)
+     (i32.const 43)
+     (i32.const -4)
+    )
+   )
+   (if
+    (i32.ne
+     (get_global $std/array/i)
+     (i32.const 1)
+    )
+    (br $folding-inner0)
+   )
+   (set_global $std/array/i
+    (call $~lib/array/Array<i32>#indexOf
+     (get_global $std/array/arr)
+     (i32.const 43)
+     (i32.const 0)
+    )
+   )
+   (if
+    (i32.ne
+     (get_global $std/array/i)
+     (i32.const 1)
+    )
+    (br $folding-inner0)
+   )
+   (set_global $std/array/i
+    (call $~lib/array/Array<i32>#indexOf
+     (get_global $std/array/arr)
+     (i32.const 43)
+     (i32.const 1)
+    )
+   )
+   (if
+    (i32.ne
+     (get_global $std/array/i)
+     (i32.const 1)
+    )
+    (br $folding-inner0)
+   )
+   (set_global $std/array/i
+    (call $~lib/array/Array<i32>#indexOf
+     (get_global $std/array/arr)
+     (i32.const 43)
+     (i32.const 2)
+    )
+   )
+   (if
+    (i32.ne
+     (get_global $std/array/i)
+     (i32.const 3)
+    )
+    (br $folding-inner0)
+   )
+   (set_global $std/array/includes
+    (call $~lib/array/Array<i32>#includes
+     (get_global $std/array/arr)
+     (i32.const 44)
+     (i32.const 0)
+    )
+   )
+   (if
+    (i32.ne
+     (get_global $std/array/includes)
+     (i32.const 1)
+    )
+    (br $folding-inner0)
+   )
+   (set_global $std/array/includes
+    (call $~lib/array/Array<i32>#includes
+     (get_global $std/array/arr)
+     (i32.const 42)
+     (i32.const 0)
+    )
+   )
+   (if
+    (i32.ne
+     (get_global $std/array/includes)
+     (i32.const 1)
+    )
+    (br $folding-inner0)
+   )
+   (set_global $std/array/includes
+    (call $~lib/array/Array<i32>#includes
+     (get_global $std/array/arr)
+     (i32.const 45)
+     (i32.const 0)
+    )
+   )
+   (if
+    (get_global $std/array/includes)
+    (br $folding-inner0)
+   )
+   (set_global $std/array/includes
+    (call $~lib/array/Array<i32>#includes
+     (get_global $std/array/arr)
+     (i32.const 43)
+     (i32.const 100)
+    )
+   )
+   (if
+    (get_global $std/array/includes)
+    (br $folding-inner0)
+   )
+   (set_global $std/array/includes
+    (call $~lib/array/Array<i32>#includes
+     (get_global $std/array/arr)
+     (i32.const 43)
+     (i32.const -100)
+    )
+   )
+   (if
+    (i32.ne
+     (get_global $std/array/includes)
+     (i32.const 1)
+    )
+    (br $folding-inner0)
+   )
+   (set_global $std/array/includes
+    (call $~lib/array/Array<i32>#includes
+     (get_global $std/array/arr)
+     (i32.const 43)
+     (i32.const -2)
+    )
+   )
+   (if
+    (i32.ne
+     (get_global $std/array/includes)
+     (i32.const 1)
+    )
+    (br $folding-inner0)
+   )
+   (set_global $std/array/includes
+    (call $~lib/array/Array<i32>#includes
+     (get_global $std/array/arr)
+     (i32.const 43)
+     (i32.const -4)
+    )
+   )
+   (if
+    (i32.ne
+     (get_global $std/array/includes)
+     (i32.const 1)
+    )
+    (br $folding-inner0)
+   )
+   (set_global $std/array/includes
+    (call $~lib/array/Array<i32>#includes
+     (get_global $std/array/arr)
+     (i32.const 43)
+     (i32.const 0)
+    )
+   )
+   (if
+    (i32.ne
+     (get_global $std/array/includes)
+     (i32.const 1)
+    )
+    (br $folding-inner0)
+   )
+   (set_global $std/array/includes
+    (call $~lib/array/Array<i32>#includes
+     (get_global $std/array/arr)
+     (i32.const 43)
+     (i32.const 1)
+    )
+   )
+   (if
+    (i32.ne
+     (get_global $std/array/includes)
+     (i32.const 1)
+    )
+    (br $folding-inner0)
+   )
+   (set_global $std/array/includes
+    (call $~lib/array/Array<i32>#includes
+     (get_global $std/array/arr)
+     (i32.const 43)
+     (i32.const 2)
+    )
+   )
+   (if
+    (i32.ne
+     (get_global $std/array/includes)
+     (i32.const 1)
+    )
+    (br $folding-inner0)
+   )
+   (call $~lib/array/Array<i32>#splice
     (get_global $std/array/arr)
-   )
-  )
-  (drop
-   (call $~lib/array/Array<i32>#pop
-    (get_global $std/array/arr)
-   )
-  )
-  (drop
-   (call $~lib/array/Array<i32>#pop
-    (get_global $std/array/arr)
-   )
-  )
-  (drop
-   (call $~lib/array/Array<i32>#pop
-    (get_global $std/array/arr)
-   )
-  )
-  (set_global $std/array/i
-   (i32.const 0)
-  )
-  (drop
-   (call $~lib/array/Array<i32>#map<i32>
-    (get_global $std/array/arr)
-    (i32.const 23)
-   )
-  )
-  (if
-   (i32.ne
-    (get_global $std/array/i)
+    (i32.const 1)
     (i32.const 1)
    )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 389)
-     (i32.const 0)
+   (if
+    (i32.ne
+     (call $~lib/array/Array<i32>#get:length
+      (get_global $std/array/arr)
+     )
+     (i32.const 4)
     )
-    (unreachable)
+    (br $folding-inner0)
    )
-  )
-  (if
-   (i32.ne
-    (call $~lib/array/Array<i32>#get:length
-     (get_global $std/array/arr)
+   (if
+    (i32.ne
+     (call $std/array/internalCapacity<i32>
+      (get_global $std/array/arr)
+     )
+     (i32.const 5)
     )
-    (i32.const 2)
+    (br $folding-inner0)
    )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 390)
-     (i32.const 0)
+   (if
+    (i32.ne
+     (call $~lib/array/Array<i32>#__get
+      (get_global $std/array/arr)
+      (i32.const 0)
+     )
+     (i32.const 44)
     )
-    (unreachable)
+    (br $folding-inner0)
    )
-  )
-  (drop
-   (call $~lib/array/Array<i32>#push
-    (get_global $std/array/arr)
-    (i32.const 2)
-   )
-  )
-  (drop
-   (call $~lib/array/Array<i32>#push
-    (get_global $std/array/arr)
-    (i32.const 3)
-   )
-  )
-  (set_global $std/array/filteredArr
-   (call $~lib/array/Array<i32>#filter
-    (get_global $std/array/arr)
-    (i32.const 24)
-   )
-  )
-  (if
-   (i32.ne
-    (call $~lib/array/Array<i32>#get:length
-     (get_global $std/array/filteredArr)
+   (if
+    (i32.ne
+     (call $~lib/array/Array<i32>#__get
+      (get_global $std/array/arr)
+      (i32.const 1)
+     )
+     (i32.const 42)
     )
-    (i32.const 2)
+    (br $folding-inner0)
    )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 398)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (set_global $std/array/i
-   (i32.const 0)
-  )
-  (drop
-   (call $~lib/array/Array<i32>#filter
+   (call $~lib/array/Array<i32>#__set
     (get_global $std/array/arr)
-    (i32.const 25)
-   )
-  )
-  (if
-   (i32.ne
-    (get_global $std/array/i)
-    (i32.const 6)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 407)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (if
-   (i32.ne
-    (call $~lib/array/Array<i32>#get:length
-     (get_global $std/array/arr)
-    )
-    (i32.const 8)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 408)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (set_global $std/array/i
-   (i32.const 0)
-  )
-  (drop
-   (call $~lib/array/Array<i32>#filter
-    (get_global $std/array/arr)
-    (i32.const 26)
-   )
-  )
-  (if
-   (i32.ne
-    (get_global $std/array/i)
-    (i32.const 406)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 415)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (drop
-   (call $~lib/array/Array<i32>#pop
-    (get_global $std/array/arr)
-   )
-  )
-  (drop
-   (call $~lib/array/Array<i32>#pop
-    (get_global $std/array/arr)
-   )
-  )
-  (drop
-   (call $~lib/array/Array<i32>#pop
-    (get_global $std/array/arr)
-   )
-  )
-  (drop
-   (call $~lib/array/Array<i32>#pop
-    (get_global $std/array/arr)
-   )
-  )
-  (set_global $std/array/i
-   (i32.const 0)
-  )
-  (drop
-   (call $~lib/array/Array<i32>#filter
-    (get_global $std/array/arr)
-    (i32.const 27)
-   )
-  )
-  (if
-   (i32.ne
-    (get_global $std/array/i)
-    (i32.const 1)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 430)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (if
-   (i32.ne
-    (call $~lib/array/Array<i32>#get:length
-     (get_global $std/array/arr)
-    )
-    (i32.const 2)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 431)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (drop
-   (call $~lib/array/Array<i32>#push
-    (get_global $std/array/arr)
-    (i32.const 2)
-   )
-  )
-  (drop
-   (call $~lib/array/Array<i32>#push
-    (get_global $std/array/arr)
-    (i32.const 3)
-   )
-  )
-  (set_global $std/array/i
-   (call $~lib/array/Array<i32>#reduce<i32>
-    (get_global $std/array/arr)
-    (i32.const 28)
+    (i32.const 0)
     (i32.const 0)
    )
-  )
-  (if
-   (i32.ne
-    (get_global $std/array/i)
-    (i32.const 6)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 439)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (set_global $std/array/i
-   (call $~lib/array/Array<i32>#reduce<i32>
+   (call $~lib/array/Array<i32>#__set
     (get_global $std/array/arr)
-    (i32.const 29)
-    (i32.const 4)
+    (i32.const 1)
+    (i32.const 1)
    )
-  )
-  (if
-   (i32.ne
-    (get_global $std/array/i)
-    (i32.const 10)
+   (call $~lib/array/Array<i32>#__set
+    (get_global $std/array/arr)
+    (i32.const 2)
+    (i32.const 2)
    )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 443)
+   (call $~lib/array/Array<i32>#__set
+    (get_global $std/array/arr)
+    (i32.const 3)
+    (i32.const 3)
+   )
+   (set_global $std/array/i
+    (call $~lib/array/Array<i32>#findIndex
+     (get_global $std/array/arr)
      (i32.const 0)
     )
-    (unreachable)
    )
-  )
-  (set_global $std/array/boolVal
-   (i32.and
+   (if
+    (get_global $std/array/i)
+    (br $folding-inner0)
+   )
+   (set_global $std/array/i
+    (call $~lib/array/Array<i32>#findIndex
+     (get_global $std/array/arr)
+     (i32.const 1)
+    )
+   )
+   (if
+    (i32.ne
+     (get_global $std/array/i)
+     (i32.const 1)
+    )
+    (br $folding-inner0)
+   )
+   (set_global $std/array/i
+    (call $~lib/array/Array<i32>#findIndex
+     (get_global $std/array/arr)
+     (i32.const 2)
+    )
+   )
+   (if
+    (i32.ne
+     (get_global $std/array/i)
+     (i32.const -1)
+    )
+    (br $folding-inner0)
+   )
+   (set_global $std/array/i
+    (call $~lib/array/Array<i32>#findIndex
+     (get_global $std/array/arr)
+     (i32.const 3)
+    )
+   )
+   (if
+    (i32.ne
+     (get_global $std/array/i)
+     (i32.const -1)
+    )
+    (br $folding-inner0)
+   )
+   (if
+    (i32.ne
+     (call $~lib/array/Array<i32>#get:length
+      (get_global $std/array/arr)
+     )
+     (i32.const 8)
+    )
+    (br $folding-inner0)
+   )
+   (set_global $std/array/i
+    (call $~lib/array/Array<i32>#findIndex
+     (get_global $std/array/arr)
+     (i32.const 4)
+    )
+   )
+   (if
+    (i32.eq
+     (get_global $std/array/i)
+     (i32.const -1)
+    )
+    (br $folding-inner0)
+   )
+   (drop
+    (call $~lib/array/Array<i32>#pop
+     (get_global $std/array/arr)
+    )
+   )
+   (drop
+    (call $~lib/array/Array<i32>#pop
+     (get_global $std/array/arr)
+    )
+   )
+   (drop
+    (call $~lib/array/Array<i32>#pop
+     (get_global $std/array/arr)
+    )
+   )
+   (drop
+    (call $~lib/array/Array<i32>#pop
+     (get_global $std/array/arr)
+    )
+   )
+   (set_global $std/array/i
+    (call $~lib/array/Array<i32>#findIndex
+     (get_global $std/array/arr)
+     (i32.const 5)
+    )
+   )
+   (if
+    (i32.ne
+     (get_global $std/array/i)
+     (i32.const -1)
+    )
+    (br $folding-inner0)
+   )
+   (if
+    (i32.ne
+     (call $~lib/array/Array<i32>#get:length
+      (get_global $std/array/arr)
+     )
+     (i32.const 2)
+    )
+    (br $folding-inner0)
+   )
+   (drop
+    (call $~lib/array/Array<i32>#push
+     (get_global $std/array/arr)
+     (i32.const 2)
+    )
+   )
+   (drop
+    (call $~lib/array/Array<i32>#push
+     (get_global $std/array/arr)
+     (i32.const 3)
+    )
+   )
+   (set_global $std/array/every
+    (call $~lib/array/Array<i32>#every
+     (get_global $std/array/arr)
+     (i32.const 6)
+    )
+   )
+   (if
+    (i32.ne
+     (get_global $std/array/every)
+     (i32.const 1)
+    )
+    (br $folding-inner0)
+   )
+   (set_global $std/array/every
+    (call $~lib/array/Array<i32>#every
+     (get_global $std/array/arr)
+     (i32.const 7)
+    )
+   )
+   (if
+    (get_global $std/array/every)
+    (br $folding-inner0)
+   )
+   (set_global $std/array/every
+    (call $~lib/array/Array<i32>#every
+     (get_global $std/array/arr)
+     (i32.const 8)
+    )
+   )
+   (if
+    (i32.ne
+     (get_global $std/array/every)
+     (i32.const 1)
+    )
+    (br $folding-inner0)
+   )
+   (if
+    (i32.ne
+     (call $~lib/array/Array<i32>#get:length
+      (get_global $std/array/arr)
+     )
+     (i32.const 8)
+    )
+    (br $folding-inner0)
+   )
+   (set_global $std/array/every
+    (call $~lib/array/Array<i32>#every
+     (get_global $std/array/arr)
+     (i32.const 9)
+    )
+   )
+   (if
+    (get_global $std/array/every)
+    (br $folding-inner0)
+   )
+   (drop
+    (call $~lib/array/Array<i32>#pop
+     (get_global $std/array/arr)
+    )
+   )
+   (drop
+    (call $~lib/array/Array<i32>#pop
+     (get_global $std/array/arr)
+    )
+   )
+   (drop
+    (call $~lib/array/Array<i32>#pop
+     (get_global $std/array/arr)
+    )
+   )
+   (drop
+    (call $~lib/array/Array<i32>#pop
+     (get_global $std/array/arr)
+    )
+   )
+   (set_global $std/array/every
+    (call $~lib/array/Array<i32>#every
+     (get_global $std/array/arr)
+     (i32.const 10)
+    )
+   )
+   (if
+    (i32.ne
+     (get_global $std/array/every)
+     (i32.const 1)
+    )
+    (br $folding-inner0)
+   )
+   (if
+    (i32.ne
+     (call $~lib/array/Array<i32>#get:length
+      (get_global $std/array/arr)
+     )
+     (i32.const 2)
+    )
+    (br $folding-inner0)
+   )
+   (drop
+    (call $~lib/array/Array<i32>#push
+     (get_global $std/array/arr)
+     (i32.const 2)
+    )
+   )
+   (drop
+    (call $~lib/array/Array<i32>#push
+     (get_global $std/array/arr)
+     (i32.const 3)
+    )
+   )
+   (set_global $std/array/some
+    (call $~lib/array/Array<i32>#some
+     (get_global $std/array/arr)
+     (i32.const 11)
+    )
+   )
+   (if
+    (i32.ne
+     (get_global $std/array/some)
+     (i32.const 1)
+    )
+    (br $folding-inner0)
+   )
+   (set_global $std/array/some
+    (call $~lib/array/Array<i32>#some
+     (get_global $std/array/arr)
+     (i32.const 12)
+    )
+   )
+   (if
+    (get_global $std/array/some)
+    (br $folding-inner0)
+   )
+   (set_global $std/array/some
+    (call $~lib/array/Array<i32>#some
+     (get_global $std/array/arr)
+     (i32.const 13)
+    )
+   )
+   (if
+    (get_global $std/array/some)
+    (br $folding-inner0)
+   )
+   (if
+    (i32.ne
+     (call $~lib/array/Array<i32>#get:length
+      (get_global $std/array/arr)
+     )
+     (i32.const 8)
+    )
+    (br $folding-inner0)
+   )
+   (set_global $std/array/some
+    (call $~lib/array/Array<i32>#some
+     (get_global $std/array/arr)
+     (i32.const 14)
+    )
+   )
+   (if
+    (i32.ne
+     (get_global $std/array/some)
+     (i32.const 1)
+    )
+    (br $folding-inner0)
+   )
+   (drop
+    (call $~lib/array/Array<i32>#pop
+     (get_global $std/array/arr)
+    )
+   )
+   (drop
+    (call $~lib/array/Array<i32>#pop
+     (get_global $std/array/arr)
+    )
+   )
+   (drop
+    (call $~lib/array/Array<i32>#pop
+     (get_global $std/array/arr)
+    )
+   )
+   (drop
+    (call $~lib/array/Array<i32>#pop
+     (get_global $std/array/arr)
+    )
+   )
+   (set_global $std/array/some
+    (call $~lib/array/Array<i32>#some
+     (get_global $std/array/arr)
+     (i32.const 15)
+    )
+   )
+   (if
+    (get_global $std/array/some)
+    (br $folding-inner0)
+   )
+   (if
+    (i32.ne
+     (call $~lib/array/Array<i32>#get:length
+      (get_global $std/array/arr)
+     )
+     (i32.const 2)
+    )
+    (br $folding-inner0)
+   )
+   (drop
+    (call $~lib/array/Array<i32>#push
+     (get_global $std/array/arr)
+     (i32.const 2)
+    )
+   )
+   (drop
+    (call $~lib/array/Array<i32>#push
+     (get_global $std/array/arr)
+     (i32.const 3)
+    )
+   )
+   (set_global $std/array/i
+    (i32.const 0)
+   )
+   (call $~lib/array/Array<i32>#forEach
+    (get_global $std/array/arr)
+    (i32.const 16)
+   )
+   (if
+    (i32.ne
+     (get_global $std/array/i)
+     (i32.const 6)
+    )
+    (br $folding-inner0)
+   )
+   (set_global $std/array/i
+    (i32.const 0)
+   )
+   (call $~lib/array/Array<i32>#forEach
+    (get_global $std/array/arr)
+    (i32.const 17)
+   )
+   (if
+    (i32.ne
+     (get_global $std/array/i)
+     (i32.const 6)
+    )
+    (br $folding-inner0)
+   )
+   (if
+    (i32.ne
+     (call $~lib/array/Array<i32>#get:length
+      (get_global $std/array/arr)
+     )
+     (i32.const 8)
+    )
+    (br $folding-inner0)
+   )
+   (set_global $std/array/i
+    (i32.const 0)
+   )
+   (call $~lib/array/Array<i32>#forEach
+    (get_global $std/array/arr)
+    (i32.const 18)
+   )
+   (if
+    (i32.ne
+     (get_global $std/array/i)
+     (i32.const 406)
+    )
+    (br $folding-inner0)
+   )
+   (drop
+    (call $~lib/array/Array<i32>#pop
+     (get_global $std/array/arr)
+    )
+   )
+   (drop
+    (call $~lib/array/Array<i32>#pop
+     (get_global $std/array/arr)
+    )
+   )
+   (drop
+    (call $~lib/array/Array<i32>#pop
+     (get_global $std/array/arr)
+    )
+   )
+   (drop
+    (call $~lib/array/Array<i32>#pop
+     (get_global $std/array/arr)
+    )
+   )
+   (set_global $std/array/i
+    (i32.const 0)
+   )
+   (call $~lib/array/Array<i32>#forEach
+    (get_global $std/array/arr)
+    (i32.const 19)
+   )
+   (if
+    (i32.ne
+     (get_global $std/array/i)
+     (i32.const 1)
+    )
+    (br $folding-inner0)
+   )
+   (if
+    (i32.ne
+     (call $~lib/array/Array<i32>#get:length
+      (get_global $std/array/arr)
+     )
+     (i32.const 2)
+    )
+    (br $folding-inner0)
+   )
+   (drop
+    (call $~lib/array/Array<i32>#push
+     (get_global $std/array/arr)
+     (i32.const 2)
+    )
+   )
+   (drop
+    (call $~lib/array/Array<i32>#push
+     (get_global $std/array/arr)
+     (i32.const 3)
+    )
+   )
+   (set_global $std/array/newArr
+    (call $~lib/array/Array<i32>#map<f32>
+     (get_global $std/array/arr)
+     (i32.const 20)
+    )
+   )
+   (if
+    (i32.ne
+     (call $~lib/array/Array<i32>#get:length
+      (get_global $std/array/newArr)
+     )
+     (i32.const 4)
+    )
+    (br $folding-inner0)
+   )
+   (if
+    (f32.ne
+     (call $~lib/array/Array<f32>#__get
+      (get_global $std/array/newArr)
+      (i32.const 0)
+     )
+     (f32.convert_s/i32
+      (call $~lib/array/Array<i32>#__get
+       (get_global $std/array/arr)
+       (i32.const 0)
+      )
+     )
+    )
+    (br $folding-inner0)
+   )
+   (set_global $std/array/i
+    (i32.const 0)
+   )
+   (drop
+    (call $~lib/array/Array<i32>#map<i32>
+     (get_global $std/array/arr)
+     (i32.const 21)
+    )
+   )
+   (if
+    (i32.ne
+     (get_global $std/array/i)
+     (i32.const 6)
+    )
+    (br $folding-inner0)
+   )
+   (if
+    (i32.ne
+     (call $~lib/array/Array<i32>#get:length
+      (get_global $std/array/arr)
+     )
+     (i32.const 8)
+    )
+    (br $folding-inner0)
+   )
+   (set_global $std/array/i
+    (i32.const 0)
+   )
+   (drop
+    (call $~lib/array/Array<i32>#map<i32>
+     (get_global $std/array/arr)
+     (i32.const 22)
+    )
+   )
+   (if
+    (i32.ne
+     (get_global $std/array/i)
+     (i32.const 406)
+    )
+    (br $folding-inner0)
+   )
+   (drop
+    (call $~lib/array/Array<i32>#pop
+     (get_global $std/array/arr)
+    )
+   )
+   (drop
+    (call $~lib/array/Array<i32>#pop
+     (get_global $std/array/arr)
+    )
+   )
+   (drop
+    (call $~lib/array/Array<i32>#pop
+     (get_global $std/array/arr)
+    )
+   )
+   (drop
+    (call $~lib/array/Array<i32>#pop
+     (get_global $std/array/arr)
+    )
+   )
+   (set_global $std/array/i
+    (i32.const 0)
+   )
+   (drop
+    (call $~lib/array/Array<i32>#map<i32>
+     (get_global $std/array/arr)
+     (i32.const 23)
+    )
+   )
+   (if
+    (i32.ne
+     (get_global $std/array/i)
+     (i32.const 1)
+    )
+    (br $folding-inner0)
+   )
+   (if
+    (i32.ne
+     (call $~lib/array/Array<i32>#get:length
+      (get_global $std/array/arr)
+     )
+     (i32.const 2)
+    )
+    (br $folding-inner0)
+   )
+   (drop
+    (call $~lib/array/Array<i32>#push
+     (get_global $std/array/arr)
+     (i32.const 2)
+    )
+   )
+   (drop
+    (call $~lib/array/Array<i32>#push
+     (get_global $std/array/arr)
+     (i32.const 3)
+    )
+   )
+   (set_global $std/array/filteredArr
+    (call $~lib/array/Array<i32>#filter
+     (get_global $std/array/arr)
+     (i32.const 24)
+    )
+   )
+   (if
+    (i32.ne
+     (call $~lib/array/Array<i32>#get:length
+      (get_global $std/array/filteredArr)
+     )
+     (i32.const 2)
+    )
+    (br $folding-inner0)
+   )
+   (set_global $std/array/i
+    (i32.const 0)
+   )
+   (drop
+    (call $~lib/array/Array<i32>#filter
+     (get_global $std/array/arr)
+     (i32.const 25)
+    )
+   )
+   (if
+    (i32.ne
+     (get_global $std/array/i)
+     (i32.const 6)
+    )
+    (br $folding-inner0)
+   )
+   (if
+    (i32.ne
+     (call $~lib/array/Array<i32>#get:length
+      (get_global $std/array/arr)
+     )
+     (i32.const 8)
+    )
+    (br $folding-inner0)
+   )
+   (set_global $std/array/i
+    (i32.const 0)
+   )
+   (drop
+    (call $~lib/array/Array<i32>#filter
+     (get_global $std/array/arr)
+     (i32.const 26)
+    )
+   )
+   (if
+    (i32.ne
+     (get_global $std/array/i)
+     (i32.const 406)
+    )
+    (br $folding-inner0)
+   )
+   (drop
+    (call $~lib/array/Array<i32>#pop
+     (get_global $std/array/arr)
+    )
+   )
+   (drop
+    (call $~lib/array/Array<i32>#pop
+     (get_global $std/array/arr)
+    )
+   )
+   (drop
+    (call $~lib/array/Array<i32>#pop
+     (get_global $std/array/arr)
+    )
+   )
+   (drop
+    (call $~lib/array/Array<i32>#pop
+     (get_global $std/array/arr)
+    )
+   )
+   (set_global $std/array/i
+    (i32.const 0)
+   )
+   (drop
+    (call $~lib/array/Array<i32>#filter
+     (get_global $std/array/arr)
+     (i32.const 27)
+    )
+   )
+   (if
+    (i32.ne
+     (get_global $std/array/i)
+     (i32.const 1)
+    )
+    (br $folding-inner0)
+   )
+   (if
+    (i32.ne
+     (call $~lib/array/Array<i32>#get:length
+      (get_global $std/array/arr)
+     )
+     (i32.const 2)
+    )
+    (br $folding-inner0)
+   )
+   (drop
+    (call $~lib/array/Array<i32>#push
+     (get_global $std/array/arr)
+     (i32.const 2)
+    )
+   )
+   (drop
+    (call $~lib/array/Array<i32>#push
+     (get_global $std/array/arr)
+     (i32.const 3)
+    )
+   )
+   (set_global $std/array/i
     (call $~lib/array/Array<i32>#reduce<i32>
      (get_global $std/array/arr)
-     (i32.const 30)
+     (i32.const 28)
      (i32.const 0)
     )
-    (i32.const 1)
    )
-  )
-  (if
-   (i32.ne
-    (get_global $std/array/boolVal)
-    (i32.const 1)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 446)
-     (i32.const 0)
+   (if
+    (i32.ne
+     (get_global $std/array/i)
+     (i32.const 6)
     )
-    (unreachable)
+    (br $folding-inner0)
    )
-  )
-  (set_global $std/array/boolVal
-   (i32.and
+   (set_global $std/array/i
     (call $~lib/array/Array<i32>#reduce<i32>
      (get_global $std/array/arr)
-     (i32.const 31)
-     (i32.const 0)
+     (i32.const 29)
+     (i32.const 4)
     )
-    (i32.const 1)
    )
-  )
-  (if
-   (get_global $std/array/boolVal)
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 449)
-     (i32.const 0)
+   (if
+    (i32.ne
+     (get_global $std/array/i)
+     (i32.const 10)
     )
-    (unreachable)
+    (br $folding-inner0)
    )
-  )
-  (set_global $std/array/i
-   (call $~lib/array/Array<i32>#reduce<i32>
-    (get_global $std/array/arr)
-    (i32.const 32)
-    (i32.const 0)
-   )
-  )
-  (if
-   (i32.ne
-    (get_global $std/array/i)
-    (i32.const 6)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 457)
-     (i32.const 0)
+   (set_global $std/array/boolVal
+    (i32.and
+     (call $~lib/array/Array<i32>#reduce<i32>
+      (get_global $std/array/arr)
+      (i32.const 30)
+      (i32.const 0)
+     )
+     (i32.const 1)
     )
-    (unreachable)
    )
-  )
-  (if
-   (i32.ne
-    (call $~lib/array/Array<i32>#get:length
-     (get_global $std/array/arr)
+   (if
+    (i32.ne
+     (get_global $std/array/boolVal)
+     (i32.const 1)
     )
-    (i32.const 8)
+    (br $folding-inner0)
    )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 458)
-     (i32.const 0)
+   (set_global $std/array/boolVal
+    (i32.and
+     (call $~lib/array/Array<i32>#reduce<i32>
+      (get_global $std/array/arr)
+      (i32.const 31)
+      (i32.const 0)
+     )
+     (i32.const 1)
     )
-    (unreachable)
    )
-  )
-  (set_global $std/array/i
-   (call $~lib/array/Array<i32>#reduce<i32>
-    (get_global $std/array/arr)
-    (i32.const 33)
-    (i32.const 0)
-   )
-  )
-  (if
-   (i32.ne
-    (get_global $std/array/i)
-    (i32.const 10)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 460)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (drop
-   (call $~lib/array/Array<i32>#pop
-    (get_global $std/array/arr)
-   )
-  )
-  (drop
-   (call $~lib/array/Array<i32>#pop
-    (get_global $std/array/arr)
-   )
-  )
-  (drop
-   (call $~lib/array/Array<i32>#pop
-    (get_global $std/array/arr)
-   )
-  )
-  (drop
-   (call $~lib/array/Array<i32>#pop
-    (get_global $std/array/arr)
-   )
-  )
-  (set_global $std/array/i
-   (call $~lib/array/Array<i32>#reduce<i32>
-    (get_global $std/array/arr)
-    (i32.const 34)
-    (i32.const 0)
-   )
-  )
-  (if
-   (i32.ne
-    (get_global $std/array/i)
-    (i32.const 1)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 473)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (if
-   (i32.ne
-    (call $~lib/array/Array<i32>#get:length
-     (get_global $std/array/arr)
-    )
-    (i32.const 2)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 474)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (drop
-   (call $~lib/array/Array<i32>#push
-    (get_global $std/array/arr)
-    (i32.const 2)
-   )
-  )
-  (drop
-   (call $~lib/array/Array<i32>#push
-    (get_global $std/array/arr)
-    (i32.const 3)
-   )
-  )
-  (set_global $std/array/i
-   (call $~lib/array/Array<i32>#reduceRight<i32>
-    (get_global $std/array/arr)
-    (i32.const 35)
-    (i32.const 0)
-   )
-  )
-  (if
-   (i32.ne
-    (get_global $std/array/i)
-    (i32.const 6)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 482)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (set_global $std/array/i
-   (call $~lib/array/Array<i32>#reduceRight<i32>
-    (get_global $std/array/arr)
-    (i32.const 36)
-    (i32.const 4)
-   )
-  )
-  (if
-   (i32.ne
-    (get_global $std/array/i)
-    (i32.const 10)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 486)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (set_global $std/array/boolVal
-   (i32.and
-    (call $~lib/array/Array<i32>#reduceRight<i32>
-     (get_global $std/array/arr)
-     (i32.const 37)
-     (i32.const 0)
-    )
-    (i32.const 1)
-   )
-  )
-  (if
-   (i32.ne
+   (if
     (get_global $std/array/boolVal)
-    (i32.const 1)
+    (br $folding-inner0)
    )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 489)
+   (set_global $std/array/i
+    (call $~lib/array/Array<i32>#reduce<i32>
+     (get_global $std/array/arr)
+     (i32.const 32)
      (i32.const 0)
     )
-    (unreachable)
    )
-  )
-  (set_global $std/array/boolVal
-   (i32.and
+   (if
+    (i32.ne
+     (get_global $std/array/i)
+     (i32.const 6)
+    )
+    (br $folding-inner0)
+   )
+   (if
+    (i32.ne
+     (call $~lib/array/Array<i32>#get:length
+      (get_global $std/array/arr)
+     )
+     (i32.const 8)
+    )
+    (br $folding-inner0)
+   )
+   (set_global $std/array/i
+    (call $~lib/array/Array<i32>#reduce<i32>
+     (get_global $std/array/arr)
+     (i32.const 33)
+     (i32.const 0)
+    )
+   )
+   (if
+    (i32.ne
+     (get_global $std/array/i)
+     (i32.const 10)
+    )
+    (br $folding-inner0)
+   )
+   (drop
+    (call $~lib/array/Array<i32>#pop
+     (get_global $std/array/arr)
+    )
+   )
+   (drop
+    (call $~lib/array/Array<i32>#pop
+     (get_global $std/array/arr)
+    )
+   )
+   (drop
+    (call $~lib/array/Array<i32>#pop
+     (get_global $std/array/arr)
+    )
+   )
+   (drop
+    (call $~lib/array/Array<i32>#pop
+     (get_global $std/array/arr)
+    )
+   )
+   (set_global $std/array/i
+    (call $~lib/array/Array<i32>#reduce<i32>
+     (get_global $std/array/arr)
+     (i32.const 34)
+     (i32.const 0)
+    )
+   )
+   (if
+    (i32.ne
+     (get_global $std/array/i)
+     (i32.const 1)
+    )
+    (br $folding-inner0)
+   )
+   (if
+    (i32.ne
+     (call $~lib/array/Array<i32>#get:length
+      (get_global $std/array/arr)
+     )
+     (i32.const 2)
+    )
+    (br $folding-inner0)
+   )
+   (drop
+    (call $~lib/array/Array<i32>#push
+     (get_global $std/array/arr)
+     (i32.const 2)
+    )
+   )
+   (drop
+    (call $~lib/array/Array<i32>#push
+     (get_global $std/array/arr)
+     (i32.const 3)
+    )
+   )
+   (set_global $std/array/i
     (call $~lib/array/Array<i32>#reduceRight<i32>
      (get_global $std/array/arr)
-     (i32.const 38)
+     (i32.const 35)
      (i32.const 0)
     )
-    (i32.const 1)
    )
-  )
-  (if
-   (get_global $std/array/boolVal)
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 492)
+   (if
+    (i32.ne
+     (get_global $std/array/i)
+     (i32.const 6)
+    )
+    (br $folding-inner0)
+   )
+   (set_global $std/array/i
+    (call $~lib/array/Array<i32>#reduceRight<i32>
+     (get_global $std/array/arr)
+     (i32.const 36)
+     (i32.const 4)
+    )
+   )
+   (if
+    (i32.ne
+     (get_global $std/array/i)
+     (i32.const 10)
+    )
+    (br $folding-inner0)
+   )
+   (set_global $std/array/boolVal
+    (i32.and
+     (call $~lib/array/Array<i32>#reduceRight<i32>
+      (get_global $std/array/arr)
+      (i32.const 37)
+      (i32.const 0)
+     )
+     (i32.const 1)
+    )
+   )
+   (if
+    (i32.ne
+     (get_global $std/array/boolVal)
+     (i32.const 1)
+    )
+    (br $folding-inner0)
+   )
+   (set_global $std/array/boolVal
+    (i32.and
+     (call $~lib/array/Array<i32>#reduceRight<i32>
+      (get_global $std/array/arr)
+      (i32.const 38)
+      (i32.const 0)
+     )
+     (i32.const 1)
+    )
+   )
+   (if
+    (get_global $std/array/boolVal)
+    (br $folding-inner0)
+   )
+   (set_global $std/array/i
+    (call $~lib/array/Array<i32>#reduceRight<i32>
+     (get_global $std/array/arr)
+     (i32.const 39)
      (i32.const 0)
     )
-    (unreachable)
    )
-  )
-  (set_global $std/array/i
-   (call $~lib/array/Array<i32>#reduceRight<i32>
-    (get_global $std/array/arr)
-    (i32.const 39)
-    (i32.const 0)
+   (if
+    (i32.ne
+     (get_global $std/array/i)
+     (i32.const 6)
+    )
+    (br $folding-inner0)
    )
-  )
-  (if
-   (i32.ne
-    (get_global $std/array/i)
-    (i32.const 6)
+   (if
+    (i32.ne
+     (call $~lib/array/Array<i32>#get:length
+      (get_global $std/array/arr)
+     )
+     (i32.const 8)
+    )
+    (br $folding-inner0)
    )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 500)
+   (set_global $std/array/i
+    (call $~lib/array/Array<i32>#reduceRight<i32>
+     (get_global $std/array/arr)
+     (i32.const 40)
      (i32.const 0)
     )
-    (unreachable)
    )
-  )
-  (if
-   (i32.ne
+   (if
+    (i32.ne
+     (get_global $std/array/i)
+     (i32.const 10)
+    )
+    (br $folding-inner0)
+   )
+   (drop
+    (call $~lib/array/Array<i32>#pop
+     (get_global $std/array/arr)
+    )
+   )
+   (drop
+    (call $~lib/array/Array<i32>#pop
+     (get_global $std/array/arr)
+    )
+   )
+   (drop
+    (call $~lib/array/Array<i32>#pop
+     (get_global $std/array/arr)
+    )
+   )
+   (drop
+    (call $~lib/array/Array<i32>#pop
+     (get_global $std/array/arr)
+    )
+   )
+   (set_global $std/array/i
+    (call $~lib/array/Array<i32>#reduceRight<i32>
+     (get_global $std/array/arr)
+     (i32.const 41)
+     (i32.const 0)
+    )
+   )
+   (if
+    (i32.ne
+     (get_global $std/array/i)
+     (i32.const 6)
+    )
+    (br $folding-inner0)
+   )
+   (if
     (call $~lib/array/Array<i32>#get:length
      (get_global $std/array/arr)
     )
-    (i32.const 8)
+    (br $folding-inner0)
    )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 501)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (set_global $std/array/i
-   (call $~lib/array/Array<i32>#reduceRight<i32>
-    (get_global $std/array/arr)
-    (i32.const 40)
-    (i32.const 0)
-   )
-  )
-  (if
-   (i32.ne
-    (get_global $std/array/i)
-    (i32.const 10)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 503)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (drop
-   (call $~lib/array/Array<i32>#pop
-    (get_global $std/array/arr)
-   )
-  )
-  (drop
-   (call $~lib/array/Array<i32>#pop
-    (get_global $std/array/arr)
-   )
-  )
-  (drop
-   (call $~lib/array/Array<i32>#pop
-    (get_global $std/array/arr)
-   )
-  )
-  (drop
-   (call $~lib/array/Array<i32>#pop
-    (get_global $std/array/arr)
-   )
-  )
-  (set_global $std/array/i
-   (call $~lib/array/Array<i32>#reduceRight<i32>
-    (get_global $std/array/arr)
-    (i32.const 41)
-    (i32.const 0)
-   )
-  )
-  (if
-   (i32.ne
-    (get_global $std/array/i)
-    (i32.const 6)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 516)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (if
-   (call $~lib/array/Array<i32>#get:length
-    (get_global $std/array/arr)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 517)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (drop
-   (call $~lib/array/Array<i32>#push
-    (get_global $std/array/arr)
-    (i32.const 0)
-   )
-  )
-  (drop
-   (call $~lib/array/Array<i32>#push
-    (get_global $std/array/arr)
-    (i32.const 1)
-   )
-  )
-  (drop
-   (call $~lib/array/Array<i32>#push
-    (get_global $std/array/arr)
-    (i32.const 2)
-   )
-  )
-  (drop
-   (call $~lib/array/Array<i32>#push
-    (get_global $std/array/arr)
-    (i32.const 3)
-   )
-  )
-  (call $~lib/math/NativeMath.seedRandom
-   (i64.reinterpret/f64
-    (call $~lib/math/JSMath.random)
-   )
-  )
-  (set_global $std/array/reversed0
-   (call $~lib/array/Array<i32>#constructor
-    (i32.const 0)
-    (i32.const 0)
-   )
-  )
-  (set_global $std/array/reversed64
-   (call $std/array/createReverseOrderedArray
-    (i32.const 64)
-   )
-  )
-  (set_global $std/array/reversed128
-   (call $std/array/createReverseOrderedArray
-    (i32.const 128)
-   )
-  )
-  (set_global $std/array/reversed1024
-   (call $std/array/createReverseOrderedArray
-    (i32.const 1024)
-   )
-  )
-  (set_global $std/array/reversed10000
-   (call $std/array/createReverseOrderedArray
-    (i32.const 10000)
-   )
-  )
-  (set_global $std/array/randomized512
-   (call $std/array/createRandomOrderedArray
-    (i32.const 512)
-   )
-  )
-  (call $std/array/assertSortedDefault<i32>
-   (get_global $std/array/reversed0)
-  )
-  (call $std/array/assertSortedDefault<i32>
-   (get_global $std/array/reversed1)
-  )
-  (if
-   (i32.eqz
-    (call $std/array/isArraysEqual<i32>
-     (get_global $std/array/reversed1)
-     (i32.const 464)
+   (drop
+    (call $~lib/array/Array<i32>#push
+     (get_global $std/array/arr)
      (i32.const 0)
     )
    )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 631)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (call $std/array/assertSortedDefault<i32>
-   (get_global $std/array/reversed2)
-  )
-  (if
-   (i32.eqz
-    (call $std/array/isArraysEqual<i32>
-     (get_global $std/array/reversed2)
-     (i32.const 488)
-     (i32.const 0)
+   (drop
+    (call $~lib/array/Array<i32>#push
+     (get_global $std/array/arr)
+     (i32.const 1)
     )
    )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 634)
-     (i32.const 0)
+   (drop
+    (call $~lib/array/Array<i32>#push
+     (get_global $std/array/arr)
+     (i32.const 2)
     )
-    (unreachable)
    )
-  )
-  (call $std/array/assertSortedDefault<i32>
-   (get_global $std/array/reversed4)
-  )
-  (if
-   (i32.eqz
-    (call $std/array/isArraysEqual<i32>
-     (get_global $std/array/reversed4)
-     (get_global $std/array/expected4)
+   (drop
+    (call $~lib/array/Array<i32>#push
+     (get_global $std/array/arr)
+     (i32.const 3)
+    )
+   )
+   (call $~lib/math/NativeMath.seedRandom
+    (i64.reinterpret/f64
+     (call $~lib/math/JSMath.random)
+    )
+   )
+   (set_global $std/array/reversed0
+    (call $~lib/array/Array<i32>#constructor
+     (i32.const 0)
      (i32.const 0)
     )
    )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 637)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (call $std/array/assertSortedDefault<i32>
-   (get_global $std/array/reversed64)
-  )
-  (if
-   (i32.eqz
-    (call $std/array/isArraysEqual<i32>
-     (get_global $std/array/reversed64)
-     (get_global $std/array/expected4)
-     (i32.const 4)
+   (set_global $std/array/reversed64
+    (call $std/array/createReverseOrderedArray
+     (i32.const 64)
     )
    )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 640)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (call $std/array/assertSortedDefault<i32>
-   (get_global $std/array/reversed128)
-  )
-  (if
-   (i32.eqz
-    (call $std/array/isArraysEqual<i32>
-     (get_global $std/array/reversed128)
-     (get_global $std/array/expected4)
-     (i32.const 4)
+   (set_global $std/array/reversed128
+    (call $std/array/createReverseOrderedArray
+     (i32.const 128)
     )
    )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 643)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (call $std/array/assertSortedDefault<i32>
-   (get_global $std/array/reversed1024)
-  )
-  (if
-   (i32.eqz
-    (call $std/array/isArraysEqual<i32>
-     (get_global $std/array/reversed1024)
-     (get_global $std/array/expected4)
-     (i32.const 4)
+   (set_global $std/array/reversed1024
+    (call $std/array/createReverseOrderedArray
+     (i32.const 1024)
     )
    )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 646)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (call $std/array/assertSortedDefault<i32>
-   (get_global $std/array/reversed10000)
-  )
-  (if
-   (i32.eqz
-    (call $std/array/isArraysEqual<i32>
-     (get_global $std/array/reversed10000)
-     (get_global $std/array/expected4)
-     (i32.const 4)
+   (set_global $std/array/reversed10000
+    (call $std/array/createReverseOrderedArray
+     (i32.const 10000)
     )
    )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 649)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (call $std/array/assertSortedDefault<i32>
-   (get_global $std/array/randomized512)
-  )
-  (set_global $std/array/randomized64
-   (call $std/array/createRandomOrderedArray
-    (i32.const 64)
-   )
-  )
-  (set_global $std/array/randomized257
-   (call $std/array/createRandomOrderedArray
-    (i32.const 257)
-   )
-  )
-  (call $std/array/assertSorted<i32>
-   (get_global $std/array/randomized64)
-   (i32.const 43)
-  )
-  (call $std/array/assertSorted<i32>
-   (get_global $std/array/randomized64)
-   (i32.const 44)
-  )
-  (call $std/array/assertSorted<i32>
-   (get_global $std/array/randomized257)
-   (i32.const 45)
-  )
-  (call $std/array/assertSorted<i32>
-   (get_global $std/array/randomized257)
-   (i32.const 46)
-  )
-  (set_global $std/array/reversedNested512
-   (call $std/array/createReverseOrderedNestedArray
-    (i32.const 512)
-   )
-  )
-  (call $std/array/assertSorted<Array<i32>>
-   (get_global $std/array/reversedNested512)
-   (i32.const 47)
-  )
-  (set_global $std/array/reversedElements512
-   (call $std/array/createReverseOrderedElementsArray
-    (i32.const 512)
-   )
-  )
-  (call $std/array/assertSorted<Array<i32>>
-   (get_global $std/array/reversedElements512)
-   (i32.const 48)
-  )
-  (call $std/array/assertSorted<Array<i32>>
-   (get_global $std/array/randomStringsActual)
-   (i32.const 49)
-  )
-  (if
-   (i32.eqz
-    (call $std/array/isArraysEqual<String>
-     (get_global $std/array/randomStringsActual)
-     (get_global $std/array/randomStringsExpected)
-     (i32.const 0)
+   (set_global $std/array/randomized512
+    (call $std/array/createRandomOrderedArray
+     (i32.const 512)
     )
    )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 100)
-     (i32.const 678)
-     (i32.const 0)
+   (call $std/array/assertSortedDefault<i32>
+    (get_global $std/array/reversed0)
+   )
+   (call $std/array/assertSortedDefault<i32>
+    (get_global $std/array/reversed1)
+   )
+   (if
+    (i32.eqz
+     (call $std/array/isArraysEqual<i32>
+      (get_global $std/array/reversed1)
+      (i32.const 464)
+      (i32.const 0)
+     )
     )
-    (unreachable)
+    (br $folding-inner0)
    )
-  )
-  (set_global $std/array/randomStrings400
-   (call $std/array/createRandomStringArray
-    (i32.const 400)
+   (call $std/array/assertSortedDefault<i32>
+    (get_global $std/array/reversed2)
    )
+   (if
+    (i32.eqz
+     (call $std/array/isArraysEqual<i32>
+      (get_global $std/array/reversed2)
+      (i32.const 488)
+      (i32.const 0)
+     )
+    )
+    (br $folding-inner0)
+   )
+   (call $std/array/assertSortedDefault<i32>
+    (get_global $std/array/reversed4)
+   )
+   (if
+    (i32.eqz
+     (call $std/array/isArraysEqual<i32>
+      (get_global $std/array/reversed4)
+      (get_global $std/array/expected4)
+      (i32.const 0)
+     )
+    )
+    (br $folding-inner0)
+   )
+   (call $std/array/assertSortedDefault<i32>
+    (get_global $std/array/reversed64)
+   )
+   (if
+    (i32.eqz
+     (call $std/array/isArraysEqual<i32>
+      (get_global $std/array/reversed64)
+      (get_global $std/array/expected4)
+      (i32.const 4)
+     )
+    )
+    (br $folding-inner0)
+   )
+   (call $std/array/assertSortedDefault<i32>
+    (get_global $std/array/reversed128)
+   )
+   (if
+    (i32.eqz
+     (call $std/array/isArraysEqual<i32>
+      (get_global $std/array/reversed128)
+      (get_global $std/array/expected4)
+      (i32.const 4)
+     )
+    )
+    (br $folding-inner0)
+   )
+   (call $std/array/assertSortedDefault<i32>
+    (get_global $std/array/reversed1024)
+   )
+   (if
+    (i32.eqz
+     (call $std/array/isArraysEqual<i32>
+      (get_global $std/array/reversed1024)
+      (get_global $std/array/expected4)
+      (i32.const 4)
+     )
+    )
+    (br $folding-inner0)
+   )
+   (call $std/array/assertSortedDefault<i32>
+    (get_global $std/array/reversed10000)
+   )
+   (if
+    (i32.eqz
+     (call $std/array/isArraysEqual<i32>
+      (get_global $std/array/reversed10000)
+      (get_global $std/array/expected4)
+      (i32.const 4)
+     )
+    )
+    (br $folding-inner0)
+   )
+   (call $std/array/assertSortedDefault<i32>
+    (get_global $std/array/randomized512)
+   )
+   (set_global $std/array/randomized64
+    (call $std/array/createRandomOrderedArray
+     (i32.const 64)
+    )
+   )
+   (set_global $std/array/randomized257
+    (call $std/array/createRandomOrderedArray
+     (i32.const 257)
+    )
+   )
+   (call $std/array/assertSorted<i32>
+    (get_global $std/array/randomized64)
+    (i32.const 43)
+   )
+   (call $std/array/assertSorted<i32>
+    (get_global $std/array/randomized64)
+    (i32.const 44)
+   )
+   (call $std/array/assertSorted<i32>
+    (get_global $std/array/randomized257)
+    (i32.const 45)
+   )
+   (call $std/array/assertSorted<i32>
+    (get_global $std/array/randomized257)
+    (i32.const 46)
+   )
+   (set_global $std/array/reversedNested512
+    (call $std/array/createReverseOrderedNestedArray
+     (i32.const 512)
+    )
+   )
+   (call $std/array/assertSorted<Array<i32>>
+    (get_global $std/array/reversedNested512)
+    (i32.const 47)
+   )
+   (set_global $std/array/reversedElements512
+    (call $std/array/createReverseOrderedElementsArray
+     (i32.const 512)
+    )
+   )
+   (call $std/array/assertSorted<Array<i32>>
+    (get_global $std/array/reversedElements512)
+    (i32.const 48)
+   )
+   (call $std/array/assertSorted<Array<i32>>
+    (get_global $std/array/randomStringsActual)
+    (i32.const 49)
+   )
+   (if
+    (i32.eqz
+     (call $std/array/isArraysEqual<String>
+      (get_global $std/array/randomStringsActual)
+      (get_global $std/array/randomStringsExpected)
+      (i32.const 0)
+     )
+    )
+    (br $folding-inner0)
+   )
+   (set_global $std/array/randomStrings400
+    (call $std/array/createRandomStringArray
+     (i32.const 400)
+    )
+   )
+   (call $std/array/assertSorted<Array<i32>>
+    (get_global $std/array/randomStrings400)
+    (i32.const 50)
+   )
+   (return)
   )
-  (call $std/array/assertSorted<Array<i32>>
-   (get_global $std/array/randomStrings400)
-   (i32.const 50)
-  )
+  (call $~lib/env/abort)
+  (unreachable)
  )
 )

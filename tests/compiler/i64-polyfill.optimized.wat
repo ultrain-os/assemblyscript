@@ -2,6 +2,9 @@
  (type $i (func (result i32)))
  (type $iiv (func (param i32 i32)))
  (type $iiiiv (func (param i32 i32 i32 i32)))
+ (type $v (func))
+ (global $~lib/allocator/arena/startOffset (mut i32) (i32.const 0))
+ (global $~lib/allocator/arena/offset (mut i32) (i32.const 0))
  (global $../../examples/i64-polyfill/assembly/i64/lo (mut i32) (i32.const 0))
  (global $../../examples/i64-polyfill/assembly/i64/hi (mut i32) (i32.const 0))
  (memory $0 0)
@@ -37,6 +40,7 @@
  (export "gt_u" (func $../../examples/i64-polyfill/assembly/i64/gt_u))
  (export "ge_s" (func $../../examples/i64-polyfill/assembly/i64/ge_s))
  (export "ge_u" (func $../../examples/i64-polyfill/assembly/i64/ge_u))
+ (start $start)
  (func $../../examples/i64-polyfill/assembly/i64/getHi (; 0 ;) (type $i) (result i32)
   (get_global $../../examples/i64-polyfill/assembly/i64/hi)
  )
@@ -1052,6 +1056,14 @@
   )
   (set_global $../../examples/i64-polyfill/assembly/i64/hi
    (i32.const 0)
+  )
+ )
+ (func $start (; 31 ;) (type $v)
+  (set_global $~lib/allocator/arena/startOffset
+   (i32.const 8)
+  )
+  (set_global $~lib/allocator/arena/offset
+   (get_global $~lib/allocator/arena/startOffset)
   )
  )
 )

@@ -1,8 +1,9 @@
 (module
- (type $iiiiv (func (param i32 i32 i32 i32)))
- (type $iiv (func (param i32 i32)))
  (type $v (func))
- (import "env" "abort" (func $~lib/env/abort (param i32 i32 i32 i32)))
+ (type $iiv (func (param i32 i32)))
+ (import "env" "abort" (func $~lib/env/abort))
+ (global $~lib/allocator/arena/startOffset (mut i32) (i32.const 0))
+ (global $~lib/allocator/arena/offset (mut i32) (i32.const 0))
  (global $builtins/b (mut i32) (i32.const 0))
  (global $builtins/i (mut i32) (i32.const 0))
  (global $builtins/I (mut i64) (i64.const 0))
@@ -28,630 +29,593 @@
   (nop)
  )
  (func $start (; 3 ;) (type $v)
-  (set_global $builtins/i
-   (i32.const 31)
-  )
-  (set_global $builtins/i
-   (i32.const 0)
-  )
-  (set_global $builtins/i
-   (i32.const 1)
-  )
-  (set_global $builtins/i
-   (i32.const 2)
-  )
-  (set_global $builtins/i
-   (i32.const -2147483648)
-  )
-  (set_global $builtins/i
-   (i32.const 42)
-  )
-  (if
-   (i32.ne
-    (get_global $builtins/i)
-    (i32.const 42)
+  (block $folding-inner0
+   (set_global $~lib/allocator/arena/startOffset
+    (i32.const 48)
    )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 8)
-     (i32.const 50)
-     (i32.const 19)
-    )
-    (unreachable)
+   (set_global $~lib/allocator/arena/offset
+    (get_global $~lib/allocator/arena/startOffset)
    )
-  )
-  (set_global $builtins/i
-   (i32.const 2)
-  )
-  (if
-   (i32.ne
-    (get_global $builtins/i)
+   (set_global $builtins/i
+    (i32.const 31)
+   )
+   (set_global $builtins/i
+    (i32.const 0)
+   )
+   (set_global $builtins/i
+    (i32.const 1)
+   )
+   (set_global $builtins/i
     (i32.const 2)
    )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 8)
-     (i32.const 51)
-     (i32.const 20)
-    )
-    (unreachable)
+   (set_global $builtins/i
+    (i32.const -2147483648)
    )
-  )
-  (set_global $builtins/i
-   (i32.const 1)
-  )
-  (if
-   (i32.ne
-    (get_global $builtins/i)
+   (set_global $builtins/i
+    (i32.const 42)
+   )
+   (if
+    (i32.ne
+     (get_global $builtins/i)
+     (i32.const 42)
+    )
+    (br $folding-inner0)
+   )
+   (set_global $builtins/i
+    (i32.const 2)
+   )
+   (if
+    (i32.ne
+     (get_global $builtins/i)
+     (i32.const 2)
+    )
+    (br $folding-inner0)
+   )
+   (set_global $builtins/i
     (i32.const 1)
    )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 8)
-     (i32.const 52)
-     (i32.const 20)
+   (if
+    (i32.ne
+     (get_global $builtins/i)
+     (i32.const 1)
     )
-    (unreachable)
+    (br $folding-inner0)
    )
-  )
-  (set_global $builtins/I
-   (i64.const 63)
-  )
-  (set_global $builtins/I
-   (i64.const 0)
-  )
-  (set_global $builtins/I
-   (i64.const 1)
-  )
-  (set_global $builtins/I
-   (i64.const 2)
-  )
-  (set_global $builtins/I
-   (i64.const -9223372036854775808)
-  )
-  (set_global $builtins/I
-   (i64.const 42)
-  )
-  (if
-   (i64.ne
-    (get_global $builtins/I)
-    (i64.const 42)
+   (set_global $builtins/I
+    (i64.const 63)
    )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 8)
-     (i32.const 68)
-     (i32.const 19)
-    )
-    (unreachable)
+   (set_global $builtins/I
+    (i64.const 0)
    )
-  )
-  (set_global $builtins/I
-   (i64.const 2)
-  )
-  (if
-   (i64.ne
-    (get_global $builtins/I)
+   (set_global $builtins/I
+    (i64.const 1)
+   )
+   (set_global $builtins/I
     (i64.const 2)
    )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
+   (set_global $builtins/I
+    (i64.const -9223372036854775808)
+   )
+   (set_global $builtins/I
+    (i64.const 42)
+   )
+   (if
+    (i64.ne
+     (get_global $builtins/I)
+     (i64.const 42)
+    )
+    (br $folding-inner0)
+   )
+   (set_global $builtins/I
+    (i64.const 2)
+   )
+   (if
+    (i64.ne
+     (get_global $builtins/I)
+     (i64.const 2)
+    )
+    (br $folding-inner0)
+   )
+   (set_global $builtins/I
+    (i64.const 1)
+   )
+   (if
+    (i32.ne
+     (get_global $builtins/i)
+     (i32.const 1)
+    )
+    (br $folding-inner0)
+   )
+   (set_global $builtins/f
+    (f32.const nan:0x400000)
+   )
+   (set_global $builtins/f
+    (f32.const inf)
+   )
+   (set_global $builtins/f
+    (f32.const 1.25)
+   )
+   (set_global $builtins/f
+    (f32.const 2)
+   )
+   (set_global $builtins/f
+    (f32.const 1.25)
+   )
+   (set_global $builtins/f
+    (f32.const 1)
+   )
+   (set_global $builtins/f
+    (f32.const 2.5)
+   )
+   (set_global $builtins/f
+    (f32.const 1.25)
+   )
+   (set_global $builtins/f
+    (f32.const 1)
+   )
+   (set_global $builtins/f
+    (f32.const 1.1180340051651)
+   )
+   (set_global $builtins/f
+    (f32.const 1)
+   )
+   (set_global $builtins/b
+    (i32.const 0)
+   )
+   (set_global $builtins/b
+    (i32.const 1)
+   )
+   (set_global $builtins/F
+    (f64.const nan:0x8000000000000)
+   )
+   (set_global $builtins/F
+    (f64.const inf)
+   )
+   (set_global $builtins/F
+    (f64.const 1.25)
+   )
+   (set_global $builtins/F
+    (f64.const 2)
+   )
+   (set_global $builtins/F
+    (f64.const 1.25)
+   )
+   (set_global $builtins/F
+    (f64.const 1)
+   )
+   (set_global $builtins/F
+    (f64.const 2.5)
+   )
+   (set_global $builtins/F
+    (f64.const 1.25)
+   )
+   (set_global $builtins/F
+    (f64.const 1)
+   )
+   (set_global $builtins/F
+    (f64.const 1.118033988749895)
+   )
+   (set_global $builtins/F
+    (f64.const 1)
+   )
+   (set_global $builtins/b
+    (i32.const 0)
+   )
+   (set_global $builtins/b
+    (i32.const 1)
+   )
+   (set_global $builtins/i
+    (i32.load
      (i32.const 8)
-     (i32.const 69)
-     (i32.const 20)
+    )
+   )
+   (i32.store
+    (i32.const 8)
+    (get_global $builtins/i)
+   )
+   (i32.store
+    (i32.const 8)
+    (i32.load
+     (i32.const 8)
+    )
+   )
+   (set_global $builtins/I
+    (i64.load
+     (i32.const 8)
+    )
+   )
+   (i64.store
+    (i32.const 8)
+    (get_global $builtins/I)
+   )
+   (i64.store
+    (i32.const 8)
+    (i64.load
+     (i32.const 8)
+    )
+   )
+   (set_global $builtins/f
+    (f32.load
+     (i32.const 8)
+    )
+   )
+   (f32.store
+    (i32.const 8)
+    (get_global $builtins/f)
+   )
+   (f32.store
+    (i32.const 8)
+    (f32.load
+     (i32.const 8)
+    )
+   )
+   (set_global $builtins/F
+    (f64.load
+     (i32.const 8)
+    )
+   )
+   (f64.store
+    (i32.const 8)
+    (get_global $builtins/F)
+   )
+   (f64.store
+    (i32.const 8)
+    (f64.load
+     (i32.const 8)
+    )
+   )
+   (set_global $builtins/i
+    (i32.load
+     (i32.const 8)
+    )
+   )
+   (i32.store
+    (i32.const 8)
+    (get_global $builtins/i)
+   )
+   (i32.store
+    (i32.const 8)
+    (i32.load
+     (i32.const 8)
+    )
+   )
+   (set_global $builtins/I
+    (i64.load
+     (i32.const 8)
+    )
+   )
+   (i64.store
+    (i32.const 8)
+    (get_global $builtins/I)
+   )
+   (i64.store
+    (i32.const 8)
+    (i64.load
+     (i32.const 8)
+    )
+   )
+   (set_global $builtins/f
+    (f32.load
+     (i32.const 8)
+    )
+   )
+   (f32.store
+    (i32.const 8)
+    (get_global $builtins/f)
+   )
+   (f32.store
+    (i32.const 8)
+    (f32.load
+     (i32.const 8)
+    )
+   )
+   (set_global $builtins/F
+    (f64.load
+     (i32.const 8)
+    )
+   )
+   (f64.store
+    (i32.const 8)
+    (get_global $builtins/F)
+   )
+   (f64.store
+    (i32.const 8)
+    (f64.load
+     (i32.const 8)
+    )
+   )
+   (set_global $builtins/i
+    (i32.load8_s
+     (i32.const 8)
+    )
+   )
+   (set_global $builtins/i
+    (i32.load16_s
+     (i32.const 8)
+    )
+   )
+   (set_global $builtins/i
+    (i32.load
+     (i32.const 8)
+    )
+   )
+   (set_global $builtins/i
+    (i32.load8_u
+     (i32.const 8)
+    )
+   )
+   (set_global $builtins/i
+    (i32.load16_u
+     (i32.const 8)
+    )
+   )
+   (set_global $builtins/i
+    (i32.load
+     (i32.const 8)
+    )
+   )
+   (set_global $builtins/u
+    (i32.load8_u
+     (i32.const 8)
+    )
+   )
+   (set_global $builtins/u
+    (i32.load16_u
+     (i32.const 8)
+    )
+   )
+   (set_global $builtins/u
+    (i32.load
+     (i32.const 8)
+    )
+   )
+   (set_global $builtins/u
+    (i32.load8_s
+     (i32.const 8)
+    )
+   )
+   (set_global $builtins/u
+    (i32.load16_s
+     (i32.const 8)
+    )
+   )
+   (set_global $builtins/u
+    (i32.load
+     (i32.const 8)
+    )
+   )
+   (set_global $builtins/I
+    (i64.load8_s
+     (i32.const 8)
+    )
+   )
+   (set_global $builtins/I
+    (i64.load16_s
+     (i32.const 8)
+    )
+   )
+   (set_global $builtins/I
+    (i64.load32_s
+     (i32.const 8)
+    )
+   )
+   (set_global $builtins/I
+    (i64.load
+     (i32.const 8)
+    )
+   )
+   (set_global $builtins/U
+    (i64.load8_u
+     (i32.const 8)
+    )
+   )
+   (set_global $builtins/U
+    (i64.load16_u
+     (i32.const 8)
+    )
+   )
+   (set_global $builtins/U
+    (i64.load32_u
+     (i32.const 8)
+    )
+   )
+   (set_global $builtins/U
+    (i64.load
+     (i32.const 8)
+    )
+   )
+   (i32.store8
+    (i32.const 8)
+    (i32.const 1)
+   )
+   (i32.store16
+    (i32.const 8)
+    (i32.const 1)
+   )
+   (i32.store
+    (i32.const 8)
+    (i32.const 1)
+   )
+   (i64.store8
+    (i32.const 8)
+    (i64.const 1)
+   )
+   (i64.store16
+    (i32.const 8)
+    (i64.const 1)
+   )
+   (i64.store32
+    (i32.const 8)
+    (i64.const 1)
+   )
+   (i64.store
+    (i32.const 8)
+    (i64.const 1)
+   )
+   (i64.store
+    (i32.const 8)
+    (i64.const 1)
+   )
+   (set_global $builtins/i
+    (i32.const 1067450368)
+   )
+   (set_global $builtins/f
+    (f32.const 3.5032461608120427e-44)
+   )
+   (set_global $builtins/I
+    (i64.const 4608308318706860032)
+   )
+   (set_global $builtins/F
+    (f64.const 1.24e-322)
+   )
+   (drop
+    (current_memory)
+   )
+   (drop
+    (grow_memory
+     (i32.const 1)
+    )
+   )
+   (set_global $builtins/s
+    (current_memory)
+   )
+   (set_global $builtins/s
+    (grow_memory
+     (i32.const 1)
+    )
+   )
+   (set_global $builtins/i
+    (i32.const 10)
+   )
+   (set_global $builtins/I
+    (i64.const 200)
+   )
+   (set_global $builtins/f
+    (f32.const 1.25)
+   )
+   (set_global $builtins/F
+    (f64.const 25)
+   )
+   (if
+    (i32.eqz
+     (get_global $builtins/i)
     )
     (unreachable)
    )
-  )
-  (set_global $builtins/I
-   (i64.const 1)
-  )
-  (if
-   (i32.ne
-    (get_global $builtins/i)
+   (call_indirect (type $iiv)
     (i32.const 1)
+    (i32.const 2)
+    (get_global $builtins/fn)
    )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
+   (drop
+    (i32.load8_s
      (i32.const 8)
-     (i32.const 70)
-     (i32.const 20)
     )
-    (unreachable)
    )
-  )
-  (set_global $builtins/f
-   (f32.const nan:0x400000)
-  )
-  (set_global $builtins/f
-   (f32.const inf)
-  )
-  (set_global $builtins/f
-   (f32.const 1.25)
-  )
-  (set_global $builtins/f
-   (f32.const 2)
-  )
-  (set_global $builtins/f
-   (f32.const 1.25)
-  )
-  (set_global $builtins/f
-   (f32.const 1)
-  )
-  (set_global $builtins/f
-   (f32.const 2.5)
-  )
-  (set_global $builtins/f
-   (f32.const 1.25)
-  )
-  (set_global $builtins/f
-   (f32.const 1)
-  )
-  (set_global $builtins/f
-   (f32.const 1.1180340051651)
-  )
-  (set_global $builtins/f
-   (f32.const 1)
-  )
-  (set_global $builtins/b
-   (i32.const 0)
-  )
-  (set_global $builtins/b
-   (i32.const 1)
-  )
-  (set_global $builtins/F
-   (f64.const nan:0x8000000000000)
-  )
-  (set_global $builtins/F
-   (f64.const inf)
-  )
-  (set_global $builtins/F
-   (f64.const 1.25)
-  )
-  (set_global $builtins/F
-   (f64.const 2)
-  )
-  (set_global $builtins/F
-   (f64.const 1.25)
-  )
-  (set_global $builtins/F
-   (f64.const 1)
-  )
-  (set_global $builtins/F
-   (f64.const 2.5)
-  )
-  (set_global $builtins/F
-   (f64.const 1.25)
-  )
-  (set_global $builtins/F
-   (f64.const 1)
-  )
-  (set_global $builtins/F
-   (f64.const 1.118033988749895)
-  )
-  (set_global $builtins/F
-   (f64.const 1)
-  )
-  (set_global $builtins/b
-   (i32.const 0)
-  )
-  (set_global $builtins/b
-   (i32.const 1)
-  )
-  (set_global $builtins/i
-   (i32.load
+   (drop
+    (i32.load8_u
+     (i32.const 8)
+    )
+   )
+   (drop
+    (i32.load16_s
+     (i32.const 8)
+    )
+   )
+   (drop
+    (i32.load16_u
+     (i32.const 8)
+    )
+   )
+   (drop
+    (i32.load
+     (i32.const 8)
+    )
+   )
+   (drop
+    (i64.load8_s
+     (i32.const 8)
+    )
+   )
+   (drop
+    (i64.load8_u
+     (i32.const 8)
+    )
+   )
+   (drop
+    (i64.load16_s
+     (i32.const 8)
+    )
+   )
+   (drop
+    (i64.load16_u
+     (i32.const 8)
+    )
+   )
+   (drop
+    (i64.load32_s
+     (i32.const 8)
+    )
+   )
+   (drop
+    (i64.load32_u
+     (i32.const 8)
+    )
+   )
+   (drop
+    (i64.load
+     (i32.const 8)
+    )
+   )
+   (drop
+    (f32.load
+     (i32.const 8)
+    )
+   )
+   (drop
+    (f64.load
+     (i32.const 8)
+    )
+   )
+   (i32.store8
     (i32.const 8)
-   )
-  )
-  (i32.store
-   (i32.const 8)
-   (get_global $builtins/i)
-  )
-  (i32.store
-   (i32.const 8)
-   (i32.load
-    (i32.const 8)
-   )
-  )
-  (set_global $builtins/I
-   (i64.load
-    (i32.const 8)
-   )
-  )
-  (i64.store
-   (i32.const 8)
-   (get_global $builtins/I)
-  )
-  (i64.store
-   (i32.const 8)
-   (i64.load
-    (i32.const 8)
-   )
-  )
-  (set_global $builtins/f
-   (f32.load
-    (i32.const 8)
-   )
-  )
-  (f32.store
-   (i32.const 8)
-   (get_global $builtins/f)
-  )
-  (f32.store
-   (i32.const 8)
-   (f32.load
-    (i32.const 8)
-   )
-  )
-  (set_global $builtins/F
-   (f64.load
-    (i32.const 8)
-   )
-  )
-  (f64.store
-   (i32.const 8)
-   (get_global $builtins/F)
-  )
-  (f64.store
-   (i32.const 8)
-   (f64.load
-    (i32.const 8)
-   )
-  )
-  (set_global $builtins/i
-   (i32.load
-    (i32.const 8)
-   )
-  )
-  (i32.store
-   (i32.const 8)
-   (get_global $builtins/i)
-  )
-  (i32.store
-   (i32.const 8)
-   (i32.load
-    (i32.const 8)
-   )
-  )
-  (set_global $builtins/I
-   (i64.load
-    (i32.const 8)
-   )
-  )
-  (i64.store
-   (i32.const 8)
-   (get_global $builtins/I)
-  )
-  (i64.store
-   (i32.const 8)
-   (i64.load
-    (i32.const 8)
-   )
-  )
-  (set_global $builtins/f
-   (f32.load
-    (i32.const 8)
-   )
-  )
-  (f32.store
-   (i32.const 8)
-   (get_global $builtins/f)
-  )
-  (f32.store
-   (i32.const 8)
-   (f32.load
-    (i32.const 8)
-   )
-  )
-  (set_global $builtins/F
-   (f64.load
-    (i32.const 8)
-   )
-  )
-  (f64.store
-   (i32.const 8)
-   (get_global $builtins/F)
-  )
-  (f64.store
-   (i32.const 8)
-   (f64.load
-    (i32.const 8)
-   )
-  )
-  (set_global $builtins/i
-   (i32.load8_s
-    (i32.const 8)
-   )
-  )
-  (set_global $builtins/i
-   (i32.load16_s
-    (i32.const 8)
-   )
-  )
-  (set_global $builtins/i
-   (i32.load
-    (i32.const 8)
-   )
-  )
-  (set_global $builtins/i
-   (i32.load8_u
-    (i32.const 8)
-   )
-  )
-  (set_global $builtins/i
-   (i32.load16_u
-    (i32.const 8)
-   )
-  )
-  (set_global $builtins/i
-   (i32.load
-    (i32.const 8)
-   )
-  )
-  (set_global $builtins/u
-   (i32.load8_u
-    (i32.const 8)
-   )
-  )
-  (set_global $builtins/u
-   (i32.load16_u
-    (i32.const 8)
-   )
-  )
-  (set_global $builtins/u
-   (i32.load
-    (i32.const 8)
-   )
-  )
-  (set_global $builtins/u
-   (i32.load8_s
-    (i32.const 8)
-   )
-  )
-  (set_global $builtins/u
-   (i32.load16_s
-    (i32.const 8)
-   )
-  )
-  (set_global $builtins/u
-   (i32.load
-    (i32.const 8)
-   )
-  )
-  (set_global $builtins/I
-   (i64.load8_s
-    (i32.const 8)
-   )
-  )
-  (set_global $builtins/I
-   (i64.load16_s
-    (i32.const 8)
-   )
-  )
-  (set_global $builtins/I
-   (i64.load32_s
-    (i32.const 8)
-   )
-  )
-  (set_global $builtins/I
-   (i64.load
-    (i32.const 8)
-   )
-  )
-  (set_global $builtins/U
-   (i64.load8_u
-    (i32.const 8)
-   )
-  )
-  (set_global $builtins/U
-   (i64.load16_u
-    (i32.const 8)
-   )
-  )
-  (set_global $builtins/U
-   (i64.load32_u
-    (i32.const 8)
-   )
-  )
-  (set_global $builtins/U
-   (i64.load
-    (i32.const 8)
-   )
-  )
-  (i32.store8
-   (i32.const 8)
-   (i32.const 1)
-  )
-  (i32.store16
-   (i32.const 8)
-   (i32.const 1)
-  )
-  (i32.store
-   (i32.const 8)
-   (i32.const 1)
-  )
-  (i64.store8
-   (i32.const 8)
-   (i64.const 1)
-  )
-  (i64.store16
-   (i32.const 8)
-   (i64.const 1)
-  )
-  (i64.store32
-   (i32.const 8)
-   (i64.const 1)
-  )
-  (i64.store
-   (i32.const 8)
-   (i64.const 1)
-  )
-  (i64.store
-   (i32.const 8)
-   (i64.const 1)
-  )
-  (set_global $builtins/i
-   (i32.const 1067450368)
-  )
-  (set_global $builtins/f
-   (f32.const 3.5032461608120427e-44)
-  )
-  (set_global $builtins/I
-   (i64.const 4608308318706860032)
-  )
-  (set_global $builtins/F
-   (f64.const 1.24e-322)
-  )
-  (drop
-   (current_memory)
-  )
-  (drop
-   (grow_memory
     (i32.const 1)
    )
-  )
-  (set_global $builtins/s
-   (current_memory)
-  )
-  (set_global $builtins/s
-   (grow_memory
+   (i32.store16
+    (i32.const 8)
     (i32.const 1)
    )
-  )
-  (set_global $builtins/i
-   (i32.const 10)
-  )
-  (set_global $builtins/I
-   (i64.const 200)
-  )
-  (set_global $builtins/f
-   (f32.const 1.25)
-  )
-  (set_global $builtins/F
-   (f64.const 25)
-  )
-  (if
-   (i32.eqz
-    (get_global $builtins/i)
-   )
-   (unreachable)
-  )
-  (call_indirect (type $iiv)
-   (i32.const 1)
-   (i32.const 2)
-   (get_global $builtins/fn)
-  )
-  (drop
-   (i32.load8_s
+   (i32.store
     (i32.const 8)
+    (i32.const 1)
    )
-  )
-  (drop
-   (i32.load8_u
+   (i32.store8
     (i32.const 8)
+    (i32.const 1)
    )
-  )
-  (drop
-   (i32.load16_s
+   (i32.store16
     (i32.const 8)
+    (i32.const 1)
    )
-  )
-  (drop
-   (i32.load16_u
+   (i32.store
     (i32.const 8)
+    (i32.const 1)
    )
-  )
-  (drop
-   (i32.load
+   (i64.store
     (i32.const 8)
+    (i64.const 1)
    )
-  )
-  (drop
-   (i64.load8_s
+   (f32.store
     (i32.const 8)
+    (f32.const 1)
    )
-  )
-  (drop
-   (i64.load8_u
+   (f64.store
     (i32.const 8)
+    (f64.const 1)
    )
+   (return)
   )
-  (drop
-   (i64.load16_s
-    (i32.const 8)
-   )
-  )
-  (drop
-   (i64.load16_u
-    (i32.const 8)
-   )
-  )
-  (drop
-   (i64.load32_s
-    (i32.const 8)
-   )
-  )
-  (drop
-   (i64.load32_u
-    (i32.const 8)
-   )
-  )
-  (drop
-   (i64.load
-    (i32.const 8)
-   )
-  )
-  (drop
-   (f32.load
-    (i32.const 8)
-   )
-  )
-  (drop
-   (f64.load
-    (i32.const 8)
-   )
-  )
-  (i32.store8
-   (i32.const 8)
-   (i32.const 1)
-  )
-  (i32.store16
-   (i32.const 8)
-   (i32.const 1)
-  )
-  (i32.store
-   (i32.const 8)
-   (i32.const 1)
-  )
-  (i32.store8
-   (i32.const 8)
-   (i32.const 1)
-  )
-  (i32.store16
-   (i32.const 8)
-   (i32.const 1)
-  )
-  (i32.store
-   (i32.const 8)
-   (i32.const 1)
-  )
-  (i64.store
-   (i32.const 8)
-   (i64.const 1)
-  )
-  (f32.store
-   (i32.const 8)
-   (f32.const 1)
-  )
-  (f64.store
-   (i32.const 8)
-   (f64.const 1)
-  )
+  (call $~lib/env/abort)
+  (unreachable)
  )
 )

@@ -1,9 +1,8 @@
 (module
  (type $ii (func (param i32) (result i32)))
- (type $iiiiv (func (param i32 i32 i32 i32)))
- (type $iv (func (param i32)))
  (type $v (func))
- (import "env" "abort" (func $~lib/env/abort (param i32 i32 i32 i32)))
+ (type $iv (func (param i32)))
+ (import "env" "abort" (func $~lib/env/abort))
  (global $~lib/allocator/arena/startOffset (mut i32) (i32.const 0))
  (global $~lib/allocator/arena/offset (mut i32) (i32.const 0))
  (global $std/string-utf8/str (mut i32) (i32.const 8))
@@ -546,223 +545,132 @@
   )
  )
  (func $start (; 7 ;) (type $v)
-  (set_global $~lib/allocator/arena/startOffset
-   (i32.const 64)
-  )
-  (set_global $~lib/allocator/arena/offset
-   (get_global $~lib/allocator/arena/startOffset)
-  )
-  (set_global $std/string-utf8/len
-   (call $~lib/string/String#get:lengthUTF8
-    (get_global $std/string-utf8/str)
+  (block $folding-inner0
+   (set_global $~lib/allocator/arena/startOffset
+    (i32.const 64)
    )
-  )
-  (if
-   (i32.ne
-    (get_global $std/string-utf8/len)
-    (i32.const 11)
+   (set_global $~lib/allocator/arena/offset
+    (get_global $~lib/allocator/arena/startOffset)
    )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 24)
-     (i32.const 7)
-     (i32.const 0)
+   (set_global $std/string-utf8/len
+    (call $~lib/string/String#get:lengthUTF8
+     (get_global $std/string-utf8/str)
     )
-    (unreachable)
    )
-  )
-  (set_global $std/string-utf8/ptr
-   (call $~lib/string/String#toUTF8
-    (get_global $std/string-utf8/str)
-   )
-  )
-  (if
-   (i32.ne
-    (i32.load8_u
-     (get_global $std/string-utf8/ptr)
-    )
-    (i32.const 240)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 24)
+   (if
+    (i32.ne
+     (get_global $std/string-utf8/len)
      (i32.const 11)
-     (i32.const 0)
     )
-    (unreachable)
+    (br $folding-inner0)
    )
-  )
-  (if
-   (i32.ne
-    (i32.load8_u offset=1
+   (set_global $std/string-utf8/ptr
+    (call $~lib/string/String#toUTF8
+     (get_global $std/string-utf8/str)
+    )
+   )
+   (if
+    (i32.ne
+     (i32.load8_u
+      (get_global $std/string-utf8/ptr)
+     )
+     (i32.const 240)
+    )
+    (br $folding-inner0)
+   )
+   (if
+    (i32.ne
+     (i32.load8_u offset=1
+      (get_global $std/string-utf8/ptr)
+     )
+     (i32.const 144)
+    )
+    (br $folding-inner0)
+   )
+   (if
+    (i32.ne
+     (i32.load8_u offset=2
+      (get_global $std/string-utf8/ptr)
+     )
+     (i32.const 144)
+    )
+    (br $folding-inner0)
+   )
+   (if
+    (i32.ne
+     (i32.load8_u offset=3
+      (get_global $std/string-utf8/ptr)
+     )
+     (i32.const 183)
+    )
+    (br $folding-inner0)
+   )
+   (if
+    (i32.ne
+     (i32.load8_u offset=4
+      (get_global $std/string-utf8/ptr)
+     )
+     (i32.const 104)
+    )
+    (br $folding-inner0)
+   )
+   (if
+    (i32.ne
+     (i32.load8_u offset=5
+      (get_global $std/string-utf8/ptr)
+     )
+     (i32.const 105)
+    )
+    (br $folding-inner0)
+   )
+   (if
+    (i32.ne
+     (i32.load8_u offset=6
+      (get_global $std/string-utf8/ptr)
+     )
+     (i32.const 240)
+    )
+    (br $folding-inner0)
+   )
+   (if
+    (i32.ne
+     (i32.load8_u offset=7
+      (get_global $std/string-utf8/ptr)
+     )
+     (i32.const 164)
+    )
+    (br $folding-inner0)
+   )
+   (if
+    (i32.ne
+     (i32.load8_u offset=8
+      (get_global $std/string-utf8/ptr)
+     )
+     (i32.const 173)
+    )
+    (br $folding-inner0)
+   )
+   (if
+    (i32.ne
+     (i32.load8_u offset=9
+      (get_global $std/string-utf8/ptr)
+     )
+     (i32.const 162)
+    )
+    (br $folding-inner0)
+   )
+   (if
+    (i32.load8_u offset=10
      (get_global $std/string-utf8/ptr)
     )
-    (i32.const 144)
+    (br $folding-inner0)
    )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 24)
-     (i32.const 12)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (if
-   (i32.ne
-    (i32.load8_u offset=2
-     (get_global $std/string-utf8/ptr)
-    )
-    (i32.const 144)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 24)
-     (i32.const 13)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (if
-   (i32.ne
-    (i32.load8_u offset=3
-     (get_global $std/string-utf8/ptr)
-    )
-    (i32.const 183)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 24)
-     (i32.const 14)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (if
-   (i32.ne
-    (i32.load8_u offset=4
-     (get_global $std/string-utf8/ptr)
-    )
-    (i32.const 104)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 24)
-     (i32.const 15)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (if
-   (i32.ne
-    (i32.load8_u offset=5
-     (get_global $std/string-utf8/ptr)
-    )
-    (i32.const 105)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 24)
-     (i32.const 16)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (if
-   (i32.ne
-    (i32.load8_u offset=6
-     (get_global $std/string-utf8/ptr)
-    )
-    (i32.const 240)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 24)
-     (i32.const 17)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (if
-   (i32.ne
-    (i32.load8_u offset=7
-     (get_global $std/string-utf8/ptr)
-    )
-    (i32.const 164)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 24)
-     (i32.const 18)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (if
-   (i32.ne
-    (i32.load8_u offset=8
-     (get_global $std/string-utf8/ptr)
-    )
-    (i32.const 173)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 24)
-     (i32.const 19)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (if
-   (i32.ne
-    (i32.load8_u offset=9
-     (get_global $std/string-utf8/ptr)
-    )
-    (i32.const 162)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 24)
-     (i32.const 20)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (if
-   (i32.load8_u offset=10
+   (call $~lib/memory/memory.free
     (get_global $std/string-utf8/ptr)
    )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 24)
-     (i32.const 21)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
+   (return)
   )
-  (call $~lib/memory/memory.free
-   (get_global $std/string-utf8/ptr)
-  )
+  (call $~lib/env/abort)
+  (unreachable)
  )
 )

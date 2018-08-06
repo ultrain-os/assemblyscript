@@ -5,6 +5,8 @@
  (import "external" "bar" (func $external/two))
  (import "foo" "baz" (func $external/three))
  (import "foo" "var" (global $external/var_ i32))
+ (global $~lib/allocator/arena/startOffset (mut i32) (i32.const 0))
+ (global $~lib/allocator/arena/offset (mut i32) (i32.const 0))
  (memory $0 0)
  (export "memory" (memory $0))
  (export "foo.bar" (func $external/foo.bar))
@@ -12,4 +14,13 @@
  (export "two" (func $external/two))
  (export "three" (func $external/three))
  (export "var_" (global $external/var_))
+ (start $start)
+ (func $start (; 4 ;) (type $v)
+  (set_global $~lib/allocator/arena/startOffset
+   (i32.const 8)
+  )
+  (set_global $~lib/allocator/arena/offset
+   (get_global $~lib/allocator/arena/startOffset)
+  )
+ )
 )

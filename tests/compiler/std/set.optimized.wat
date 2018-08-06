@@ -3,7 +3,6 @@
  (type $ii (func (param i32) (result i32)))
  (type $iv (func (param i32)))
  (type $iiii (func (param i32 i32 i32) (result i32)))
- (type $iiiiv (func (param i32 i32 i32 i32)))
  (type $iiiv (func (param i32 i32 i32)))
  (type $iii (func (param i32 i32) (result i32)))
  (type $iiv (func (param i32 i32)))
@@ -19,7 +18,7 @@
  (type $Fi (func (param f64) (result i32)))
  (type $iFii (func (param i32 f64 i32) (result i32)))
  (type $iFv (func (param i32 f64)))
- (import "env" "abort" (func $~lib/env/abort (param i32 i32 i32 i32)))
+ (import "env" "abort" (func $~lib/env/abort))
  (global $~lib/allocator/arena/startOffset (mut i32) (i32.const 0))
  (global $~lib/allocator/arena/offset (mut i32) (i32.const 0))
  (memory $0 1)
@@ -141,12 +140,7 @@
     (i32.const 1073741816)
    )
    (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 52)
-     (i32.const 22)
-     (i32.const 2)
-    )
+    (call $~lib/env/abort)
     (unreachable)
    )
   )
@@ -507,12 +501,7 @@
     (i32.const 1073741816)
    )
    (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 8)
-     (i32.const 13)
-     (i32.const 40)
-    )
+    (call $~lib/env/abort)
     (unreachable)
    )
   )
@@ -1107,346 +1096,239 @@
  (func $std/set/test<i8> (; 18 ;) (type $v)
   (local $0 i32)
   (local $1 i32)
-  (set_local $1
-   (call $~lib/set/Set<i8>#constructor
-    (i32.const 0)
-   )
-  )
-  (block $break|0
-   (loop $repeat|0
-    (br_if $break|0
-     (i32.ge_s
-      (get_local $0)
-      (i32.const 100)
-     )
-    )
-    (if
-     (call $~lib/set/Set<i8>#has
-      (get_local $1)
-      (get_local $0)
-     )
-     (block
-      (call $~lib/env/abort
-       (i32.const 0)
-       (i32.const 112)
-       (i32.const 8)
-       (i32.const 4)
-      )
-      (unreachable)
-     )
-    )
-    (call $~lib/set/Set<i8>#add
-     (get_local $1)
-     (get_local $0)
-    )
-    (if
-     (call $~lib/set/Set<i8>#has
-      (get_local $1)
-      (get_local $0)
-     )
-     (block
-      (set_local $0
-       (i32.add
-        (get_local $0)
-        (i32.const 1)
-       )
-      )
-      (br $repeat|0)
-     )
-     (block
-      (call $~lib/env/abort
-       (i32.const 0)
-       (i32.const 112)
-       (i32.const 10)
-       (i32.const 4)
-      )
-      (unreachable)
-     )
-    )
-   )
-  )
-  (if
-   (i32.ne
-    (call $~lib/set/Set<i8>#get:size
-     (get_local $1)
-    )
-    (i32.const 100)
-   )
-   (block
-    (call $~lib/env/abort
+  (block $folding-inner0
+   (set_local $1
+    (call $~lib/set/Set<i8>#constructor
      (i32.const 0)
-     (i32.const 112)
-     (i32.const 12)
-     (i32.const 2)
     )
-    (unreachable)
    )
-  )
-  (block $break|1
-   (set_local $0
-    (i32.const 50)
-   )
-   (loop $repeat|1
-    (br_if $break|1
-     (i32.ge_s
-      (get_local $0)
-      (i32.const 100)
+   (block $break|0
+    (loop $repeat|0
+     (br_if $break|0
+      (i32.ge_s
+       (get_local $0)
+       (i32.const 100)
+      )
      )
-    )
-    (if
-     (i32.eqz
+     (if
       (call $~lib/set/Set<i8>#has
        (get_local $1)
        (get_local $0)
       )
+      (br $folding-inner0)
      )
-     (block
-      (call $~lib/env/abort
-       (i32.const 0)
-       (i32.const 112)
-       (i32.const 16)
-       (i32.const 4)
-      )
-      (unreachable)
-     )
-    )
-    (call $~lib/set/Set<i8>#add
-     (get_local $1)
-     (get_local $0)
-    )
-    (if
-     (call $~lib/set/Set<i8>#has
+     (call $~lib/set/Set<i8>#add
       (get_local $1)
       (get_local $0)
      )
-     (block
-      (set_local $0
-       (i32.add
-        (get_local $0)
-        (i32.const 1)
-       )
-      )
-      (br $repeat|1)
-     )
-     (block
-      (call $~lib/env/abort
-       (i32.const 0)
-       (i32.const 112)
-       (i32.const 18)
-       (i32.const 4)
-      )
-      (unreachable)
-     )
-    )
-   )
-  )
-  (if
-   (i32.ne
-    (call $~lib/set/Set<i8>#get:size
-     (get_local $1)
-    )
-    (i32.const 100)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 112)
-     (i32.const 20)
-     (i32.const 2)
-    )
-    (unreachable)
-   )
-  )
-  (block $break|2
-   (set_local $0
-    (i32.const 0)
-   )
-   (loop $repeat|2
-    (br_if $break|2
-     (i32.ge_s
-      (get_local $0)
-      (i32.const 50)
-     )
-    )
-    (if
-     (i32.eqz
+     (if
       (call $~lib/set/Set<i8>#has
        (get_local $1)
        (get_local $0)
       )
-     )
-     (block
-      (call $~lib/env/abort
-       (i32.const 0)
-       (i32.const 112)
-       (i32.const 24)
-       (i32.const 4)
+      (block
+       (set_local $0
+        (i32.add
+         (get_local $0)
+         (i32.const 1)
+        )
+       )
+       (br $repeat|0)
       )
-      (unreachable)
+      (br $folding-inner0)
      )
     )
-    (drop
-     (call $~lib/set/Set<i8>#delete
+   )
+   (if
+    (i32.ne
+     (call $~lib/set/Set<i8>#get:size
       (get_local $1)
-      (get_local $0)
      )
+     (i32.const 100)
     )
-    (if
-     (call $~lib/set/Set<i8>#has
-      (get_local $1)
-      (get_local $0)
-     )
-     (block
-      (call $~lib/env/abort
-       (i32.const 0)
-       (i32.const 112)
-       (i32.const 26)
-       (i32.const 4)
+    (br $folding-inner0)
+   )
+   (block $break|1
+    (set_local $0
+     (i32.const 50)
+    )
+    (loop $repeat|1
+     (br_if $break|1
+      (i32.ge_s
+       (get_local $0)
+       (i32.const 100)
       )
-      (unreachable)
      )
-     (block
-      (set_local $0
-       (i32.add
+     (if
+      (i32.eqz
+       (call $~lib/set/Set<i8>#has
+        (get_local $1)
         (get_local $0)
-        (i32.const 1)
        )
       )
-      (br $repeat|2)
+      (br $folding-inner0)
      )
-    )
-   )
-  )
-  (if
-   (i32.ne
-    (call $~lib/set/Set<i8>#get:size
-     (get_local $1)
-    )
-    (i32.const 50)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 112)
-     (i32.const 28)
-     (i32.const 2)
-    )
-    (unreachable)
-   )
-  )
-  (block $break|3
-   (set_local $0
-    (i32.const 0)
-   )
-   (loop $repeat|3
-    (br_if $break|3
-     (i32.ge_s
-      (get_local $0)
-      (i32.const 50)
-     )
-    )
-    (if
-     (call $~lib/set/Set<i8>#has
+     (call $~lib/set/Set<i8>#add
       (get_local $1)
       (get_local $0)
      )
-     (block
-      (call $~lib/env/abort
-       (i32.const 0)
-       (i32.const 112)
-       (i32.const 32)
-       (i32.const 4)
-      )
-      (unreachable)
-     )
-    )
-    (call $~lib/set/Set<i8>#add
-     (get_local $1)
-     (get_local $0)
-    )
-    (if
-     (i32.eqz
+     (if
       (call $~lib/set/Set<i8>#has
        (get_local $1)
        (get_local $0)
       )
-     )
-     (block
-      (call $~lib/env/abort
-       (i32.const 0)
-       (i32.const 112)
-       (i32.const 34)
-       (i32.const 4)
+      (block
+       (set_local $0
+        (i32.add
+         (get_local $0)
+         (i32.const 1)
+        )
+       )
+       (br $repeat|1)
       )
-      (unreachable)
+      (br $folding-inner0)
      )
     )
-    (drop
-     (call $~lib/set/Set<i8>#delete
+   )
+   (if
+    (i32.ne
+     (call $~lib/set/Set<i8>#get:size
       (get_local $1)
-      (get_local $0)
      )
+     (i32.const 100)
     )
-    (if
-     (call $~lib/set/Set<i8>#has
-      (get_local $1)
-      (get_local $0)
-     )
-     (block
-      (call $~lib/env/abort
-       (i32.const 0)
-       (i32.const 112)
-       (i32.const 36)
-       (i32.const 4)
+    (br $folding-inner0)
+   )
+   (block $break|2
+    (set_local $0
+     (i32.const 0)
+    )
+    (loop $repeat|2
+     (br_if $break|2
+      (i32.ge_s
+       (get_local $0)
+       (i32.const 50)
       )
-      (unreachable)
      )
-     (block
-      (set_local $0
-       (i32.add
+     (if
+      (i32.eqz
+       (call $~lib/set/Set<i8>#has
+        (get_local $1)
         (get_local $0)
-        (i32.const 1)
        )
       )
-      (br $repeat|3)
+      (br $folding-inner0)
+     )
+     (drop
+      (call $~lib/set/Set<i8>#delete
+       (get_local $1)
+       (get_local $0)
+      )
+     )
+     (if
+      (call $~lib/set/Set<i8>#has
+       (get_local $1)
+       (get_local $0)
+      )
+      (br $folding-inner0)
+      (block
+       (set_local $0
+        (i32.add
+         (get_local $0)
+         (i32.const 1)
+        )
+       )
+       (br $repeat|2)
+      )
      )
     )
    )
-  )
-  (if
-   (i32.ne
-    (call $~lib/set/Set<i8>#get:size
-     (get_local $1)
+   (if
+    (i32.ne
+     (call $~lib/set/Set<i8>#get:size
+      (get_local $1)
+     )
+     (i32.const 50)
     )
-    (i32.const 50)
+    (br $folding-inner0)
    )
-   (block
-    (call $~lib/env/abort
+   (block $break|3
+    (set_local $0
      (i32.const 0)
-     (i32.const 112)
-     (i32.const 38)
-     (i32.const 2)
     )
-    (unreachable)
+    (loop $repeat|3
+     (br_if $break|3
+      (i32.ge_s
+       (get_local $0)
+       (i32.const 50)
+      )
+     )
+     (if
+      (call $~lib/set/Set<i8>#has
+       (get_local $1)
+       (get_local $0)
+      )
+      (br $folding-inner0)
+     )
+     (call $~lib/set/Set<i8>#add
+      (get_local $1)
+      (get_local $0)
+     )
+     (if
+      (i32.eqz
+       (call $~lib/set/Set<i8>#has
+        (get_local $1)
+        (get_local $0)
+       )
+      )
+      (br $folding-inner0)
+     )
+     (drop
+      (call $~lib/set/Set<i8>#delete
+       (get_local $1)
+       (get_local $0)
+      )
+     )
+     (if
+      (call $~lib/set/Set<i8>#has
+       (get_local $1)
+       (get_local $0)
+      )
+      (br $folding-inner0)
+      (block
+       (set_local $0
+        (i32.add
+         (get_local $0)
+         (i32.const 1)
+        )
+       )
+       (br $repeat|3)
+      )
+     )
+    )
    )
-  )
-  (call $~lib/set/Set<i8>#clear
-   (get_local $1)
-  )
-  (if
-   (call $~lib/set/Set<i8>#get:size
+   (if
+    (i32.ne
+     (call $~lib/set/Set<i8>#get:size
+      (get_local $1)
+     )
+     (i32.const 50)
+    )
+    (br $folding-inner0)
+   )
+   (call $~lib/set/Set<i8>#clear
     (get_local $1)
    )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 112)
-     (i32.const 42)
-     (i32.const 2)
+   (if
+    (call $~lib/set/Set<i8>#get:size
+     (get_local $1)
     )
-    (unreachable)
+    (br $folding-inner0)
    )
+   (return)
   )
+  (call $~lib/env/abort)
+  (unreachable)
  )
  (func $~lib/internal/hash/hash<u8> (; 19 ;) (type $ii) (param $0 i32) (result i32)
   (call $~lib/internal/hash/hash8
@@ -1855,346 +1737,239 @@
  (func $std/set/test<u8> (; 24 ;) (type $v)
   (local $0 i32)
   (local $1 i32)
-  (set_local $1
-   (call $~lib/set/Set<i8>#constructor
-    (i32.const 0)
-   )
-  )
-  (block $break|0
-   (loop $repeat|0
-    (br_if $break|0
-     (i32.ge_u
-      (get_local $0)
-      (i32.const 100)
-     )
-    )
-    (if
-     (call $~lib/set/Set<u8>#has
-      (get_local $1)
-      (get_local $0)
-     )
-     (block
-      (call $~lib/env/abort
-       (i32.const 0)
-       (i32.const 112)
-       (i32.const 8)
-       (i32.const 4)
-      )
-      (unreachable)
-     )
-    )
-    (call $~lib/set/Set<u8>#add
-     (get_local $1)
-     (get_local $0)
-    )
-    (if
-     (call $~lib/set/Set<u8>#has
-      (get_local $1)
-      (get_local $0)
-     )
-     (block
-      (set_local $0
-       (i32.add
-        (get_local $0)
-        (i32.const 1)
-       )
-      )
-      (br $repeat|0)
-     )
-     (block
-      (call $~lib/env/abort
-       (i32.const 0)
-       (i32.const 112)
-       (i32.const 10)
-       (i32.const 4)
-      )
-      (unreachable)
-     )
-    )
-   )
-  )
-  (if
-   (i32.ne
-    (call $~lib/set/Set<i8>#get:size
-     (get_local $1)
-    )
-    (i32.const 100)
-   )
-   (block
-    (call $~lib/env/abort
+  (block $folding-inner0
+   (set_local $1
+    (call $~lib/set/Set<i8>#constructor
      (i32.const 0)
-     (i32.const 112)
-     (i32.const 12)
-     (i32.const 2)
     )
-    (unreachable)
    )
-  )
-  (block $break|1
-   (set_local $0
-    (i32.const 50)
-   )
-   (loop $repeat|1
-    (br_if $break|1
-     (i32.ge_u
-      (get_local $0)
-      (i32.const 100)
+   (block $break|0
+    (loop $repeat|0
+     (br_if $break|0
+      (i32.ge_u
+       (get_local $0)
+       (i32.const 100)
+      )
      )
-    )
-    (if
-     (i32.eqz
+     (if
       (call $~lib/set/Set<u8>#has
        (get_local $1)
        (get_local $0)
       )
+      (br $folding-inner0)
      )
-     (block
-      (call $~lib/env/abort
-       (i32.const 0)
-       (i32.const 112)
-       (i32.const 16)
-       (i32.const 4)
-      )
-      (unreachable)
-     )
-    )
-    (call $~lib/set/Set<u8>#add
-     (get_local $1)
-     (get_local $0)
-    )
-    (if
-     (call $~lib/set/Set<u8>#has
+     (call $~lib/set/Set<u8>#add
       (get_local $1)
       (get_local $0)
      )
-     (block
-      (set_local $0
-       (i32.add
-        (get_local $0)
-        (i32.const 1)
-       )
-      )
-      (br $repeat|1)
-     )
-     (block
-      (call $~lib/env/abort
-       (i32.const 0)
-       (i32.const 112)
-       (i32.const 18)
-       (i32.const 4)
-      )
-      (unreachable)
-     )
-    )
-   )
-  )
-  (if
-   (i32.ne
-    (call $~lib/set/Set<i8>#get:size
-     (get_local $1)
-    )
-    (i32.const 100)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 112)
-     (i32.const 20)
-     (i32.const 2)
-    )
-    (unreachable)
-   )
-  )
-  (block $break|2
-   (set_local $0
-    (i32.const 0)
-   )
-   (loop $repeat|2
-    (br_if $break|2
-     (i32.ge_u
-      (get_local $0)
-      (i32.const 50)
-     )
-    )
-    (if
-     (i32.eqz
+     (if
       (call $~lib/set/Set<u8>#has
        (get_local $1)
        (get_local $0)
       )
-     )
-     (block
-      (call $~lib/env/abort
-       (i32.const 0)
-       (i32.const 112)
-       (i32.const 24)
-       (i32.const 4)
+      (block
+       (set_local $0
+        (i32.add
+         (get_local $0)
+         (i32.const 1)
+        )
+       )
+       (br $repeat|0)
       )
-      (unreachable)
+      (br $folding-inner0)
      )
     )
-    (drop
-     (call $~lib/set/Set<u8>#delete
+   )
+   (if
+    (i32.ne
+     (call $~lib/set/Set<i8>#get:size
       (get_local $1)
-      (get_local $0)
      )
+     (i32.const 100)
     )
-    (if
-     (call $~lib/set/Set<u8>#has
-      (get_local $1)
-      (get_local $0)
-     )
-     (block
-      (call $~lib/env/abort
-       (i32.const 0)
-       (i32.const 112)
-       (i32.const 26)
-       (i32.const 4)
+    (br $folding-inner0)
+   )
+   (block $break|1
+    (set_local $0
+     (i32.const 50)
+    )
+    (loop $repeat|1
+     (br_if $break|1
+      (i32.ge_u
+       (get_local $0)
+       (i32.const 100)
       )
-      (unreachable)
      )
-     (block
-      (set_local $0
-       (i32.add
+     (if
+      (i32.eqz
+       (call $~lib/set/Set<u8>#has
+        (get_local $1)
         (get_local $0)
-        (i32.const 1)
        )
       )
-      (br $repeat|2)
+      (br $folding-inner0)
      )
-    )
-   )
-  )
-  (if
-   (i32.ne
-    (call $~lib/set/Set<i8>#get:size
-     (get_local $1)
-    )
-    (i32.const 50)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 112)
-     (i32.const 28)
-     (i32.const 2)
-    )
-    (unreachable)
-   )
-  )
-  (block $break|3
-   (set_local $0
-    (i32.const 0)
-   )
-   (loop $repeat|3
-    (br_if $break|3
-     (i32.ge_u
-      (get_local $0)
-      (i32.const 50)
-     )
-    )
-    (if
-     (call $~lib/set/Set<u8>#has
+     (call $~lib/set/Set<u8>#add
       (get_local $1)
       (get_local $0)
      )
-     (block
-      (call $~lib/env/abort
-       (i32.const 0)
-       (i32.const 112)
-       (i32.const 32)
-       (i32.const 4)
-      )
-      (unreachable)
-     )
-    )
-    (call $~lib/set/Set<u8>#add
-     (get_local $1)
-     (get_local $0)
-    )
-    (if
-     (i32.eqz
+     (if
       (call $~lib/set/Set<u8>#has
        (get_local $1)
        (get_local $0)
       )
-     )
-     (block
-      (call $~lib/env/abort
-       (i32.const 0)
-       (i32.const 112)
-       (i32.const 34)
-       (i32.const 4)
+      (block
+       (set_local $0
+        (i32.add
+         (get_local $0)
+         (i32.const 1)
+        )
+       )
+       (br $repeat|1)
       )
-      (unreachable)
+      (br $folding-inner0)
      )
     )
-    (drop
-     (call $~lib/set/Set<u8>#delete
+   )
+   (if
+    (i32.ne
+     (call $~lib/set/Set<i8>#get:size
       (get_local $1)
-      (get_local $0)
      )
+     (i32.const 100)
     )
-    (if
-     (call $~lib/set/Set<u8>#has
-      (get_local $1)
-      (get_local $0)
-     )
-     (block
-      (call $~lib/env/abort
-       (i32.const 0)
-       (i32.const 112)
-       (i32.const 36)
-       (i32.const 4)
+    (br $folding-inner0)
+   )
+   (block $break|2
+    (set_local $0
+     (i32.const 0)
+    )
+    (loop $repeat|2
+     (br_if $break|2
+      (i32.ge_u
+       (get_local $0)
+       (i32.const 50)
       )
-      (unreachable)
      )
-     (block
-      (set_local $0
-       (i32.add
+     (if
+      (i32.eqz
+       (call $~lib/set/Set<u8>#has
+        (get_local $1)
         (get_local $0)
-        (i32.const 1)
        )
       )
-      (br $repeat|3)
+      (br $folding-inner0)
+     )
+     (drop
+      (call $~lib/set/Set<u8>#delete
+       (get_local $1)
+       (get_local $0)
+      )
+     )
+     (if
+      (call $~lib/set/Set<u8>#has
+       (get_local $1)
+       (get_local $0)
+      )
+      (br $folding-inner0)
+      (block
+       (set_local $0
+        (i32.add
+         (get_local $0)
+         (i32.const 1)
+        )
+       )
+       (br $repeat|2)
+      )
      )
     )
    )
-  )
-  (if
-   (i32.ne
-    (call $~lib/set/Set<i8>#get:size
-     (get_local $1)
+   (if
+    (i32.ne
+     (call $~lib/set/Set<i8>#get:size
+      (get_local $1)
+     )
+     (i32.const 50)
     )
-    (i32.const 50)
+    (br $folding-inner0)
    )
-   (block
-    (call $~lib/env/abort
+   (block $break|3
+    (set_local $0
      (i32.const 0)
-     (i32.const 112)
-     (i32.const 38)
-     (i32.const 2)
     )
-    (unreachable)
+    (loop $repeat|3
+     (br_if $break|3
+      (i32.ge_u
+       (get_local $0)
+       (i32.const 50)
+      )
+     )
+     (if
+      (call $~lib/set/Set<u8>#has
+       (get_local $1)
+       (get_local $0)
+      )
+      (br $folding-inner0)
+     )
+     (call $~lib/set/Set<u8>#add
+      (get_local $1)
+      (get_local $0)
+     )
+     (if
+      (i32.eqz
+       (call $~lib/set/Set<u8>#has
+        (get_local $1)
+        (get_local $0)
+       )
+      )
+      (br $folding-inner0)
+     )
+     (drop
+      (call $~lib/set/Set<u8>#delete
+       (get_local $1)
+       (get_local $0)
+      )
+     )
+     (if
+      (call $~lib/set/Set<u8>#has
+       (get_local $1)
+       (get_local $0)
+      )
+      (br $folding-inner0)
+      (block
+       (set_local $0
+        (i32.add
+         (get_local $0)
+         (i32.const 1)
+        )
+       )
+       (br $repeat|3)
+      )
+     )
+    )
    )
-  )
-  (call $~lib/set/Set<i8>#clear
-   (get_local $1)
-  )
-  (if
-   (call $~lib/set/Set<i8>#get:size
+   (if
+    (i32.ne
+     (call $~lib/set/Set<i8>#get:size
+      (get_local $1)
+     )
+     (i32.const 50)
+    )
+    (br $folding-inner0)
+   )
+   (call $~lib/set/Set<i8>#clear
     (get_local $1)
    )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 112)
-     (i32.const 42)
-     (i32.const 2)
+   (if
+    (call $~lib/set/Set<i8>#get:size
+     (get_local $1)
     )
-    (unreachable)
+    (br $folding-inner0)
    )
+   (return)
   )
+  (call $~lib/env/abort)
+  (unreachable)
  )
  (func $~lib/internal/hash/hash16 (; 25 ;) (type $ii) (param $0 i32) (result i32)
   (i32.mul
@@ -2696,346 +2471,239 @@
  (func $std/set/test<i16> (; 32 ;) (type $v)
   (local $0 i32)
   (local $1 i32)
-  (set_local $1
-   (call $~lib/set/Set<i8>#constructor
-    (i32.const 0)
-   )
-  )
-  (block $break|0
-   (loop $repeat|0
-    (br_if $break|0
-     (i32.ge_s
-      (get_local $0)
-      (i32.const 100)
-     )
-    )
-    (if
-     (call $~lib/set/Set<i16>#has
-      (get_local $1)
-      (get_local $0)
-     )
-     (block
-      (call $~lib/env/abort
-       (i32.const 0)
-       (i32.const 112)
-       (i32.const 8)
-       (i32.const 4)
-      )
-      (unreachable)
-     )
-    )
-    (call $~lib/set/Set<i16>#add
-     (get_local $1)
-     (get_local $0)
-    )
-    (if
-     (call $~lib/set/Set<i16>#has
-      (get_local $1)
-      (get_local $0)
-     )
-     (block
-      (set_local $0
-       (i32.add
-        (get_local $0)
-        (i32.const 1)
-       )
-      )
-      (br $repeat|0)
-     )
-     (block
-      (call $~lib/env/abort
-       (i32.const 0)
-       (i32.const 112)
-       (i32.const 10)
-       (i32.const 4)
-      )
-      (unreachable)
-     )
-    )
-   )
-  )
-  (if
-   (i32.ne
-    (call $~lib/set/Set<i8>#get:size
-     (get_local $1)
-    )
-    (i32.const 100)
-   )
-   (block
-    (call $~lib/env/abort
+  (block $folding-inner0
+   (set_local $1
+    (call $~lib/set/Set<i8>#constructor
      (i32.const 0)
-     (i32.const 112)
-     (i32.const 12)
-     (i32.const 2)
     )
-    (unreachable)
    )
-  )
-  (block $break|1
-   (set_local $0
-    (i32.const 50)
-   )
-   (loop $repeat|1
-    (br_if $break|1
-     (i32.ge_s
-      (get_local $0)
-      (i32.const 100)
+   (block $break|0
+    (loop $repeat|0
+     (br_if $break|0
+      (i32.ge_s
+       (get_local $0)
+       (i32.const 100)
+      )
      )
-    )
-    (if
-     (i32.eqz
+     (if
       (call $~lib/set/Set<i16>#has
        (get_local $1)
        (get_local $0)
       )
+      (br $folding-inner0)
      )
-     (block
-      (call $~lib/env/abort
-       (i32.const 0)
-       (i32.const 112)
-       (i32.const 16)
-       (i32.const 4)
-      )
-      (unreachable)
-     )
-    )
-    (call $~lib/set/Set<i16>#add
-     (get_local $1)
-     (get_local $0)
-    )
-    (if
-     (call $~lib/set/Set<i16>#has
+     (call $~lib/set/Set<i16>#add
       (get_local $1)
       (get_local $0)
      )
-     (block
-      (set_local $0
-       (i32.add
-        (get_local $0)
-        (i32.const 1)
-       )
-      )
-      (br $repeat|1)
-     )
-     (block
-      (call $~lib/env/abort
-       (i32.const 0)
-       (i32.const 112)
-       (i32.const 18)
-       (i32.const 4)
-      )
-      (unreachable)
-     )
-    )
-   )
-  )
-  (if
-   (i32.ne
-    (call $~lib/set/Set<i8>#get:size
-     (get_local $1)
-    )
-    (i32.const 100)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 112)
-     (i32.const 20)
-     (i32.const 2)
-    )
-    (unreachable)
-   )
-  )
-  (block $break|2
-   (set_local $0
-    (i32.const 0)
-   )
-   (loop $repeat|2
-    (br_if $break|2
-     (i32.ge_s
-      (get_local $0)
-      (i32.const 50)
-     )
-    )
-    (if
-     (i32.eqz
+     (if
       (call $~lib/set/Set<i16>#has
        (get_local $1)
        (get_local $0)
       )
-     )
-     (block
-      (call $~lib/env/abort
-       (i32.const 0)
-       (i32.const 112)
-       (i32.const 24)
-       (i32.const 4)
+      (block
+       (set_local $0
+        (i32.add
+         (get_local $0)
+         (i32.const 1)
+        )
+       )
+       (br $repeat|0)
       )
-      (unreachable)
+      (br $folding-inner0)
      )
     )
-    (drop
-     (call $~lib/set/Set<i16>#delete
+   )
+   (if
+    (i32.ne
+     (call $~lib/set/Set<i8>#get:size
       (get_local $1)
-      (get_local $0)
      )
+     (i32.const 100)
     )
-    (if
-     (call $~lib/set/Set<i16>#has
-      (get_local $1)
-      (get_local $0)
-     )
-     (block
-      (call $~lib/env/abort
-       (i32.const 0)
-       (i32.const 112)
-       (i32.const 26)
-       (i32.const 4)
+    (br $folding-inner0)
+   )
+   (block $break|1
+    (set_local $0
+     (i32.const 50)
+    )
+    (loop $repeat|1
+     (br_if $break|1
+      (i32.ge_s
+       (get_local $0)
+       (i32.const 100)
       )
-      (unreachable)
      )
-     (block
-      (set_local $0
-       (i32.add
+     (if
+      (i32.eqz
+       (call $~lib/set/Set<i16>#has
+        (get_local $1)
         (get_local $0)
-        (i32.const 1)
        )
       )
-      (br $repeat|2)
+      (br $folding-inner0)
      )
-    )
-   )
-  )
-  (if
-   (i32.ne
-    (call $~lib/set/Set<i8>#get:size
-     (get_local $1)
-    )
-    (i32.const 50)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 112)
-     (i32.const 28)
-     (i32.const 2)
-    )
-    (unreachable)
-   )
-  )
-  (block $break|3
-   (set_local $0
-    (i32.const 0)
-   )
-   (loop $repeat|3
-    (br_if $break|3
-     (i32.ge_s
-      (get_local $0)
-      (i32.const 50)
-     )
-    )
-    (if
-     (call $~lib/set/Set<i16>#has
+     (call $~lib/set/Set<i16>#add
       (get_local $1)
       (get_local $0)
      )
-     (block
-      (call $~lib/env/abort
-       (i32.const 0)
-       (i32.const 112)
-       (i32.const 32)
-       (i32.const 4)
-      )
-      (unreachable)
-     )
-    )
-    (call $~lib/set/Set<i16>#add
-     (get_local $1)
-     (get_local $0)
-    )
-    (if
-     (i32.eqz
+     (if
       (call $~lib/set/Set<i16>#has
        (get_local $1)
        (get_local $0)
       )
-     )
-     (block
-      (call $~lib/env/abort
-       (i32.const 0)
-       (i32.const 112)
-       (i32.const 34)
-       (i32.const 4)
+      (block
+       (set_local $0
+        (i32.add
+         (get_local $0)
+         (i32.const 1)
+        )
+       )
+       (br $repeat|1)
       )
-      (unreachable)
+      (br $folding-inner0)
      )
     )
-    (drop
-     (call $~lib/set/Set<i16>#delete
+   )
+   (if
+    (i32.ne
+     (call $~lib/set/Set<i8>#get:size
       (get_local $1)
-      (get_local $0)
      )
+     (i32.const 100)
     )
-    (if
-     (call $~lib/set/Set<i16>#has
-      (get_local $1)
-      (get_local $0)
-     )
-     (block
-      (call $~lib/env/abort
-       (i32.const 0)
-       (i32.const 112)
-       (i32.const 36)
-       (i32.const 4)
+    (br $folding-inner0)
+   )
+   (block $break|2
+    (set_local $0
+     (i32.const 0)
+    )
+    (loop $repeat|2
+     (br_if $break|2
+      (i32.ge_s
+       (get_local $0)
+       (i32.const 50)
       )
-      (unreachable)
      )
-     (block
-      (set_local $0
-       (i32.add
+     (if
+      (i32.eqz
+       (call $~lib/set/Set<i16>#has
+        (get_local $1)
         (get_local $0)
-        (i32.const 1)
        )
       )
-      (br $repeat|3)
+      (br $folding-inner0)
+     )
+     (drop
+      (call $~lib/set/Set<i16>#delete
+       (get_local $1)
+       (get_local $0)
+      )
+     )
+     (if
+      (call $~lib/set/Set<i16>#has
+       (get_local $1)
+       (get_local $0)
+      )
+      (br $folding-inner0)
+      (block
+       (set_local $0
+        (i32.add
+         (get_local $0)
+         (i32.const 1)
+        )
+       )
+       (br $repeat|2)
+      )
      )
     )
    )
-  )
-  (if
-   (i32.ne
-    (call $~lib/set/Set<i8>#get:size
-     (get_local $1)
+   (if
+    (i32.ne
+     (call $~lib/set/Set<i8>#get:size
+      (get_local $1)
+     )
+     (i32.const 50)
     )
-    (i32.const 50)
+    (br $folding-inner0)
    )
-   (block
-    (call $~lib/env/abort
+   (block $break|3
+    (set_local $0
      (i32.const 0)
-     (i32.const 112)
-     (i32.const 38)
-     (i32.const 2)
     )
-    (unreachable)
+    (loop $repeat|3
+     (br_if $break|3
+      (i32.ge_s
+       (get_local $0)
+       (i32.const 50)
+      )
+     )
+     (if
+      (call $~lib/set/Set<i16>#has
+       (get_local $1)
+       (get_local $0)
+      )
+      (br $folding-inner0)
+     )
+     (call $~lib/set/Set<i16>#add
+      (get_local $1)
+      (get_local $0)
+     )
+     (if
+      (i32.eqz
+       (call $~lib/set/Set<i16>#has
+        (get_local $1)
+        (get_local $0)
+       )
+      )
+      (br $folding-inner0)
+     )
+     (drop
+      (call $~lib/set/Set<i16>#delete
+       (get_local $1)
+       (get_local $0)
+      )
+     )
+     (if
+      (call $~lib/set/Set<i16>#has
+       (get_local $1)
+       (get_local $0)
+      )
+      (br $folding-inner0)
+      (block
+       (set_local $0
+        (i32.add
+         (get_local $0)
+         (i32.const 1)
+        )
+       )
+       (br $repeat|3)
+      )
+     )
+    )
    )
-  )
-  (call $~lib/set/Set<i8>#clear
-   (get_local $1)
-  )
-  (if
-   (call $~lib/set/Set<i8>#get:size
+   (if
+    (i32.ne
+     (call $~lib/set/Set<i8>#get:size
+      (get_local $1)
+     )
+     (i32.const 50)
+    )
+    (br $folding-inner0)
+   )
+   (call $~lib/set/Set<i8>#clear
     (get_local $1)
    )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 112)
-     (i32.const 42)
-     (i32.const 2)
+   (if
+    (call $~lib/set/Set<i8>#get:size
+     (get_local $1)
     )
-    (unreachable)
+    (br $folding-inner0)
    )
+   (return)
   )
+  (call $~lib/env/abort)
+  (unreachable)
  )
  (func $~lib/internal/hash/hash<u16> (; 33 ;) (type $ii) (param $0 i32) (result i32)
   (call $~lib/internal/hash/hash16
@@ -3444,346 +3112,239 @@
  (func $std/set/test<u16> (; 38 ;) (type $v)
   (local $0 i32)
   (local $1 i32)
-  (set_local $1
-   (call $~lib/set/Set<i8>#constructor
-    (i32.const 0)
-   )
-  )
-  (block $break|0
-   (loop $repeat|0
-    (br_if $break|0
-     (i32.ge_u
-      (get_local $0)
-      (i32.const 100)
-     )
-    )
-    (if
-     (call $~lib/set/Set<u16>#has
-      (get_local $1)
-      (get_local $0)
-     )
-     (block
-      (call $~lib/env/abort
-       (i32.const 0)
-       (i32.const 112)
-       (i32.const 8)
-       (i32.const 4)
-      )
-      (unreachable)
-     )
-    )
-    (call $~lib/set/Set<u16>#add
-     (get_local $1)
-     (get_local $0)
-    )
-    (if
-     (call $~lib/set/Set<u16>#has
-      (get_local $1)
-      (get_local $0)
-     )
-     (block
-      (set_local $0
-       (i32.add
-        (get_local $0)
-        (i32.const 1)
-       )
-      )
-      (br $repeat|0)
-     )
-     (block
-      (call $~lib/env/abort
-       (i32.const 0)
-       (i32.const 112)
-       (i32.const 10)
-       (i32.const 4)
-      )
-      (unreachable)
-     )
-    )
-   )
-  )
-  (if
-   (i32.ne
-    (call $~lib/set/Set<i8>#get:size
-     (get_local $1)
-    )
-    (i32.const 100)
-   )
-   (block
-    (call $~lib/env/abort
+  (block $folding-inner0
+   (set_local $1
+    (call $~lib/set/Set<i8>#constructor
      (i32.const 0)
-     (i32.const 112)
-     (i32.const 12)
-     (i32.const 2)
     )
-    (unreachable)
    )
-  )
-  (block $break|1
-   (set_local $0
-    (i32.const 50)
-   )
-   (loop $repeat|1
-    (br_if $break|1
-     (i32.ge_u
-      (get_local $0)
-      (i32.const 100)
+   (block $break|0
+    (loop $repeat|0
+     (br_if $break|0
+      (i32.ge_u
+       (get_local $0)
+       (i32.const 100)
+      )
      )
-    )
-    (if
-     (i32.eqz
+     (if
       (call $~lib/set/Set<u16>#has
        (get_local $1)
        (get_local $0)
       )
+      (br $folding-inner0)
      )
-     (block
-      (call $~lib/env/abort
-       (i32.const 0)
-       (i32.const 112)
-       (i32.const 16)
-       (i32.const 4)
-      )
-      (unreachable)
-     )
-    )
-    (call $~lib/set/Set<u16>#add
-     (get_local $1)
-     (get_local $0)
-    )
-    (if
-     (call $~lib/set/Set<u16>#has
+     (call $~lib/set/Set<u16>#add
       (get_local $1)
       (get_local $0)
      )
-     (block
-      (set_local $0
-       (i32.add
-        (get_local $0)
-        (i32.const 1)
-       )
-      )
-      (br $repeat|1)
-     )
-     (block
-      (call $~lib/env/abort
-       (i32.const 0)
-       (i32.const 112)
-       (i32.const 18)
-       (i32.const 4)
-      )
-      (unreachable)
-     )
-    )
-   )
-  )
-  (if
-   (i32.ne
-    (call $~lib/set/Set<i8>#get:size
-     (get_local $1)
-    )
-    (i32.const 100)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 112)
-     (i32.const 20)
-     (i32.const 2)
-    )
-    (unreachable)
-   )
-  )
-  (block $break|2
-   (set_local $0
-    (i32.const 0)
-   )
-   (loop $repeat|2
-    (br_if $break|2
-     (i32.ge_u
-      (get_local $0)
-      (i32.const 50)
-     )
-    )
-    (if
-     (i32.eqz
+     (if
       (call $~lib/set/Set<u16>#has
        (get_local $1)
        (get_local $0)
       )
-     )
-     (block
-      (call $~lib/env/abort
-       (i32.const 0)
-       (i32.const 112)
-       (i32.const 24)
-       (i32.const 4)
+      (block
+       (set_local $0
+        (i32.add
+         (get_local $0)
+         (i32.const 1)
+        )
+       )
+       (br $repeat|0)
       )
-      (unreachable)
+      (br $folding-inner0)
      )
     )
-    (drop
-     (call $~lib/set/Set<u16>#delete
+   )
+   (if
+    (i32.ne
+     (call $~lib/set/Set<i8>#get:size
       (get_local $1)
-      (get_local $0)
      )
+     (i32.const 100)
     )
-    (if
-     (call $~lib/set/Set<u16>#has
-      (get_local $1)
-      (get_local $0)
-     )
-     (block
-      (call $~lib/env/abort
-       (i32.const 0)
-       (i32.const 112)
-       (i32.const 26)
-       (i32.const 4)
+    (br $folding-inner0)
+   )
+   (block $break|1
+    (set_local $0
+     (i32.const 50)
+    )
+    (loop $repeat|1
+     (br_if $break|1
+      (i32.ge_u
+       (get_local $0)
+       (i32.const 100)
       )
-      (unreachable)
      )
-     (block
-      (set_local $0
-       (i32.add
+     (if
+      (i32.eqz
+       (call $~lib/set/Set<u16>#has
+        (get_local $1)
         (get_local $0)
-        (i32.const 1)
        )
       )
-      (br $repeat|2)
+      (br $folding-inner0)
      )
-    )
-   )
-  )
-  (if
-   (i32.ne
-    (call $~lib/set/Set<i8>#get:size
-     (get_local $1)
-    )
-    (i32.const 50)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 112)
-     (i32.const 28)
-     (i32.const 2)
-    )
-    (unreachable)
-   )
-  )
-  (block $break|3
-   (set_local $0
-    (i32.const 0)
-   )
-   (loop $repeat|3
-    (br_if $break|3
-     (i32.ge_u
-      (get_local $0)
-      (i32.const 50)
-     )
-    )
-    (if
-     (call $~lib/set/Set<u16>#has
+     (call $~lib/set/Set<u16>#add
       (get_local $1)
       (get_local $0)
      )
-     (block
-      (call $~lib/env/abort
-       (i32.const 0)
-       (i32.const 112)
-       (i32.const 32)
-       (i32.const 4)
-      )
-      (unreachable)
-     )
-    )
-    (call $~lib/set/Set<u16>#add
-     (get_local $1)
-     (get_local $0)
-    )
-    (if
-     (i32.eqz
+     (if
       (call $~lib/set/Set<u16>#has
        (get_local $1)
        (get_local $0)
       )
-     )
-     (block
-      (call $~lib/env/abort
-       (i32.const 0)
-       (i32.const 112)
-       (i32.const 34)
-       (i32.const 4)
+      (block
+       (set_local $0
+        (i32.add
+         (get_local $0)
+         (i32.const 1)
+        )
+       )
+       (br $repeat|1)
       )
-      (unreachable)
+      (br $folding-inner0)
      )
     )
-    (drop
-     (call $~lib/set/Set<u16>#delete
+   )
+   (if
+    (i32.ne
+     (call $~lib/set/Set<i8>#get:size
       (get_local $1)
-      (get_local $0)
      )
+     (i32.const 100)
     )
-    (if
-     (call $~lib/set/Set<u16>#has
-      (get_local $1)
-      (get_local $0)
-     )
-     (block
-      (call $~lib/env/abort
-       (i32.const 0)
-       (i32.const 112)
-       (i32.const 36)
-       (i32.const 4)
+    (br $folding-inner0)
+   )
+   (block $break|2
+    (set_local $0
+     (i32.const 0)
+    )
+    (loop $repeat|2
+     (br_if $break|2
+      (i32.ge_u
+       (get_local $0)
+       (i32.const 50)
       )
-      (unreachable)
      )
-     (block
-      (set_local $0
-       (i32.add
+     (if
+      (i32.eqz
+       (call $~lib/set/Set<u16>#has
+        (get_local $1)
         (get_local $0)
-        (i32.const 1)
        )
       )
-      (br $repeat|3)
+      (br $folding-inner0)
+     )
+     (drop
+      (call $~lib/set/Set<u16>#delete
+       (get_local $1)
+       (get_local $0)
+      )
+     )
+     (if
+      (call $~lib/set/Set<u16>#has
+       (get_local $1)
+       (get_local $0)
+      )
+      (br $folding-inner0)
+      (block
+       (set_local $0
+        (i32.add
+         (get_local $0)
+         (i32.const 1)
+        )
+       )
+       (br $repeat|2)
+      )
      )
     )
    )
-  )
-  (if
-   (i32.ne
-    (call $~lib/set/Set<i8>#get:size
-     (get_local $1)
+   (if
+    (i32.ne
+     (call $~lib/set/Set<i8>#get:size
+      (get_local $1)
+     )
+     (i32.const 50)
     )
-    (i32.const 50)
+    (br $folding-inner0)
    )
-   (block
-    (call $~lib/env/abort
+   (block $break|3
+    (set_local $0
      (i32.const 0)
-     (i32.const 112)
-     (i32.const 38)
-     (i32.const 2)
     )
-    (unreachable)
+    (loop $repeat|3
+     (br_if $break|3
+      (i32.ge_u
+       (get_local $0)
+       (i32.const 50)
+      )
+     )
+     (if
+      (call $~lib/set/Set<u16>#has
+       (get_local $1)
+       (get_local $0)
+      )
+      (br $folding-inner0)
+     )
+     (call $~lib/set/Set<u16>#add
+      (get_local $1)
+      (get_local $0)
+     )
+     (if
+      (i32.eqz
+       (call $~lib/set/Set<u16>#has
+        (get_local $1)
+        (get_local $0)
+       )
+      )
+      (br $folding-inner0)
+     )
+     (drop
+      (call $~lib/set/Set<u16>#delete
+       (get_local $1)
+       (get_local $0)
+      )
+     )
+     (if
+      (call $~lib/set/Set<u16>#has
+       (get_local $1)
+       (get_local $0)
+      )
+      (br $folding-inner0)
+      (block
+       (set_local $0
+        (i32.add
+         (get_local $0)
+         (i32.const 1)
+        )
+       )
+       (br $repeat|3)
+      )
+     )
+    )
    )
-  )
-  (call $~lib/set/Set<i8>#clear
-   (get_local $1)
-  )
-  (if
-   (call $~lib/set/Set<i8>#get:size
+   (if
+    (i32.ne
+     (call $~lib/set/Set<i8>#get:size
+      (get_local $1)
+     )
+     (i32.const 50)
+    )
+    (br $folding-inner0)
+   )
+   (call $~lib/set/Set<i8>#clear
     (get_local $1)
    )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 112)
-     (i32.const 42)
-     (i32.const 2)
+   (if
+    (call $~lib/set/Set<i8>#get:size
+     (get_local $1)
     )
-    (unreachable)
+    (br $folding-inner0)
    )
+   (return)
   )
+  (call $~lib/env/abort)
+  (unreachable)
  )
  (func $~lib/internal/hash/hash32 (; 39 ;) (type $ii) (param $0 i32) (result i32)
   (i32.mul
@@ -4294,690 +3855,476 @@
  (func $std/set/test<i32> (; 46 ;) (type $v)
   (local $0 i32)
   (local $1 i32)
-  (set_local $1
-   (call $~lib/set/Set<i8>#constructor
-    (i32.const 0)
-   )
-  )
-  (block $break|0
-   (loop $repeat|0
-    (br_if $break|0
-     (i32.ge_s
-      (get_local $0)
-      (i32.const 100)
-     )
-    )
-    (if
-     (call $~lib/set/Set<i32>#has
-      (get_local $1)
-      (get_local $0)
-     )
-     (block
-      (call $~lib/env/abort
-       (i32.const 0)
-       (i32.const 112)
-       (i32.const 8)
-       (i32.const 4)
-      )
-      (unreachable)
-     )
-    )
-    (call $~lib/set/Set<i32>#add
-     (get_local $1)
-     (get_local $0)
-    )
-    (if
-     (call $~lib/set/Set<i32>#has
-      (get_local $1)
-      (get_local $0)
-     )
-     (block
-      (set_local $0
-       (i32.add
-        (get_local $0)
-        (i32.const 1)
-       )
-      )
-      (br $repeat|0)
-     )
-     (block
-      (call $~lib/env/abort
-       (i32.const 0)
-       (i32.const 112)
-       (i32.const 10)
-       (i32.const 4)
-      )
-      (unreachable)
-     )
-    )
-   )
-  )
-  (if
-   (i32.ne
-    (call $~lib/set/Set<i8>#get:size
-     (get_local $1)
-    )
-    (i32.const 100)
-   )
-   (block
-    (call $~lib/env/abort
+  (block $folding-inner0
+   (set_local $1
+    (call $~lib/set/Set<i8>#constructor
      (i32.const 0)
-     (i32.const 112)
-     (i32.const 12)
-     (i32.const 2)
     )
-    (unreachable)
    )
-  )
-  (block $break|1
-   (set_local $0
-    (i32.const 50)
-   )
-   (loop $repeat|1
-    (br_if $break|1
-     (i32.ge_s
-      (get_local $0)
-      (i32.const 100)
+   (block $break|0
+    (loop $repeat|0
+     (br_if $break|0
+      (i32.ge_s
+       (get_local $0)
+       (i32.const 100)
+      )
      )
-    )
-    (if
-     (i32.eqz
+     (if
       (call $~lib/set/Set<i32>#has
        (get_local $1)
        (get_local $0)
       )
+      (br $folding-inner0)
      )
-     (block
-      (call $~lib/env/abort
-       (i32.const 0)
-       (i32.const 112)
-       (i32.const 16)
-       (i32.const 4)
-      )
-      (unreachable)
-     )
-    )
-    (call $~lib/set/Set<i32>#add
-     (get_local $1)
-     (get_local $0)
-    )
-    (if
-     (call $~lib/set/Set<i32>#has
+     (call $~lib/set/Set<i32>#add
       (get_local $1)
       (get_local $0)
      )
-     (block
-      (set_local $0
-       (i32.add
-        (get_local $0)
-        (i32.const 1)
-       )
-      )
-      (br $repeat|1)
-     )
-     (block
-      (call $~lib/env/abort
-       (i32.const 0)
-       (i32.const 112)
-       (i32.const 18)
-       (i32.const 4)
-      )
-      (unreachable)
-     )
-    )
-   )
-  )
-  (if
-   (i32.ne
-    (call $~lib/set/Set<i8>#get:size
-     (get_local $1)
-    )
-    (i32.const 100)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 112)
-     (i32.const 20)
-     (i32.const 2)
-    )
-    (unreachable)
-   )
-  )
-  (block $break|2
-   (set_local $0
-    (i32.const 0)
-   )
-   (loop $repeat|2
-    (br_if $break|2
-     (i32.ge_s
-      (get_local $0)
-      (i32.const 50)
-     )
-    )
-    (if
-     (i32.eqz
+     (if
       (call $~lib/set/Set<i32>#has
        (get_local $1)
        (get_local $0)
       )
-     )
-     (block
-      (call $~lib/env/abort
-       (i32.const 0)
-       (i32.const 112)
-       (i32.const 24)
-       (i32.const 4)
+      (block
+       (set_local $0
+        (i32.add
+         (get_local $0)
+         (i32.const 1)
+        )
+       )
+       (br $repeat|0)
       )
-      (unreachable)
+      (br $folding-inner0)
      )
     )
-    (drop
-     (call $~lib/set/Set<i32>#delete
+   )
+   (if
+    (i32.ne
+     (call $~lib/set/Set<i8>#get:size
       (get_local $1)
-      (get_local $0)
      )
+     (i32.const 100)
     )
-    (if
-     (call $~lib/set/Set<i32>#has
-      (get_local $1)
-      (get_local $0)
-     )
-     (block
-      (call $~lib/env/abort
-       (i32.const 0)
-       (i32.const 112)
-       (i32.const 26)
-       (i32.const 4)
+    (br $folding-inner0)
+   )
+   (block $break|1
+    (set_local $0
+     (i32.const 50)
+    )
+    (loop $repeat|1
+     (br_if $break|1
+      (i32.ge_s
+       (get_local $0)
+       (i32.const 100)
       )
-      (unreachable)
      )
-     (block
-      (set_local $0
-       (i32.add
+     (if
+      (i32.eqz
+       (call $~lib/set/Set<i32>#has
+        (get_local $1)
         (get_local $0)
-        (i32.const 1)
        )
       )
-      (br $repeat|2)
+      (br $folding-inner0)
      )
-    )
-   )
-  )
-  (if
-   (i32.ne
-    (call $~lib/set/Set<i8>#get:size
-     (get_local $1)
-    )
-    (i32.const 50)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 112)
-     (i32.const 28)
-     (i32.const 2)
-    )
-    (unreachable)
-   )
-  )
-  (block $break|3
-   (set_local $0
-    (i32.const 0)
-   )
-   (loop $repeat|3
-    (br_if $break|3
-     (i32.ge_s
-      (get_local $0)
-      (i32.const 50)
-     )
-    )
-    (if
-     (call $~lib/set/Set<i32>#has
+     (call $~lib/set/Set<i32>#add
       (get_local $1)
       (get_local $0)
      )
-     (block
-      (call $~lib/env/abort
-       (i32.const 0)
-       (i32.const 112)
-       (i32.const 32)
-       (i32.const 4)
-      )
-      (unreachable)
-     )
-    )
-    (call $~lib/set/Set<i32>#add
-     (get_local $1)
-     (get_local $0)
-    )
-    (if
-     (i32.eqz
+     (if
       (call $~lib/set/Set<i32>#has
        (get_local $1)
        (get_local $0)
       )
-     )
-     (block
-      (call $~lib/env/abort
-       (i32.const 0)
-       (i32.const 112)
-       (i32.const 34)
-       (i32.const 4)
+      (block
+       (set_local $0
+        (i32.add
+         (get_local $0)
+         (i32.const 1)
+        )
+       )
+       (br $repeat|1)
       )
-      (unreachable)
+      (br $folding-inner0)
      )
     )
-    (drop
-     (call $~lib/set/Set<i32>#delete
+   )
+   (if
+    (i32.ne
+     (call $~lib/set/Set<i8>#get:size
       (get_local $1)
-      (get_local $0)
      )
+     (i32.const 100)
     )
-    (if
-     (call $~lib/set/Set<i32>#has
-      (get_local $1)
-      (get_local $0)
-     )
-     (block
-      (call $~lib/env/abort
-       (i32.const 0)
-       (i32.const 112)
-       (i32.const 36)
-       (i32.const 4)
+    (br $folding-inner0)
+   )
+   (block $break|2
+    (set_local $0
+     (i32.const 0)
+    )
+    (loop $repeat|2
+     (br_if $break|2
+      (i32.ge_s
+       (get_local $0)
+       (i32.const 50)
       )
-      (unreachable)
      )
-     (block
-      (set_local $0
-       (i32.add
+     (if
+      (i32.eqz
+       (call $~lib/set/Set<i32>#has
+        (get_local $1)
         (get_local $0)
-        (i32.const 1)
        )
       )
-      (br $repeat|3)
+      (br $folding-inner0)
+     )
+     (drop
+      (call $~lib/set/Set<i32>#delete
+       (get_local $1)
+       (get_local $0)
+      )
+     )
+     (if
+      (call $~lib/set/Set<i32>#has
+       (get_local $1)
+       (get_local $0)
+      )
+      (br $folding-inner0)
+      (block
+       (set_local $0
+        (i32.add
+         (get_local $0)
+         (i32.const 1)
+        )
+       )
+       (br $repeat|2)
+      )
      )
     )
    )
-  )
-  (if
-   (i32.ne
-    (call $~lib/set/Set<i8>#get:size
-     (get_local $1)
+   (if
+    (i32.ne
+     (call $~lib/set/Set<i8>#get:size
+      (get_local $1)
+     )
+     (i32.const 50)
     )
-    (i32.const 50)
+    (br $folding-inner0)
    )
-   (block
-    (call $~lib/env/abort
+   (block $break|3
+    (set_local $0
      (i32.const 0)
-     (i32.const 112)
-     (i32.const 38)
-     (i32.const 2)
     )
-    (unreachable)
+    (loop $repeat|3
+     (br_if $break|3
+      (i32.ge_s
+       (get_local $0)
+       (i32.const 50)
+      )
+     )
+     (if
+      (call $~lib/set/Set<i32>#has
+       (get_local $1)
+       (get_local $0)
+      )
+      (br $folding-inner0)
+     )
+     (call $~lib/set/Set<i32>#add
+      (get_local $1)
+      (get_local $0)
+     )
+     (if
+      (i32.eqz
+       (call $~lib/set/Set<i32>#has
+        (get_local $1)
+        (get_local $0)
+       )
+      )
+      (br $folding-inner0)
+     )
+     (drop
+      (call $~lib/set/Set<i32>#delete
+       (get_local $1)
+       (get_local $0)
+      )
+     )
+     (if
+      (call $~lib/set/Set<i32>#has
+       (get_local $1)
+       (get_local $0)
+      )
+      (br $folding-inner0)
+      (block
+       (set_local $0
+        (i32.add
+         (get_local $0)
+         (i32.const 1)
+        )
+       )
+       (br $repeat|3)
+      )
+     )
+    )
    )
-  )
-  (call $~lib/set/Set<i8>#clear
-   (get_local $1)
-  )
-  (if
-   (call $~lib/set/Set<i8>#get:size
+   (if
+    (i32.ne
+     (call $~lib/set/Set<i8>#get:size
+      (get_local $1)
+     )
+     (i32.const 50)
+    )
+    (br $folding-inner0)
+   )
+   (call $~lib/set/Set<i8>#clear
     (get_local $1)
    )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 112)
-     (i32.const 42)
-     (i32.const 2)
+   (if
+    (call $~lib/set/Set<i8>#get:size
+     (get_local $1)
     )
-    (unreachable)
+    (br $folding-inner0)
    )
+   (return)
   )
+  (call $~lib/env/abort)
+  (unreachable)
  )
  (func $std/set/test<u32> (; 47 ;) (type $v)
   (local $0 i32)
   (local $1 i32)
-  (set_local $1
-   (call $~lib/set/Set<i8>#constructor
-    (i32.const 0)
-   )
-  )
-  (block $break|0
-   (loop $repeat|0
-    (br_if $break|0
-     (i32.ge_u
-      (get_local $0)
-      (i32.const 100)
-     )
-    )
-    (if
-     (call $~lib/set/Set<i32>#has
-      (get_local $1)
-      (get_local $0)
-     )
-     (block
-      (call $~lib/env/abort
-       (i32.const 0)
-       (i32.const 112)
-       (i32.const 8)
-       (i32.const 4)
-      )
-      (unreachable)
-     )
-    )
-    (call $~lib/set/Set<i32>#add
-     (get_local $1)
-     (get_local $0)
-    )
-    (if
-     (call $~lib/set/Set<i32>#has
-      (get_local $1)
-      (get_local $0)
-     )
-     (block
-      (set_local $0
-       (i32.add
-        (get_local $0)
-        (i32.const 1)
-       )
-      )
-      (br $repeat|0)
-     )
-     (block
-      (call $~lib/env/abort
-       (i32.const 0)
-       (i32.const 112)
-       (i32.const 10)
-       (i32.const 4)
-      )
-      (unreachable)
-     )
-    )
-   )
-  )
-  (if
-   (i32.ne
-    (call $~lib/set/Set<i8>#get:size
-     (get_local $1)
-    )
-    (i32.const 100)
-   )
-   (block
-    (call $~lib/env/abort
+  (block $folding-inner0
+   (set_local $1
+    (call $~lib/set/Set<i8>#constructor
      (i32.const 0)
-     (i32.const 112)
-     (i32.const 12)
-     (i32.const 2)
     )
-    (unreachable)
    )
-  )
-  (block $break|1
-   (set_local $0
-    (i32.const 50)
-   )
-   (loop $repeat|1
-    (br_if $break|1
-     (i32.ge_u
-      (get_local $0)
-      (i32.const 100)
+   (block $break|0
+    (loop $repeat|0
+     (br_if $break|0
+      (i32.ge_u
+       (get_local $0)
+       (i32.const 100)
+      )
      )
-    )
-    (if
-     (i32.eqz
+     (if
       (call $~lib/set/Set<i32>#has
        (get_local $1)
        (get_local $0)
       )
+      (br $folding-inner0)
      )
-     (block
-      (call $~lib/env/abort
-       (i32.const 0)
-       (i32.const 112)
-       (i32.const 16)
-       (i32.const 4)
-      )
-      (unreachable)
-     )
-    )
-    (call $~lib/set/Set<i32>#add
-     (get_local $1)
-     (get_local $0)
-    )
-    (if
-     (call $~lib/set/Set<i32>#has
+     (call $~lib/set/Set<i32>#add
       (get_local $1)
       (get_local $0)
      )
-     (block
-      (set_local $0
-       (i32.add
-        (get_local $0)
-        (i32.const 1)
-       )
-      )
-      (br $repeat|1)
-     )
-     (block
-      (call $~lib/env/abort
-       (i32.const 0)
-       (i32.const 112)
-       (i32.const 18)
-       (i32.const 4)
-      )
-      (unreachable)
-     )
-    )
-   )
-  )
-  (if
-   (i32.ne
-    (call $~lib/set/Set<i8>#get:size
-     (get_local $1)
-    )
-    (i32.const 100)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 112)
-     (i32.const 20)
-     (i32.const 2)
-    )
-    (unreachable)
-   )
-  )
-  (block $break|2
-   (set_local $0
-    (i32.const 0)
-   )
-   (loop $repeat|2
-    (br_if $break|2
-     (i32.ge_u
-      (get_local $0)
-      (i32.const 50)
-     )
-    )
-    (if
-     (i32.eqz
+     (if
       (call $~lib/set/Set<i32>#has
        (get_local $1)
        (get_local $0)
       )
-     )
-     (block
-      (call $~lib/env/abort
-       (i32.const 0)
-       (i32.const 112)
-       (i32.const 24)
-       (i32.const 4)
+      (block
+       (set_local $0
+        (i32.add
+         (get_local $0)
+         (i32.const 1)
+        )
+       )
+       (br $repeat|0)
       )
-      (unreachable)
+      (br $folding-inner0)
      )
     )
-    (drop
-     (call $~lib/set/Set<i32>#delete
+   )
+   (if
+    (i32.ne
+     (call $~lib/set/Set<i8>#get:size
       (get_local $1)
-      (get_local $0)
      )
+     (i32.const 100)
     )
-    (if
-     (call $~lib/set/Set<i32>#has
-      (get_local $1)
-      (get_local $0)
-     )
-     (block
-      (call $~lib/env/abort
-       (i32.const 0)
-       (i32.const 112)
-       (i32.const 26)
-       (i32.const 4)
+    (br $folding-inner0)
+   )
+   (block $break|1
+    (set_local $0
+     (i32.const 50)
+    )
+    (loop $repeat|1
+     (br_if $break|1
+      (i32.ge_u
+       (get_local $0)
+       (i32.const 100)
       )
-      (unreachable)
      )
-     (block
-      (set_local $0
-       (i32.add
+     (if
+      (i32.eqz
+       (call $~lib/set/Set<i32>#has
+        (get_local $1)
         (get_local $0)
-        (i32.const 1)
        )
       )
-      (br $repeat|2)
+      (br $folding-inner0)
      )
-    )
-   )
-  )
-  (if
-   (i32.ne
-    (call $~lib/set/Set<i8>#get:size
-     (get_local $1)
-    )
-    (i32.const 50)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 112)
-     (i32.const 28)
-     (i32.const 2)
-    )
-    (unreachable)
-   )
-  )
-  (block $break|3
-   (set_local $0
-    (i32.const 0)
-   )
-   (loop $repeat|3
-    (br_if $break|3
-     (i32.ge_u
-      (get_local $0)
-      (i32.const 50)
-     )
-    )
-    (if
-     (call $~lib/set/Set<i32>#has
+     (call $~lib/set/Set<i32>#add
       (get_local $1)
       (get_local $0)
      )
-     (block
-      (call $~lib/env/abort
-       (i32.const 0)
-       (i32.const 112)
-       (i32.const 32)
-       (i32.const 4)
-      )
-      (unreachable)
-     )
-    )
-    (call $~lib/set/Set<i32>#add
-     (get_local $1)
-     (get_local $0)
-    )
-    (if
-     (i32.eqz
+     (if
       (call $~lib/set/Set<i32>#has
        (get_local $1)
        (get_local $0)
       )
-     )
-     (block
-      (call $~lib/env/abort
-       (i32.const 0)
-       (i32.const 112)
-       (i32.const 34)
-       (i32.const 4)
+      (block
+       (set_local $0
+        (i32.add
+         (get_local $0)
+         (i32.const 1)
+        )
+       )
+       (br $repeat|1)
       )
-      (unreachable)
+      (br $folding-inner0)
      )
     )
-    (drop
-     (call $~lib/set/Set<i32>#delete
+   )
+   (if
+    (i32.ne
+     (call $~lib/set/Set<i8>#get:size
       (get_local $1)
-      (get_local $0)
      )
+     (i32.const 100)
     )
-    (if
-     (call $~lib/set/Set<i32>#has
-      (get_local $1)
-      (get_local $0)
-     )
-     (block
-      (call $~lib/env/abort
-       (i32.const 0)
-       (i32.const 112)
-       (i32.const 36)
-       (i32.const 4)
+    (br $folding-inner0)
+   )
+   (block $break|2
+    (set_local $0
+     (i32.const 0)
+    )
+    (loop $repeat|2
+     (br_if $break|2
+      (i32.ge_u
+       (get_local $0)
+       (i32.const 50)
       )
-      (unreachable)
      )
-     (block
-      (set_local $0
-       (i32.add
+     (if
+      (i32.eqz
+       (call $~lib/set/Set<i32>#has
+        (get_local $1)
         (get_local $0)
-        (i32.const 1)
        )
       )
-      (br $repeat|3)
+      (br $folding-inner0)
+     )
+     (drop
+      (call $~lib/set/Set<i32>#delete
+       (get_local $1)
+       (get_local $0)
+      )
+     )
+     (if
+      (call $~lib/set/Set<i32>#has
+       (get_local $1)
+       (get_local $0)
+      )
+      (br $folding-inner0)
+      (block
+       (set_local $0
+        (i32.add
+         (get_local $0)
+         (i32.const 1)
+        )
+       )
+       (br $repeat|2)
+      )
      )
     )
    )
-  )
-  (if
-   (i32.ne
-    (call $~lib/set/Set<i8>#get:size
-     (get_local $1)
+   (if
+    (i32.ne
+     (call $~lib/set/Set<i8>#get:size
+      (get_local $1)
+     )
+     (i32.const 50)
     )
-    (i32.const 50)
+    (br $folding-inner0)
    )
-   (block
-    (call $~lib/env/abort
+   (block $break|3
+    (set_local $0
      (i32.const 0)
-     (i32.const 112)
-     (i32.const 38)
-     (i32.const 2)
     )
-    (unreachable)
+    (loop $repeat|3
+     (br_if $break|3
+      (i32.ge_u
+       (get_local $0)
+       (i32.const 50)
+      )
+     )
+     (if
+      (call $~lib/set/Set<i32>#has
+       (get_local $1)
+       (get_local $0)
+      )
+      (br $folding-inner0)
+     )
+     (call $~lib/set/Set<i32>#add
+      (get_local $1)
+      (get_local $0)
+     )
+     (if
+      (i32.eqz
+       (call $~lib/set/Set<i32>#has
+        (get_local $1)
+        (get_local $0)
+       )
+      )
+      (br $folding-inner0)
+     )
+     (drop
+      (call $~lib/set/Set<i32>#delete
+       (get_local $1)
+       (get_local $0)
+      )
+     )
+     (if
+      (call $~lib/set/Set<i32>#has
+       (get_local $1)
+       (get_local $0)
+      )
+      (br $folding-inner0)
+      (block
+       (set_local $0
+        (i32.add
+         (get_local $0)
+         (i32.const 1)
+        )
+       )
+       (br $repeat|3)
+      )
+     )
+    )
    )
-  )
-  (call $~lib/set/Set<i8>#clear
-   (get_local $1)
-  )
-  (if
-   (call $~lib/set/Set<i8>#get:size
+   (if
+    (i32.ne
+     (call $~lib/set/Set<i8>#get:size
+      (get_local $1)
+     )
+     (i32.const 50)
+    )
+    (br $folding-inner0)
+   )
+   (call $~lib/set/Set<i8>#clear
     (get_local $1)
    )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 112)
-     (i32.const 42)
-     (i32.const 2)
+   (if
+    (call $~lib/set/Set<i8>#get:size
+     (get_local $1)
     )
-    (unreachable)
+    (br $folding-inner0)
    )
+   (return)
   )
+  (call $~lib/env/abort)
+  (unreachable)
  )
  (func $~lib/set/Set<i64>#clear (; 48 ;) (type $iv) (param $0 i32)
   (i32.store
@@ -5618,690 +4965,476 @@
  (func $std/set/test<i64> (; 57 ;) (type $v)
   (local $0 i64)
   (local $1 i32)
-  (set_local $1
-   (call $~lib/set/Set<i64>#constructor
-    (i32.const 0)
-   )
-  )
-  (block $break|0
-   (loop $repeat|0
-    (br_if $break|0
-     (i64.ge_s
-      (get_local $0)
-      (i64.const 100)
-     )
-    )
-    (if
-     (call $~lib/set/Set<i64>#has
-      (get_local $1)
-      (get_local $0)
-     )
-     (block
-      (call $~lib/env/abort
-       (i32.const 0)
-       (i32.const 112)
-       (i32.const 8)
-       (i32.const 4)
-      )
-      (unreachable)
-     )
-    )
-    (call $~lib/set/Set<i64>#add
-     (get_local $1)
-     (get_local $0)
-    )
-    (if
-     (call $~lib/set/Set<i64>#has
-      (get_local $1)
-      (get_local $0)
-     )
-     (block
-      (set_local $0
-       (i64.add
-        (get_local $0)
-        (i64.const 1)
-       )
-      )
-      (br $repeat|0)
-     )
-     (block
-      (call $~lib/env/abort
-       (i32.const 0)
-       (i32.const 112)
-       (i32.const 10)
-       (i32.const 4)
-      )
-      (unreachable)
-     )
-    )
-   )
-  )
-  (if
-   (i32.ne
-    (call $~lib/set/Set<i8>#get:size
-     (get_local $1)
-    )
-    (i32.const 100)
-   )
-   (block
-    (call $~lib/env/abort
+  (block $folding-inner0
+   (set_local $1
+    (call $~lib/set/Set<i64>#constructor
      (i32.const 0)
-     (i32.const 112)
-     (i32.const 12)
-     (i32.const 2)
     )
-    (unreachable)
    )
-  )
-  (block $break|1
-   (set_local $0
-    (i64.const 50)
-   )
-   (loop $repeat|1
-    (br_if $break|1
-     (i64.ge_s
-      (get_local $0)
-      (i64.const 100)
+   (block $break|0
+    (loop $repeat|0
+     (br_if $break|0
+      (i64.ge_s
+       (get_local $0)
+       (i64.const 100)
+      )
      )
-    )
-    (if
-     (i32.eqz
+     (if
       (call $~lib/set/Set<i64>#has
        (get_local $1)
        (get_local $0)
       )
+      (br $folding-inner0)
      )
-     (block
-      (call $~lib/env/abort
-       (i32.const 0)
-       (i32.const 112)
-       (i32.const 16)
-       (i32.const 4)
-      )
-      (unreachable)
-     )
-    )
-    (call $~lib/set/Set<i64>#add
-     (get_local $1)
-     (get_local $0)
-    )
-    (if
-     (call $~lib/set/Set<i64>#has
+     (call $~lib/set/Set<i64>#add
       (get_local $1)
       (get_local $0)
      )
-     (block
-      (set_local $0
-       (i64.add
-        (get_local $0)
-        (i64.const 1)
-       )
-      )
-      (br $repeat|1)
-     )
-     (block
-      (call $~lib/env/abort
-       (i32.const 0)
-       (i32.const 112)
-       (i32.const 18)
-       (i32.const 4)
-      )
-      (unreachable)
-     )
-    )
-   )
-  )
-  (if
-   (i32.ne
-    (call $~lib/set/Set<i8>#get:size
-     (get_local $1)
-    )
-    (i32.const 100)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 112)
-     (i32.const 20)
-     (i32.const 2)
-    )
-    (unreachable)
-   )
-  )
-  (block $break|2
-   (set_local $0
-    (i64.const 0)
-   )
-   (loop $repeat|2
-    (br_if $break|2
-     (i64.ge_s
-      (get_local $0)
-      (i64.const 50)
-     )
-    )
-    (if
-     (i32.eqz
+     (if
       (call $~lib/set/Set<i64>#has
        (get_local $1)
        (get_local $0)
       )
-     )
-     (block
-      (call $~lib/env/abort
-       (i32.const 0)
-       (i32.const 112)
-       (i32.const 24)
-       (i32.const 4)
+      (block
+       (set_local $0
+        (i64.add
+         (get_local $0)
+         (i64.const 1)
+        )
+       )
+       (br $repeat|0)
       )
-      (unreachable)
+      (br $folding-inner0)
      )
     )
-    (drop
-     (call $~lib/set/Set<i64>#delete
+   )
+   (if
+    (i32.ne
+     (call $~lib/set/Set<i8>#get:size
       (get_local $1)
-      (get_local $0)
      )
+     (i32.const 100)
     )
-    (if
-     (call $~lib/set/Set<i64>#has
-      (get_local $1)
-      (get_local $0)
-     )
-     (block
-      (call $~lib/env/abort
-       (i32.const 0)
-       (i32.const 112)
-       (i32.const 26)
-       (i32.const 4)
+    (br $folding-inner0)
+   )
+   (block $break|1
+    (set_local $0
+     (i64.const 50)
+    )
+    (loop $repeat|1
+     (br_if $break|1
+      (i64.ge_s
+       (get_local $0)
+       (i64.const 100)
       )
-      (unreachable)
      )
-     (block
-      (set_local $0
-       (i64.add
+     (if
+      (i32.eqz
+       (call $~lib/set/Set<i64>#has
+        (get_local $1)
         (get_local $0)
-        (i64.const 1)
        )
       )
-      (br $repeat|2)
+      (br $folding-inner0)
      )
-    )
-   )
-  )
-  (if
-   (i32.ne
-    (call $~lib/set/Set<i8>#get:size
-     (get_local $1)
-    )
-    (i32.const 50)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 112)
-     (i32.const 28)
-     (i32.const 2)
-    )
-    (unreachable)
-   )
-  )
-  (block $break|3
-   (set_local $0
-    (i64.const 0)
-   )
-   (loop $repeat|3
-    (br_if $break|3
-     (i64.ge_s
-      (get_local $0)
-      (i64.const 50)
-     )
-    )
-    (if
-     (call $~lib/set/Set<i64>#has
+     (call $~lib/set/Set<i64>#add
       (get_local $1)
       (get_local $0)
      )
-     (block
-      (call $~lib/env/abort
-       (i32.const 0)
-       (i32.const 112)
-       (i32.const 32)
-       (i32.const 4)
-      )
-      (unreachable)
-     )
-    )
-    (call $~lib/set/Set<i64>#add
-     (get_local $1)
-     (get_local $0)
-    )
-    (if
-     (i32.eqz
+     (if
       (call $~lib/set/Set<i64>#has
        (get_local $1)
        (get_local $0)
       )
-     )
-     (block
-      (call $~lib/env/abort
-       (i32.const 0)
-       (i32.const 112)
-       (i32.const 34)
-       (i32.const 4)
+      (block
+       (set_local $0
+        (i64.add
+         (get_local $0)
+         (i64.const 1)
+        )
+       )
+       (br $repeat|1)
       )
-      (unreachable)
+      (br $folding-inner0)
      )
     )
-    (drop
-     (call $~lib/set/Set<i64>#delete
+   )
+   (if
+    (i32.ne
+     (call $~lib/set/Set<i8>#get:size
       (get_local $1)
-      (get_local $0)
      )
+     (i32.const 100)
     )
-    (if
-     (call $~lib/set/Set<i64>#has
-      (get_local $1)
-      (get_local $0)
-     )
-     (block
-      (call $~lib/env/abort
-       (i32.const 0)
-       (i32.const 112)
-       (i32.const 36)
-       (i32.const 4)
+    (br $folding-inner0)
+   )
+   (block $break|2
+    (set_local $0
+     (i64.const 0)
+    )
+    (loop $repeat|2
+     (br_if $break|2
+      (i64.ge_s
+       (get_local $0)
+       (i64.const 50)
       )
-      (unreachable)
      )
-     (block
-      (set_local $0
-       (i64.add
+     (if
+      (i32.eqz
+       (call $~lib/set/Set<i64>#has
+        (get_local $1)
         (get_local $0)
-        (i64.const 1)
        )
       )
-      (br $repeat|3)
+      (br $folding-inner0)
+     )
+     (drop
+      (call $~lib/set/Set<i64>#delete
+       (get_local $1)
+       (get_local $0)
+      )
+     )
+     (if
+      (call $~lib/set/Set<i64>#has
+       (get_local $1)
+       (get_local $0)
+      )
+      (br $folding-inner0)
+      (block
+       (set_local $0
+        (i64.add
+         (get_local $0)
+         (i64.const 1)
+        )
+       )
+       (br $repeat|2)
+      )
      )
     )
    )
-  )
-  (if
-   (i32.ne
-    (call $~lib/set/Set<i8>#get:size
-     (get_local $1)
+   (if
+    (i32.ne
+     (call $~lib/set/Set<i8>#get:size
+      (get_local $1)
+     )
+     (i32.const 50)
     )
-    (i32.const 50)
+    (br $folding-inner0)
    )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 112)
-     (i32.const 38)
-     (i32.const 2)
+   (block $break|3
+    (set_local $0
+     (i64.const 0)
     )
-    (unreachable)
+    (loop $repeat|3
+     (br_if $break|3
+      (i64.ge_s
+       (get_local $0)
+       (i64.const 50)
+      )
+     )
+     (if
+      (call $~lib/set/Set<i64>#has
+       (get_local $1)
+       (get_local $0)
+      )
+      (br $folding-inner0)
+     )
+     (call $~lib/set/Set<i64>#add
+      (get_local $1)
+      (get_local $0)
+     )
+     (if
+      (i32.eqz
+       (call $~lib/set/Set<i64>#has
+        (get_local $1)
+        (get_local $0)
+       )
+      )
+      (br $folding-inner0)
+     )
+     (drop
+      (call $~lib/set/Set<i64>#delete
+       (get_local $1)
+       (get_local $0)
+      )
+     )
+     (if
+      (call $~lib/set/Set<i64>#has
+       (get_local $1)
+       (get_local $0)
+      )
+      (br $folding-inner0)
+      (block
+       (set_local $0
+        (i64.add
+         (get_local $0)
+         (i64.const 1)
+        )
+       )
+       (br $repeat|3)
+      )
+     )
+    )
    )
-  )
-  (call $~lib/set/Set<i64>#clear
-   (get_local $1)
-  )
-  (if
-   (call $~lib/set/Set<i8>#get:size
+   (if
+    (i32.ne
+     (call $~lib/set/Set<i8>#get:size
+      (get_local $1)
+     )
+     (i32.const 50)
+    )
+    (br $folding-inner0)
+   )
+   (call $~lib/set/Set<i64>#clear
     (get_local $1)
    )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 112)
-     (i32.const 42)
-     (i32.const 2)
+   (if
+    (call $~lib/set/Set<i8>#get:size
+     (get_local $1)
     )
-    (unreachable)
+    (br $folding-inner0)
    )
+   (return)
   )
+  (call $~lib/env/abort)
+  (unreachable)
  )
  (func $std/set/test<u64> (; 58 ;) (type $v)
   (local $0 i64)
   (local $1 i32)
-  (set_local $1
-   (call $~lib/set/Set<i64>#constructor
-    (i32.const 0)
-   )
-  )
-  (block $break|0
-   (loop $repeat|0
-    (br_if $break|0
-     (i64.ge_u
-      (get_local $0)
-      (i64.const 100)
-     )
-    )
-    (if
-     (call $~lib/set/Set<i64>#has
-      (get_local $1)
-      (get_local $0)
-     )
-     (block
-      (call $~lib/env/abort
-       (i32.const 0)
-       (i32.const 112)
-       (i32.const 8)
-       (i32.const 4)
-      )
-      (unreachable)
-     )
-    )
-    (call $~lib/set/Set<i64>#add
-     (get_local $1)
-     (get_local $0)
-    )
-    (if
-     (call $~lib/set/Set<i64>#has
-      (get_local $1)
-      (get_local $0)
-     )
-     (block
-      (set_local $0
-       (i64.add
-        (get_local $0)
-        (i64.const 1)
-       )
-      )
-      (br $repeat|0)
-     )
-     (block
-      (call $~lib/env/abort
-       (i32.const 0)
-       (i32.const 112)
-       (i32.const 10)
-       (i32.const 4)
-      )
-      (unreachable)
-     )
-    )
-   )
-  )
-  (if
-   (i32.ne
-    (call $~lib/set/Set<i8>#get:size
-     (get_local $1)
-    )
-    (i32.const 100)
-   )
-   (block
-    (call $~lib/env/abort
+  (block $folding-inner0
+   (set_local $1
+    (call $~lib/set/Set<i64>#constructor
      (i32.const 0)
-     (i32.const 112)
-     (i32.const 12)
-     (i32.const 2)
     )
-    (unreachable)
    )
-  )
-  (block $break|1
-   (set_local $0
-    (i64.const 50)
-   )
-   (loop $repeat|1
-    (br_if $break|1
-     (i64.ge_u
-      (get_local $0)
-      (i64.const 100)
+   (block $break|0
+    (loop $repeat|0
+     (br_if $break|0
+      (i64.ge_u
+       (get_local $0)
+       (i64.const 100)
+      )
      )
-    )
-    (if
-     (i32.eqz
+     (if
       (call $~lib/set/Set<i64>#has
        (get_local $1)
        (get_local $0)
       )
+      (br $folding-inner0)
      )
-     (block
-      (call $~lib/env/abort
-       (i32.const 0)
-       (i32.const 112)
-       (i32.const 16)
-       (i32.const 4)
-      )
-      (unreachable)
-     )
-    )
-    (call $~lib/set/Set<i64>#add
-     (get_local $1)
-     (get_local $0)
-    )
-    (if
-     (call $~lib/set/Set<i64>#has
+     (call $~lib/set/Set<i64>#add
       (get_local $1)
       (get_local $0)
      )
-     (block
-      (set_local $0
-       (i64.add
-        (get_local $0)
-        (i64.const 1)
-       )
-      )
-      (br $repeat|1)
-     )
-     (block
-      (call $~lib/env/abort
-       (i32.const 0)
-       (i32.const 112)
-       (i32.const 18)
-       (i32.const 4)
-      )
-      (unreachable)
-     )
-    )
-   )
-  )
-  (if
-   (i32.ne
-    (call $~lib/set/Set<i8>#get:size
-     (get_local $1)
-    )
-    (i32.const 100)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 112)
-     (i32.const 20)
-     (i32.const 2)
-    )
-    (unreachable)
-   )
-  )
-  (block $break|2
-   (set_local $0
-    (i64.const 0)
-   )
-   (loop $repeat|2
-    (br_if $break|2
-     (i64.ge_u
-      (get_local $0)
-      (i64.const 50)
-     )
-    )
-    (if
-     (i32.eqz
+     (if
       (call $~lib/set/Set<i64>#has
        (get_local $1)
        (get_local $0)
       )
-     )
-     (block
-      (call $~lib/env/abort
-       (i32.const 0)
-       (i32.const 112)
-       (i32.const 24)
-       (i32.const 4)
+      (block
+       (set_local $0
+        (i64.add
+         (get_local $0)
+         (i64.const 1)
+        )
+       )
+       (br $repeat|0)
       )
-      (unreachable)
+      (br $folding-inner0)
      )
     )
-    (drop
-     (call $~lib/set/Set<i64>#delete
+   )
+   (if
+    (i32.ne
+     (call $~lib/set/Set<i8>#get:size
       (get_local $1)
-      (get_local $0)
      )
+     (i32.const 100)
     )
-    (if
-     (call $~lib/set/Set<i64>#has
-      (get_local $1)
-      (get_local $0)
-     )
-     (block
-      (call $~lib/env/abort
-       (i32.const 0)
-       (i32.const 112)
-       (i32.const 26)
-       (i32.const 4)
+    (br $folding-inner0)
+   )
+   (block $break|1
+    (set_local $0
+     (i64.const 50)
+    )
+    (loop $repeat|1
+     (br_if $break|1
+      (i64.ge_u
+       (get_local $0)
+       (i64.const 100)
       )
-      (unreachable)
      )
-     (block
-      (set_local $0
-       (i64.add
+     (if
+      (i32.eqz
+       (call $~lib/set/Set<i64>#has
+        (get_local $1)
         (get_local $0)
-        (i64.const 1)
        )
       )
-      (br $repeat|2)
+      (br $folding-inner0)
      )
-    )
-   )
-  )
-  (if
-   (i32.ne
-    (call $~lib/set/Set<i8>#get:size
-     (get_local $1)
-    )
-    (i32.const 50)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 112)
-     (i32.const 28)
-     (i32.const 2)
-    )
-    (unreachable)
-   )
-  )
-  (block $break|3
-   (set_local $0
-    (i64.const 0)
-   )
-   (loop $repeat|3
-    (br_if $break|3
-     (i64.ge_u
-      (get_local $0)
-      (i64.const 50)
-     )
-    )
-    (if
-     (call $~lib/set/Set<i64>#has
+     (call $~lib/set/Set<i64>#add
       (get_local $1)
       (get_local $0)
      )
-     (block
-      (call $~lib/env/abort
-       (i32.const 0)
-       (i32.const 112)
-       (i32.const 32)
-       (i32.const 4)
-      )
-      (unreachable)
-     )
-    )
-    (call $~lib/set/Set<i64>#add
-     (get_local $1)
-     (get_local $0)
-    )
-    (if
-     (i32.eqz
+     (if
       (call $~lib/set/Set<i64>#has
        (get_local $1)
        (get_local $0)
       )
-     )
-     (block
-      (call $~lib/env/abort
-       (i32.const 0)
-       (i32.const 112)
-       (i32.const 34)
-       (i32.const 4)
+      (block
+       (set_local $0
+        (i64.add
+         (get_local $0)
+         (i64.const 1)
+        )
+       )
+       (br $repeat|1)
       )
-      (unreachable)
+      (br $folding-inner0)
      )
     )
-    (drop
-     (call $~lib/set/Set<i64>#delete
+   )
+   (if
+    (i32.ne
+     (call $~lib/set/Set<i8>#get:size
       (get_local $1)
-      (get_local $0)
      )
+     (i32.const 100)
     )
-    (if
-     (call $~lib/set/Set<i64>#has
-      (get_local $1)
-      (get_local $0)
-     )
-     (block
-      (call $~lib/env/abort
-       (i32.const 0)
-       (i32.const 112)
-       (i32.const 36)
-       (i32.const 4)
+    (br $folding-inner0)
+   )
+   (block $break|2
+    (set_local $0
+     (i64.const 0)
+    )
+    (loop $repeat|2
+     (br_if $break|2
+      (i64.ge_u
+       (get_local $0)
+       (i64.const 50)
       )
-      (unreachable)
      )
-     (block
-      (set_local $0
-       (i64.add
+     (if
+      (i32.eqz
+       (call $~lib/set/Set<i64>#has
+        (get_local $1)
         (get_local $0)
-        (i64.const 1)
        )
       )
-      (br $repeat|3)
+      (br $folding-inner0)
+     )
+     (drop
+      (call $~lib/set/Set<i64>#delete
+       (get_local $1)
+       (get_local $0)
+      )
+     )
+     (if
+      (call $~lib/set/Set<i64>#has
+       (get_local $1)
+       (get_local $0)
+      )
+      (br $folding-inner0)
+      (block
+       (set_local $0
+        (i64.add
+         (get_local $0)
+         (i64.const 1)
+        )
+       )
+       (br $repeat|2)
+      )
      )
     )
    )
-  )
-  (if
-   (i32.ne
-    (call $~lib/set/Set<i8>#get:size
-     (get_local $1)
+   (if
+    (i32.ne
+     (call $~lib/set/Set<i8>#get:size
+      (get_local $1)
+     )
+     (i32.const 50)
     )
-    (i32.const 50)
+    (br $folding-inner0)
    )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 112)
-     (i32.const 38)
-     (i32.const 2)
+   (block $break|3
+    (set_local $0
+     (i64.const 0)
     )
-    (unreachable)
+    (loop $repeat|3
+     (br_if $break|3
+      (i64.ge_u
+       (get_local $0)
+       (i64.const 50)
+      )
+     )
+     (if
+      (call $~lib/set/Set<i64>#has
+       (get_local $1)
+       (get_local $0)
+      )
+      (br $folding-inner0)
+     )
+     (call $~lib/set/Set<i64>#add
+      (get_local $1)
+      (get_local $0)
+     )
+     (if
+      (i32.eqz
+       (call $~lib/set/Set<i64>#has
+        (get_local $1)
+        (get_local $0)
+       )
+      )
+      (br $folding-inner0)
+     )
+     (drop
+      (call $~lib/set/Set<i64>#delete
+       (get_local $1)
+       (get_local $0)
+      )
+     )
+     (if
+      (call $~lib/set/Set<i64>#has
+       (get_local $1)
+       (get_local $0)
+      )
+      (br $folding-inner0)
+      (block
+       (set_local $0
+        (i64.add
+         (get_local $0)
+         (i64.const 1)
+        )
+       )
+       (br $repeat|3)
+      )
+     )
+    )
    )
-  )
-  (call $~lib/set/Set<i64>#clear
-   (get_local $1)
-  )
-  (if
-   (call $~lib/set/Set<i8>#get:size
+   (if
+    (i32.ne
+     (call $~lib/set/Set<i8>#get:size
+      (get_local $1)
+     )
+     (i32.const 50)
+    )
+    (br $folding-inner0)
+   )
+   (call $~lib/set/Set<i64>#clear
     (get_local $1)
    )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 112)
-     (i32.const 42)
-     (i32.const 2)
+   (if
+    (call $~lib/set/Set<i8>#get:size
+     (get_local $1)
     )
-    (unreachable)
+    (br $folding-inner0)
    )
+   (return)
   )
+  (call $~lib/env/abort)
+  (unreachable)
  )
  (func $~lib/internal/hash/hash<f32> (; 59 ;) (type $fi) (param $0 f32) (result i32)
   (call $~lib/internal/hash/hash32
@@ -6774,354 +5907,247 @@
  (func $std/set/test<f32> (; 65 ;) (type $v)
   (local $0 f32)
   (local $1 i32)
-  (set_local $1
-   (call $~lib/set/Set<i8>#constructor
-    (i32.const 0)
+  (block $folding-inner0
+   (set_local $1
+    (call $~lib/set/Set<i8>#constructor
+     (i32.const 0)
+    )
    )
-  )
-  (block $break|0
-   (loop $repeat|0
-    (br_if $break|0
-     (i32.eqz
-      (f32.lt
-       (get_local $0)
-       (f32.const 100)
-      )
-     )
-    )
-    (if
-     (call $~lib/set/Set<f32>#has
-      (get_local $1)
-      (get_local $0)
-     )
-     (block
-      (call $~lib/env/abort
-       (i32.const 0)
-       (i32.const 112)
-       (i32.const 8)
-       (i32.const 4)
-      )
-      (unreachable)
-     )
-    )
-    (call $~lib/set/Set<f32>#add
-     (get_local $1)
-     (get_local $0)
-    )
-    (if
-     (call $~lib/set/Set<f32>#has
-      (get_local $1)
-      (get_local $0)
-     )
-     (block
-      (set_local $0
-       (f32.add
+   (block $break|0
+    (loop $repeat|0
+     (br_if $break|0
+      (i32.eqz
+       (f32.lt
         (get_local $0)
-        (f32.const 1)
+        (f32.const 100)
        )
       )
-      (br $repeat|0)
      )
-     (block
-      (call $~lib/env/abort
-       (i32.const 0)
-       (i32.const 112)
-       (i32.const 10)
-       (i32.const 4)
-      )
-      (unreachable)
-     )
-    )
-   )
-  )
-  (if
-   (i32.ne
-    (call $~lib/set/Set<i8>#get:size
-     (get_local $1)
-    )
-    (i32.const 100)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 112)
-     (i32.const 12)
-     (i32.const 2)
-    )
-    (unreachable)
-   )
-  )
-  (block $break|1
-   (set_local $0
-    (f32.const 50)
-   )
-   (loop $repeat|1
-    (br_if $break|1
-     (i32.eqz
-      (f32.lt
-       (get_local $0)
-       (f32.const 100)
-      )
-     )
-    )
-    (if
-     (i32.eqz
+     (if
       (call $~lib/set/Set<f32>#has
        (get_local $1)
        (get_local $0)
       )
+      (br $folding-inner0)
      )
-     (block
-      (call $~lib/env/abort
-       (i32.const 0)
-       (i32.const 112)
-       (i32.const 16)
-       (i32.const 4)
-      )
-      (unreachable)
-     )
-    )
-    (call $~lib/set/Set<f32>#add
-     (get_local $1)
-     (get_local $0)
-    )
-    (if
-     (call $~lib/set/Set<f32>#has
+     (call $~lib/set/Set<f32>#add
       (get_local $1)
       (get_local $0)
      )
-     (block
-      (set_local $0
-       (f32.add
-        (get_local $0)
-        (f32.const 1)
-       )
-      )
-      (br $repeat|1)
-     )
-     (block
-      (call $~lib/env/abort
-       (i32.const 0)
-       (i32.const 112)
-       (i32.const 18)
-       (i32.const 4)
-      )
-      (unreachable)
-     )
-    )
-   )
-  )
-  (if
-   (i32.ne
-    (call $~lib/set/Set<i8>#get:size
-     (get_local $1)
-    )
-    (i32.const 100)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 112)
-     (i32.const 20)
-     (i32.const 2)
-    )
-    (unreachable)
-   )
-  )
-  (block $break|2
-   (set_local $0
-    (f32.const 0)
-   )
-   (loop $repeat|2
-    (br_if $break|2
-     (i32.eqz
-      (f32.lt
-       (get_local $0)
-       (f32.const 50)
-      )
-     )
-    )
-    (if
-     (i32.eqz
+     (if
       (call $~lib/set/Set<f32>#has
        (get_local $1)
        (get_local $0)
       )
-     )
-     (block
-      (call $~lib/env/abort
-       (i32.const 0)
-       (i32.const 112)
-       (i32.const 24)
-       (i32.const 4)
+      (block
+       (set_local $0
+        (f32.add
+         (get_local $0)
+         (f32.const 1)
+        )
+       )
+       (br $repeat|0)
       )
-      (unreachable)
+      (br $folding-inner0)
      )
     )
-    (drop
-     (call $~lib/set/Set<f32>#delete
+   )
+   (if
+    (i32.ne
+     (call $~lib/set/Set<i8>#get:size
       (get_local $1)
-      (get_local $0)
      )
+     (i32.const 100)
     )
-    (if
-     (call $~lib/set/Set<f32>#has
-      (get_local $1)
-      (get_local $0)
-     )
-     (block
-      (call $~lib/env/abort
-       (i32.const 0)
-       (i32.const 112)
-       (i32.const 26)
-       (i32.const 4)
-      )
-      (unreachable)
-     )
-     (block
-      (set_local $0
-       (f32.add
+    (br $folding-inner0)
+   )
+   (block $break|1
+    (set_local $0
+     (f32.const 50)
+    )
+    (loop $repeat|1
+     (br_if $break|1
+      (i32.eqz
+       (f32.lt
         (get_local $0)
-        (f32.const 1)
+        (f32.const 100)
        )
       )
-      (br $repeat|2)
      )
-    )
-   )
-  )
-  (if
-   (i32.ne
-    (call $~lib/set/Set<i8>#get:size
-     (get_local $1)
-    )
-    (i32.const 50)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 112)
-     (i32.const 28)
-     (i32.const 2)
-    )
-    (unreachable)
-   )
-  )
-  (block $break|3
-   (set_local $0
-    (f32.const 0)
-   )
-   (loop $repeat|3
-    (br_if $break|3
-     (i32.eqz
-      (f32.lt
-       (get_local $0)
-       (f32.const 50)
+     (if
+      (i32.eqz
+       (call $~lib/set/Set<f32>#has
+        (get_local $1)
+        (get_local $0)
+       )
       )
+      (br $folding-inner0)
      )
-    )
-    (if
-     (call $~lib/set/Set<f32>#has
+     (call $~lib/set/Set<f32>#add
       (get_local $1)
       (get_local $0)
      )
-     (block
-      (call $~lib/env/abort
-       (i32.const 0)
-       (i32.const 112)
-       (i32.const 32)
-       (i32.const 4)
-      )
-      (unreachable)
-     )
-    )
-    (call $~lib/set/Set<f32>#add
-     (get_local $1)
-     (get_local $0)
-    )
-    (if
-     (i32.eqz
+     (if
       (call $~lib/set/Set<f32>#has
        (get_local $1)
        (get_local $0)
       )
-     )
-     (block
-      (call $~lib/env/abort
-       (i32.const 0)
-       (i32.const 112)
-       (i32.const 34)
-       (i32.const 4)
+      (block
+       (set_local $0
+        (f32.add
+         (get_local $0)
+         (f32.const 1)
+        )
+       )
+       (br $repeat|1)
       )
-      (unreachable)
+      (br $folding-inner0)
      )
     )
-    (drop
-     (call $~lib/set/Set<f32>#delete
+   )
+   (if
+    (i32.ne
+     (call $~lib/set/Set<i8>#get:size
       (get_local $1)
-      (get_local $0)
      )
+     (i32.const 100)
     )
-    (if
-     (call $~lib/set/Set<f32>#has
-      (get_local $1)
-      (get_local $0)
-     )
-     (block
-      (call $~lib/env/abort
-       (i32.const 0)
-       (i32.const 112)
-       (i32.const 36)
-       (i32.const 4)
-      )
-      (unreachable)
-     )
-     (block
-      (set_local $0
-       (f32.add
+    (br $folding-inner0)
+   )
+   (block $break|2
+    (set_local $0
+     (f32.const 0)
+    )
+    (loop $repeat|2
+     (br_if $break|2
+      (i32.eqz
+       (f32.lt
         (get_local $0)
-        (f32.const 1)
+        (f32.const 50)
        )
       )
-      (br $repeat|3)
+     )
+     (if
+      (i32.eqz
+       (call $~lib/set/Set<f32>#has
+        (get_local $1)
+        (get_local $0)
+       )
+      )
+      (br $folding-inner0)
+     )
+     (drop
+      (call $~lib/set/Set<f32>#delete
+       (get_local $1)
+       (get_local $0)
+      )
+     )
+     (if
+      (call $~lib/set/Set<f32>#has
+       (get_local $1)
+       (get_local $0)
+      )
+      (br $folding-inner0)
+      (block
+       (set_local $0
+        (f32.add
+         (get_local $0)
+         (f32.const 1)
+        )
+       )
+       (br $repeat|2)
+      )
      )
     )
    )
-  )
-  (if
-   (i32.ne
-    (call $~lib/set/Set<i8>#get:size
-     (get_local $1)
+   (if
+    (i32.ne
+     (call $~lib/set/Set<i8>#get:size
+      (get_local $1)
+     )
+     (i32.const 50)
     )
-    (i32.const 50)
+    (br $folding-inner0)
    )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 112)
-     (i32.const 38)
-     (i32.const 2)
+   (block $break|3
+    (set_local $0
+     (f32.const 0)
     )
-    (unreachable)
+    (loop $repeat|3
+     (br_if $break|3
+      (i32.eqz
+       (f32.lt
+        (get_local $0)
+        (f32.const 50)
+       )
+      )
+     )
+     (if
+      (call $~lib/set/Set<f32>#has
+       (get_local $1)
+       (get_local $0)
+      )
+      (br $folding-inner0)
+     )
+     (call $~lib/set/Set<f32>#add
+      (get_local $1)
+      (get_local $0)
+     )
+     (if
+      (i32.eqz
+       (call $~lib/set/Set<f32>#has
+        (get_local $1)
+        (get_local $0)
+       )
+      )
+      (br $folding-inner0)
+     )
+     (drop
+      (call $~lib/set/Set<f32>#delete
+       (get_local $1)
+       (get_local $0)
+      )
+     )
+     (if
+      (call $~lib/set/Set<f32>#has
+       (get_local $1)
+       (get_local $0)
+      )
+      (br $folding-inner0)
+      (block
+       (set_local $0
+        (f32.add
+         (get_local $0)
+         (f32.const 1)
+        )
+       )
+       (br $repeat|3)
+      )
+     )
+    )
    )
-  )
-  (call $~lib/set/Set<i8>#clear
-   (get_local $1)
-  )
-  (if
-   (call $~lib/set/Set<i8>#get:size
+   (if
+    (i32.ne
+     (call $~lib/set/Set<i8>#get:size
+      (get_local $1)
+     )
+     (i32.const 50)
+    )
+    (br $folding-inner0)
+   )
+   (call $~lib/set/Set<i8>#clear
     (get_local $1)
    )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 112)
-     (i32.const 42)
-     (i32.const 2)
+   (if
+    (call $~lib/set/Set<i8>#get:size
+     (get_local $1)
     )
-    (unreachable)
+    (br $folding-inner0)
    )
+   (return)
   )
+  (call $~lib/env/abort)
+  (unreachable)
  )
  (func $~lib/internal/hash/hash<f64> (; 66 ;) (type $Fi) (param $0 f64) (result i32)
   (call $~lib/internal/hash/hash64
@@ -7594,354 +6620,247 @@
  (func $std/set/test<f64> (; 72 ;) (type $v)
   (local $0 f64)
   (local $1 i32)
-  (set_local $1
-   (call $~lib/set/Set<i64>#constructor
-    (i32.const 0)
+  (block $folding-inner0
+   (set_local $1
+    (call $~lib/set/Set<i64>#constructor
+     (i32.const 0)
+    )
    )
-  )
-  (block $break|0
-   (loop $repeat|0
-    (br_if $break|0
-     (i32.eqz
-      (f64.lt
-       (get_local $0)
-       (f64.const 100)
-      )
-     )
-    )
-    (if
-     (call $~lib/set/Set<f64>#has
-      (get_local $1)
-      (get_local $0)
-     )
-     (block
-      (call $~lib/env/abort
-       (i32.const 0)
-       (i32.const 112)
-       (i32.const 8)
-       (i32.const 4)
-      )
-      (unreachable)
-     )
-    )
-    (call $~lib/set/Set<f64>#add
-     (get_local $1)
-     (get_local $0)
-    )
-    (if
-     (call $~lib/set/Set<f64>#has
-      (get_local $1)
-      (get_local $0)
-     )
-     (block
-      (set_local $0
-       (f64.add
+   (block $break|0
+    (loop $repeat|0
+     (br_if $break|0
+      (i32.eqz
+       (f64.lt
         (get_local $0)
-        (f64.const 1)
+        (f64.const 100)
        )
       )
-      (br $repeat|0)
      )
-     (block
-      (call $~lib/env/abort
-       (i32.const 0)
-       (i32.const 112)
-       (i32.const 10)
-       (i32.const 4)
-      )
-      (unreachable)
-     )
-    )
-   )
-  )
-  (if
-   (i32.ne
-    (call $~lib/set/Set<i8>#get:size
-     (get_local $1)
-    )
-    (i32.const 100)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 112)
-     (i32.const 12)
-     (i32.const 2)
-    )
-    (unreachable)
-   )
-  )
-  (block $break|1
-   (set_local $0
-    (f64.const 50)
-   )
-   (loop $repeat|1
-    (br_if $break|1
-     (i32.eqz
-      (f64.lt
-       (get_local $0)
-       (f64.const 100)
-      )
-     )
-    )
-    (if
-     (i32.eqz
+     (if
       (call $~lib/set/Set<f64>#has
        (get_local $1)
        (get_local $0)
       )
+      (br $folding-inner0)
      )
-     (block
-      (call $~lib/env/abort
-       (i32.const 0)
-       (i32.const 112)
-       (i32.const 16)
-       (i32.const 4)
-      )
-      (unreachable)
-     )
-    )
-    (call $~lib/set/Set<f64>#add
-     (get_local $1)
-     (get_local $0)
-    )
-    (if
-     (call $~lib/set/Set<f64>#has
+     (call $~lib/set/Set<f64>#add
       (get_local $1)
       (get_local $0)
      )
-     (block
-      (set_local $0
-       (f64.add
-        (get_local $0)
-        (f64.const 1)
-       )
-      )
-      (br $repeat|1)
-     )
-     (block
-      (call $~lib/env/abort
-       (i32.const 0)
-       (i32.const 112)
-       (i32.const 18)
-       (i32.const 4)
-      )
-      (unreachable)
-     )
-    )
-   )
-  )
-  (if
-   (i32.ne
-    (call $~lib/set/Set<i8>#get:size
-     (get_local $1)
-    )
-    (i32.const 100)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 112)
-     (i32.const 20)
-     (i32.const 2)
-    )
-    (unreachable)
-   )
-  )
-  (block $break|2
-   (set_local $0
-    (f64.const 0)
-   )
-   (loop $repeat|2
-    (br_if $break|2
-     (i32.eqz
-      (f64.lt
-       (get_local $0)
-       (f64.const 50)
-      )
-     )
-    )
-    (if
-     (i32.eqz
+     (if
       (call $~lib/set/Set<f64>#has
        (get_local $1)
        (get_local $0)
       )
-     )
-     (block
-      (call $~lib/env/abort
-       (i32.const 0)
-       (i32.const 112)
-       (i32.const 24)
-       (i32.const 4)
+      (block
+       (set_local $0
+        (f64.add
+         (get_local $0)
+         (f64.const 1)
+        )
+       )
+       (br $repeat|0)
       )
-      (unreachable)
+      (br $folding-inner0)
      )
     )
-    (drop
-     (call $~lib/set/Set<f64>#delete
+   )
+   (if
+    (i32.ne
+     (call $~lib/set/Set<i8>#get:size
       (get_local $1)
-      (get_local $0)
      )
+     (i32.const 100)
     )
-    (if
-     (call $~lib/set/Set<f64>#has
-      (get_local $1)
-      (get_local $0)
-     )
-     (block
-      (call $~lib/env/abort
-       (i32.const 0)
-       (i32.const 112)
-       (i32.const 26)
-       (i32.const 4)
-      )
-      (unreachable)
-     )
-     (block
-      (set_local $0
-       (f64.add
+    (br $folding-inner0)
+   )
+   (block $break|1
+    (set_local $0
+     (f64.const 50)
+    )
+    (loop $repeat|1
+     (br_if $break|1
+      (i32.eqz
+       (f64.lt
         (get_local $0)
-        (f64.const 1)
+        (f64.const 100)
        )
       )
-      (br $repeat|2)
      )
-    )
-   )
-  )
-  (if
-   (i32.ne
-    (call $~lib/set/Set<i8>#get:size
-     (get_local $1)
-    )
-    (i32.const 50)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 112)
-     (i32.const 28)
-     (i32.const 2)
-    )
-    (unreachable)
-   )
-  )
-  (block $break|3
-   (set_local $0
-    (f64.const 0)
-   )
-   (loop $repeat|3
-    (br_if $break|3
-     (i32.eqz
-      (f64.lt
-       (get_local $0)
-       (f64.const 50)
+     (if
+      (i32.eqz
+       (call $~lib/set/Set<f64>#has
+        (get_local $1)
+        (get_local $0)
+       )
       )
+      (br $folding-inner0)
      )
-    )
-    (if
-     (call $~lib/set/Set<f64>#has
+     (call $~lib/set/Set<f64>#add
       (get_local $1)
       (get_local $0)
      )
-     (block
-      (call $~lib/env/abort
-       (i32.const 0)
-       (i32.const 112)
-       (i32.const 32)
-       (i32.const 4)
-      )
-      (unreachable)
-     )
-    )
-    (call $~lib/set/Set<f64>#add
-     (get_local $1)
-     (get_local $0)
-    )
-    (if
-     (i32.eqz
+     (if
       (call $~lib/set/Set<f64>#has
        (get_local $1)
        (get_local $0)
       )
-     )
-     (block
-      (call $~lib/env/abort
-       (i32.const 0)
-       (i32.const 112)
-       (i32.const 34)
-       (i32.const 4)
+      (block
+       (set_local $0
+        (f64.add
+         (get_local $0)
+         (f64.const 1)
+        )
+       )
+       (br $repeat|1)
       )
-      (unreachable)
+      (br $folding-inner0)
      )
     )
-    (drop
-     (call $~lib/set/Set<f64>#delete
+   )
+   (if
+    (i32.ne
+     (call $~lib/set/Set<i8>#get:size
       (get_local $1)
-      (get_local $0)
      )
+     (i32.const 100)
     )
-    (if
-     (call $~lib/set/Set<f64>#has
-      (get_local $1)
-      (get_local $0)
-     )
-     (block
-      (call $~lib/env/abort
-       (i32.const 0)
-       (i32.const 112)
-       (i32.const 36)
-       (i32.const 4)
-      )
-      (unreachable)
-     )
-     (block
-      (set_local $0
-       (f64.add
+    (br $folding-inner0)
+   )
+   (block $break|2
+    (set_local $0
+     (f64.const 0)
+    )
+    (loop $repeat|2
+     (br_if $break|2
+      (i32.eqz
+       (f64.lt
         (get_local $0)
-        (f64.const 1)
+        (f64.const 50)
        )
       )
-      (br $repeat|3)
+     )
+     (if
+      (i32.eqz
+       (call $~lib/set/Set<f64>#has
+        (get_local $1)
+        (get_local $0)
+       )
+      )
+      (br $folding-inner0)
+     )
+     (drop
+      (call $~lib/set/Set<f64>#delete
+       (get_local $1)
+       (get_local $0)
+      )
+     )
+     (if
+      (call $~lib/set/Set<f64>#has
+       (get_local $1)
+       (get_local $0)
+      )
+      (br $folding-inner0)
+      (block
+       (set_local $0
+        (f64.add
+         (get_local $0)
+         (f64.const 1)
+        )
+       )
+       (br $repeat|2)
+      )
      )
     )
    )
-  )
-  (if
-   (i32.ne
-    (call $~lib/set/Set<i8>#get:size
-     (get_local $1)
+   (if
+    (i32.ne
+     (call $~lib/set/Set<i8>#get:size
+      (get_local $1)
+     )
+     (i32.const 50)
     )
-    (i32.const 50)
+    (br $folding-inner0)
    )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 112)
-     (i32.const 38)
-     (i32.const 2)
+   (block $break|3
+    (set_local $0
+     (f64.const 0)
     )
-    (unreachable)
+    (loop $repeat|3
+     (br_if $break|3
+      (i32.eqz
+       (f64.lt
+        (get_local $0)
+        (f64.const 50)
+       )
+      )
+     )
+     (if
+      (call $~lib/set/Set<f64>#has
+       (get_local $1)
+       (get_local $0)
+      )
+      (br $folding-inner0)
+     )
+     (call $~lib/set/Set<f64>#add
+      (get_local $1)
+      (get_local $0)
+     )
+     (if
+      (i32.eqz
+       (call $~lib/set/Set<f64>#has
+        (get_local $1)
+        (get_local $0)
+       )
+      )
+      (br $folding-inner0)
+     )
+     (drop
+      (call $~lib/set/Set<f64>#delete
+       (get_local $1)
+       (get_local $0)
+      )
+     )
+     (if
+      (call $~lib/set/Set<f64>#has
+       (get_local $1)
+       (get_local $0)
+      )
+      (br $folding-inner0)
+      (block
+       (set_local $0
+        (f64.add
+         (get_local $0)
+         (f64.const 1)
+        )
+       )
+       (br $repeat|3)
+      )
+     )
+    )
    )
-  )
-  (call $~lib/set/Set<i64>#clear
-   (get_local $1)
-  )
-  (if
-   (call $~lib/set/Set<i8>#get:size
+   (if
+    (i32.ne
+     (call $~lib/set/Set<i8>#get:size
+      (get_local $1)
+     )
+     (i32.const 50)
+    )
+    (br $folding-inner0)
+   )
+   (call $~lib/set/Set<i64>#clear
     (get_local $1)
    )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 112)
-     (i32.const 42)
-     (i32.const 2)
+   (if
+    (call $~lib/set/Set<i8>#get:size
+     (get_local $1)
     )
-    (unreachable)
+    (br $folding-inner0)
    )
+   (return)
   )
+  (call $~lib/env/abort)
+  (unreachable)
  )
  (func $start (; 73 ;) (type $v)
   (set_global $~lib/allocator/arena/startOffset

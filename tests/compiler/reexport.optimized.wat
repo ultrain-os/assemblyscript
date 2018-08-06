@@ -1,6 +1,8 @@
 (module
  (type $iii (func (param i32 i32) (result i32)))
  (type $v (func))
+ (global $~lib/allocator/arena/startOffset (mut i32) (i32.const 0))
+ (global $~lib/allocator/arena/offset (mut i32) (i32.const 0))
  (global $export/a i32 (i32.const 1))
  (global $export/b i32 (i32.const 2))
  (global $export/c i32 (i32.const 3))
@@ -40,6 +42,12 @@
   (nop)
  )
  (func $start (; 4 ;) (type $v)
+  (set_global $~lib/allocator/arena/startOffset
+   (i32.const 8)
+  )
+  (set_global $~lib/allocator/arena/offset
+   (get_global $~lib/allocator/arena/startOffset)
+  )
   (drop
    (i32.add
     (call $export/add

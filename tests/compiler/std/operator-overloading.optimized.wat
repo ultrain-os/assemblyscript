@@ -2,11 +2,10 @@
  (type $iiii (func (param i32 i32 i32) (result i32)))
  (type $ii (func (param i32) (result i32)))
  (type $iii (func (param i32 i32) (result i32)))
- (type $iiiiv (func (param i32 i32 i32 i32)))
+ (type $v (func))
  (type $FFF (func (param f64 f64) (result f64)))
  (type $FiF (func (param f64 i32) (result f64)))
- (type $v (func))
- (import "env" "abort" (func $~lib/env/abort (param i32 i32 i32 i32)))
+ (import "env" "abort" (func $~lib/env/abort))
  (global $~lib/allocator/arena/startOffset (mut i32) (i32.const 0))
  (global $~lib/allocator/arena/offset (mut i32) (i32.const 0))
  (global $std/operator-overloading/a1 (mut i32) (i32.const 0))
@@ -2250,1297 +2249,1070 @@
  (func $start (; 30 ;) (type $v)
   (local $0 i32)
   (local $1 i32)
-  (set_global $~lib/allocator/arena/startOffset
-   (i32.const 72)
-  )
-  (set_global $~lib/allocator/arena/offset
-   (get_global $~lib/allocator/arena/startOffset)
-  )
-  (set_global $std/operator-overloading/a1
-   (call $std/operator-overloading/Tester#constructor
-    (i32.const 0)
-    (i32.const 1)
-    (i32.const 2)
+  (block $folding-inner0
+   (set_global $~lib/allocator/arena/startOffset
+    (i32.const 72)
    )
-  )
-  (set_global $std/operator-overloading/a2
-   (call $std/operator-overloading/Tester#constructor
-    (i32.const 0)
-    (i32.const 2)
-    (i32.const 3)
+   (set_global $~lib/allocator/arena/offset
+    (get_global $~lib/allocator/arena/startOffset)
    )
-  )
-  (set_global $std/operator-overloading/a
-   (call $std/operator-overloading/Tester.add
-    (get_global $std/operator-overloading/a1)
-    (get_global $std/operator-overloading/a2)
+   (set_global $std/operator-overloading/a1
+    (call $std/operator-overloading/Tester#constructor
+     (i32.const 0)
+     (i32.const 1)
+     (i32.const 2)
+    )
    )
-  )
-  (if
-   (tee_local $0
-    (i32.eq
-     (i32.load
-      (get_global $std/operator-overloading/a)
-     )
+   (set_global $std/operator-overloading/a2
+    (call $std/operator-overloading/Tester#constructor
+     (i32.const 0)
+     (i32.const 2)
      (i32.const 3)
     )
    )
-   (set_local $0
-    (i32.eq
-     (i32.load offset=4
-      (get_global $std/operator-overloading/a)
+   (set_global $std/operator-overloading/a
+    (call $std/operator-overloading/Tester.add
+     (get_global $std/operator-overloading/a1)
+     (get_global $std/operator-overloading/a2)
+    )
+   )
+   (if
+    (tee_local $0
+     (i32.eq
+      (i32.load
+       (get_global $std/operator-overloading/a)
+      )
+      (i32.const 3)
      )
+    )
+    (set_local $0
+     (i32.eq
+      (i32.load offset=4
+       (get_global $std/operator-overloading/a)
+      )
+      (i32.const 5)
+     )
+    )
+   )
+   (if
+    (i32.eqz
+     (get_local $0)
+    )
+    (br $folding-inner0)
+   )
+   (set_global $std/operator-overloading/s1
+    (call $std/operator-overloading/Tester#constructor
+     (i32.const 0)
+     (i32.const 2)
+     (i32.const 3)
+    )
+   )
+   (set_global $std/operator-overloading/s2
+    (call $std/operator-overloading/Tester#constructor
+     (i32.const 0)
+     (i32.const 2)
+     (i32.const -3)
+    )
+   )
+   (set_global $std/operator-overloading/s
+    (call $std/operator-overloading/Tester.sub
+     (get_global $std/operator-overloading/s1)
+     (get_global $std/operator-overloading/s2)
+    )
+   )
+   (if
+    (tee_local $0
+     (i32.eqz
+      (i32.load
+       (get_global $std/operator-overloading/s)
+      )
+     )
+    )
+    (set_local $0
+     (i32.eq
+      (i32.load offset=4
+       (get_global $std/operator-overloading/s)
+      )
+      (i32.const 6)
+     )
+    )
+   )
+   (if
+    (i32.eqz
+     (get_local $0)
+    )
+    (br $folding-inner0)
+   )
+   (set_global $std/operator-overloading/m1
+    (call $std/operator-overloading/Tester#constructor
+     (i32.const 0)
+     (i32.const 2)
      (i32.const 5)
     )
    )
-  )
-  (if
-   (i32.eqz
-    (get_local $0)
-   )
-   (block
-    (call $~lib/env/abort
+   (set_global $std/operator-overloading/m2
+    (call $std/operator-overloading/Tester#constructor
      (i32.const 0)
-     (i32.const 8)
-     (i32.const 137)
-     (i32.const 0)
+     (i32.const 3)
+     (i32.const 2)
     )
-    (unreachable)
    )
-  )
-  (set_global $std/operator-overloading/s1
-   (call $std/operator-overloading/Tester#constructor
-    (i32.const 0)
-    (i32.const 2)
-    (i32.const 3)
+   (set_global $std/operator-overloading/m
+    (call $std/operator-overloading/Tester.mul
+     (get_global $std/operator-overloading/m1)
+     (get_global $std/operator-overloading/m2)
+    )
    )
-  )
-  (set_global $std/operator-overloading/s2
-   (call $std/operator-overloading/Tester#constructor
-    (i32.const 0)
-    (i32.const 2)
-    (i32.const -3)
+   (if
+    (tee_local $0
+     (i32.eq
+      (i32.load
+       (get_global $std/operator-overloading/m)
+      )
+      (i32.const 6)
+     )
+    )
+    (set_local $0
+     (i32.eq
+      (i32.load offset=4
+       (get_global $std/operator-overloading/m)
+      )
+      (i32.const 10)
+     )
+    )
    )
-  )
-  (set_global $std/operator-overloading/s
-   (call $std/operator-overloading/Tester.sub
-    (get_global $std/operator-overloading/s1)
-    (get_global $std/operator-overloading/s2)
-   )
-  )
-  (if
-   (tee_local $0
+   (if
     (i32.eqz
-     (i32.load
-      (get_global $std/operator-overloading/s)
-     )
+     (get_local $0)
     )
+    (br $folding-inner0)
    )
-   (set_local $0
-    (i32.eq
-     (i32.load offset=4
-      (get_global $std/operator-overloading/s)
-     )
-     (i32.const 6)
-    )
-   )
-  )
-  (if
-   (i32.eqz
-    (get_local $0)
-   )
-   (block
-    (call $~lib/env/abort
+   (set_global $std/operator-overloading/d1
+    (call $std/operator-overloading/Tester#constructor
      (i32.const 0)
-     (i32.const 8)
-     (i32.const 143)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (set_global $std/operator-overloading/m1
-   (call $std/operator-overloading/Tester#constructor
-    (i32.const 0)
-    (i32.const 2)
-    (i32.const 5)
-   )
-  )
-  (set_global $std/operator-overloading/m2
-   (call $std/operator-overloading/Tester#constructor
-    (i32.const 0)
-    (i32.const 3)
-    (i32.const 2)
-   )
-  )
-  (set_global $std/operator-overloading/m
-   (call $std/operator-overloading/Tester.mul
-    (get_global $std/operator-overloading/m1)
-    (get_global $std/operator-overloading/m2)
-   )
-  )
-  (if
-   (tee_local $0
-    (i32.eq
-     (i32.load
-      (get_global $std/operator-overloading/m)
-     )
      (i32.const 6)
+     (i32.const 50)
     )
    )
-   (set_local $0
-    (i32.eq
-     (i32.load offset=4
-      (get_global $std/operator-overloading/m)
-     )
+   (set_global $std/operator-overloading/d2
+    (call $std/operator-overloading/Tester#constructor
+     (i32.const 0)
+     (i32.const 3)
      (i32.const 10)
     )
    )
-  )
-  (if
-   (i32.eqz
-    (get_local $0)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 8)
-     (i32.const 149)
-     (i32.const 0)
+   (set_global $std/operator-overloading/d
+    (call $std/operator-overloading/Tester.div
+     (get_global $std/operator-overloading/d1)
+     (get_global $std/operator-overloading/d2)
     )
-    (unreachable)
    )
-  )
-  (set_global $std/operator-overloading/d1
-   (call $std/operator-overloading/Tester#constructor
-    (i32.const 0)
-    (i32.const 6)
-    (i32.const 50)
-   )
-  )
-  (set_global $std/operator-overloading/d2
-   (call $std/operator-overloading/Tester#constructor
-    (i32.const 0)
-    (i32.const 3)
-    (i32.const 10)
-   )
-  )
-  (set_global $std/operator-overloading/d
-   (call $std/operator-overloading/Tester.div
-    (get_global $std/operator-overloading/d1)
-    (get_global $std/operator-overloading/d2)
-   )
-  )
-  (if
-   (tee_local $0
-    (i32.eq
-     (i32.load
-      (get_global $std/operator-overloading/d)
+   (if
+    (tee_local $0
+     (i32.eq
+      (i32.load
+       (get_global $std/operator-overloading/d)
+      )
+      (i32.const 2)
      )
+    )
+    (set_local $0
+     (i32.eq
+      (i32.load offset=4
+       (get_global $std/operator-overloading/d)
+      )
+      (i32.const 5)
+     )
+    )
+   )
+   (if
+    (i32.eqz
+     (get_local $0)
+    )
+    (br $folding-inner0)
+   )
+   (set_global $std/operator-overloading/f1
+    (call $std/operator-overloading/Tester#constructor
+     (i32.const 0)
+     (i32.const 10)
+     (i32.const 10)
+    )
+   )
+   (set_global $std/operator-overloading/f2
+    (call $std/operator-overloading/Tester#constructor
+     (i32.const 0)
+     (i32.const 6)
+     (i32.const 10)
+    )
+   )
+   (set_global $std/operator-overloading/f
+    (call $std/operator-overloading/Tester.mod
+     (get_global $std/operator-overloading/f1)
+     (get_global $std/operator-overloading/f2)
+    )
+   )
+   (if
+    (tee_local $0
+     (i32.eq
+      (i32.load
+       (get_global $std/operator-overloading/f)
+      )
+      (i32.const 4)
+     )
+    )
+    (set_local $0
+     (i32.eqz
+      (i32.load offset=4
+       (get_global $std/operator-overloading/f)
+      )
+     )
+    )
+   )
+   (if
+    (i32.eqz
+     (get_local $0)
+    )
+    (br $folding-inner0)
+   )
+   (set_global $std/operator-overloading/p1
+    (call $std/operator-overloading/Tester#constructor
+     (i32.const 0)
      (i32.const 2)
+     (i32.const 3)
     )
    )
-   (set_local $0
-    (i32.eq
-     (i32.load offset=4
-      (get_global $std/operator-overloading/d)
-     )
+   (set_global $std/operator-overloading/p2
+    (call $std/operator-overloading/Tester#constructor
+     (i32.const 0)
+     (i32.const 4)
      (i32.const 5)
     )
    )
-  )
-  (if
-   (i32.eqz
-    (get_local $0)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 8)
-     (i32.const 155)
-     (i32.const 0)
+   (set_global $std/operator-overloading/p
+    (call $std/operator-overloading/Tester.pow
+     (get_global $std/operator-overloading/p1)
+     (get_global $std/operator-overloading/p2)
     )
-    (unreachable)
    )
-  )
-  (set_global $std/operator-overloading/f1
-   (call $std/operator-overloading/Tester#constructor
-    (i32.const 0)
-    (i32.const 10)
-    (i32.const 10)
-   )
-  )
-  (set_global $std/operator-overloading/f2
-   (call $std/operator-overloading/Tester#constructor
-    (i32.const 0)
-    (i32.const 6)
-    (i32.const 10)
-   )
-  )
-  (set_global $std/operator-overloading/f
-   (call $std/operator-overloading/Tester.mod
-    (get_global $std/operator-overloading/f1)
-    (get_global $std/operator-overloading/f2)
-   )
-  )
-  (if
-   (tee_local $0
-    (i32.eq
-     (i32.load
-      (get_global $std/operator-overloading/f)
+   (if
+    (tee_local $0
+     (i32.eq
+      (i32.load
+       (get_global $std/operator-overloading/p)
+      )
+      (i32.const 16)
      )
-     (i32.const 4)
+    )
+    (set_local $0
+     (i32.eq
+      (i32.load offset=4
+       (get_global $std/operator-overloading/p)
+      )
+      (i32.const 243)
+     )
     )
    )
-   (set_local $0
+   (if
     (i32.eqz
-     (i32.load offset=4
-      (get_global $std/operator-overloading/f)
-     )
+     (get_local $0)
     )
+    (br $folding-inner0)
    )
-  )
-  (if
-   (i32.eqz
-    (get_local $0)
-   )
-   (block
-    (call $~lib/env/abort
+   (set_global $std/operator-overloading/n1
+    (call $std/operator-overloading/Tester#constructor
      (i32.const 0)
-     (i32.const 8)
-     (i32.const 161)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (set_global $std/operator-overloading/p1
-   (call $std/operator-overloading/Tester#constructor
-    (i32.const 0)
-    (i32.const 2)
-    (i32.const 3)
-   )
-  )
-  (set_global $std/operator-overloading/p2
-   (call $std/operator-overloading/Tester#constructor
-    (i32.const 0)
-    (i32.const 4)
-    (i32.const 5)
-   )
-  )
-  (set_global $std/operator-overloading/p
-   (call $std/operator-overloading/Tester.pow
-    (get_global $std/operator-overloading/p1)
-    (get_global $std/operator-overloading/p2)
-   )
-  )
-  (if
-   (tee_local $0
-    (i32.eq
-     (i32.load
-      (get_global $std/operator-overloading/p)
-     )
-     (i32.const 16)
-    )
-   )
-   (set_local $0
-    (i32.eq
-     (i32.load offset=4
-      (get_global $std/operator-overloading/p)
-     )
-     (i32.const 243)
-    )
-   )
-  )
-  (if
-   (i32.eqz
-    (get_local $0)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 8)
-     (i32.const 167)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (set_global $std/operator-overloading/n1
-   (call $std/operator-overloading/Tester#constructor
-    (i32.const 0)
-    (i32.const 255)
-    (i32.const 15)
-   )
-  )
-  (set_global $std/operator-overloading/n2
-   (call $std/operator-overloading/Tester#constructor
-    (i32.const 0)
-    (i32.const 15)
-    (i32.const 255)
-   )
-  )
-  (set_global $std/operator-overloading/n
-   (call $std/operator-overloading/Tester.and
-    (get_global $std/operator-overloading/n1)
-    (get_global $std/operator-overloading/n2)
-   )
-  )
-  (if
-   (tee_local $0
-    (i32.eq
-     (i32.load
-      (get_global $std/operator-overloading/n)
-     )
+     (i32.const 255)
      (i32.const 15)
     )
    )
-   (set_local $0
-    (i32.eq
-     (i32.load offset=4
-      (get_global $std/operator-overloading/n)
-     )
+   (set_global $std/operator-overloading/n2
+    (call $std/operator-overloading/Tester#constructor
+     (i32.const 0)
      (i32.const 15)
-    )
-   )
-  )
-  (if
-   (i32.eqz
-    (get_local $0)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 8)
-     (i32.const 173)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (set_global $std/operator-overloading/o1
-   (call $std/operator-overloading/Tester#constructor
-    (i32.const 0)
-    (i32.const 3855)
-    (i32.const 255)
-   )
-  )
-  (set_global $std/operator-overloading/o2
-   (call $std/operator-overloading/Tester#constructor
-    (i32.const 0)
-    (i32.const 61680)
-    (i32.const 0)
-   )
-  )
-  (set_global $std/operator-overloading/o
-   (call $std/operator-overloading/Tester.or
-    (get_global $std/operator-overloading/o1)
-    (get_global $std/operator-overloading/o2)
-   )
-  )
-  (if
-   (tee_local $0
-    (i32.eq
-     (i32.load
-      (get_global $std/operator-overloading/o)
-     )
-     (i32.const 65535)
-    )
-   )
-   (set_local $0
-    (i32.eq
-     (i32.load offset=4
-      (get_global $std/operator-overloading/o)
-     )
      (i32.const 255)
     )
    )
-  )
-  (if
-   (i32.eqz
-    (get_local $0)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 8)
-     (i32.const 179)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (set_global $std/operator-overloading/x1
-   (call $std/operator-overloading/Tester#constructor
-    (i32.const 0)
-    (i32.const 255)
-    (i32.const 255)
-   )
-  )
-  (set_global $std/operator-overloading/x2
-   (call $std/operator-overloading/Tester#constructor
-    (i32.const 0)
-    (i32.const 65280)
-    (i32.const 0)
-   )
-  )
-  (set_global $std/operator-overloading/x
-   (call $std/operator-overloading/Tester.xor
-    (get_global $std/operator-overloading/x1)
-    (get_global $std/operator-overloading/x2)
-   )
-  )
-  (if
-   (tee_local $0
-    (i32.eq
-     (i32.load
-      (get_global $std/operator-overloading/x)
-     )
-     (i32.const 65535)
+   (set_global $std/operator-overloading/n
+    (call $std/operator-overloading/Tester.and
+     (get_global $std/operator-overloading/n1)
+     (get_global $std/operator-overloading/n2)
     )
    )
-   (set_local $0
-    (i32.eq
-     (i32.load offset=4
-      (get_global $std/operator-overloading/x)
+   (if
+    (tee_local $0
+     (i32.eq
+      (i32.load
+       (get_global $std/operator-overloading/n)
+      )
+      (i32.const 15)
      )
+    )
+    (set_local $0
+     (i32.eq
+      (i32.load offset=4
+       (get_global $std/operator-overloading/n)
+      )
+      (i32.const 15)
+     )
+    )
+   )
+   (if
+    (i32.eqz
+     (get_local $0)
+    )
+    (br $folding-inner0)
+   )
+   (set_global $std/operator-overloading/o1
+    (call $std/operator-overloading/Tester#constructor
+     (i32.const 0)
+     (i32.const 3855)
      (i32.const 255)
     )
    )
-  )
-  (if
-   (i32.eqz
-    (get_local $0)
-   )
-   (block
-    (call $~lib/env/abort
+   (set_global $std/operator-overloading/o2
+    (call $std/operator-overloading/Tester#constructor
      (i32.const 0)
-     (i32.const 8)
-     (i32.const 185)
+     (i32.const 61680)
      (i32.const 0)
     )
-    (unreachable)
    )
-  )
-  (set_global $std/operator-overloading/eq1
-   (call $std/operator-overloading/Tester#constructor
-    (i32.const 0)
-    (i32.const 1)
-    (i32.const -2)
+   (set_global $std/operator-overloading/o
+    (call $std/operator-overloading/Tester.or
+     (get_global $std/operator-overloading/o1)
+     (get_global $std/operator-overloading/o2)
+    )
    )
-  )
-  (set_global $std/operator-overloading/eq2
-   (call $std/operator-overloading/Tester#constructor
-    (i32.const 0)
-    (i32.const 1)
-    (i32.const -2)
+   (if
+    (tee_local $0
+     (i32.eq
+      (i32.load
+       (get_global $std/operator-overloading/o)
+      )
+      (i32.const 65535)
+     )
+    )
+    (set_local $0
+     (i32.eq
+      (i32.load offset=4
+       (get_global $std/operator-overloading/o)
+      )
+      (i32.const 255)
+     )
+    )
    )
-  )
-  (set_global $std/operator-overloading/eq
-   (call $std/operator-overloading/Tester.equals
-    (get_global $std/operator-overloading/eq1)
-    (get_global $std/operator-overloading/eq2)
+   (if
+    (i32.eqz
+     (get_local $0)
+    )
+    (br $folding-inner0)
    )
-  )
-  (if
-   (i32.ne
-    (get_global $std/operator-overloading/eq)
-    (i32.const 1)
-   )
-   (block
-    (call $~lib/env/abort
+   (set_global $std/operator-overloading/x1
+    (call $std/operator-overloading/Tester#constructor
      (i32.const 0)
-     (i32.const 8)
-     (i32.const 191)
+     (i32.const 255)
+     (i32.const 255)
+    )
+   )
+   (set_global $std/operator-overloading/x2
+    (call $std/operator-overloading/Tester#constructor
+     (i32.const 0)
+     (i32.const 65280)
      (i32.const 0)
     )
-    (unreachable)
    )
-  )
-  (set_global $std/operator-overloading/eq3
-   (call $std/operator-overloading/Tester#constructor
-    (i32.const 0)
-    (i32.const 1)
-    (i32.const 0)
+   (set_global $std/operator-overloading/x
+    (call $std/operator-overloading/Tester.xor
+     (get_global $std/operator-overloading/x1)
+     (get_global $std/operator-overloading/x2)
+    )
    )
-  )
-  (set_global $std/operator-overloading/eq4
-   (call $std/operator-overloading/Tester#constructor
-    (i32.const 0)
-    (i32.const 0)
-    (i32.const 1)
+   (if
+    (tee_local $0
+     (i32.eq
+      (i32.load
+       (get_global $std/operator-overloading/x)
+      )
+      (i32.const 65535)
+     )
+    )
+    (set_local $0
+     (i32.eq
+      (i32.load offset=4
+       (get_global $std/operator-overloading/x)
+      )
+      (i32.const 255)
+     )
+    )
    )
-  )
-  (set_global $std/operator-overloading/eqf
-   (call $std/operator-overloading/Tester.equals
-    (get_global $std/operator-overloading/eq3)
-    (get_global $std/operator-overloading/eq4)
+   (if
+    (i32.eqz
+     (get_local $0)
+    )
+    (br $folding-inner0)
    )
-  )
-  (if
-   (get_global $std/operator-overloading/eqf)
-   (block
-    (call $~lib/env/abort
+   (set_global $std/operator-overloading/eq1
+    (call $std/operator-overloading/Tester#constructor
      (i32.const 0)
-     (i32.const 8)
-     (i32.const 197)
+     (i32.const 1)
+     (i32.const -2)
+    )
+   )
+   (set_global $std/operator-overloading/eq2
+    (call $std/operator-overloading/Tester#constructor
+     (i32.const 0)
+     (i32.const 1)
+     (i32.const -2)
+    )
+   )
+   (set_global $std/operator-overloading/eq
+    (call $std/operator-overloading/Tester.equals
+     (get_global $std/operator-overloading/eq1)
+     (get_global $std/operator-overloading/eq2)
+    )
+   )
+   (if
+    (i32.ne
+     (get_global $std/operator-overloading/eq)
+     (i32.const 1)
+    )
+    (br $folding-inner0)
+   )
+   (set_global $std/operator-overloading/eq3
+    (call $std/operator-overloading/Tester#constructor
+     (i32.const 0)
+     (i32.const 1)
      (i32.const 0)
     )
-    (unreachable)
    )
-  )
-  (set_global $std/operator-overloading/eq
-   (call $std/operator-overloading/Tester.notEquals
-    (get_global $std/operator-overloading/eq1)
-    (get_global $std/operator-overloading/eq2)
-   )
-  )
-  (if
-   (get_global $std/operator-overloading/eq)
-   (block
-    (call $~lib/env/abort
+   (set_global $std/operator-overloading/eq4
+    (call $std/operator-overloading/Tester#constructor
      (i32.const 0)
-     (i32.const 8)
-     (i32.const 201)
      (i32.const 0)
+     (i32.const 1)
     )
-    (unreachable)
    )
-  )
-  (set_global $std/operator-overloading/eqf
-   (call $std/operator-overloading/Tester.notEquals
-    (get_global $std/operator-overloading/eq3)
-    (get_global $std/operator-overloading/eq4)
+   (set_global $std/operator-overloading/eqf
+    (call $std/operator-overloading/Tester.equals
+     (get_global $std/operator-overloading/eq3)
+     (get_global $std/operator-overloading/eq4)
+    )
    )
-  )
-  (if
-   (i32.ne
+   (if
     (get_global $std/operator-overloading/eqf)
-    (i32.const 1)
+    (br $folding-inner0)
    )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 8)
-     (i32.const 205)
-     (i32.const 0)
+   (set_global $std/operator-overloading/eq
+    (call $std/operator-overloading/Tester.notEquals
+     (get_global $std/operator-overloading/eq1)
+     (get_global $std/operator-overloading/eq2)
     )
-    (unreachable)
    )
-  )
-  (set_global $std/operator-overloading/gt1
-   (call $std/operator-overloading/Tester#constructor
-    (i32.const 0)
-    (i32.const 2)
-    (i32.const 2147483647)
+   (if
+    (get_global $std/operator-overloading/eq)
+    (br $folding-inner0)
    )
-  )
-  (set_global $std/operator-overloading/gt2
-   (call $std/operator-overloading/Tester#constructor
-    (i32.const 0)
-    (i32.const 1)
-    (i32.const 0)
-   )
-  )
-  (set_global $std/operator-overloading/gt
-   (call $std/operator-overloading/Tester.greater
-    (get_global $std/operator-overloading/gt1)
-    (get_global $std/operator-overloading/gt2)
-   )
-  )
-  (if
-   (i32.ne
-    (get_global $std/operator-overloading/gt)
-    (i32.const 1)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 8)
-     (i32.const 211)
-     (i32.const 0)
+   (set_global $std/operator-overloading/eqf
+    (call $std/operator-overloading/Tester.notEquals
+     (get_global $std/operator-overloading/eq3)
+     (get_global $std/operator-overloading/eq4)
     )
-    (unreachable)
    )
-  )
-  (set_global $std/operator-overloading/gte1
-   (call $std/operator-overloading/Tester#constructor
-    (i32.const 0)
-    (i32.const 2)
-    (i32.const 2)
-   )
-  )
-  (set_global $std/operator-overloading/gte2
-   (call $std/operator-overloading/Tester#constructor
-    (i32.const 0)
-    (i32.const 2)
-    (i32.const 2)
-   )
-  )
-  (set_global $std/operator-overloading/gte
-   (call $std/operator-overloading/Tester.greaterEquals
-    (get_global $std/operator-overloading/gte1)
-    (get_global $std/operator-overloading/gte2)
-   )
-  )
-  (if
-   (i32.ne
-    (get_global $std/operator-overloading/gte)
-    (i32.const 1)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 8)
-     (i32.const 217)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (set_global $std/operator-overloading/le1
-   (call $std/operator-overloading/Tester#constructor
-    (i32.const 0)
-    (i32.const 5)
-    (i32.const -1)
-   )
-  )
-  (set_global $std/operator-overloading/le2
-   (call $std/operator-overloading/Tester#constructor
-    (i32.const 0)
-    (i32.const 6)
-    (i32.const 6)
-   )
-  )
-  (set_global $std/operator-overloading/le
-   (call $std/operator-overloading/Tester.less
-    (get_global $std/operator-overloading/le1)
-    (get_global $std/operator-overloading/le2)
-   )
-  )
-  (if
-   (i32.ne
-    (get_global $std/operator-overloading/le)
-    (i32.const 1)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 8)
-     (i32.const 223)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (set_global $std/operator-overloading/leq1
-   (call $std/operator-overloading/Tester#constructor
-    (i32.const 0)
-    (i32.const 4)
-    (i32.const 3)
-   )
-  )
-  (set_global $std/operator-overloading/leq2
-   (call $std/operator-overloading/Tester#constructor
-    (i32.const 0)
-    (i32.const 4)
-    (i32.const 3)
-   )
-  )
-  (set_global $std/operator-overloading/leq
-   (call $std/operator-overloading/Tester.lessEquals
-    (get_global $std/operator-overloading/leq1)
-    (get_global $std/operator-overloading/leq2)
-   )
-  )
-  (if
-   (i32.ne
-    (get_global $std/operator-overloading/leq)
-    (i32.const 1)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 8)
-     (i32.const 229)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (set_global $std/operator-overloading/shr
-   (call $std/operator-overloading/Tester#constructor
-    (i32.const 0)
-    (i32.const 8)
-    (i32.const 16)
-   )
-  )
-  (set_global $std/operator-overloading/sres
-   (call $std/operator-overloading/Tester.shr
-    (get_global $std/operator-overloading/shr)
-    (i32.const 3)
-   )
-  )
-  (if
-   (tee_local $0
-    (i32.eq
-     (i32.load
-      (get_global $std/operator-overloading/sres)
-     )
+   (if
+    (i32.ne
+     (get_global $std/operator-overloading/eqf)
      (i32.const 1)
     )
+    (br $folding-inner0)
    )
-   (set_local $0
-    (i32.eq
-     (i32.load offset=4
-      (get_global $std/operator-overloading/sres)
-     )
+   (set_global $std/operator-overloading/gt1
+    (call $std/operator-overloading/Tester#constructor
+     (i32.const 0)
+     (i32.const 2)
+     (i32.const 2147483647)
+    )
+   )
+   (set_global $std/operator-overloading/gt2
+    (call $std/operator-overloading/Tester#constructor
+     (i32.const 0)
+     (i32.const 1)
+     (i32.const 0)
+    )
+   )
+   (set_global $std/operator-overloading/gt
+    (call $std/operator-overloading/Tester.greater
+     (get_global $std/operator-overloading/gt1)
+     (get_global $std/operator-overloading/gt2)
+    )
+   )
+   (if
+    (i32.ne
+     (get_global $std/operator-overloading/gt)
+     (i32.const 1)
+    )
+    (br $folding-inner0)
+   )
+   (set_global $std/operator-overloading/gte1
+    (call $std/operator-overloading/Tester#constructor
+     (i32.const 0)
+     (i32.const 2)
      (i32.const 2)
     )
    )
-  )
-  (if
-   (i32.eqz
-    (get_local $0)
+   (set_global $std/operator-overloading/gte2
+    (call $std/operator-overloading/Tester#constructor
+     (i32.const 0)
+     (i32.const 2)
+     (i32.const 2)
+    )
    )
-   (block
-    (call $~lib/env/abort
+   (set_global $std/operator-overloading/gte
+    (call $std/operator-overloading/Tester.greaterEquals
+     (get_global $std/operator-overloading/gte1)
+     (get_global $std/operator-overloading/gte2)
+    )
+   )
+   (if
+    (i32.ne
+     (get_global $std/operator-overloading/gte)
+     (i32.const 1)
+    )
+    (br $folding-inner0)
+   )
+   (set_global $std/operator-overloading/le1
+    (call $std/operator-overloading/Tester#constructor
+     (i32.const 0)
+     (i32.const 5)
+     (i32.const -1)
+    )
+   )
+   (set_global $std/operator-overloading/le2
+    (call $std/operator-overloading/Tester#constructor
+     (i32.const 0)
+     (i32.const 6)
+     (i32.const 6)
+    )
+   )
+   (set_global $std/operator-overloading/le
+    (call $std/operator-overloading/Tester.less
+     (get_global $std/operator-overloading/le1)
+     (get_global $std/operator-overloading/le2)
+    )
+   )
+   (if
+    (i32.ne
+     (get_global $std/operator-overloading/le)
+     (i32.const 1)
+    )
+    (br $folding-inner0)
+   )
+   (set_global $std/operator-overloading/leq1
+    (call $std/operator-overloading/Tester#constructor
+     (i32.const 0)
+     (i32.const 4)
+     (i32.const 3)
+    )
+   )
+   (set_global $std/operator-overloading/leq2
+    (call $std/operator-overloading/Tester#constructor
+     (i32.const 0)
+     (i32.const 4)
+     (i32.const 3)
+    )
+   )
+   (set_global $std/operator-overloading/leq
+    (call $std/operator-overloading/Tester.lessEquals
+     (get_global $std/operator-overloading/leq1)
+     (get_global $std/operator-overloading/leq2)
+    )
+   )
+   (if
+    (i32.ne
+     (get_global $std/operator-overloading/leq)
+     (i32.const 1)
+    )
+    (br $folding-inner0)
+   )
+   (set_global $std/operator-overloading/shr
+    (call $std/operator-overloading/Tester#constructor
      (i32.const 0)
      (i32.const 8)
-     (i32.const 234)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (set_global $std/operator-overloading/shu
-   (call $std/operator-overloading/Tester#constructor
-    (i32.const 0)
-    (i32.const -8)
-    (i32.const -16)
-   )
-  )
-  (set_global $std/operator-overloading/ures
-   (call $std/operator-overloading/Tester.shu
-    (get_global $std/operator-overloading/shu)
-    (i32.const 3)
-   )
-  )
-  (if
-   (tee_local $0
-    (i32.eq
-     (i32.load
-      (get_global $std/operator-overloading/ures)
-     )
-     (i32.const 536870911)
-    )
-   )
-   (set_local $0
-    (i32.eq
-     (i32.load offset=4
-      (get_global $std/operator-overloading/ures)
-     )
-     (i32.const 536870910)
-    )
-   )
-  )
-  (if
-   (i32.eqz
-    (get_local $0)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 8)
-     (i32.const 239)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (set_global $std/operator-overloading/shl
-   (call $std/operator-overloading/Tester#constructor
-    (i32.const 0)
-    (i32.const 1)
-    (i32.const 2)
-   )
-  )
-  (set_global $std/operator-overloading/sres
-   (call $std/operator-overloading/Tester.shl
-    (get_global $std/operator-overloading/shl)
-    (i32.const 3)
-   )
-  )
-  (if
-   (tee_local $0
-    (i32.eq
-     (i32.load
-      (get_global $std/operator-overloading/sres)
-     )
-     (i32.const 8)
-    )
-   )
-   (set_local $0
-    (i32.eq
-     (i32.load offset=4
-      (get_global $std/operator-overloading/sres)
-     )
      (i32.const 16)
     )
    )
-  )
-  (if
-   (i32.eqz
-    (get_local $0)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 8)
-     (i32.const 244)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (set_global $std/operator-overloading/pos
-   (call $std/operator-overloading/Tester#constructor
-    (i32.const 0)
-    (i32.const 1)
-    (i32.const -2)
-   )
-  )
-  (set_global $std/operator-overloading/pres
-   (call $std/operator-overloading/Tester.pos
-    (get_global $std/operator-overloading/pos)
-   )
-  )
-  (if
-   (tee_local $0
-    (i32.eq
-     (i32.load
-      (get_global $std/operator-overloading/pres)
-     )
-     (i32.load
-      (get_global $std/operator-overloading/pos)
-     )
+   (set_global $std/operator-overloading/sres
+    (call $std/operator-overloading/Tester.shr
+     (get_global $std/operator-overloading/shr)
+     (i32.const 3)
     )
    )
-   (set_local $0
-    (i32.eq
-     (i32.load offset=4
-      (get_global $std/operator-overloading/pres)
-     )
-     (i32.load offset=4
-      (get_global $std/operator-overloading/pos)
-     )
-    )
-   )
-  )
-  (if
-   (i32.eqz
-    (get_local $0)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 8)
-     (i32.const 249)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (set_global $std/operator-overloading/neg
-   (call $std/operator-overloading/Tester#constructor
-    (i32.const 0)
-    (i32.const -1)
-    (i32.const -2)
-   )
-  )
-  (set_global $std/operator-overloading/nres
-   (call $std/operator-overloading/Tester.neg
-    (get_global $std/operator-overloading/neg)
-   )
-  )
-  (if
-   (tee_local $0
-    (i32.eq
-     (i32.load
-      (get_global $std/operator-overloading/nres)
-     )
-     (i32.sub
-      (i32.const 0)
+   (if
+    (tee_local $0
+     (i32.eq
       (i32.load
-       (get_global $std/operator-overloading/neg)
+       (get_global $std/operator-overloading/sres)
       )
+      (i32.const 1)
      )
     )
-   )
-   (set_local $0
-    (i32.eq
-     (i32.load offset=4
-      (get_global $std/operator-overloading/nres)
-     )
-     (i32.sub
-      (i32.const 0)
+    (set_local $0
+     (i32.eq
       (i32.load offset=4
-       (get_global $std/operator-overloading/neg)
+       (get_global $std/operator-overloading/sres)
       )
+      (i32.const 2)
      )
     )
    )
-  )
-  (if
-   (i32.eqz
-    (get_local $0)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 8)
-     (i32.const 254)
-     (i32.const 0)
+   (if
+    (i32.eqz
+     (get_local $0)
     )
-    (unreachable)
+    (br $folding-inner0)
    )
-  )
-  (set_global $std/operator-overloading/not
-   (call $std/operator-overloading/Tester#constructor
-    (i32.const 0)
-    (i32.const 255)
-    (i32.const 16)
+   (set_global $std/operator-overloading/shu
+    (call $std/operator-overloading/Tester#constructor
+     (i32.const 0)
+     (i32.const -8)
+     (i32.const -16)
+    )
    )
-  )
-  (set_global $std/operator-overloading/res
-   (call $std/operator-overloading/Tester.not
-    (get_global $std/operator-overloading/not)
+   (set_global $std/operator-overloading/ures
+    (call $std/operator-overloading/Tester.shu
+     (get_global $std/operator-overloading/shu)
+     (i32.const 3)
+    )
    )
-  )
-  (if
-   (tee_local $0
-    (i32.eq
-     (i32.load
-      (get_global $std/operator-overloading/res)
-     )
-     (i32.xor
+   (if
+    (tee_local $0
+     (i32.eq
       (i32.load
-       (get_global $std/operator-overloading/not)
+       (get_global $std/operator-overloading/ures)
       )
-      (i32.const -1)
+      (i32.const 536870911)
      )
     )
-   )
-   (set_local $0
-    (i32.eq
-     (i32.load offset=4
-      (get_global $std/operator-overloading/res)
-     )
-     (i32.xor
+    (set_local $0
+     (i32.eq
       (i32.load offset=4
-       (get_global $std/operator-overloading/not)
+       (get_global $std/operator-overloading/ures)
       )
-      (i32.const -1)
+      (i32.const 536870910)
      )
     )
    )
-  )
-  (if
-   (i32.eqz
-    (get_local $0)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 8)
-     (i32.const 259)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (set_global $std/operator-overloading/excl
-   (call $std/operator-overloading/Tester#constructor
-    (i32.const 0)
-    (i32.const 0)
-    (i32.const 0)
-   )
-  )
-  (set_global $std/operator-overloading/bres
-   (call $std/operator-overloading/Tester.excl
-    (get_global $std/operator-overloading/excl)
-   )
-  )
-  (set_local $1
-   (get_global $std/operator-overloading/bres)
-  )
-  (if
-   (tee_local $0
+   (if
     (i32.eqz
-     (i32.load
-      (get_global $std/operator-overloading/excl)
-     )
+     (get_local $0)
     )
+    (br $folding-inner0)
    )
-   (set_local $0
-    (i32.eqz
-     (i32.load offset=4
-      (get_global $std/operator-overloading/excl)
-     )
-    )
-   )
-  )
-  (if
-   (i32.ne
-    (get_local $1)
-    (get_local $0)
-   )
-   (block
-    (call $~lib/env/abort
+   (set_global $std/operator-overloading/shl
+    (call $std/operator-overloading/Tester#constructor
      (i32.const 0)
-     (i32.const 8)
-     (i32.const 264)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (if
-   (i32.ne
-    (get_global $std/operator-overloading/bres)
-    (i32.const 1)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 8)
-     (i32.const 265)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (set_global $std/operator-overloading/incdec
-   (call $std/operator-overloading/Tester#constructor
-    (i32.const 0)
-    (i32.const 0)
-    (i32.const 1)
-   )
-  )
-  (set_global $std/operator-overloading/incdec
-   (call $std/operator-overloading/Tester#inc
-    (get_global $std/operator-overloading/incdec)
-   )
-  )
-  (if
-   (tee_local $0
-    (i32.eq
-     (i32.load
-      (get_global $std/operator-overloading/incdec)
-     )
      (i32.const 1)
-    )
-   )
-   (set_local $0
-    (i32.eq
-     (i32.load offset=4
-      (get_global $std/operator-overloading/incdec)
-     )
      (i32.const 2)
     )
    )
-  )
-  (if
-   (i32.eqz
-    (get_local $0)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 8)
-     (i32.const 271)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (set_global $std/operator-overloading/incdec
-   (call $std/operator-overloading/Tester#dec
-    (get_global $std/operator-overloading/incdec)
-   )
-  )
-  (if
-   (tee_local $0
-    (i32.eqz
-     (i32.load
-      (get_global $std/operator-overloading/incdec)
-     )
-    )
-   )
-   (set_local $0
-    (i32.eq
-     (i32.load offset=4
-      (get_global $std/operator-overloading/incdec)
-     )
-     (i32.const 1)
-    )
-   )
-  )
-  (if
-   (i32.eqz
-    (get_local $0)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 8)
-     (i32.const 274)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (set_global $std/operator-overloading/ais1
-   (call $std/operator-overloading/Tester#constructor
-    (i32.const 0)
-    (i32.const 1)
-    (i32.const 2)
-   )
-  )
-  (set_global $std/operator-overloading/ais2
-   (call $std/operator-overloading/Tester#constructor
-    (i32.const 0)
-    (i32.const 2)
-    (i32.const 3)
-   )
-  )
-  (set_global $std/operator-overloading/ais
-   (call $std/operator-overloading/Tester#constructor
-    (i32.const 0)
-    (i32.add
-     (i32.load
-      (tee_local $0
-       (get_global $std/operator-overloading/ais1)
-      )
-     )
-     (i32.load
-      (tee_local $1
-       (get_global $std/operator-overloading/ais2)
-      )
-     )
-    )
-    (i32.add
-     (i32.load offset=4
-      (get_local $0)
-     )
-     (i32.load offset=4
-      (get_local $1)
-     )
-    )
-   )
-  )
-  (if
-   (tee_local $1
-    (i32.eq
-     (i32.load
-      (get_global $std/operator-overloading/ais)
-     )
+   (set_global $std/operator-overloading/sres
+    (call $std/operator-overloading/Tester.shl
+     (get_global $std/operator-overloading/shl)
      (i32.const 3)
+    )
+   )
+   (if
+    (tee_local $0
+     (i32.eq
+      (i32.load
+       (get_global $std/operator-overloading/sres)
+      )
+      (i32.const 8)
+     )
+    )
+    (set_local $0
+     (i32.eq
+      (i32.load offset=4
+       (get_global $std/operator-overloading/sres)
+      )
+      (i32.const 16)
+     )
+    )
+   )
+   (if
+    (i32.eqz
+     (get_local $0)
+    )
+    (br $folding-inner0)
+   )
+   (set_global $std/operator-overloading/pos
+    (call $std/operator-overloading/Tester#constructor
+     (i32.const 0)
+     (i32.const 1)
+     (i32.const -2)
+    )
+   )
+   (set_global $std/operator-overloading/pres
+    (call $std/operator-overloading/Tester.pos
+     (get_global $std/operator-overloading/pos)
+    )
+   )
+   (if
+    (tee_local $0
+     (i32.eq
+      (i32.load
+       (get_global $std/operator-overloading/pres)
+      )
+      (i32.load
+       (get_global $std/operator-overloading/pos)
+      )
+     )
+    )
+    (set_local $0
+     (i32.eq
+      (i32.load offset=4
+       (get_global $std/operator-overloading/pres)
+      )
+      (i32.load offset=4
+       (get_global $std/operator-overloading/pos)
+      )
+     )
+    )
+   )
+   (if
+    (i32.eqz
+     (get_local $0)
+    )
+    (br $folding-inner0)
+   )
+   (set_global $std/operator-overloading/neg
+    (call $std/operator-overloading/Tester#constructor
+     (i32.const 0)
+     (i32.const -1)
+     (i32.const -2)
+    )
+   )
+   (set_global $std/operator-overloading/nres
+    (call $std/operator-overloading/Tester.neg
+     (get_global $std/operator-overloading/neg)
+    )
+   )
+   (if
+    (tee_local $0
+     (i32.eq
+      (i32.load
+       (get_global $std/operator-overloading/nres)
+      )
+      (i32.sub
+       (i32.const 0)
+       (i32.load
+        (get_global $std/operator-overloading/neg)
+       )
+      )
+     )
+    )
+    (set_local $0
+     (i32.eq
+      (i32.load offset=4
+       (get_global $std/operator-overloading/nres)
+      )
+      (i32.sub
+       (i32.const 0)
+       (i32.load offset=4
+        (get_global $std/operator-overloading/neg)
+       )
+      )
+     )
+    )
+   )
+   (if
+    (i32.eqz
+     (get_local $0)
+    )
+    (br $folding-inner0)
+   )
+   (set_global $std/operator-overloading/not
+    (call $std/operator-overloading/Tester#constructor
+     (i32.const 0)
+     (i32.const 255)
+     (i32.const 16)
+    )
+   )
+   (set_global $std/operator-overloading/res
+    (call $std/operator-overloading/Tester.not
+     (get_global $std/operator-overloading/not)
+    )
+   )
+   (if
+    (tee_local $0
+     (i32.eq
+      (i32.load
+       (get_global $std/operator-overloading/res)
+      )
+      (i32.xor
+       (i32.load
+        (get_global $std/operator-overloading/not)
+       )
+       (i32.const -1)
+      )
+     )
+    )
+    (set_local $0
+     (i32.eq
+      (i32.load offset=4
+       (get_global $std/operator-overloading/res)
+      )
+      (i32.xor
+       (i32.load offset=4
+        (get_global $std/operator-overloading/not)
+       )
+       (i32.const -1)
+      )
+     )
+    )
+   )
+   (if
+    (i32.eqz
+     (get_local $0)
+    )
+    (br $folding-inner0)
+   )
+   (set_global $std/operator-overloading/excl
+    (call $std/operator-overloading/Tester#constructor
+     (i32.const 0)
+     (i32.const 0)
+     (i32.const 0)
+    )
+   )
+   (set_global $std/operator-overloading/bres
+    (call $std/operator-overloading/Tester.excl
+     (get_global $std/operator-overloading/excl)
     )
    )
    (set_local $1
-    (i32.eq
-     (i32.load offset=4
-      (get_global $std/operator-overloading/ais)
-     )
-     (i32.const 5)
-    )
+    (get_global $std/operator-overloading/bres)
    )
-  )
-  (if
-   (i32.eqz
-    (get_local $1)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 8)
-     (i32.const 288)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (set_global $std/operator-overloading/aii1
-   (call $std/operator-overloading/Tester#constructor
-    (i32.const 0)
-    (i32.const 1)
-    (i32.const 2)
-   )
-  )
-  (set_global $std/operator-overloading/aii2
-   (call $std/operator-overloading/Tester#constructor
-    (i32.const 0)
-    (i32.const 2)
-    (i32.const 3)
-   )
-  )
-  (set_global $std/operator-overloading/aii
-   (call $std/operator-overloading/Tester#constructor
-    (i32.const 0)
-    (i32.add
-     (i32.load
-      (tee_local $1
-       (get_global $std/operator-overloading/aii1)
-      )
-     )
-     (i32.load
-      (tee_local $0
-       (get_global $std/operator-overloading/aii2)
+   (if
+    (tee_local $0
+     (i32.eqz
+      (i32.load
+       (get_global $std/operator-overloading/excl)
       )
      )
     )
-    (i32.add
-     (i32.load offset=4
-      (get_local $1)
-     )
-     (i32.load offset=4
-      (get_local $0)
+    (set_local $0
+     (i32.eqz
+      (i32.load offset=4
+       (get_global $std/operator-overloading/excl)
+      )
      )
     )
    )
-  )
-  (if
-   (tee_local $0
-    (i32.eq
-     (i32.load
-      (get_global $std/operator-overloading/aii)
+   (if
+    (i32.ne
+     (get_local $1)
+     (get_local $0)
+    )
+    (br $folding-inner0)
+   )
+   (if
+    (i32.ne
+     (get_global $std/operator-overloading/bres)
+     (i32.const 1)
+    )
+    (br $folding-inner0)
+   )
+   (set_global $std/operator-overloading/incdec
+    (call $std/operator-overloading/Tester#constructor
+     (i32.const 0)
+     (i32.const 0)
+     (i32.const 1)
+    )
+   )
+   (set_global $std/operator-overloading/incdec
+    (call $std/operator-overloading/Tester#inc
+     (get_global $std/operator-overloading/incdec)
+    )
+   )
+   (if
+    (tee_local $0
+     (i32.eq
+      (i32.load
+       (get_global $std/operator-overloading/incdec)
+      )
+      (i32.const 1)
      )
+    )
+    (set_local $0
+     (i32.eq
+      (i32.load offset=4
+       (get_global $std/operator-overloading/incdec)
+      )
+      (i32.const 2)
+     )
+    )
+   )
+   (if
+    (i32.eqz
+     (get_local $0)
+    )
+    (br $folding-inner0)
+   )
+   (set_global $std/operator-overloading/incdec
+    (call $std/operator-overloading/Tester#dec
+     (get_global $std/operator-overloading/incdec)
+    )
+   )
+   (if
+    (tee_local $0
+     (i32.eqz
+      (i32.load
+       (get_global $std/operator-overloading/incdec)
+      )
+     )
+    )
+    (set_local $0
+     (i32.eq
+      (i32.load offset=4
+       (get_global $std/operator-overloading/incdec)
+      )
+      (i32.const 1)
+     )
+    )
+   )
+   (if
+    (i32.eqz
+     (get_local $0)
+    )
+    (br $folding-inner0)
+   )
+   (set_global $std/operator-overloading/ais1
+    (call $std/operator-overloading/Tester#constructor
+     (i32.const 0)
+     (i32.const 1)
+     (i32.const 2)
+    )
+   )
+   (set_global $std/operator-overloading/ais2
+    (call $std/operator-overloading/Tester#constructor
+     (i32.const 0)
+     (i32.const 2)
      (i32.const 3)
     )
    )
-   (set_local $0
-    (i32.eq
-     (i32.load offset=4
-      (get_global $std/operator-overloading/aii)
+   (set_global $std/operator-overloading/ais
+    (call $std/operator-overloading/Tester#constructor
+     (i32.const 0)
+     (i32.add
+      (i32.load
+       (tee_local $0
+        (get_global $std/operator-overloading/ais1)
+       )
+      )
+      (i32.load
+       (tee_local $1
+        (get_global $std/operator-overloading/ais2)
+       )
+      )
      )
-     (i32.const 5)
+     (i32.add
+      (i32.load offset=4
+       (get_local $0)
+      )
+      (i32.load offset=4
+       (get_local $1)
+      )
+     )
     )
    )
-  )
-  (if
-   (i32.eqz
-    (get_local $0)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 8)
-     (i32.const 302)
-     (i32.const 0)
+   (if
+    (tee_local $1
+     (i32.eq
+      (i32.load
+       (get_global $std/operator-overloading/ais)
+      )
+      (i32.const 3)
+     )
     )
-    (unreachable)
+    (set_local $1
+     (i32.eq
+      (i32.load offset=4
+       (get_global $std/operator-overloading/ais)
+      )
+      (i32.const 5)
+     )
+    )
    )
+   (if
+    (i32.eqz
+     (get_local $1)
+    )
+    (br $folding-inner0)
+   )
+   (set_global $std/operator-overloading/aii1
+    (call $std/operator-overloading/Tester#constructor
+     (i32.const 0)
+     (i32.const 1)
+     (i32.const 2)
+    )
+   )
+   (set_global $std/operator-overloading/aii2
+    (call $std/operator-overloading/Tester#constructor
+     (i32.const 0)
+     (i32.const 2)
+     (i32.const 3)
+    )
+   )
+   (set_global $std/operator-overloading/aii
+    (call $std/operator-overloading/Tester#constructor
+     (i32.const 0)
+     (i32.add
+      (i32.load
+       (tee_local $1
+        (get_global $std/operator-overloading/aii1)
+       )
+      )
+      (i32.load
+       (tee_local $0
+        (get_global $std/operator-overloading/aii2)
+       )
+      )
+     )
+     (i32.add
+      (i32.load offset=4
+       (get_local $1)
+      )
+      (i32.load offset=4
+       (get_local $0)
+      )
+     )
+    )
+   )
+   (if
+    (tee_local $0
+     (i32.eq
+      (i32.load
+       (get_global $std/operator-overloading/aii)
+      )
+      (i32.const 3)
+     )
+    )
+    (set_local $0
+     (i32.eq
+      (i32.load offset=4
+       (get_global $std/operator-overloading/aii)
+      )
+      (i32.const 5)
+     )
+    )
+   )
+   (if
+    (i32.eqz
+     (get_local $0)
+    )
+    (br $folding-inner0)
+   )
+   (return)
   )
+  (call $~lib/env/abort)
+  (unreachable)
  )
 )

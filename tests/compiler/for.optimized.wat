@@ -1,7 +1,8 @@
 (module
- (type $iiiiv (func (param i32 i32 i32 i32)))
  (type $v (func))
- (import "env" "abort" (func $~lib/env/abort (param i32 i32 i32 i32)))
+ (import "env" "abort" (func $~lib/env/abort))
+ (global $~lib/allocator/arena/startOffset (mut i32) (i32.const 0))
+ (global $~lib/allocator/arena/offset (mut i32) (i32.const 0))
  (global $for/i (mut i32) (i32.const 0))
  (memory $0 1)
  (data (i32.const 8) "\06\00\00\00f\00o\00r\00.\00t\00s")
@@ -10,6 +11,12 @@
  (func $start (; 1 ;) (type $v)
   (local $0 i32)
   (local $1 i32)
+  (set_global $~lib/allocator/arena/startOffset
+   (i32.const 24)
+  )
+  (set_global $~lib/allocator/arena/offset
+   (get_global $~lib/allocator/arena/startOffset)
+  )
   (block $break|0
    (set_global $for/i
     (i32.const 0)
@@ -36,12 +43,7 @@
     (i32.const 10)
    )
    (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 8)
-     (i32.const 5)
-     (i32.const 0)
-    )
+    (call $~lib/env/abort)
     (unreachable)
    )
   )
@@ -82,12 +84,7 @@
   (if
    (get_global $for/i)
    (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 8)
-     (i32.const 12)
-     (i32.const 0)
-    )
+    (call $~lib/env/abort)
     (unreachable)
    )
   )
@@ -145,12 +142,7 @@
     (i32.const 10)
    )
    (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 8)
-     (i32.const 19)
-     (i32.const 0)
-    )
+    (call $~lib/env/abort)
     (unreachable)
    )
   )

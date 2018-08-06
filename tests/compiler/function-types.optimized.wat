@@ -1,12 +1,13 @@
 (module
  (type $i (func (result i32)))
  (type $iii (func (param i32 i32) (result i32)))
- (type $iiiiv (func (param i32 i32 i32 i32)))
+ (type $v (func))
  (type $III (func (param i64 i64) (result i64)))
  (type $FFF (func (param f64 f64) (result f64)))
  (type $iiii (func (param i32 i32 i32) (result i32)))
- (type $v (func))
- (import "env" "abort" (func $~lib/env/abort (param i32 i32 i32 i32)))
+ (import "env" "abort" (func $~lib/env/abort))
+ (global $~lib/allocator/arena/startOffset (mut i32) (i32.const 0))
+ (global $~lib/allocator/arena/offset (mut i32) (i32.const 0))
  (global $function-types/i32Adder (mut i32) (i32.const 0))
  (global $~argc (mut i32) (i32.const 0))
  (global $function-types/i64Adder (mut i32) (i32.const 0))
@@ -88,174 +89,121 @@
   )
  )
  (func $start (; 10 ;) (type $v)
-  (set_global $function-types/i32Adder
-   (call $function-types/makeAdder<i32>)
-  )
-  (set_global $~argc
-   (i32.const 2)
-  )
-  (if
-   (i32.ne
-    (call_indirect (type $iii)
-     (i32.const 1)
-     (i32.const 2)
-     (get_global $function-types/i32Adder)
-    )
-    (i32.const 3)
+  (block $folding-inner0
+   (set_global $~lib/allocator/arena/startOffset
+    (i32.const 48)
    )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 8)
-     (i32.const 11)
-     (i32.const 0)
-    )
-    (unreachable)
+   (set_global $~lib/allocator/arena/offset
+    (get_global $~lib/allocator/arena/startOffset)
    )
-  )
-  (set_global $function-types/i64Adder
-   (call $function-types/makeAdder<i64>)
-  )
-  (set_global $~argc
-   (i32.const 2)
-  )
-  (if
-   (i64.ne
-    (call_indirect (type $III)
-     (i64.const 10)
-     (i64.const 20)
-     (get_global $function-types/i64Adder)
-    )
-    (i64.const 30)
+   (set_global $function-types/i32Adder
+    (call $function-types/makeAdder<i32>)
    )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 8)
-     (i32.const 15)
-     (i32.const 0)
-    )
-    (unreachable)
+   (set_global $~argc
+    (i32.const 2)
    )
-  )
-  (set_global $~argc
-   (i32.const 2)
-  )
-  (if
-   (f64.ne
-    (call_indirect (type $FFF)
-     (f64.const 1.5)
-     (f64.const 2.5)
-     (call $function-types/makeAdder<f64>)
-    )
-    (f64.const 4)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 8)
-     (i32.const 17)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (if
-   (i32.ne
-    (call $function-types/doAddWithFn<i32>
-     (i32.const 2)
+   (if
+    (i32.ne
+     (call_indirect (type $iii)
+      (i32.const 1)
+      (i32.const 2)
+      (get_global $function-types/i32Adder)
+     )
      (i32.const 3)
-     (get_global $function-types/i32Adder)
     )
-    (i32.const 5)
+    (br $folding-inner0)
    )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 8)
-     (i32.const 23)
-     (i32.const 0)
+   (set_global $function-types/i64Adder
+    (call $function-types/makeAdder<i64>)
+   )
+   (set_global $~argc
+    (i32.const 2)
+   )
+   (if
+    (i64.ne
+     (call_indirect (type $III)
+      (i64.const 10)
+      (i64.const 20)
+      (get_global $function-types/i64Adder)
+     )
+     (i64.const 30)
     )
-    (unreachable)
+    (br $folding-inner0)
    )
-  )
-  (if
-   (i32.ne
-    (call $function-types/doAdd<i32>
-     (i32.const 3)
-     (i32.const 4)
+   (set_global $~argc
+    (i32.const 2)
+   )
+   (if
+    (f64.ne
+     (call_indirect (type $FFF)
+      (f64.const 1.5)
+      (f64.const 2.5)
+      (call $function-types/makeAdder<f64>)
+     )
+     (f64.const 4)
     )
-    (i32.const 7)
+    (br $folding-inner0)
    )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 8)
-     (i32.const 29)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (if
-   (i32.ne
-    (call $function-types/doAddWithFn<i32>
-     (i32.const 4)
+   (if
+    (i32.ne
+     (call $function-types/doAddWithFn<i32>
+      (i32.const 2)
+      (i32.const 3)
+      (get_global $function-types/i32Adder)
+     )
      (i32.const 5)
+    )
+    (br $folding-inner0)
+   )
+   (if
+    (i32.ne
+     (call $function-types/doAdd<i32>
+      (i32.const 3)
+      (i32.const 4)
+     )
+     (i32.const 7)
+    )
+    (br $folding-inner0)
+   )
+   (if
+    (i32.ne
+     (call $function-types/doAddWithFn<i32>
+      (i32.const 4)
+      (i32.const 5)
+      (i32.const 3)
+     )
+     (i32.const 9)
+    )
+    (br $folding-inner0)
+   )
+   (set_global $~argc
+    (i32.const 2)
+   )
+   (if
+    (i32.ne
+     (call $function-types/makeAndAdd<i32>|trampoline
+      (i32.const 1)
+      (i32.const 2)
+      (i32.const 0)
+     )
      (i32.const 3)
     )
-    (i32.const 9)
+    (br $folding-inner0)
    )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 8)
-     (i32.const 35)
-     (i32.const 0)
+   (if
+    (i32.ne
+     (call $function-types/doAddWithFn<i32>
+      (i32.const 1)
+      (i32.const 2)
+      (call $function-types/makeAdder<i32>)
+     )
+     (i32.const 3)
     )
-    (unreachable)
+    (br $folding-inner0)
    )
+   (return)
   )
-  (set_global $~argc
-   (i32.const 2)
-  )
-  (if
-   (i32.ne
-    (call $function-types/makeAndAdd<i32>|trampoline
-     (i32.const 1)
-     (i32.const 2)
-     (i32.const 0)
-    )
-    (i32.const 3)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 8)
-     (i32.const 41)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (if
-   (i32.ne
-    (call $function-types/doAddWithFn<i32>
-     (i32.const 1)
-     (i32.const 2)
-     (call $function-types/makeAdder<i32>)
-    )
-    (i32.const 3)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 8)
-     (i32.const 42)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
+  (call $~lib/env/abort)
+  (unreachable)
  )
 )

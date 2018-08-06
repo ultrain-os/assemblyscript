@@ -1,8 +1,9 @@
 (module
  (type $iiii (func (param i32 i32 i32) (result i32)))
- (type $iiiiv (func (param i32 i32 i32 i32)))
  (type $v (func))
- (import "env" "abort" (func $~lib/env/abort (param i32 i32 i32 i32)))
+ (import "env" "abort" (func $~lib/env/abort))
+ (global $~lib/allocator/arena/startOffset (mut i32) (i32.const 0))
+ (global $~lib/allocator/arena/offset (mut i32) (i32.const 0))
  (global $memset/dest (mut i32) (i32.const 0))
  (memory $0 1)
  (data (i32.const 8) "\t\00\00\00m\00e\00m\00s\00e\00t\00.\00t\00s")
@@ -343,139 +344,102 @@
   (get_local $3)
  )
  (func $start (; 2 ;) (type $v)
-  (set_global $memset/dest
-   (i32.const 32)
-  )
-  (drop
-   (call $memset/memset
-    (get_global $memset/dest)
-    (i32.const 1)
-    (i32.const 16)
+  (block $folding-inner0
+   (set_global $~lib/allocator/arena/startOffset
+    (i32.const 32)
    )
-  )
-  (if
-   (i32.ne
-    (i32.load8_u
-     (get_global $memset/dest)
-    )
-    (i32.const 1)
+   (set_global $~lib/allocator/arena/offset
+    (get_global $~lib/allocator/arena/startOffset)
    )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 8)
-     (i32.const 72)
-     (i32.const 0)
-    )
-    (unreachable)
+   (set_global $memset/dest
+    (i32.const 32)
    )
-  )
-  (if
-   (i32.ne
-    (i32.load8_u
-     (i32.add
-      (get_global $memset/dest)
-      (i32.const 15)
-     )
-    )
-    (i32.const 1)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 8)
-     (i32.const 73)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (drop
-   (call $memset/memset
-    (i32.add
+   (drop
+    (call $memset/memset
      (get_global $memset/dest)
      (i32.const 1)
+     (i32.const 16)
     )
-    (i32.const 2)
-    (i32.const 14)
    )
-  )
-  (if
-   (i32.ne
-    (i32.load8_u
-     (get_global $memset/dest)
+   (if
+    (i32.ne
+     (i32.load8_u
+      (get_global $memset/dest)
+     )
+     (i32.const 1)
     )
-    (i32.const 1)
+    (br $folding-inner0)
    )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 8)
-     (i32.const 77)
-     (i32.const 0)
+   (if
+    (i32.ne
+     (i32.load8_u
+      (i32.add
+       (get_global $memset/dest)
+       (i32.const 15)
+      )
+     )
+     (i32.const 1)
     )
-    (unreachable)
+    (br $folding-inner0)
    )
-  )
-  (if
-   (i32.ne
-    (i32.load8_u
+   (drop
+    (call $memset/memset
      (i32.add
       (get_global $memset/dest)
       (i32.const 1)
      )
+     (i32.const 2)
+     (i32.const 14)
     )
-    (i32.const 2)
    )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 8)
-     (i32.const 78)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (if
-   (i32.ne
-    (i32.load8_u
-     (i32.add
+   (if
+    (i32.ne
+     (i32.load8_u
       (get_global $memset/dest)
-      (i32.const 14)
      )
+     (i32.const 1)
     )
-    (i32.const 2)
+    (br $folding-inner0)
    )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 8)
-     (i32.const 79)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (if
-   (i32.ne
-    (i32.load8_u
-     (i32.add
-      (get_global $memset/dest)
-      (i32.const 15)
+   (if
+    (i32.ne
+     (i32.load8_u
+      (i32.add
+       (get_global $memset/dest)
+       (i32.const 1)
+      )
      )
+     (i32.const 2)
     )
-    (i32.const 1)
+    (br $folding-inner0)
    )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 8)
-     (i32.const 80)
-     (i32.const 0)
+   (if
+    (i32.ne
+     (i32.load8_u
+      (i32.add
+       (get_global $memset/dest)
+       (i32.const 14)
+      )
+     )
+     (i32.const 2)
     )
-    (unreachable)
+    (br $folding-inner0)
    )
+   (if
+    (i32.ne
+     (i32.load8_u
+      (i32.add
+       (get_global $memset/dest)
+       (i32.const 15)
+      )
+     )
+     (i32.const 1)
+    )
+    (br $folding-inner0)
+   )
+   (return)
   )
+  (call $~lib/env/abort)
+  (unreachable)
  )
 )

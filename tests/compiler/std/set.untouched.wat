@@ -3,7 +3,6 @@
  (type $ii (func (param i32) (result i32)))
  (type $iv (func (param i32)))
  (type $iiii (func (param i32 i32 i32) (result i32)))
- (type $iiiiv (func (param i32 i32 i32 i32)))
  (type $iiiv (func (param i32 i32 i32)))
  (type $iii (func (param i32 i32) (result i32)))
  (type $iiv (func (param i32 i32)))
@@ -19,7 +18,7 @@
  (type $Fi (func (param f64) (result i32)))
  (type $iFii (func (param i32 f64 i32) (result i32)))
  (type $iFv (func (param i32 f64)))
- (import "env" "abort" (func $~lib/env/abort (param i32 i32 i32 i32)))
+ (import "env" "abort" (func $~lib/env/abort))
  (global $~lib/internal/allocator/AL_BITS i32 (i32.const 3))
  (global $~lib/internal/allocator/AL_SIZE i32 (i32.const 8))
  (global $~lib/internal/allocator/AL_MASK i32 (i32.const 7))
@@ -184,12 +183,7 @@
     )
    )
    (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 52)
-     (i32.const 22)
-     (i32.const 2)
-    )
+    (call $~lib/env/abort)
     (unreachable)
    )
   )
@@ -573,12 +567,7 @@
     (get_global $~lib/internal/arraybuffer/MAX_BLENGTH)
    )
    (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 8)
-     (i32.const 13)
-     (i32.const 40)
-    )
+    (call $~lib/env/abort)
     (unreachable)
    )
   )
@@ -1271,12 +1260,7 @@
        )
       )
       (block
-       (call $~lib/env/abort
-        (i32.const 0)
-        (i32.const 112)
-        (i32.const 8)
-        (i32.const 4)
-       )
+       (call $~lib/env/abort)
        (unreachable)
       )
      )
@@ -1292,12 +1276,7 @@
        )
       )
       (block
-       (call $~lib/env/abort
-        (i32.const 0)
-        (i32.const 112)
-        (i32.const 10)
-        (i32.const 4)
-       )
+       (call $~lib/env/abort)
        (unreachable)
       )
      )
@@ -1321,12 +1300,7 @@
     )
    )
    (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 112)
-     (i32.const 12)
-     (i32.const 2)
-    )
+    (call $~lib/env/abort)
     (unreachable)
    )
   )
@@ -1352,12 +1326,7 @@
        )
       )
       (block
-       (call $~lib/env/abort
-        (i32.const 0)
-        (i32.const 112)
-        (i32.const 16)
-        (i32.const 4)
-       )
+       (call $~lib/env/abort)
        (unreachable)
       )
      )
@@ -1373,12 +1342,7 @@
        )
       )
       (block
-       (call $~lib/env/abort
-        (i32.const 0)
-        (i32.const 112)
-        (i32.const 18)
-        (i32.const 4)
-       )
+       (call $~lib/env/abort)
        (unreachable)
       )
      )
@@ -1402,12 +1366,7 @@
     )
    )
    (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 112)
-     (i32.const 20)
-     (i32.const 2)
-    )
+    (call $~lib/env/abort)
     (unreachable)
    )
   )
@@ -1433,12 +1392,7 @@
        )
       )
       (block
-       (call $~lib/env/abort
-        (i32.const 0)
-        (i32.const 112)
-        (i32.const 24)
-        (i32.const 4)
-       )
+       (call $~lib/env/abort)
        (unreachable)
       )
      )
@@ -1458,12 +1412,7 @@
        )
       )
       (block
-       (call $~lib/env/abort
-        (i32.const 0)
-        (i32.const 112)
-        (i32.const 26)
-        (i32.const 4)
-       )
+       (call $~lib/env/abort)
        (unreachable)
       )
      )
@@ -1487,12 +1436,7 @@
     )
    )
    (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 112)
-     (i32.const 28)
-     (i32.const 2)
-    )
+    (call $~lib/env/abort)
     (unreachable)
    )
   )
@@ -1520,12 +1464,7 @@
        )
       )
       (block
-       (call $~lib/env/abort
-        (i32.const 0)
-        (i32.const 112)
-        (i32.const 32)
-        (i32.const 4)
-       )
+       (call $~lib/env/abort)
        (unreachable)
       )
      )
@@ -1541,12 +1480,7 @@
        )
       )
       (block
-       (call $~lib/env/abort
-        (i32.const 0)
-        (i32.const 112)
-        (i32.const 34)
-        (i32.const 4)
-       )
+       (call $~lib/env/abort)
        (unreachable)
       )
      )
@@ -1566,12 +1500,7 @@
        )
       )
       (block
-       (call $~lib/env/abort
-        (i32.const 0)
-        (i32.const 112)
-        (i32.const 36)
-        (i32.const 4)
-       )
+       (call $~lib/env/abort)
        (unreachable)
       )
      )
@@ -1595,12 +1524,7 @@
     )
    )
    (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 112)
-     (i32.const 38)
-     (i32.const 2)
-    )
+    (call $~lib/env/abort)
     (unreachable)
    )
   )
@@ -1617,12 +1541,7 @@
     )
    )
    (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 112)
-     (i32.const 42)
-     (i32.const 2)
-    )
+    (call $~lib/env/abort)
     (unreachable)
    )
   )
@@ -2275,12 +2194,7 @@
        )
       )
       (block
-       (call $~lib/env/abort
-        (i32.const 0)
-        (i32.const 112)
-        (i32.const 8)
-        (i32.const 4)
-       )
+       (call $~lib/env/abort)
        (unreachable)
       )
      )
@@ -2296,12 +2210,7 @@
        )
       )
       (block
-       (call $~lib/env/abort
-        (i32.const 0)
-        (i32.const 112)
-        (i32.const 10)
-        (i32.const 4)
-       )
+       (call $~lib/env/abort)
        (unreachable)
       )
      )
@@ -2325,12 +2234,7 @@
     )
    )
    (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 112)
-     (i32.const 12)
-     (i32.const 2)
-    )
+    (call $~lib/env/abort)
     (unreachable)
    )
   )
@@ -2356,12 +2260,7 @@
        )
       )
       (block
-       (call $~lib/env/abort
-        (i32.const 0)
-        (i32.const 112)
-        (i32.const 16)
-        (i32.const 4)
-       )
+       (call $~lib/env/abort)
        (unreachable)
       )
      )
@@ -2377,12 +2276,7 @@
        )
       )
       (block
-       (call $~lib/env/abort
-        (i32.const 0)
-        (i32.const 112)
-        (i32.const 18)
-        (i32.const 4)
-       )
+       (call $~lib/env/abort)
        (unreachable)
       )
      )
@@ -2406,12 +2300,7 @@
     )
    )
    (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 112)
-     (i32.const 20)
-     (i32.const 2)
-    )
+    (call $~lib/env/abort)
     (unreachable)
    )
   )
@@ -2437,12 +2326,7 @@
        )
       )
       (block
-       (call $~lib/env/abort
-        (i32.const 0)
-        (i32.const 112)
-        (i32.const 24)
-        (i32.const 4)
-       )
+       (call $~lib/env/abort)
        (unreachable)
       )
      )
@@ -2462,12 +2346,7 @@
        )
       )
       (block
-       (call $~lib/env/abort
-        (i32.const 0)
-        (i32.const 112)
-        (i32.const 26)
-        (i32.const 4)
-       )
+       (call $~lib/env/abort)
        (unreachable)
       )
      )
@@ -2491,12 +2370,7 @@
     )
    )
    (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 112)
-     (i32.const 28)
-     (i32.const 2)
-    )
+    (call $~lib/env/abort)
     (unreachable)
    )
   )
@@ -2524,12 +2398,7 @@
        )
       )
       (block
-       (call $~lib/env/abort
-        (i32.const 0)
-        (i32.const 112)
-        (i32.const 32)
-        (i32.const 4)
-       )
+       (call $~lib/env/abort)
        (unreachable)
       )
      )
@@ -2545,12 +2414,7 @@
        )
       )
       (block
-       (call $~lib/env/abort
-        (i32.const 0)
-        (i32.const 112)
-        (i32.const 34)
-        (i32.const 4)
-       )
+       (call $~lib/env/abort)
        (unreachable)
       )
      )
@@ -2570,12 +2434,7 @@
        )
       )
       (block
-       (call $~lib/env/abort
-        (i32.const 0)
-        (i32.const 112)
-        (i32.const 36)
-        (i32.const 4)
-       )
+       (call $~lib/env/abort)
        (unreachable)
       )
      )
@@ -2599,12 +2458,7 @@
     )
    )
    (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 112)
-     (i32.const 38)
-     (i32.const 2)
-    )
+    (call $~lib/env/abort)
     (unreachable)
    )
   )
@@ -2621,12 +2475,7 @@
     )
    )
    (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 112)
-     (i32.const 42)
-     (i32.const 2)
-    )
+    (call $~lib/env/abort)
     (unreachable)
    )
   )
@@ -3319,12 +3168,7 @@
        )
       )
       (block
-       (call $~lib/env/abort
-        (i32.const 0)
-        (i32.const 112)
-        (i32.const 8)
-        (i32.const 4)
-       )
+       (call $~lib/env/abort)
        (unreachable)
       )
      )
@@ -3340,12 +3184,7 @@
        )
       )
       (block
-       (call $~lib/env/abort
-        (i32.const 0)
-        (i32.const 112)
-        (i32.const 10)
-        (i32.const 4)
-       )
+       (call $~lib/env/abort)
        (unreachable)
       )
      )
@@ -3369,12 +3208,7 @@
     )
    )
    (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 112)
-     (i32.const 12)
-     (i32.const 2)
-    )
+    (call $~lib/env/abort)
     (unreachable)
    )
   )
@@ -3400,12 +3234,7 @@
        )
       )
       (block
-       (call $~lib/env/abort
-        (i32.const 0)
-        (i32.const 112)
-        (i32.const 16)
-        (i32.const 4)
-       )
+       (call $~lib/env/abort)
        (unreachable)
       )
      )
@@ -3421,12 +3250,7 @@
        )
       )
       (block
-       (call $~lib/env/abort
-        (i32.const 0)
-        (i32.const 112)
-        (i32.const 18)
-        (i32.const 4)
-       )
+       (call $~lib/env/abort)
        (unreachable)
       )
      )
@@ -3450,12 +3274,7 @@
     )
    )
    (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 112)
-     (i32.const 20)
-     (i32.const 2)
-    )
+    (call $~lib/env/abort)
     (unreachable)
    )
   )
@@ -3481,12 +3300,7 @@
        )
       )
       (block
-       (call $~lib/env/abort
-        (i32.const 0)
-        (i32.const 112)
-        (i32.const 24)
-        (i32.const 4)
-       )
+       (call $~lib/env/abort)
        (unreachable)
       )
      )
@@ -3506,12 +3320,7 @@
        )
       )
       (block
-       (call $~lib/env/abort
-        (i32.const 0)
-        (i32.const 112)
-        (i32.const 26)
-        (i32.const 4)
-       )
+       (call $~lib/env/abort)
        (unreachable)
       )
      )
@@ -3535,12 +3344,7 @@
     )
    )
    (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 112)
-     (i32.const 28)
-     (i32.const 2)
-    )
+    (call $~lib/env/abort)
     (unreachable)
    )
   )
@@ -3568,12 +3372,7 @@
        )
       )
       (block
-       (call $~lib/env/abort
-        (i32.const 0)
-        (i32.const 112)
-        (i32.const 32)
-        (i32.const 4)
-       )
+       (call $~lib/env/abort)
        (unreachable)
       )
      )
@@ -3589,12 +3388,7 @@
        )
       )
       (block
-       (call $~lib/env/abort
-        (i32.const 0)
-        (i32.const 112)
-        (i32.const 34)
-        (i32.const 4)
-       )
+       (call $~lib/env/abort)
        (unreachable)
       )
      )
@@ -3614,12 +3408,7 @@
        )
       )
       (block
-       (call $~lib/env/abort
-        (i32.const 0)
-        (i32.const 112)
-        (i32.const 36)
-        (i32.const 4)
-       )
+       (call $~lib/env/abort)
        (unreachable)
       )
      )
@@ -3643,12 +3432,7 @@
     )
    )
    (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 112)
-     (i32.const 38)
-     (i32.const 2)
-    )
+    (call $~lib/env/abort)
     (unreachable)
    )
   )
@@ -3665,12 +3449,7 @@
     )
    )
    (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 112)
-     (i32.const 42)
-     (i32.const 2)
-    )
+    (call $~lib/env/abort)
     (unreachable)
    )
   )
@@ -4323,12 +4102,7 @@
        )
       )
       (block
-       (call $~lib/env/abort
-        (i32.const 0)
-        (i32.const 112)
-        (i32.const 8)
-        (i32.const 4)
-       )
+       (call $~lib/env/abort)
        (unreachable)
       )
      )
@@ -4344,12 +4118,7 @@
        )
       )
       (block
-       (call $~lib/env/abort
-        (i32.const 0)
-        (i32.const 112)
-        (i32.const 10)
-        (i32.const 4)
-       )
+       (call $~lib/env/abort)
        (unreachable)
       )
      )
@@ -4373,12 +4142,7 @@
     )
    )
    (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 112)
-     (i32.const 12)
-     (i32.const 2)
-    )
+    (call $~lib/env/abort)
     (unreachable)
    )
   )
@@ -4404,12 +4168,7 @@
        )
       )
       (block
-       (call $~lib/env/abort
-        (i32.const 0)
-        (i32.const 112)
-        (i32.const 16)
-        (i32.const 4)
-       )
+       (call $~lib/env/abort)
        (unreachable)
       )
      )
@@ -4425,12 +4184,7 @@
        )
       )
       (block
-       (call $~lib/env/abort
-        (i32.const 0)
-        (i32.const 112)
-        (i32.const 18)
-        (i32.const 4)
-       )
+       (call $~lib/env/abort)
        (unreachable)
       )
      )
@@ -4454,12 +4208,7 @@
     )
    )
    (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 112)
-     (i32.const 20)
-     (i32.const 2)
-    )
+    (call $~lib/env/abort)
     (unreachable)
    )
   )
@@ -4485,12 +4234,7 @@
        )
       )
       (block
-       (call $~lib/env/abort
-        (i32.const 0)
-        (i32.const 112)
-        (i32.const 24)
-        (i32.const 4)
-       )
+       (call $~lib/env/abort)
        (unreachable)
       )
      )
@@ -4510,12 +4254,7 @@
        )
       )
       (block
-       (call $~lib/env/abort
-        (i32.const 0)
-        (i32.const 112)
-        (i32.const 26)
-        (i32.const 4)
-       )
+       (call $~lib/env/abort)
        (unreachable)
       )
      )
@@ -4539,12 +4278,7 @@
     )
    )
    (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 112)
-     (i32.const 28)
-     (i32.const 2)
-    )
+    (call $~lib/env/abort)
     (unreachable)
    )
   )
@@ -4572,12 +4306,7 @@
        )
       )
       (block
-       (call $~lib/env/abort
-        (i32.const 0)
-        (i32.const 112)
-        (i32.const 32)
-        (i32.const 4)
-       )
+       (call $~lib/env/abort)
        (unreachable)
       )
      )
@@ -4593,12 +4322,7 @@
        )
       )
       (block
-       (call $~lib/env/abort
-        (i32.const 0)
-        (i32.const 112)
-        (i32.const 34)
-        (i32.const 4)
-       )
+       (call $~lib/env/abort)
        (unreachable)
       )
      )
@@ -4618,12 +4342,7 @@
        )
       )
       (block
-       (call $~lib/env/abort
-        (i32.const 0)
-        (i32.const 112)
-        (i32.const 36)
-        (i32.const 4)
-       )
+       (call $~lib/env/abort)
        (unreachable)
       )
      )
@@ -4647,12 +4366,7 @@
     )
    )
    (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 112)
-     (i32.const 38)
-     (i32.const 2)
-    )
+    (call $~lib/env/abort)
     (unreachable)
    )
   )
@@ -4669,12 +4383,7 @@
     )
    )
    (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 112)
-     (i32.const 42)
-     (i32.const 2)
-    )
+    (call $~lib/env/abort)
     (unreachable)
    )
   )
@@ -5379,12 +5088,7 @@
        )
       )
       (block
-       (call $~lib/env/abort
-        (i32.const 0)
-        (i32.const 112)
-        (i32.const 8)
-        (i32.const 4)
-       )
+       (call $~lib/env/abort)
        (unreachable)
       )
      )
@@ -5400,12 +5104,7 @@
        )
       )
       (block
-       (call $~lib/env/abort
-        (i32.const 0)
-        (i32.const 112)
-        (i32.const 10)
-        (i32.const 4)
-       )
+       (call $~lib/env/abort)
        (unreachable)
       )
      )
@@ -5429,12 +5128,7 @@
     )
    )
    (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 112)
-     (i32.const 12)
-     (i32.const 2)
-    )
+    (call $~lib/env/abort)
     (unreachable)
    )
   )
@@ -5460,12 +5154,7 @@
        )
       )
       (block
-       (call $~lib/env/abort
-        (i32.const 0)
-        (i32.const 112)
-        (i32.const 16)
-        (i32.const 4)
-       )
+       (call $~lib/env/abort)
        (unreachable)
       )
      )
@@ -5481,12 +5170,7 @@
        )
       )
       (block
-       (call $~lib/env/abort
-        (i32.const 0)
-        (i32.const 112)
-        (i32.const 18)
-        (i32.const 4)
-       )
+       (call $~lib/env/abort)
        (unreachable)
       )
      )
@@ -5510,12 +5194,7 @@
     )
    )
    (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 112)
-     (i32.const 20)
-     (i32.const 2)
-    )
+    (call $~lib/env/abort)
     (unreachable)
    )
   )
@@ -5541,12 +5220,7 @@
        )
       )
       (block
-       (call $~lib/env/abort
-        (i32.const 0)
-        (i32.const 112)
-        (i32.const 24)
-        (i32.const 4)
-       )
+       (call $~lib/env/abort)
        (unreachable)
       )
      )
@@ -5566,12 +5240,7 @@
        )
       )
       (block
-       (call $~lib/env/abort
-        (i32.const 0)
-        (i32.const 112)
-        (i32.const 26)
-        (i32.const 4)
-       )
+       (call $~lib/env/abort)
        (unreachable)
       )
      )
@@ -5595,12 +5264,7 @@
     )
    )
    (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 112)
-     (i32.const 28)
-     (i32.const 2)
-    )
+    (call $~lib/env/abort)
     (unreachable)
    )
   )
@@ -5628,12 +5292,7 @@
        )
       )
       (block
-       (call $~lib/env/abort
-        (i32.const 0)
-        (i32.const 112)
-        (i32.const 32)
-        (i32.const 4)
-       )
+       (call $~lib/env/abort)
        (unreachable)
       )
      )
@@ -5649,12 +5308,7 @@
        )
       )
       (block
-       (call $~lib/env/abort
-        (i32.const 0)
-        (i32.const 112)
-        (i32.const 34)
-        (i32.const 4)
-       )
+       (call $~lib/env/abort)
        (unreachable)
       )
      )
@@ -5674,12 +5328,7 @@
        )
       )
       (block
-       (call $~lib/env/abort
-        (i32.const 0)
-        (i32.const 112)
-        (i32.const 36)
-        (i32.const 4)
-       )
+       (call $~lib/env/abort)
        (unreachable)
       )
      )
@@ -5703,12 +5352,7 @@
     )
    )
    (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 112)
-     (i32.const 38)
-     (i32.const 2)
-    )
+    (call $~lib/env/abort)
     (unreachable)
    )
   )
@@ -5725,12 +5369,7 @@
     )
    )
    (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 112)
-     (i32.const 42)
-     (i32.const 2)
-    )
+    (call $~lib/env/abort)
     (unreachable)
    )
   )
@@ -6374,12 +6013,7 @@
        )
       )
       (block
-       (call $~lib/env/abort
-        (i32.const 0)
-        (i32.const 112)
-        (i32.const 8)
-        (i32.const 4)
-       )
+       (call $~lib/env/abort)
        (unreachable)
       )
      )
@@ -6395,12 +6029,7 @@
        )
       )
       (block
-       (call $~lib/env/abort
-        (i32.const 0)
-        (i32.const 112)
-        (i32.const 10)
-        (i32.const 4)
-       )
+       (call $~lib/env/abort)
        (unreachable)
       )
      )
@@ -6424,12 +6053,7 @@
     )
    )
    (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 112)
-     (i32.const 12)
-     (i32.const 2)
-    )
+    (call $~lib/env/abort)
     (unreachable)
    )
   )
@@ -6455,12 +6079,7 @@
        )
       )
       (block
-       (call $~lib/env/abort
-        (i32.const 0)
-        (i32.const 112)
-        (i32.const 16)
-        (i32.const 4)
-       )
+       (call $~lib/env/abort)
        (unreachable)
       )
      )
@@ -6476,12 +6095,7 @@
        )
       )
       (block
-       (call $~lib/env/abort
-        (i32.const 0)
-        (i32.const 112)
-        (i32.const 18)
-        (i32.const 4)
-       )
+       (call $~lib/env/abort)
        (unreachable)
       )
      )
@@ -6505,12 +6119,7 @@
     )
    )
    (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 112)
-     (i32.const 20)
-     (i32.const 2)
-    )
+    (call $~lib/env/abort)
     (unreachable)
    )
   )
@@ -6536,12 +6145,7 @@
        )
       )
       (block
-       (call $~lib/env/abort
-        (i32.const 0)
-        (i32.const 112)
-        (i32.const 24)
-        (i32.const 4)
-       )
+       (call $~lib/env/abort)
        (unreachable)
       )
      )
@@ -6561,12 +6165,7 @@
        )
       )
       (block
-       (call $~lib/env/abort
-        (i32.const 0)
-        (i32.const 112)
-        (i32.const 26)
-        (i32.const 4)
-       )
+       (call $~lib/env/abort)
        (unreachable)
       )
      )
@@ -6590,12 +6189,7 @@
     )
    )
    (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 112)
-     (i32.const 28)
-     (i32.const 2)
-    )
+    (call $~lib/env/abort)
     (unreachable)
    )
   )
@@ -6623,12 +6217,7 @@
        )
       )
       (block
-       (call $~lib/env/abort
-        (i32.const 0)
-        (i32.const 112)
-        (i32.const 32)
-        (i32.const 4)
-       )
+       (call $~lib/env/abort)
        (unreachable)
       )
      )
@@ -6644,12 +6233,7 @@
        )
       )
       (block
-       (call $~lib/env/abort
-        (i32.const 0)
-        (i32.const 112)
-        (i32.const 34)
-        (i32.const 4)
-       )
+       (call $~lib/env/abort)
        (unreachable)
       )
      )
@@ -6669,12 +6253,7 @@
        )
       )
       (block
-       (call $~lib/env/abort
-        (i32.const 0)
-        (i32.const 112)
-        (i32.const 36)
-        (i32.const 4)
-       )
+       (call $~lib/env/abort)
        (unreachable)
       )
      )
@@ -6698,12 +6277,7 @@
     )
    )
    (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 112)
-     (i32.const 38)
-     (i32.const 2)
-    )
+    (call $~lib/env/abort)
     (unreachable)
    )
   )
@@ -6720,12 +6294,7 @@
     )
    )
    (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 112)
-     (i32.const 42)
-     (i32.const 2)
-    )
+    (call $~lib/env/abort)
     (unreachable)
    )
   )
@@ -7500,12 +7069,7 @@
        )
       )
       (block
-       (call $~lib/env/abort
-        (i32.const 0)
-        (i32.const 112)
-        (i32.const 8)
-        (i32.const 4)
-       )
+       (call $~lib/env/abort)
        (unreachable)
       )
      )
@@ -7521,12 +7085,7 @@
        )
       )
       (block
-       (call $~lib/env/abort
-        (i32.const 0)
-        (i32.const 112)
-        (i32.const 10)
-        (i32.const 4)
-       )
+       (call $~lib/env/abort)
        (unreachable)
       )
      )
@@ -7550,12 +7109,7 @@
     )
    )
    (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 112)
-     (i32.const 12)
-     (i32.const 2)
-    )
+    (call $~lib/env/abort)
     (unreachable)
    )
   )
@@ -7581,12 +7135,7 @@
        )
       )
       (block
-       (call $~lib/env/abort
-        (i32.const 0)
-        (i32.const 112)
-        (i32.const 16)
-        (i32.const 4)
-       )
+       (call $~lib/env/abort)
        (unreachable)
       )
      )
@@ -7602,12 +7151,7 @@
        )
       )
       (block
-       (call $~lib/env/abort
-        (i32.const 0)
-        (i32.const 112)
-        (i32.const 18)
-        (i32.const 4)
-       )
+       (call $~lib/env/abort)
        (unreachable)
       )
      )
@@ -7631,12 +7175,7 @@
     )
    )
    (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 112)
-     (i32.const 20)
-     (i32.const 2)
-    )
+    (call $~lib/env/abort)
     (unreachable)
    )
   )
@@ -7662,12 +7201,7 @@
        )
       )
       (block
-       (call $~lib/env/abort
-        (i32.const 0)
-        (i32.const 112)
-        (i32.const 24)
-        (i32.const 4)
-       )
+       (call $~lib/env/abort)
        (unreachable)
       )
      )
@@ -7687,12 +7221,7 @@
        )
       )
       (block
-       (call $~lib/env/abort
-        (i32.const 0)
-        (i32.const 112)
-        (i32.const 26)
-        (i32.const 4)
-       )
+       (call $~lib/env/abort)
        (unreachable)
       )
      )
@@ -7716,12 +7245,7 @@
     )
    )
    (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 112)
-     (i32.const 28)
-     (i32.const 2)
-    )
+    (call $~lib/env/abort)
     (unreachable)
    )
   )
@@ -7749,12 +7273,7 @@
        )
       )
       (block
-       (call $~lib/env/abort
-        (i32.const 0)
-        (i32.const 112)
-        (i32.const 32)
-        (i32.const 4)
-       )
+       (call $~lib/env/abort)
        (unreachable)
       )
      )
@@ -7770,12 +7289,7 @@
        )
       )
       (block
-       (call $~lib/env/abort
-        (i32.const 0)
-        (i32.const 112)
-        (i32.const 34)
-        (i32.const 4)
-       )
+       (call $~lib/env/abort)
        (unreachable)
       )
      )
@@ -7795,12 +7309,7 @@
        )
       )
       (block
-       (call $~lib/env/abort
-        (i32.const 0)
-        (i32.const 112)
-        (i32.const 36)
-        (i32.const 4)
-       )
+       (call $~lib/env/abort)
        (unreachable)
       )
      )
@@ -7824,12 +7333,7 @@
     )
    )
    (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 112)
-     (i32.const 38)
-     (i32.const 2)
-    )
+    (call $~lib/env/abort)
     (unreachable)
    )
   )
@@ -7846,12 +7350,7 @@
     )
    )
    (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 112)
-     (i32.const 42)
-     (i32.const 2)
-    )
+    (call $~lib/env/abort)
     (unreachable)
    )
   )
@@ -8496,12 +7995,7 @@
        )
       )
       (block
-       (call $~lib/env/abort
-        (i32.const 0)
-        (i32.const 112)
-        (i32.const 8)
-        (i32.const 4)
-       )
+       (call $~lib/env/abort)
        (unreachable)
       )
      )
@@ -8517,12 +8011,7 @@
        )
       )
       (block
-       (call $~lib/env/abort
-        (i32.const 0)
-        (i32.const 112)
-        (i32.const 10)
-        (i32.const 4)
-       )
+       (call $~lib/env/abort)
        (unreachable)
       )
      )
@@ -8546,12 +8035,7 @@
     )
    )
    (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 112)
-     (i32.const 12)
-     (i32.const 2)
-    )
+    (call $~lib/env/abort)
     (unreachable)
    )
   )
@@ -8577,12 +8061,7 @@
        )
       )
       (block
-       (call $~lib/env/abort
-        (i32.const 0)
-        (i32.const 112)
-        (i32.const 16)
-        (i32.const 4)
-       )
+       (call $~lib/env/abort)
        (unreachable)
       )
      )
@@ -8598,12 +8077,7 @@
        )
       )
       (block
-       (call $~lib/env/abort
-        (i32.const 0)
-        (i32.const 112)
-        (i32.const 18)
-        (i32.const 4)
-       )
+       (call $~lib/env/abort)
        (unreachable)
       )
      )
@@ -8627,12 +8101,7 @@
     )
    )
    (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 112)
-     (i32.const 20)
-     (i32.const 2)
-    )
+    (call $~lib/env/abort)
     (unreachable)
    )
   )
@@ -8658,12 +8127,7 @@
        )
       )
       (block
-       (call $~lib/env/abort
-        (i32.const 0)
-        (i32.const 112)
-        (i32.const 24)
-        (i32.const 4)
-       )
+       (call $~lib/env/abort)
        (unreachable)
       )
      )
@@ -8683,12 +8147,7 @@
        )
       )
       (block
-       (call $~lib/env/abort
-        (i32.const 0)
-        (i32.const 112)
-        (i32.const 26)
-        (i32.const 4)
-       )
+       (call $~lib/env/abort)
        (unreachable)
       )
      )
@@ -8712,12 +8171,7 @@
     )
    )
    (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 112)
-     (i32.const 28)
-     (i32.const 2)
-    )
+    (call $~lib/env/abort)
     (unreachable)
    )
   )
@@ -8745,12 +8199,7 @@
        )
       )
       (block
-       (call $~lib/env/abort
-        (i32.const 0)
-        (i32.const 112)
-        (i32.const 32)
-        (i32.const 4)
-       )
+       (call $~lib/env/abort)
        (unreachable)
       )
      )
@@ -8766,12 +8215,7 @@
        )
       )
       (block
-       (call $~lib/env/abort
-        (i32.const 0)
-        (i32.const 112)
-        (i32.const 34)
-        (i32.const 4)
-       )
+       (call $~lib/env/abort)
        (unreachable)
       )
      )
@@ -8791,12 +8235,7 @@
        )
       )
       (block
-       (call $~lib/env/abort
-        (i32.const 0)
-        (i32.const 112)
-        (i32.const 36)
-        (i32.const 4)
-       )
+       (call $~lib/env/abort)
        (unreachable)
       )
      )
@@ -8820,12 +8259,7 @@
     )
    )
    (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 112)
-     (i32.const 38)
-     (i32.const 2)
-    )
+    (call $~lib/env/abort)
     (unreachable)
    )
   )
@@ -8842,12 +8276,7 @@
     )
    )
    (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 112)
-     (i32.const 42)
-     (i32.const 2)
-    )
+    (call $~lib/env/abort)
     (unreachable)
    )
   )
@@ -9498,12 +8927,7 @@
        )
       )
       (block
-       (call $~lib/env/abort
-        (i32.const 0)
-        (i32.const 112)
-        (i32.const 8)
-        (i32.const 4)
-       )
+       (call $~lib/env/abort)
        (unreachable)
       )
      )
@@ -9519,12 +8943,7 @@
        )
       )
       (block
-       (call $~lib/env/abort
-        (i32.const 0)
-        (i32.const 112)
-        (i32.const 10)
-        (i32.const 4)
-       )
+       (call $~lib/env/abort)
        (unreachable)
       )
      )
@@ -9548,12 +8967,7 @@
     )
    )
    (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 112)
-     (i32.const 12)
-     (i32.const 2)
-    )
+    (call $~lib/env/abort)
     (unreachable)
    )
   )
@@ -9579,12 +8993,7 @@
        )
       )
       (block
-       (call $~lib/env/abort
-        (i32.const 0)
-        (i32.const 112)
-        (i32.const 16)
-        (i32.const 4)
-       )
+       (call $~lib/env/abort)
        (unreachable)
       )
      )
@@ -9600,12 +9009,7 @@
        )
       )
       (block
-       (call $~lib/env/abort
-        (i32.const 0)
-        (i32.const 112)
-        (i32.const 18)
-        (i32.const 4)
-       )
+       (call $~lib/env/abort)
        (unreachable)
       )
      )
@@ -9629,12 +9033,7 @@
     )
    )
    (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 112)
-     (i32.const 20)
-     (i32.const 2)
-    )
+    (call $~lib/env/abort)
     (unreachable)
    )
   )
@@ -9660,12 +9059,7 @@
        )
       )
       (block
-       (call $~lib/env/abort
-        (i32.const 0)
-        (i32.const 112)
-        (i32.const 24)
-        (i32.const 4)
-       )
+       (call $~lib/env/abort)
        (unreachable)
       )
      )
@@ -9685,12 +9079,7 @@
        )
       )
       (block
-       (call $~lib/env/abort
-        (i32.const 0)
-        (i32.const 112)
-        (i32.const 26)
-        (i32.const 4)
-       )
+       (call $~lib/env/abort)
        (unreachable)
       )
      )
@@ -9714,12 +9103,7 @@
     )
    )
    (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 112)
-     (i32.const 28)
-     (i32.const 2)
-    )
+    (call $~lib/env/abort)
     (unreachable)
    )
   )
@@ -9747,12 +9131,7 @@
        )
       )
       (block
-       (call $~lib/env/abort
-        (i32.const 0)
-        (i32.const 112)
-        (i32.const 32)
-        (i32.const 4)
-       )
+       (call $~lib/env/abort)
        (unreachable)
       )
      )
@@ -9768,12 +9147,7 @@
        )
       )
       (block
-       (call $~lib/env/abort
-        (i32.const 0)
-        (i32.const 112)
-        (i32.const 34)
-        (i32.const 4)
-       )
+       (call $~lib/env/abort)
        (unreachable)
       )
      )
@@ -9793,12 +9167,7 @@
        )
       )
       (block
-       (call $~lib/env/abort
-        (i32.const 0)
-        (i32.const 112)
-        (i32.const 36)
-        (i32.const 4)
-       )
+       (call $~lib/env/abort)
        (unreachable)
       )
      )
@@ -9822,12 +9191,7 @@
     )
    )
    (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 112)
-     (i32.const 38)
-     (i32.const 2)
-    )
+    (call $~lib/env/abort)
     (unreachable)
    )
   )
@@ -9844,12 +9208,7 @@
     )
    )
    (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 112)
-     (i32.const 42)
-     (i32.const 2)
-    )
+    (call $~lib/env/abort)
     (unreachable)
    )
   )
@@ -10500,12 +9859,7 @@
        )
       )
       (block
-       (call $~lib/env/abort
-        (i32.const 0)
-        (i32.const 112)
-        (i32.const 8)
-        (i32.const 4)
-       )
+       (call $~lib/env/abort)
        (unreachable)
       )
      )
@@ -10521,12 +9875,7 @@
        )
       )
       (block
-       (call $~lib/env/abort
-        (i32.const 0)
-        (i32.const 112)
-        (i32.const 10)
-        (i32.const 4)
-       )
+       (call $~lib/env/abort)
        (unreachable)
       )
      )
@@ -10550,12 +9899,7 @@
     )
    )
    (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 112)
-     (i32.const 12)
-     (i32.const 2)
-    )
+    (call $~lib/env/abort)
     (unreachable)
    )
   )
@@ -10581,12 +9925,7 @@
        )
       )
       (block
-       (call $~lib/env/abort
-        (i32.const 0)
-        (i32.const 112)
-        (i32.const 16)
-        (i32.const 4)
-       )
+       (call $~lib/env/abort)
        (unreachable)
       )
      )
@@ -10602,12 +9941,7 @@
        )
       )
       (block
-       (call $~lib/env/abort
-        (i32.const 0)
-        (i32.const 112)
-        (i32.const 18)
-        (i32.const 4)
-       )
+       (call $~lib/env/abort)
        (unreachable)
       )
      )
@@ -10631,12 +9965,7 @@
     )
    )
    (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 112)
-     (i32.const 20)
-     (i32.const 2)
-    )
+    (call $~lib/env/abort)
     (unreachable)
    )
   )
@@ -10662,12 +9991,7 @@
        )
       )
       (block
-       (call $~lib/env/abort
-        (i32.const 0)
-        (i32.const 112)
-        (i32.const 24)
-        (i32.const 4)
-       )
+       (call $~lib/env/abort)
        (unreachable)
       )
      )
@@ -10687,12 +10011,7 @@
        )
       )
       (block
-       (call $~lib/env/abort
-        (i32.const 0)
-        (i32.const 112)
-        (i32.const 26)
-        (i32.const 4)
-       )
+       (call $~lib/env/abort)
        (unreachable)
       )
      )
@@ -10716,12 +10035,7 @@
     )
    )
    (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 112)
-     (i32.const 28)
-     (i32.const 2)
-    )
+    (call $~lib/env/abort)
     (unreachable)
    )
   )
@@ -10749,12 +10063,7 @@
        )
       )
       (block
-       (call $~lib/env/abort
-        (i32.const 0)
-        (i32.const 112)
-        (i32.const 32)
-        (i32.const 4)
-       )
+       (call $~lib/env/abort)
        (unreachable)
       )
      )
@@ -10770,12 +10079,7 @@
        )
       )
       (block
-       (call $~lib/env/abort
-        (i32.const 0)
-        (i32.const 112)
-        (i32.const 34)
-        (i32.const 4)
-       )
+       (call $~lib/env/abort)
        (unreachable)
       )
      )
@@ -10795,12 +10099,7 @@
        )
       )
       (block
-       (call $~lib/env/abort
-        (i32.const 0)
-        (i32.const 112)
-        (i32.const 36)
-        (i32.const 4)
-       )
+       (call $~lib/env/abort)
        (unreachable)
       )
      )
@@ -10824,12 +10123,7 @@
     )
    )
    (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 112)
-     (i32.const 38)
-     (i32.const 2)
-    )
+    (call $~lib/env/abort)
     (unreachable)
    )
   )
@@ -10846,12 +10140,7 @@
     )
    )
    (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 112)
-     (i32.const 42)
-     (i32.const 2)
-    )
+    (call $~lib/env/abort)
     (unreachable)
    )
   )

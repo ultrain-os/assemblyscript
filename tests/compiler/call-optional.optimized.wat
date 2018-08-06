@@ -1,8 +1,9 @@
 (module
  (type $iiii (func (param i32 i32 i32) (result i32)))
- (type $iiiiv (func (param i32 i32 i32 i32)))
  (type $v (func))
- (import "env" "abort" (func $~lib/env/abort (param i32 i32 i32 i32)))
+ (import "env" "abort" (func $~lib/env/abort))
+ (global $~lib/allocator/arena/startOffset (mut i32) (i32.const 0))
+ (global $~lib/allocator/arena/offset (mut i32) (i32.const 0))
  (global $~argc (mut i32) (i32.const 0))
  (global $call-optional/optIndirect (mut i32) (i32.const 0))
  (table 1 1 anyfunc)
@@ -50,131 +51,94 @@
   )
  )
  (func $start (; 3 ;) (type $v)
-  (set_global $~argc
-   (i32.const 1)
-  )
-  (if
-   (call $call-optional/opt|trampoline
-    (i32.const 3)
-    (i32.const 0)
-    (i32.const 0)
+  (block $folding-inner0
+   (set_global $~lib/allocator/arena/startOffset
+    (i32.const 48)
    )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 8)
-     (i32.const 4)
-     (i32.const 0)
-    )
-    (unreachable)
+   (set_global $~lib/allocator/arena/offset
+    (get_global $~lib/allocator/arena/startOffset)
    )
-  )
-  (set_global $~argc
-   (i32.const 2)
-  )
-  (if
-   (i32.ne
+   (set_global $~argc
+    (i32.const 1)
+   )
+   (if
     (call $call-optional/opt|trampoline
      (i32.const 3)
-     (i32.const 4)
+     (i32.const 0)
      (i32.const 0)
     )
-    (i32.const 5)
+    (br $folding-inner0)
    )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 8)
+   (set_global $~argc
+    (i32.const 2)
+   )
+   (if
+    (i32.ne
+     (call $call-optional/opt|trampoline
+      (i32.const 3)
+      (i32.const 4)
+      (i32.const 0)
+     )
      (i32.const 5)
-     (i32.const 0)
     )
-    (unreachable)
+    (br $folding-inner0)
    )
-  )
-  (if
-   (i32.ne
-    (call $call-optional/opt
+   (if
+    (i32.ne
+     (call $call-optional/opt
+      (i32.const 3)
+      (i32.const 4)
+      (i32.const 5)
+     )
+     (i32.const 12)
+    )
+    (br $folding-inner0)
+   )
+   (set_global $~argc
+    (i32.const 1)
+   )
+   (if
+    (call_indirect (type $iiii)
      (i32.const 3)
-     (i32.const 4)
+     (i32.const 0)
+     (i32.const 0)
+     (get_global $call-optional/optIndirect)
+    )
+    (br $folding-inner0)
+   )
+   (set_global $~argc
+    (i32.const 2)
+   )
+   (if
+    (i32.ne
+     (call_indirect (type $iiii)
+      (i32.const 3)
+      (i32.const 4)
+      (i32.const 0)
+      (get_global $call-optional/optIndirect)
+     )
      (i32.const 5)
     )
-    (i32.const 12)
+    (br $folding-inner0)
    )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 8)
-     (i32.const 6)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (set_global $~argc
-   (i32.const 1)
-  )
-  (if
-   (call_indirect (type $iiii)
+   (set_global $~argc
     (i32.const 3)
-    (i32.const 0)
-    (i32.const 0)
-    (get_global $call-optional/optIndirect)
    )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 8)
-     (i32.const 9)
-     (i32.const 0)
+   (if
+    (i32.ne
+     (call_indirect (type $iiii)
+      (i32.const 3)
+      (i32.const 4)
+      (i32.const 5)
+      (get_global $call-optional/optIndirect)
+     )
+     (i32.const 12)
     )
-    (unreachable)
+    (br $folding-inner0)
    )
+   (return)
   )
-  (set_global $~argc
-   (i32.const 2)
-  )
-  (if
-   (i32.ne
-    (call_indirect (type $iiii)
-     (i32.const 3)
-     (i32.const 4)
-     (i32.const 0)
-     (get_global $call-optional/optIndirect)
-    )
-    (i32.const 5)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 8)
-     (i32.const 10)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (set_global $~argc
-   (i32.const 3)
-  )
-  (if
-   (i32.ne
-    (call_indirect (type $iiii)
-     (i32.const 3)
-     (i32.const 4)
-     (i32.const 5)
-     (get_global $call-optional/optIndirect)
-    )
-    (i32.const 12)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 8)
-     (i32.const 11)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
+  (call $~lib/env/abort)
+  (unreachable)
  )
 )

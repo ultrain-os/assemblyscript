@@ -1,10 +1,9 @@
 (module
  (type $ii (func (param i32) (result i32)))
- (type $iiiiv (func (param i32 i32 i32 i32)))
+ (type $v (func))
  (type $iii (func (param i32 i32) (result i32)))
  (type $iiiv (func (param i32 i32 i32)))
- (type $v (func))
- (import "env" "abort" (func $~lib/env/abort (param i32 i32 i32 i32)))
+ (import "env" "abort" (func $~lib/env/abort))
  (global $~lib/allocator/arena/startOffset (mut i32) (i32.const 0))
  (global $~lib/allocator/arena/offset (mut i32) (i32.const 0))
  (global $std/array-literal/emptyArray (mut i32) (i32.const 0))
@@ -165,12 +164,7 @@
     (i32.const 1073741816)
    )
    (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 124)
-     (i32.const 22)
-     (i32.const 2)
-    )
+    (call $~lib/env/abort)
     (unreachable)
    )
   )
@@ -532,12 +526,7 @@
     (i32.const 268435454)
    )
    (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 92)
-     (i32.const 23)
-     (i32.const 39)
-    )
+    (call $~lib/env/abort)
     (unreachable)
    )
   )
@@ -604,202 +593,135 @@
  )
  (func $start (; 11 ;) (type $v)
   (local $0 i32)
-  (set_global $~lib/allocator/arena/startOffset
-   (i32.const 184)
-  )
-  (set_global $~lib/allocator/arena/offset
-   (get_global $~lib/allocator/arena/startOffset)
-  )
-  (if
-   (i32.ne
-    (call $~lib/array/Array<i32>#get:length
-     (i32.const 8)
-    )
-    (i32.const 3)
+  (block $folding-inner0
+   (set_global $~lib/allocator/arena/startOffset
+    (i32.const 184)
    )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 48)
-     (i32.const 4)
-     (i32.const 0)
-    )
-    (unreachable)
+   (set_global $~lib/allocator/arena/offset
+    (get_global $~lib/allocator/arena/startOffset)
    )
-  )
-  (if
-   (call $~lib/array/Array<i32>#__get
-    (i32.const 8)
-    (i32.const 0)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 48)
-     (i32.const 5)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (if
-   (i32.ne
-    (call $~lib/array/Array<i32>#__get
-     (i32.const 8)
-     (i32.const 1)
-    )
-    (i32.const 1)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 48)
-     (i32.const 6)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (if
-   (i32.ne
-    (call $~lib/array/Array<i32>#__get
-     (i32.const 8)
-     (i32.const 2)
-    )
-    (i32.const 2)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 48)
-     (i32.const 7)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (set_global $std/array-literal/emptyArray
-   (call $~lib/array/Array<i32>#constructor
-    (i32.const 0)
-    (i32.const 0)
-   )
-  )
-  (if
-   (call $~lib/array/Array<i32>#get:length
-    (get_global $std/array-literal/emptyArray)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 48)
-     (i32.const 10)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (call $~lib/array/Array<i32>#__unchecked_set
-   (tee_local $0
-    (call $~lib/array/Array<i32>#constructor
-     (i32.const 0)
+   (if
+    (i32.ne
+     (call $~lib/array/Array<i32>#get:length
+      (i32.const 8)
+     )
      (i32.const 3)
     )
+    (br $folding-inner0)
    )
-   (i32.const 0)
-   (get_global $std/array-literal/i)
-  )
-  (set_global $std/array-literal/i
-   (i32.add
-    (get_global $std/array-literal/i)
-    (i32.const 1)
-   )
-  )
-  (call $~lib/array/Array<i32>#__unchecked_set
-   (get_local $0)
-   (i32.const 1)
-   (get_global $std/array-literal/i)
-  )
-  (set_global $std/array-literal/i
-   (i32.add
-    (get_global $std/array-literal/i)
-    (i32.const 1)
-   )
-  )
-  (call $~lib/array/Array<i32>#__unchecked_set
-   (get_local $0)
-   (i32.const 2)
-   (get_global $std/array-literal/i)
-  )
-  (set_global $std/array-literal/dynamicArray
-   (get_local $0)
-  )
-  (if
-   (i32.ne
-    (call $~lib/array/Array<i32>#get:length
-     (get_global $std/array-literal/dynamicArray)
-    )
-    (i32.const 3)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 48)
-     (i32.const 14)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (if
-   (call $~lib/array/Array<i32>#__get
-    (get_global $std/array-literal/dynamicArray)
-    (i32.const 0)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 48)
-     (i32.const 15)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (if
-   (i32.ne
+   (if
     (call $~lib/array/Array<i32>#__get
-     (get_global $std/array-literal/dynamicArray)
+     (i32.const 8)
+     (i32.const 0)
+    )
+    (br $folding-inner0)
+   )
+   (if
+    (i32.ne
+     (call $~lib/array/Array<i32>#__get
+      (i32.const 8)
+      (i32.const 1)
+     )
      (i32.const 1)
     )
-    (i32.const 1)
+    (br $folding-inner0)
    )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 48)
-     (i32.const 16)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (if
-   (i32.ne
-    (call $~lib/array/Array<i32>#__get
-     (get_global $std/array-literal/dynamicArray)
+   (if
+    (i32.ne
+     (call $~lib/array/Array<i32>#__get
+      (i32.const 8)
+      (i32.const 2)
+     )
      (i32.const 2)
     )
-    (i32.const 2)
+    (br $folding-inner0)
    )
-   (block
-    (call $~lib/env/abort
+   (set_global $std/array-literal/emptyArray
+    (call $~lib/array/Array<i32>#constructor
      (i32.const 0)
-     (i32.const 48)
-     (i32.const 17)
      (i32.const 0)
     )
-    (unreachable)
    )
+   (if
+    (call $~lib/array/Array<i32>#get:length
+     (get_global $std/array-literal/emptyArray)
+    )
+    (br $folding-inner0)
+   )
+   (call $~lib/array/Array<i32>#__unchecked_set
+    (tee_local $0
+     (call $~lib/array/Array<i32>#constructor
+      (i32.const 0)
+      (i32.const 3)
+     )
+    )
+    (i32.const 0)
+    (get_global $std/array-literal/i)
+   )
+   (set_global $std/array-literal/i
+    (i32.add
+     (get_global $std/array-literal/i)
+     (i32.const 1)
+    )
+   )
+   (call $~lib/array/Array<i32>#__unchecked_set
+    (get_local $0)
+    (i32.const 1)
+    (get_global $std/array-literal/i)
+   )
+   (set_global $std/array-literal/i
+    (i32.add
+     (get_global $std/array-literal/i)
+     (i32.const 1)
+    )
+   )
+   (call $~lib/array/Array<i32>#__unchecked_set
+    (get_local $0)
+    (i32.const 2)
+    (get_global $std/array-literal/i)
+   )
+   (set_global $std/array-literal/dynamicArray
+    (get_local $0)
+   )
+   (if
+    (i32.ne
+     (call $~lib/array/Array<i32>#get:length
+      (get_global $std/array-literal/dynamicArray)
+     )
+     (i32.const 3)
+    )
+    (br $folding-inner0)
+   )
+   (if
+    (call $~lib/array/Array<i32>#__get
+     (get_global $std/array-literal/dynamicArray)
+     (i32.const 0)
+    )
+    (br $folding-inner0)
+   )
+   (if
+    (i32.ne
+     (call $~lib/array/Array<i32>#__get
+      (get_global $std/array-literal/dynamicArray)
+      (i32.const 1)
+     )
+     (i32.const 1)
+    )
+    (br $folding-inner0)
+   )
+   (if
+    (i32.ne
+     (call $~lib/array/Array<i32>#__get
+      (get_global $std/array-literal/dynamicArray)
+      (i32.const 2)
+     )
+     (i32.const 2)
+    )
+    (br $folding-inner0)
+   )
+   (return)
   )
+  (call $~lib/env/abort)
+  (unreachable)
  )
 )

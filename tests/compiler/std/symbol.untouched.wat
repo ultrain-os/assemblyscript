@@ -1,13 +1,12 @@
 (module
  (type $ii (func (param i32) (result i32)))
- (type $iiiiv (func (param i32 i32 i32 i32)))
+ (type $v (func))
  (type $iv (func (param i32)))
  (type $iiii (func (param i32 i32 i32) (result i32)))
  (type $iiiv (func (param i32 i32 i32)))
  (type $iii (func (param i32 i32) (result i32)))
  (type $iiv (func (param i32 i32)))
- (type $v (func))
- (import "env" "abort" (func $~lib/env/abort (param i32 i32 i32 i32)))
+ (import "env" "abort" (func $~lib/env/abort))
  (global $~lib/internal/allocator/AL_BITS i32 (i32.const 3))
  (global $~lib/internal/allocator/AL_SIZE i32 (i32.const 8))
  (global $~lib/internal/allocator/AL_MASK i32 (i32.const 7))
@@ -212,12 +211,7 @@
     )
    )
    (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 96)
-     (i32.const 22)
-     (i32.const 2)
-    )
+    (call $~lib/env/abort)
     (unreachable)
    )
   )
@@ -601,12 +595,7 @@
     (get_global $~lib/internal/arraybuffer/MAX_BLENGTH)
    )
    (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 52)
-     (i32.const 13)
-     (i32.const 40)
-    )
+    (call $~lib/env/abort)
     (unreachable)
    )
   )
@@ -633,7 +622,7 @@
   )
   (get_local $3)
  )
- (func $~lib/map/Map<String,usize>#clear (; 9 ;) (type $iv) (param $0 i32)
+ (func $~lib/map/Map<String_usize>#clear (; 9 ;) (type $iv) (param $0 i32)
   (i32.store
    (get_local $0)
    (call $~lib/arraybuffer/ArrayBuffer#constructor
@@ -670,9 +659,9 @@
    (i32.const 0)
   )
  )
- (func $~lib/map/Map<String,usize>#constructor (; 10 ;) (type $ii) (param $0 i32) (result i32)
+ (func $~lib/map/Map<String_usize>#constructor (; 10 ;) (type $ii) (param $0 i32) (result i32)
   (local $1 i32)
-  (call $~lib/map/Map<String,usize>#clear
+  (call $~lib/map/Map<String_usize>#clear
    (tee_local $0
     (if (result i32)
      (get_local $0)
@@ -716,7 +705,7 @@
   )
   (get_local $0)
  )
- (func $~lib/map/Map<usize,String>#clear (; 11 ;) (type $iv) (param $0 i32)
+ (func $~lib/map/Map<usize_String>#clear (; 11 ;) (type $iv) (param $0 i32)
   (i32.store
    (get_local $0)
    (call $~lib/arraybuffer/ArrayBuffer#constructor
@@ -753,9 +742,9 @@
    (i32.const 0)
   )
  )
- (func $~lib/map/Map<usize,String>#constructor (; 12 ;) (type $ii) (param $0 i32) (result i32)
+ (func $~lib/map/Map<usize_String>#constructor (; 12 ;) (type $ii) (param $0 i32) (result i32)
   (local $1 i32)
-  (call $~lib/map/Map<usize,String>#clear
+  (call $~lib/map/Map<usize_String>#clear
    (tee_local $0
     (if (result i32)
      (get_local $0)
@@ -994,7 +983,7 @@
    )
   )
  )
- (func $~lib/map/Map<String,usize>#find (; 17 ;) (type $iiii) (param $0 i32) (param $1 i32) (param $2 i32) (result i32)
+ (func $~lib/map/Map<String_usize>#find (; 17 ;) (type $iiii) (param $0 i32) (param $1 i32) (param $2 i32) (result i32)
   (local $3 i32)
   (local $4 i32)
   (set_local $3
@@ -1064,9 +1053,9 @@
   )
   (i32.const 0)
  )
- (func $~lib/map/Map<String,usize>#has (; 18 ;) (type $iii) (param $0 i32) (param $1 i32) (result i32)
+ (func $~lib/map/Map<String_usize>#has (; 18 ;) (type $iii) (param $0 i32) (param $1 i32) (result i32)
   (i32.ne
-   (call $~lib/map/Map<String,usize>#find
+   (call $~lib/map/Map<String_usize>#find
     (get_local $0)
     (get_local $1)
     (block $~lib/internal/hash/hash<String>|inlined.0 (result i32)
@@ -1080,10 +1069,10 @@
    (i32.const 0)
   )
  )
- (func $~lib/map/Map<String,usize>#get (; 19 ;) (type $iii) (param $0 i32) (param $1 i32) (result i32)
+ (func $~lib/map/Map<String_usize>#get (; 19 ;) (type $iii) (param $0 i32) (param $1 i32) (result i32)
   (local $2 i32)
   (set_local $2
-   (call $~lib/map/Map<String,usize>#find
+   (call $~lib/map/Map<String_usize>#find
     (get_local $0)
     (get_local $1)
     (block $~lib/internal/hash/hash<String>|inlined.1 (result i32)
@@ -1103,7 +1092,7 @@
    (unreachable)
   )
  )
- (func $~lib/map/Map<String,usize>#rehash (; 20 ;) (type $iiv) (param $0 i32) (param $1 i32)
+ (func $~lib/map/Map<String_usize>#rehash (; 20 ;) (type $iiv) (param $0 i32) (param $1 i32)
   (local $2 i32)
   (local $3 i32)
   (local $4 i32)
@@ -1146,7 +1135,7 @@
     (i32.const 0)
     (i32.mul
      (get_local $4)
-     (block $~lib/map/ENTRY_SIZE<String,usize>|inlined.1 (result i32)
+     (block $~lib/map/ENTRY_SIZE<String_usize>|inlined.1 (result i32)
       (i32.const 12)
      )
     )
@@ -1168,7 +1157,7 @@
      (i32.load offset=16
       (get_local $0)
      )
-     (block $~lib/map/ENTRY_SIZE<String,usize>|inlined.2 (result i32)
+     (block $~lib/map/ENTRY_SIZE<String_usize>|inlined.2 (result i32)
       (i32.const 12)
      )
     )
@@ -1256,7 +1245,7 @@
          (set_local $8
           (i32.add
            (get_local $8)
-           (block $~lib/map/ENTRY_SIZE<String,usize>|inlined.3 (result i32)
+           (block $~lib/map/ENTRY_SIZE<String_usize>|inlined.3 (result i32)
             (i32.const 12)
            )
           )
@@ -1266,7 +1255,7 @@
        (set_local $6
         (i32.add
          (get_local $6)
-         (block $~lib/map/ENTRY_SIZE<String,usize>|inlined.4 (result i32)
+         (block $~lib/map/ENTRY_SIZE<String_usize>|inlined.4 (result i32)
           (i32.const 12)
          )
         )
@@ -1300,7 +1289,7 @@
    )
   )
  )
- (func $~lib/map/Map<String,usize>#set (; 21 ;) (type $iiiv) (param $0 i32) (param $1 i32) (param $2 i32)
+ (func $~lib/map/Map<String_usize>#set (; 21 ;) (type $iiiv) (param $0 i32) (param $1 i32) (param $2 i32)
   (local $3 i32)
   (local $4 i32)
   (local $5 i32)
@@ -1315,7 +1304,7 @@
    )
   )
   (set_local $4
-   (call $~lib/map/Map<String,usize>#find
+   (call $~lib/map/Map<String_usize>#find
     (get_local $0)
     (get_local $1)
     (get_local $3)
@@ -1337,7 +1326,7 @@
        (get_local $0)
       )
      )
-     (call $~lib/map/Map<String,usize>#rehash
+     (call $~lib/map/Map<String_usize>#rehash
       (get_local $0)
       (if (result i32)
        (i32.lt_s
@@ -1397,7 +1386,7 @@
         )
         (get_local $6)
        )
-       (block $~lib/map/ENTRY_SIZE<String,usize>|inlined.5 (result i32)
+       (block $~lib/map/ENTRY_SIZE<String_usize>|inlined.5 (result i32)
         (i32.const 12)
        )
       )
@@ -1510,7 +1499,7 @@
   )
   (get_local $1)
  )
- (func $~lib/map/Map<usize,String>#find (; 23 ;) (type $iiii) (param $0 i32) (param $1 i32) (param $2 i32) (result i32)
+ (func $~lib/map/Map<usize_String>#find (; 23 ;) (type $iiii) (param $0 i32) (param $1 i32) (param $2 i32) (result i32)
   (local $3 i32)
   (local $4 i32)
   (set_local $3
@@ -1580,7 +1569,7 @@
   )
   (i32.const 0)
  )
- (func $~lib/map/Map<usize,String>#rehash (; 24 ;) (type $iiv) (param $0 i32) (param $1 i32)
+ (func $~lib/map/Map<usize_String>#rehash (; 24 ;) (type $iiv) (param $0 i32) (param $1 i32)
   (local $2 i32)
   (local $3 i32)
   (local $4 i32)
@@ -1623,7 +1612,7 @@
     (i32.const 0)
     (i32.mul
      (get_local $4)
-     (block $~lib/map/ENTRY_SIZE<usize,String>|inlined.1 (result i32)
+     (block $~lib/map/ENTRY_SIZE<usize_String>|inlined.1 (result i32)
       (i32.const 12)
      )
     )
@@ -1645,7 +1634,7 @@
      (i32.load offset=16
       (get_local $0)
      )
-     (block $~lib/map/ENTRY_SIZE<usize,String>|inlined.2 (result i32)
+     (block $~lib/map/ENTRY_SIZE<usize_String>|inlined.2 (result i32)
       (i32.const 12)
      )
     )
@@ -1733,7 +1722,7 @@
          (set_local $8
           (i32.add
            (get_local $8)
-           (block $~lib/map/ENTRY_SIZE<usize,String>|inlined.3 (result i32)
+           (block $~lib/map/ENTRY_SIZE<usize_String>|inlined.3 (result i32)
             (i32.const 12)
            )
           )
@@ -1743,7 +1732,7 @@
        (set_local $6
         (i32.add
          (get_local $6)
-         (block $~lib/map/ENTRY_SIZE<usize,String>|inlined.4 (result i32)
+         (block $~lib/map/ENTRY_SIZE<usize_String>|inlined.4 (result i32)
           (i32.const 12)
          )
         )
@@ -1777,7 +1766,7 @@
    )
   )
  )
- (func $~lib/map/Map<usize,String>#set (; 25 ;) (type $iiiv) (param $0 i32) (param $1 i32) (param $2 i32)
+ (func $~lib/map/Map<usize_String>#set (; 25 ;) (type $iiiv) (param $0 i32) (param $1 i32) (param $2 i32)
   (local $3 i32)
   (local $4 i32)
   (local $5 i32)
@@ -1792,7 +1781,7 @@
    )
   )
   (set_local $4
-   (call $~lib/map/Map<usize,String>#find
+   (call $~lib/map/Map<usize_String>#find
     (get_local $0)
     (get_local $1)
     (get_local $3)
@@ -1814,7 +1803,7 @@
        (get_local $0)
       )
      )
-     (call $~lib/map/Map<usize,String>#rehash
+     (call $~lib/map/Map<usize_String>#rehash
       (get_local $0)
       (if (result i32)
        (i32.lt_s
@@ -1874,7 +1863,7 @@
         )
         (get_local $6)
        )
-       (block $~lib/map/ENTRY_SIZE<usize,String>|inlined.5 (result i32)
+       (block $~lib/map/ENTRY_SIZE<usize_String>|inlined.5 (result i32)
         (i32.const 12)
        )
       )
@@ -1935,23 +1924,23 @@
    )
    (block
     (set_global $~lib/symbol/stringToId
-     (call $~lib/map/Map<String,usize>#constructor
+     (call $~lib/map/Map<String_usize>#constructor
       (i32.const 0)
      )
     )
     (set_global $~lib/symbol/idToString
-     (call $~lib/map/Map<usize,String>#constructor
+     (call $~lib/map/Map<usize_String>#constructor
       (i32.const 0)
      )
     )
    )
    (if
-    (call $~lib/map/Map<String,usize>#has
+    (call $~lib/map/Map<String_usize>#has
      (get_global $~lib/symbol/stringToId)
      (get_local $0)
     )
     (return
-     (call $~lib/map/Map<String,usize>#get
+     (call $~lib/map/Map<String_usize>#get
       (get_global $~lib/symbol/stringToId)
       (get_local $0)
      )
@@ -1978,21 +1967,21 @@
    )
    (unreachable)
   )
-  (call $~lib/map/Map<String,usize>#set
+  (call $~lib/map/Map<String_usize>#set
    (get_global $~lib/symbol/stringToId)
    (get_local $0)
    (get_local $2)
   )
-  (call $~lib/map/Map<usize,String>#set
+  (call $~lib/map/Map<usize_String>#set
    (get_global $~lib/symbol/idToString)
    (get_local $2)
    (get_local $0)
   )
   (get_local $2)
  )
- (func $~lib/map/Map<usize,String>#has (; 27 ;) (type $iii) (param $0 i32) (param $1 i32) (result i32)
+ (func $~lib/map/Map<usize_String>#has (; 27 ;) (type $iii) (param $0 i32) (param $1 i32) (result i32)
   (i32.ne
-   (call $~lib/map/Map<usize,String>#find
+   (call $~lib/map/Map<usize_String>#find
     (get_local $0)
     (get_local $1)
     (block $~lib/internal/hash/hash<usize>|inlined.2 (result i32)
@@ -2006,10 +1995,10 @@
    (i32.const 0)
   )
  )
- (func $~lib/map/Map<usize,String>#get (; 28 ;) (type $iii) (param $0 i32) (param $1 i32) (result i32)
+ (func $~lib/map/Map<usize_String>#get (; 28 ;) (type $iii) (param $0 i32) (param $1 i32) (result i32)
   (local $2 i32)
   (set_local $2
-   (call $~lib/map/Map<usize,String>#find
+   (call $~lib/map/Map<usize_String>#find
     (get_local $0)
     (get_local $1)
     (block $~lib/internal/hash/hash<usize>|inlined.3 (result i32)
@@ -2039,13 +2028,13 @@
       (i32.const 0)
      )
     )
-    (call $~lib/map/Map<usize,String>#has
+    (call $~lib/map/Map<usize_String>#has
      (get_global $~lib/symbol/idToString)
      (get_local $0)
     )
     (get_local $1)
    )
-   (call $~lib/map/Map<usize,String>#get
+   (call $~lib/map/Map<usize_String>#get
     (get_global $~lib/symbol/idToString)
     (get_local $0)
    )
@@ -2086,12 +2075,7 @@
     )
    )
    (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 20)
-     (i32.const 6)
-     (i32.const 0)
-    )
+    (call $~lib/env/abort)
     (unreachable)
    )
   )
@@ -2113,12 +2097,7 @@
     )
    )
    (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 20)
-     (i32.const 11)
-     (i32.const 0)
-    )
+    (call $~lib/env/abort)
     (unreachable)
    )
   )
@@ -2140,12 +2119,7 @@
     )
    )
    (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 20)
-     (i32.const 16)
-     (i32.const 0)
-    )
+    (call $~lib/env/abort)
     (unreachable)
    )
   )
@@ -2157,12 +2131,7 @@
     )
    )
    (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 20)
-     (i32.const 17)
-     (i32.const 0)
-    )
+    (call $~lib/env/abort)
     (unreachable)
    )
   )
@@ -2184,12 +2153,7 @@
     )
    )
    (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 20)
-     (i32.const 22)
-     (i32.const 0)
-    )
+    (call $~lib/env/abort)
     (unreachable)
    )
   )
@@ -2201,12 +2165,7 @@
     )
    )
    (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 20)
-     (i32.const 23)
-     (i32.const 0)
-    )
+    (call $~lib/env/abort)
     (unreachable)
    )
   )

@@ -2917,12 +2917,6 @@ export function compileAbort(
   var abortInstance = program.abortInstance;
   if (!(abortInstance && compiler.compileFunction(abortInstance))) return module.createUnreachable();
 
-  var messageArg = message != null
-    ? compiler.compileExpression(message, stringType, ConversionKind.IMPLICIT, WrapMode.NONE)
-    : stringType.toNativeZero(module);
-
-  var filenameArg = compiler.compileStaticString(reportNode.range.source.normalizedPath);
-
   compiler.currentType = Type.void;
   return module.createBlock(null, [
     module.createCallImport(

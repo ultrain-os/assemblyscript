@@ -1,9 +1,10 @@
 (module
  (type $iii (func (param i32 i32) (result i32)))
- (type $iiiiv (func (param i32 i32 i32 i32)))
  (type $v (func))
  (type $iv (func (param i32)))
- (import "env" "abort" (func $~lib/env/abort (param i32 i32 i32 i32)))
+ (import "env" "abort" (func $~lib/env/abort))
+ (global $~lib/allocator/arena/startOffset (mut i32) (i32.const 0))
+ (global $~lib/allocator/arena/offset (mut i32) (i32.const 0))
  (global $std/pointer/one (mut i32) (i32.const 0))
  (global $std/pointer/two (mut i32) (i32.const 0))
  (global $std/pointer/add (mut i32) (i32.const 0))
@@ -20,262 +21,169 @@
   (get_local $1)
  )
  (func $start (; 2 ;) (type $v)
-  (set_global $std/pointer/one
-   (call $std/pointer/Pointer<Entry>#constructor
-    (i32.const 0)
-    (i32.const 8)
+  (block $folding-inner0
+   (set_global $~lib/allocator/arena/startOffset
+    (i32.const 40)
    )
-  )
-  (set_global $std/pointer/two
-   (call $std/pointer/Pointer<Entry>#constructor
-    (i32.const 0)
-    (i32.const 24)
+   (set_global $~lib/allocator/arena/offset
+    (get_global $~lib/allocator/arena/startOffset)
    )
-  )
-  (if
-   (i32.ne
-    (get_global $std/pointer/one)
-    (i32.const 8)
-   )
-   (block
-    (call $~lib/env/abort
+   (set_global $std/pointer/one
+    (call $std/pointer/Pointer<Entry>#constructor
      (i32.const 0)
      (i32.const 8)
-     (i32.const 52)
-     (i32.const 0)
     )
-    (unreachable)
    )
-  )
-  (if
-   (i32.ne
-    (get_global $std/pointer/two)
-    (i32.const 24)
-   )
-   (block
-    (call $~lib/env/abort
+   (set_global $std/pointer/two
+    (call $std/pointer/Pointer<Entry>#constructor
      (i32.const 0)
-     (i32.const 8)
-     (i32.const 53)
-     (i32.const 0)
+     (i32.const 24)
     )
-    (unreachable)
    )
-  )
-  (i32.store
-   (get_global $std/pointer/one)
-   (i32.const 1)
-  )
-  (i32.store offset=4
-   (get_global $std/pointer/one)
-   (i32.const 2)
-  )
-  (if
-   (i32.ne
-    (i32.load
+   (if
+    (i32.ne
      (get_global $std/pointer/one)
+     (i32.const 8)
     )
+    (br $folding-inner0)
+   )
+   (if
+    (i32.ne
+     (get_global $std/pointer/two)
+     (i32.const 24)
+    )
+    (br $folding-inner0)
+   )
+   (i32.store
+    (get_global $std/pointer/one)
     (i32.const 1)
    )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 8)
-     (i32.const 57)
-     (i32.const 0)
-    )
-    (unreachable)
+   (i32.store offset=4
+    (get_global $std/pointer/one)
+    (i32.const 2)
    )
-  )
-  (if
-   (i32.ne
-    (i32.load offset=4
+   (if
+    (i32.ne
+     (i32.load
+      (get_global $std/pointer/one)
+     )
+     (i32.const 1)
+    )
+    (br $folding-inner0)
+   )
+   (if
+    (i32.ne
+     (i32.load offset=4
+      (get_global $std/pointer/one)
+     )
+     (i32.const 2)
+    )
+    (br $folding-inner0)
+   )
+   (set_global $std/pointer/add
+    (i32.add
+     (get_global $std/pointer/one)
+     (get_global $std/pointer/two)
+    )
+   )
+   (if
+    (i32.ne
+     (get_global $std/pointer/add)
+     (i32.const 32)
+    )
+    (br $folding-inner0)
+   )
+   (set_global $std/pointer/sub
+    (i32.sub
+     (get_global $std/pointer/two)
      (get_global $std/pointer/one)
     )
-    (i32.const 2)
    )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 8)
-     (i32.const 58)
-     (i32.const 0)
+   (if
+    (i32.ne
+     (get_global $std/pointer/sub)
+     (i32.const 16)
     )
-    (unreachable)
+    (br $folding-inner0)
    )
-  )
-  (set_global $std/pointer/add
-   (i32.add
-    (get_global $std/pointer/one)
-    (get_global $std/pointer/two)
-   )
-  )
-  (if
-   (i32.ne
-    (get_global $std/pointer/add)
-    (i32.const 32)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
+   (if
+    (i32.ne
+     (get_global $std/pointer/one)
      (i32.const 8)
-     (i32.const 61)
-     (i32.const 0)
     )
-    (unreachable)
+    (br $folding-inner0)
    )
-  )
-  (set_global $std/pointer/sub
-   (i32.sub
-    (get_global $std/pointer/two)
+   (set_global $std/pointer/one
+    (i32.add
+     (get_global $std/pointer/one)
+     (i32.const 8)
+    )
+   )
+   (set_global $std/pointer/nextOne
     (get_global $std/pointer/one)
    )
-  )
-  (if
-   (i32.ne
-    (get_global $std/pointer/sub)
-    (i32.const 16)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 8)
-     (i32.const 64)
-     (i32.const 0)
+   (if
+    (i32.ne
+     (get_global $std/pointer/nextOne)
+     (get_global $std/pointer/one)
     )
-    (unreachable)
+    (br $folding-inner0)
    )
-  )
-  (if
-   (i32.ne
-    (get_global $std/pointer/one)
-    (i32.const 8)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 8)
-     (i32.const 66)
-     (i32.const 0)
+   (if
+    (i32.ne
+     (get_global $std/pointer/one)
+     (i32.const 16)
     )
-    (unreachable)
+    (br $folding-inner0)
    )
-  )
-  (set_global $std/pointer/one
-   (i32.add
-    (get_global $std/pointer/one)
-    (i32.const 8)
-   )
-  )
-  (set_global $std/pointer/nextOne
-   (get_global $std/pointer/one)
-  )
-  (if
-   (i32.ne
-    (get_global $std/pointer/nextOne)
-    (get_global $std/pointer/one)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 8)
-     (i32.const 68)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (if
-   (i32.ne
-    (get_global $std/pointer/one)
-    (i32.const 16)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 8)
-     (i32.const 69)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (if
-   (i32.ne
-    (get_global $std/pointer/two)
-    (i32.const 24)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 8)
-     (i32.const 71)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (set_global $std/pointer/two
-   (i32.sub
-    (get_global $std/pointer/two)
-    (i32.const 8)
-   )
-  )
-  (set_global $std/pointer/two
-   (i32.sub
-    (get_global $std/pointer/two)
-    (i32.const 8)
-   )
-  )
-  (if
-   (i32.ne
-    (get_global $std/pointer/two)
-    (i32.const 8)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 8)
-     (i32.const 74)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (if
-   (i32.ne
-    (i32.load
+   (if
+    (i32.ne
      (get_global $std/pointer/two)
+     (i32.const 24)
     )
-    (i32.const 1)
+    (br $folding-inner0)
    )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 8)
-     (i32.const 75)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (if
-   (i32.ne
-    (i32.load offset=4
+   (set_global $std/pointer/two
+    (i32.sub
      (get_global $std/pointer/two)
-    )
-    (i32.const 2)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
      (i32.const 8)
-     (i32.const 76)
-     (i32.const 0)
     )
-    (unreachable)
    )
+   (set_global $std/pointer/two
+    (i32.sub
+     (get_global $std/pointer/two)
+     (i32.const 8)
+    )
+   )
+   (if
+    (i32.ne
+     (get_global $std/pointer/two)
+     (i32.const 8)
+    )
+    (br $folding-inner0)
+   )
+   (if
+    (i32.ne
+     (i32.load
+      (get_global $std/pointer/two)
+     )
+     (i32.const 1)
+    )
+    (br $folding-inner0)
+   )
+   (if
+    (i32.ne
+     (i32.load offset=4
+      (get_global $std/pointer/two)
+     )
+     (i32.const 2)
+    )
+    (br $folding-inner0)
+   )
+   (return)
   )
+  (call $~lib/env/abort)
+  (unreachable)
  )
  (func $std/pointer/Pointer<Entry>#constructor|trampoline (; 3 ;) (type $iii) (param $0 i32) (param $1 i32) (result i32)
   (block $1of1

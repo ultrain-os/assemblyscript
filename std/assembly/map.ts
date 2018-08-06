@@ -79,10 +79,6 @@ export class Map<K,V> {
     return null;
   }
 
-  keys():K[]{
-    return this.__keys;
-  }
-
   has(key: K): bool {
     return this.find(key, hash<K>(key)) !== null;
   }

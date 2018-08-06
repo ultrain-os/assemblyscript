@@ -338,10 +338,7 @@ export class Parser extends DiagnosticEmitter {
   /** Obtains the next file to parse. */
   nextFile(): string | null {
     var backlog = this.backlog;
-    // return backlog.length ? backlog.shift() : null;
-    let fileName = backlog.length ? backlog.shift() : null;
-
-    return fileName;
+    return backlog.length ? backlog.shift() : null;
   }
 
   /** Finishes parsing and returns the program. */

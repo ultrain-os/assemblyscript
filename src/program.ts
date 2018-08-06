@@ -354,9 +354,8 @@ export class Program extends DiagnosticEmitter {
     this.sources = [];
   }
 
-
   toAbi(): Abi {
-    let abi = new Abi(this);
+    var abi = new Abi(this);
     abi.resolve();
     return abi;
   }
@@ -2121,20 +2120,20 @@ export abstract class Element {
     this._internalName = internalName;
   }
 
-  static replaceComma(str: string):string{
-    if(!str) return str;
-    let result  = "";
-    for(let ch of str){
+  static replaceComma(str: string): string {
+    if (!str) return str;
+    var result  =  "";
+    for (let ch of str) {
       result +=  ch == "," ? "_" : ch;
     }
     return result;
   }
 
-  get internalName():string{
+  get internalName(): string {
     return Element.replaceComma(this._internalName);
   }
 
-  set internalName(internalName:string) {
+  set internalName(internalName: string) {
     this._internalName = internalName;
   }
 

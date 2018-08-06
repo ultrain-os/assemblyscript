@@ -8,13 +8,7 @@ import {
 
 import {
   Type,
-  TypeKind,
-  Signature
 } from "./types";
-
-import {
-  Range
-} from "./tokenizer";
 
 import {
   ElementKind,
@@ -22,28 +16,21 @@ import {
   ClassPrototype,
   FunctionPrototype,
   Program,
-  VariableLikeElement,
-  Class
+  VariableLikeElement
 } from "./program";
 
 import {
   DecoratorKind,
   DecoratorNode,
   SignatureNode,
-  ClassDeclaration,
   FunctionDeclaration,
   DeclarationStatement,
   FieldDeclaration,
-  TypeNode,
   NodeKind,
-  Source,
   ParameterNode,
   Expression,
-  Node,
   VariableLikeDeclarationStatement,
-  LiteralKind,
-  StringLiteralExpression,
-  CommonTypeNode
+  StringLiteralExpression
 } from "./ast";
 
 class Struct {
@@ -55,7 +42,7 @@ class Struct {
 
 class AbiTypeAlias {
   new_type_name: string;
-  type: string
+  type: string;
 
   constructor(newTypeName: string, wasmType: string) {
     this.new_type_name = newTypeName;
@@ -74,7 +61,6 @@ class Action {
     this.type = type;
   }
 }
-
 
 export class AbiHelper {
 
@@ -113,7 +99,6 @@ class Table {
     this.type = type;
   }
 }
-
 
 export class Abi {
 
@@ -159,11 +144,11 @@ export class Abi {
   */
   toAbiStruct(methodName: string, signature: SignatureNode): Struct {
 
-    let struct = new Struct();
+    var struct = new Struct();
     struct.name = methodName;
     struct.base = "";
 
-    let types = signature.parameters;
+    var types = signature.parameters;
     if (types) {
       for (let type of types) {
         let typeKind = type.type.range.toString();
@@ -174,11 +159,10 @@ export class Abi {
     return struct;
   }
 
-
   addAbiTypeAlias(typeKindName: string): void {
 
     if (!this.typeAliasSet.has(typeKindName)) {
-      // It's the assemblyscript internal type 
+      // It's the assemblyscript internal type
       let originalTypeName = this.findContractOriginalType(typeKindName);
       let wasmType = this.abiTypeLookup.get(originalTypeName);
       if (wasmType) {
@@ -189,7 +173,7 @@ export class Abi {
   }
 
   /**
-  * Find the original type name, 
+  * Find the original type name,
   * eg: declare type account_name = u64;
         declare type account_name_alias = account_name;
 
@@ -197,13 +181,13 @@ export class Abi {
   */
   findContractOriginalType(typeKindName: string): string {
 
-    let abiType: string | null = this.abiTypeLookup.get(typeKindName);
+    var abiType: string | null = this.abiTypeLookup.get(typeKindName);
     if (abiType) {
       return typeKindName;
     }
-    let typeAlias = this.program.typeAliases.get(typeKindName);
+    var typeAlias = this.program.typeAliases.get(typeKindName);
     if (typeAlias) {
-      let commonaTypeName = typeAlias.type.range.toString()
+      let commonaTypeName = typeAlias.type.range.toString();
       return this.findContractOriginalType(commonaTypeName);
     } else {
       return typeKindName;
@@ -215,9 +199,9 @@ export class Abi {
   * @param typeKindName
   */
   findScriptOriginalTypeName(typeKindName: string): string {
-    let typeAlias = this.program.typeAliases.get(typeKindName);
+    var typeAlias = this.program.typeAliases.get(typeKindName);
     if (typeAlias) {
-      let commonaTypeName = typeAlias.type.range.toString()
+      let commonaTypeName = typeAlias.type.range.toString();
       return this.findScriptOriginalTypeName(commonaTypeName);
     } else {
       return typeKindName;
@@ -225,23 +209,22 @@ export class Abi {
   }
 
   /**
-  * Find assemblyscript original type name 
+  * Find assemblyscript original type name
   * eg: account_name return 'u64'
-  * 
+  *
   * @param typeKindName
   */
   findScriptOriginalType(typeKindName: string): Type | null {
-    let originalName = this.findScriptOriginalTypeName(typeKindName);
-    //Get the AssemblyScript original type 
-    let scriptType: Type | null = this.program.typesLookup.get(originalName);
+    var originalName = this.findScriptOriginalTypeName(typeKindName);
+    //Get the AssemblyScript original type
+    var scriptType: Type | null = this.program.typesLookup.get(originalName);
     return scriptType;
   }
 
-
   // Check the FunctionPrototype weather has decoratorKind
   checkFuncPrototypeDecorator(funcPrototype: FunctionPrototype, decoratorKind: DecoratorKind): bool {
-    let decorators = funcPrototype.declaration.decorators;
-    let isActionDecorator = false;
+    var decorators = funcPrototype.declaration.decorators;
+    var isActionDecorator = false;
     if (decorators) {
       for (let decorator of decorators) {
         if (decorator.decoratorKind == decoratorKind) {
@@ -261,9 +244,8 @@ export class Abi {
       ? true : false;
   }
 
-
   /**
-  *  Check that element whether is functionPrototype  
+  *  Check that element whether is functionPrototype
   *
   */
   isActionFuncPrototype(element: Element): bool {
@@ -276,12 +258,12 @@ export class Abi {
   }
 
   /**
-  * Resolve the class database decoreator 
+  * Resolve the class database decoreator
   */
   resolveClassDecorator(decorators: DecoratorNode[]): void {
     for (let decorator of decorators) {
       if (decorator.decoratorKind == DecoratorKind.DATABASE && decorator.arguments) {
-        // Decorator argument must have two arguments 
+        // Decorator argument must have two arguments
         if (decorator.arguments.length < 2) {
           throw new Error("Database decorator must have two arguments");
         }
@@ -296,16 +278,15 @@ export class Abi {
     }
   }
 
-
   retrieveArgumentText(expr: Expression): string {
-    let argu: string = expr.range.toString();
+    var argu: string = expr.range.toString();
 
     if (this.isWrapWithQutation(argu)) {
       return argu.substring(1, argu.length - 2);
     }
 
-    let internalName = NodeUtil.getInternalName(expr);
-    let element: Element | null = this.program.elementsLookup.get(internalName);
+    var internalName = NodeUtil.getInternalName(expr);
+    var element: Element | null = this.program.elementsLookup.get(internalName);
 
     if (element) {
       let declaration: VariableLikeDeclarationStatement | null = (<VariableLikeElement>element).declaration;
@@ -318,31 +299,30 @@ export class Abi {
   }
 
   /**
-  *  Get struct from expression. 
+  *  Get struct from expression.
   */
   resolveExpressionToStruct(expr: Expression): void {
 
-    let internalPath = expr.range.source.internalPath;
-    let name = expr.range.toString();
-    let internalName = `${internalPath}/${name}`;
+    var internalPath = expr.range.source.internalPath;
+    var name = expr.range.toString();
+    var internalName = `${internalPath}/${name}`;
     this.retrieveStructByInternalName(internalName);
   }
 
   retrieveStructByInternalName(internalName: string): void {
 
-    let element = this.program.elementsLookup.get(internalName);
+    var element = this.program.elementsLookup.get(internalName);
     if (!element || element.kind != ElementKind.CLASS_PROTOTYPE) {
       throw new Error(`Element ${internalName} not found, pleasure make sure that class ${internalName} was existed.`);
     }
-    let classPrototype = <ClassPrototype>element;
+    var classPrototype = <ClassPrototype>element;
     this.resolveClassPrototypeToStruct(classPrototype);
   }
 
-
   resolveClassPrototypeToStruct(classPrototype: ClassPrototype): void {
 
-    let members: DeclarationStatement[] = classPrototype.declaration.members;
-    let struct = new Struct();
+    var members: DeclarationStatement[] = classPrototype.declaration.members;
+    var struct = new Struct();
     struct.name = classPrototype.simpleName;
 
     if (this.abiTypeLookup.get(struct.name)) {
@@ -364,7 +344,6 @@ export class Abi {
     this.addStruct(struct);
   }
 
-
   addStruct(struct: Struct): void {
 
     if (!this.structsLookup.has(struct.name)) {
@@ -373,8 +352,7 @@ export class Abi {
     }
   }
 
-
-  static nameMap:string = "._0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  static nameMap: string = "._0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
   checkName(str: string): void {
 
@@ -382,14 +360,13 @@ export class Abi {
     assert(str.length <= 21, `Action Name:${str} should be less than 21 characters.`);
   }
 
-
   /**
-  *  Resolve ClassPrototype to dispatcher  
+  *  Resolve ClassPrototype to dispatcher
   */
   resolveClassDispatcher(clzPrototype: ClassPrototype): Array<string> {
 
-    let body = new Array<string>();
-    let hasActionDecorator = false;
+    var body = new Array<string>();
+    var hasActionDecorator = false;
     if (clzPrototype.instanceMembers) {
 
       let contractName = clzPrototype.simpleName; //
@@ -415,11 +392,10 @@ export class Abi {
           body.push(`    if (action == NEX("${funcName}")){`);
 
           let fields = new Array<string>();
-          for (var index = 0; index < types.length; index++) {
+          for (let index = 0; index < types.length; index++) {
             let type: ParameterNode = types[index];
             let parameterType = type.type.range.toString();
             let parameterName = type.name.range.toString();
-
 
             let variableDeclaration: VariableDeclaration = new VariableDeclaration(this.program, type.type);
             let abiType = variableDeclaration.resolveAbiParameterType();
@@ -430,7 +406,7 @@ export class Abi {
               } else if (abiType.kind == VarialbeKind.BOOL) {
                 body.push(`      let ${parameterName} = ds.readVector<u8>();`);
               } else if (abiType.kind == VarialbeKind.STRING) {
-                body.push(`      let ${parameterName} = ds.readStringVector();`);
+                body.push(`      let ${parameterName} = ds.readStringVectorP();`);
               } else {
                 body.push(`      let ${parameterName} = ds.readComplexVector<${abiType.baseType}>();`);
               }
@@ -450,15 +426,13 @@ export class Abi {
             }
             fields.push(parameterName);
           }
-          body.push(`      ${contractVarName}.${funcName}(${fields.join(',')});`);
+          body.push(`      ${contractVarName}.${funcName}(${fields.join(",")});`);
           body.push("    }");
         }
       }
       body.push("  }");
 
       if (hasActionDecorator) {
-        let clzName = clzPrototype.simpleName;
-        let sourcePath = clzPrototype.declaration.range.source.internalPath;
         if (clzPrototype.declaration.decorators) {
           this.resolveClassDecorator(clzPrototype.declaration.decorators);
         }
@@ -469,19 +443,18 @@ export class Abi {
 
   resolveFunctionPrototype(funcPrototype: FunctionPrototype): void {
 
-    let declaration: FunctionDeclaration = funcPrototype.declaration;
-    let funcName = declaration.name.range.toString();
-    let signature = funcPrototype.declaration.signature;
-    let struct = this.toAbiStruct(funcName, signature);
+    var declaration: FunctionDeclaration = funcPrototype.declaration;
+    var funcName = declaration.name.range.toString();
+    var signature = funcPrototype.declaration.signature;
+    var struct = this.toAbiStruct(funcName, signature);
 
-    this.addStruct(struct)
+    this.addStruct(struct);
     this.abiInfo.actions.push(new Action(funcName, funcName));
   }
 
-
   printTypeAliasInfo(): void {
 
-    let typesLookupKeys = this.program.typesLookup.keys();
+    var typesLookupKeys = this.program.typesLookup.keys();
     for (let key of typesLookupKeys) {
       let value = this.program.typesLookup.get(key);
       if (value) {
@@ -489,7 +462,7 @@ export class Abi {
       }
     }
 
-    let typesAliasKeys = this.program.typeAliases.keys();
+    var typesAliasKeys = this.program.typeAliases.keys();
     for (let key of typesAliasKeys) {
       let value = this.program.typeAliases.get(key);
       if (value) {
@@ -499,23 +472,25 @@ export class Abi {
   }
 
   printElementLookUpInfo(): void {
-    let keys = this.program.elementsLookup.keys();
+    var keys = this.program.elementsLookup.keys();
     for (let key of keys) {
       let value = this.program.elementsLookup.get(key);
-      if (value)
+      if (value) {
         console.log(`Element lookup key:${key}.Kind:${value.kind}`);
+      }
     }
   }
 
   private printClassProtoTypeInfo(): void {
-    let keys = this.program.elementsLookup.keys();
+    var keys = this.program.elementsLookup.keys();
     for (let key of keys) {
       let value: Element | null = this.program.elementsLookup.get(key);
       if (value && value.kind == ElementKind.CLASS_PROTOTYPE) {
         // console.log(`Element lookup key:${key}.Kind:${value.kind}`);
         let classPrototype: ClassPrototype = <ClassPrototype>value;
-        if (classPrototype.basePrototype)
+        if (classPrototype.basePrototype) {
           console.log(`Element lookup key:${key}. Base prototype:${classPrototype.basePrototype.simpleName}`);
+        }
       }
 
     }
@@ -528,11 +503,11 @@ export class Abi {
     // this.findDBManager();
     // this.printClassProtoTypeInfo();
 
-    let serializeHelper: SerializeHelper = new SerializeHelper(this.program);
+    var serializeHelper: SerializeHelper = new SerializeHelper(this.program);
     serializeHelper.resolve();
     this.fileSerializeLookup = serializeHelper.fileSerializeLookup;
 
-    let dispatchBuffer = new Array<string>();
+    var dispatchBuffer = new Array<string>();
 
     for (let element of this.program.elementsLookup.values()) {
       // The element is ClassPrototype
@@ -555,16 +530,15 @@ export class Abi {
     this.dispatch = this.assemblyDispatch(dispatchBuffer);
   }
 
-  hasElement(name: string):bool{
-    let element:Element|null = this.program.elementsLookup.get(name);
-    console.log(`hasElement name ${name}    ${ element ? true: false} `);
-    return element ? true: false;
-  } 
+  hasElement(name: string): bool {
+    var element: Element | null = this.program.elementsLookup.get(name);
+    return element ? true : false;
+  }
 
   // Concat the dispatch message
   private assemblyDispatch(body: Array<string>): string {
 
-    let sb = new Array<string>();
+    var sb = new Array<string>();
     sb.push("export function apply(receiver: u64, code: u64, actH: u64, actL: u64): void {");
 
     body.forEach((value: string, index: number): void => {
@@ -575,6 +549,3 @@ export class Abi {
     return sb.join("\n");
   }
 }
-
-
-

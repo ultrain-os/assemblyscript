@@ -4,6 +4,9 @@
  (type $FFF (func (param f64 f64) (result f64)))
  (type $FiF (func (param f64 i32) (result f64)))
  (type $Ff (func (param f64) (result f32)))
+ (type $v (func))
+ (global $~lib/allocator/arena/startOffset (mut i32) (i32.const 0))
+ (global $~lib/allocator/arena/offset (mut i32) (i32.const 0))
  (global $std/libm/E f64 (f64.const 2.718281828459045))
  (global $std/libm/LN10 f64 (f64.const 2.302585092994046))
  (global $std/libm/LN2 f64 (f64.const 0.6931471805599453))
@@ -56,6 +59,7 @@
  (export "tan" (func $std/libm/cos))
  (export "tanh" (func $std/libm/tanh))
  (export "trunc" (func $std/libm/trunc))
+ (start $start)
  (func $std/libm/abs (; 0 ;) (type $FF) (param $0 f64) (result f64)
   (f64.abs
    (get_local $0)
@@ -6049,6 +6053,14 @@
  (func $std/libm/trunc (; 57 ;) (type $FF) (param $0 f64) (result f64)
   (f64.trunc
    (get_local $0)
+  )
+ )
+ (func $start (; 58 ;) (type $v)
+  (set_global $~lib/allocator/arena/startOffset
+   (i32.const 8)
+  )
+  (set_global $~lib/allocator/arena/offset
+   (get_global $~lib/allocator/arena/startOffset)
   )
  )
 )

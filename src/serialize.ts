@@ -1,8 +1,6 @@
 import {
     Type,
-    TypeKind,
-    Signature,
-    typesToString
+    TypeKind
 } from "./types";
 
 import {
@@ -15,31 +13,16 @@ import {
     ClassPrototype,
     FunctionPrototype,
     Program,
-    VariableLikeElement,
-    Class,
-    Field,
     FieldPrototype
 } from "./program";
 
 import {
-    DecoratorKind,
-    DecoratorNode,
-    SignatureNode,
     ClassDeclaration,
-    FunctionDeclaration,
-    DeclarationStatement,
     FieldDeclaration,
     TypeNode,
     NodeKind,
-    Source,
-    ParameterNode,
-    Expression,
     Node,
-    VariableLikeDeclarationStatement,
-    LiteralKind,
-    StringLiteralExpression,
     CommonTypeNode,
-    IdentifierExpression
 } from "./ast";
 import { AbiHelper } from "./abi";
 
@@ -51,8 +34,6 @@ export enum VarialbeKind {
     CLASS // class kind
 }
 
-
-
 export class NodeUtil {
 
     /**
@@ -60,14 +41,12 @@ export class NodeUtil {
      * @param node The program node
      */
     static getInternalName(node: Node): string {
-        let internalPath = node.range.source.internalPath;
-        let name = node.range.toString();
-        let internalName = `${internalPath}/${name}`;
+        var internalPath = node.range.source.internalPath;
+        var name = node.range.toString();
+        var internalName = `${internalPath}/${name}`;
         return internalName;
     }
 }
-
-
 
 export class VariableDeclaration {
 
@@ -81,9 +60,9 @@ export class VariableDeclaration {
     /** Parameter name, u64 */
     declareType: string;
     /** Base Parameter type */
-    baseType:string;
+    baseType: string;
     /** The abi field type, eg:account_name */
-    abiType: string; 
+    abiType: string;
     /** The field fact type, eg: u64, u32 */
     factType: string;
     // /** Whether parameter or field is array  */
@@ -92,24 +71,22 @@ export class VariableDeclaration {
         this.program = program;
         this.commonTypeNode = commonTypeNode;
         this.abiTypeLookup = AbiHelper.abiTypeLookup;
-  
     }
 
     /**
      * string TypeKind is 9, and usize TypeKind is also 9.
-     * @param type 
+     * @param type
      */
     resolveAbiParameterType(): VariableDeclaration {
 
-        let variableType = this.commonTypeNode.range.toString();
-        let typeAlias = this.program.typeAliases.get(variableType);
+        var variableType = this.commonTypeNode.range.toString();
+        var typeAlias = this.program.typeAliases.get(variableType);
         if (typeAlias) {
             variableType = typeAlias.type.range.toString();
         }
         this.declareType = variableType;
-        let baseTypeName: string = this.getBaseTypeName(variableType);
+        var baseTypeName: string = this.getBaseTypeName(variableType);
         this.baseType = baseTypeName;
-        
         if (baseTypeName == "string" || baseTypeName == "String") {
             this.kind = VarialbeKind.STRING;
             this.factType = "string";
@@ -117,7 +94,7 @@ export class VariableDeclaration {
         }
 
         this.abiType = this.findAbiType(baseTypeName);
-        let factType: Type | null = this.findFactType(this.abiType);
+        var factType: Type | null = this.findFactType(this.abiType);
 
         if (!factType) {
             this.kind = VarialbeKind.CLASS;
@@ -125,31 +102,31 @@ export class VariableDeclaration {
             this.kind = VarialbeKind.BOOL;
             this.factType = factType.toString();
         } else {
-            this.kind = VarialbeKind.NUMBER
+            this.kind = VarialbeKind.NUMBER;
             this.factType = factType.toString();
         }
         return this;
     }
 
     /**
-     * Find the original type name, 
+     * Find the original type name
      * eg: declare type account_name = u64;
      *     declare type account_name_alias = account_name;
      *     findAbiType("account_name_alias") return "account_name";
-     * 
+     *
      * eg: findAbiType("u64") return "u64";
      * @param typeKindName
      * */
     findAbiType(typeKindName: string): string {
 
         /**Watch the type whether was the root type */
-        let abiType: string | null = this.abiTypeLookup.get(typeKindName);
+        var abiType: string | null = this.abiTypeLookup.get(typeKindName);
         if (abiType) {
             return typeKindName;
         }
-        let typeAlias = this.program.typeAliases.get(typeKindName);
+        var typeAlias = this.program.typeAliases.get(typeKindName);
         if (typeAlias) {
-            let typeName = typeAlias.type.range.toString()
+            let typeName = typeAlias.type.range.toString();
             return this.findAbiType(typeName);
         } else {
             return typeKindName;
@@ -161,13 +138,13 @@ export class VariableDeclaration {
     }
 
     /**
-     * Get the base type name, 
+     * Get the base type name
      * If the type name is string[], so the base type name is string
-     * @param typeName 
+     * @param typeName
      */
     getBaseTypeName(typeName: string): string {
 
-        let bracketIndex = typeName.indexOf("[");
+        var bracketIndex = typeName.indexOf("[");
         if (bracketIndex != -1) {
             let index = typeName.indexOf(" ") == -1 ? bracketIndex : typeName.indexOf(" ");
             let baseTypeName = typeName.substring(0, index);
@@ -179,12 +156,12 @@ export class VariableDeclaration {
     /**
      *  Find the script original type name
      *  @param typeKindName
-     * 
+     *
      */
     private findFactTypeName(typeKindName: string): string {
-        let typeAlias = this.program.typeAliases.get(typeKindName);
+        var typeAlias = this.program.typeAliases.get(typeKindName);
         if (typeAlias) {
-            let commonaTypeName = typeAlias.type.range.toString()
+            let commonaTypeName = typeAlias.type.range.toString();
             return this.findFactTypeName(commonaTypeName);
         } else {
             return typeKindName;
@@ -192,21 +169,21 @@ export class VariableDeclaration {
     }
 
     /**
-    * Find assemblyscript original type name 
+    * Find assemblyscript original type name
     * eg: account_name return 'u64'
-    * 
+    *
     * @param typeKindName
     */
     private findFactType(typeKindName: string): Type | null {
-        let originalName = this.findFactTypeName(typeKindName);
-        //Get the AssemblyScript original type 
-        let scriptType: Type | null = this.program.typesLookup.get(originalName);
+        var originalName = this.findFactTypeName(typeKindName);
+        //Get the AssemblyScript original type
+        var scriptType: Type | null = this.program.typesLookup.get(originalName);
         return scriptType;
     }
 }
 
 /**
- * 
+ * Serialiize Generateor
  */
 class SerializeGenerator {
 
@@ -230,9 +207,9 @@ class SerializeGenerator {
     }
 
     getInternalName(node: Node): string {
-        let internalPath = node.range.source.internalPath;
-        let name = node.range.toString();
-        let internalName = `${internalPath}/${name}`;
+        var internalPath = node.range.source.internalPath;
+        var name = node.range.toString();
+        var internalName = `${internalPath}/${name}`;
         return internalName;
     }
 
@@ -242,7 +219,7 @@ class SerializeGenerator {
             return;
         }
 
-        for (let [fieldName, element] of this.classPrototype.instanceMembers) {
+        for (let [_, element] of this.classPrototype.instanceMembers) {
             if (element.kind == ElementKind.FUNCTION_PROTOTYPE) {
                 let functionPrototype = <FunctionPrototype>element;
                 if (functionPrototype.declaration.name.range.toString() == this.SERIALIZE_METHOD_NAME) {
@@ -258,11 +235,10 @@ class SerializeGenerator {
         }
     }
 
-
     checkFieldImplSerialize(typeNode: CommonTypeNode): bool {
 
-        let internalName = NodeUtil.getInternalName(typeNode);
-        let element: Element | null = this.classPrototype.program.elementsLookup.get(internalName)
+        var internalName = NodeUtil.getInternalName(typeNode);
+        var element: Element | null = this.classPrototype.program.elementsLookup.get(internalName);
 
         if (element && element.kind == ElementKind.CLASS_PROTOTYPE) {
             let hasImpl = SerializeHelper.hasImplSerialize((<ClassPrototype>element).declaration);
@@ -276,13 +252,14 @@ class SerializeGenerator {
     /**Parse the class prototype and get serialize points */
     getSerializePoints(): SerializePoint {
 
-        let serializePoint: SerializePoint = new SerializePoint(this.classPrototype.declaration.range);
+        var serializePoint: SerializePoint = new SerializePoint(this.classPrototype.declaration.range);
         serializePoint.needDeserialize = this.needImplDeSerialize;
         serializePoint.needSerialize = this.needImplSerialize;
         serializePoint.needPrimaryKey = this.needImplPrimary;
 
-        if (!this.classPrototype.instanceMembers)
+        if (!this.classPrototype.instanceMembers) {
             return serializePoint;
+        }
 
         for (let [fieldName, element] of this.classPrototype.instanceMembers) {
             if (element.kind == ElementKind.FIELD_PROTOTYPE) {
@@ -294,11 +271,13 @@ class SerializeGenerator {
                 if (commonType && commonType.kind == NodeKind.TYPE) {
 
                     let typeNode = <TypeNode>commonType;
-                    if (this.needImplDeSerialize && this.checkFieldImplSerialize(commonType))
+                    if (this.needImplDeSerialize && this.checkFieldImplSerialize(commonType)) {
                         serializePoint.addSerializeExpr(this.serializeField(fieldName, typeNode));
+                    }
 
-                    if (this.needImplSerialize && this.checkFieldImplSerialize(commonType))
+                    if (this.needImplSerialize && this.checkFieldImplSerialize(commonType)) {
                         serializePoint.addDeserializeExpr(this.deserializeField(fieldName, typeNode));
+                    }
                 }
             }
         }
@@ -308,13 +287,12 @@ class SerializeGenerator {
         return serializePoint;
     }
 
-
     /** Implement the serrialize field */
     serializeField(fieldName: string, typeNode: TypeNode): string {
 
-        let typeNodeHelper: VariableDeclaration = new VariableDeclaration(this.classPrototype.program, typeNode);
-        let body: Array<string> = new Array<string>();
-        let paramDeclaration: VariableDeclaration = typeNodeHelper.resolveAbiParameterType();
+        var typeNodeHelper: VariableDeclaration = new VariableDeclaration(this.classPrototype.program, typeNode);
+        var body: Array<string> = new Array<string>();
+        var paramDeclaration: VariableDeclaration = typeNodeHelper.resolveAbiParameterType();
 
         if (paramDeclaration.isArray) {
             if (paramDeclaration.kind == VarialbeKind.NUMBER) {
@@ -342,10 +320,10 @@ class SerializeGenerator {
 
     deserializeField(fieldName: string, type: TypeNode): string {
 
-        let typeNodeHelper: VariableDeclaration = new VariableDeclaration(this.classPrototype.program, type);
+        var typeNodeHelper: VariableDeclaration = new VariableDeclaration(this.classPrototype.program, type);
 
-        let body: Array<string> = new Array<string>();
-        let variableType:VariableDeclaration = typeNodeHelper.resolveAbiParameterType();
+        var body: Array<string> = new Array<string>();
+        var variableType: VariableDeclaration = typeNodeHelper.resolveAbiParameterType();
 
         if (variableType.isArray) {
             if (variableType.kind == VarialbeKind.NUMBER) {
@@ -403,10 +381,9 @@ export class SerializePoint {
         this.range = range;
         this.serialize.push(`    serialize(ds: DataStream): void {`);
         this.deserialize.push(`    deserialize(ds: DataStream): void {`);
-        
         this.primaryKey.push(`     primaryKey(): id_type {`);
-        this.primaryKey.push(`       return 0;`)
-        this.primaryKey.push(`    }`)
+        this.primaryKey.push(`       return 0;`);
+        this.primaryKey.push(`    }`);
     }
 
     addSerializeExpr(expr: string): void {
@@ -436,7 +413,6 @@ export class SerializePoint {
     }
 }
 
-
 export class SerializeHelper {
 
     static SERIALIZE_INTERFANCE: string = "ISerializable";
@@ -452,14 +428,13 @@ export class SerializeHelper {
     }
 
     static hasImplSerialize(classDeclaration: ClassDeclaration): bool {
-        let classDeclareStr = classDeclaration.range.toString();
-        return classDeclareStr.includes(this.SERIALIZE_INTERFANCE)
+        var classDeclareStr = classDeclaration.range.toString();
+        return classDeclareStr.includes(this.SERIALIZE_INTERFANCE);
     }
 
     resolve(): void {
 
-        for (let [key, element] of this.program.elementsLookup) {
-
+        for (let [_, element] of this.program.elementsLookup) {
             if (element && element.kind == ElementKind.CLASS_PROTOTYPE) {
                 let classDeclaration: ClassDeclaration = (<ClassPrototype>element).declaration;
                 if (SerializeHelper.hasImplSerialize(classDeclaration)) {
@@ -482,8 +457,8 @@ export class SerializeHelper {
      */
     addSerializePoint(serialize: SerializePoint): void {
 
-        let normalizedPath = serialize.normalizedPath;
-        let fileSerialize: Array<SerializePoint> | null = this.fileSerializeLookup.get(normalizedPath);
+        var normalizedPath = serialize.normalizedPath;
+        var fileSerialize: Array<SerializePoint> | null = this.fileSerializeLookup.get(normalizedPath);
 
         if (fileSerialize) {
             fileSerialize.push(serialize);
@@ -495,15 +470,16 @@ export class SerializeHelper {
     }
 
     /**
-     * Sorting the serialize points by the line number, 
+     * Sorting the serialize points by the line number
      * the max line number is in front of.
      */
     sortSerializePoints(): void {
-        for (let [key, array] of this.fileSerializeLookup) {
+        for (let [_, array] of this.fileSerializeLookup) {
             let compartor = (a: SerializePoint, b: SerializePoint): i32 => {
                 return (b.line - a.line);
-            }
+            };
             array.sort(compartor);
         }
     }
+
 }

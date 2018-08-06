@@ -1128,7 +1128,6 @@ export enum DecoratorKind {
   BUILTIN
 }
 
-
 /** Returns the kind of the specified decorator. Defaults to {@link DecoratorKind.CUSTOM}. */
 export function decoratorNameToKind(name: Expression): DecoratorKind {
   // @global, @inline, @operator, @sealed, @unmanaged
@@ -1136,7 +1135,7 @@ export function decoratorNameToKind(name: Expression): DecoratorKind {
     let nameStr = (<IdentifierExpression>name).text;
     assert(nameStr.length);
     switch (nameStr.charCodeAt(0)) {
-      case CharCode.a:{
+      case CharCode.a: {
         if (nameStr == "action") return DecoratorKind.ACTION;
         break;
       }
@@ -1144,7 +1143,7 @@ export function decoratorNameToKind(name: Expression): DecoratorKind {
         if (nameStr == "builtin") return DecoratorKind.BUILTIN;
         break;
       }
-      case CharCode.d:{
+      case CharCode.d: {
         if (nameStr == "database") return DecoratorKind.DATABASE;
       }
       case CharCode.e: {

@@ -1,5 +1,7 @@
 (module
  (type $v (func))
+ (global $~lib/allocator/arena/startOffset (mut i32) (i32.const 0))
+ (global $~lib/allocator/arena/offset (mut i32) (i32.const 0))
  (global $unary/i (mut i32) (i32.const 0))
  (global $unary/I (mut i64) (i64.const 0))
  (global $unary/f (mut f32) (f32.const 0))
@@ -12,6 +14,12 @@
   (local $1 i64)
   (local $2 f32)
   (local $3 f64)
+  (set_global $~lib/allocator/arena/startOffset
+   (i32.const 8)
+  )
+  (set_global $~lib/allocator/arena/offset
+   (get_global $~lib/allocator/arena/startOffset)
+  )
   (set_global $unary/i
    (i32.add
     (get_global $unary/i)

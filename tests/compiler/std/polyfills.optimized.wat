@@ -1,9 +1,10 @@
 (module
  (type $ii (func (param i32) (result i32)))
- (type $iiiiv (func (param i32 i32 i32 i32)))
- (type $II (func (param i64) (result i64)))
  (type $v (func))
- (import "env" "abort" (func $~lib/env/abort (param i32 i32 i32 i32)))
+ (type $II (func (param i64) (result i64)))
+ (import "env" "abort" (func $~lib/env/abort))
+ (global $~lib/allocator/arena/startOffset (mut i32) (i32.const 0))
+ (global $~lib/allocator/arena/offset (mut i32) (i32.const 0))
  (memory $0 1)
  (data (i32.const 8) "\11\00\00\00~\00l\00i\00b\00/\00p\00o\00l\00y\00f\00i\00l\00l\00s\00.\00t\00s")
  (data (i32.const 48) "\10\00\00\00s\00t\00d\00/\00p\00o\00l\00y\00f\00i\00l\00l\00s\00.\00t\00s")
@@ -26,12 +27,7 @@
     (get_local $1)
    )
    (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 8)
-     (i32.const 27)
-     (i32.const 2)
-    )
+    (call $~lib/env/abort)
     (unreachable)
    )
   )
@@ -91,12 +87,7 @@
     (get_local $1)
    )
    (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 8)
-     (i32.const 2)
-     (i32.const 2)
-    )
+    (call $~lib/env/abort)
     (unreachable)
    )
   )
@@ -121,12 +112,7 @@
     (get_local $1)
    )
    (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 8)
-     (i32.const 27)
-     (i32.const 2)
-    )
+    (call $~lib/env/abort)
     (unreachable)
    )
   )
@@ -189,12 +175,7 @@
     (get_local $1)
    )
    (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 8)
-     (i32.const 2)
-     (i32.const 2)
-    )
+    (call $~lib/env/abort)
     (unreachable)
    )
   )
@@ -219,12 +200,7 @@
     (get_local $1)
    )
    (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 8)
-     (i32.const 2)
-     (i32.const 2)
-    )
+    (call $~lib/env/abort)
     (unreachable)
    )
   )
@@ -332,221 +308,136 @@
   )
  )
  (func $start (; 9 ;) (type $v)
-  (if
-   (i32.ne
-    (i32.and
-     (call $~lib/polyfills/bswap<u16>
-      (i32.const 43707)
+  (block $folding-inner0
+   (set_global $~lib/allocator/arena/startOffset
+    (i32.const 88)
+   )
+   (set_global $~lib/allocator/arena/offset
+    (get_global $~lib/allocator/arena/startOffset)
+   )
+   (if
+    (i32.ne
+     (i32.and
+      (call $~lib/polyfills/bswap<u16>
+       (i32.const 43707)
+      )
+      (i32.const 65535)
      )
-     (i32.const 65535)
+     (i32.const 48042)
     )
-    (i32.const 48042)
+    (br $folding-inner0)
    )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 48)
-     (i32.const 4)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (if
-   (i32.ne
-    (i32.and
-     (call $~lib/polyfills/bswap<i16>
-      (i32.const 43707)
+   (if
+    (i32.ne
+     (i32.and
+      (call $~lib/polyfills/bswap<i16>
+       (i32.const 43707)
+      )
+      (i32.const 65535)
      )
-     (i32.const 65535)
+     (i32.const 48042)
     )
-    (i32.const 48042)
+    (br $folding-inner0)
    )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 48)
-     (i32.const 5)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (if
-   (i32.ne
-    (call $~lib/polyfills/bswap<u32>
-     (i32.const -1430532899)
-    )
-    (i32.const -573785174)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 48)
-     (i32.const 8)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (if
-   (i32.ne
-    (call $~lib/polyfills/bswap<u32>
-     (i32.const -1430532899)
-    )
-    (i32.const -573785174)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 48)
-     (i32.const 9)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (if
-   (i64.ne
-    (call $~lib/polyfills/bswap<u64>
-     (i64.const 4822679907192029)
-    )
-    (i64.const -2464388556401798912)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 48)
-     (i32.const 12)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (if
-   (i64.ne
-    (call $~lib/polyfills/bswap<u64>
-     (i64.const 4822679907192029)
-    )
-    (i64.const -2464388556401798912)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 48)
-     (i32.const 13)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (if
-   (i32.ne
-    (call $~lib/polyfills/bswap<u32>
-     (i32.const -1430532899)
-    )
-    (i32.const -573785174)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 48)
-     (i32.const 16)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (if
-   (i32.ne
-    (call $~lib/polyfills/bswap<u32>
-     (i32.const -1430532899)
-    )
-    (i32.const -573785174)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 48)
-     (i32.const 17)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (if
-   (i32.ne
-    (i32.and
-     (call $~lib/polyfills/bswap16<u16>
-      (i32.const 43707)
+   (if
+    (i32.ne
+     (call $~lib/polyfills/bswap<u32>
+      (i32.const -1430532899)
      )
-     (i32.const 65535)
+     (i32.const -573785174)
     )
-    (i32.const 48042)
+    (br $folding-inner0)
    )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 48)
-     (i32.const 20)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (if
-   (i32.ne
-    (i32.and
-     (call $~lib/polyfills/bswap16<i16>
-      (i32.const 43707)
+   (if
+    (i32.ne
+     (call $~lib/polyfills/bswap<u32>
+      (i32.const -1430532899)
      )
-     (i32.const 65535)
+     (i32.const -573785174)
     )
-    (i32.const 48042)
+    (br $folding-inner0)
    )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 48)
-     (i32.const 21)
-     (i32.const 0)
+   (if
+    (i64.ne
+     (call $~lib/polyfills/bswap<u64>
+      (i64.const 4822679907192029)
+     )
+     (i64.const -2464388556401798912)
     )
-    (unreachable)
+    (br $folding-inner0)
    )
+   (if
+    (i64.ne
+     (call $~lib/polyfills/bswap<u64>
+      (i64.const 4822679907192029)
+     )
+     (i64.const -2464388556401798912)
+    )
+    (br $folding-inner0)
+   )
+   (if
+    (i32.ne
+     (call $~lib/polyfills/bswap<u32>
+      (i32.const -1430532899)
+     )
+     (i32.const -573785174)
+    )
+    (br $folding-inner0)
+   )
+   (if
+    (i32.ne
+     (call $~lib/polyfills/bswap<u32>
+      (i32.const -1430532899)
+     )
+     (i32.const -573785174)
+    )
+    (br $folding-inner0)
+   )
+   (if
+    (i32.ne
+     (i32.and
+      (call $~lib/polyfills/bswap16<u16>
+       (i32.const 43707)
+      )
+      (i32.const 65535)
+     )
+     (i32.const 48042)
+    )
+    (br $folding-inner0)
+   )
+   (if
+    (i32.ne
+     (i32.and
+      (call $~lib/polyfills/bswap16<i16>
+       (i32.const 43707)
+      )
+      (i32.const 65535)
+     )
+     (i32.const 48042)
+    )
+    (br $folding-inner0)
+   )
+   (if
+    (i32.ne
+     (call $~lib/polyfills/bswap16<u32>
+      (i32.const -7820613)
+     )
+     (i32.const -7816278)
+    )
+    (br $folding-inner0)
+   )
+   (if
+    (i32.ne
+     (call $~lib/polyfills/bswap16<i32>
+      (i32.const -7820613)
+     )
+     (i32.const -7816278)
+    )
+    (br $folding-inner0)
+   )
+   (return)
   )
-  (if
-   (i32.ne
-    (call $~lib/polyfills/bswap16<u32>
-     (i32.const -7820613)
-    )
-    (i32.const -7816278)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 48)
-     (i32.const 24)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
-  (if
-   (i32.ne
-    (call $~lib/polyfills/bswap16<i32>
-     (i32.const -7820613)
-    )
-    (i32.const -7816278)
-   )
-   (block
-    (call $~lib/env/abort
-     (i32.const 0)
-     (i32.const 48)
-     (i32.const 25)
-     (i32.const 0)
-    )
-    (unreachable)
-   )
-  )
+  (call $~lib/env/abort)
+  (unreachable)
  )
 )
