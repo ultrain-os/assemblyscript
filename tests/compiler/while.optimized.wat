@@ -6,15 +6,14 @@
  (global $while/n (mut i32) (i32.const 10))
  (global $while/m (mut i32) (i32.const 0))
  (global $while/o (mut i32) (i32.const 0))
- (memory $0 1)
- (data (i32.const 8) "\08\00\00\00w\00h\00i\00l\00e\00.\00t\00s")
+ (memory $0 0)
  (export "memory" (memory $0))
  (start $start)
  (func $start (; 1 ;) (type $v)
   (local $0 i32)
   (block $folding-inner0
    (set_global $~lib/allocator/arena/startOffset
-    (i32.const 32)
+    (i32.const 8)
    )
    (set_global $~lib/allocator/arena/offset
     (get_global $~lib/allocator/arena/startOffset)

@@ -8,8 +8,7 @@
  (global $call-optional/optIndirect (mut i32) (i32.const 0))
  (table 1 1 anyfunc)
  (elem (i32.const 0) $call-optional/opt|trampoline)
- (memory $0 1)
- (data (i32.const 8) "\10\00\00\00c\00a\00l\00l\00-\00o\00p\00t\00i\00o\00n\00a\00l\00.\00t\00s")
+ (memory $0 0)
  (export "memory" (memory $0))
  (export "table" (table $0))
  (start $start)
@@ -53,7 +52,7 @@
  (func $start (; 3 ;) (type $v)
   (block $folding-inner0
    (set_global $~lib/allocator/arena/startOffset
-    (i32.const 48)
+    (i32.const 8)
    )
    (set_global $~lib/allocator/arena/offset
     (get_global $~lib/allocator/arena/startOffset)

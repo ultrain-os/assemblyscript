@@ -6,8 +6,7 @@
  (global $~lib/allocator/arena/offset (mut i32) (i32.const 0))
  (global $abi/condition (mut i32) (i32.const 0))
  (global $abi/y (mut i32) (i32.const 0))
- (memory $0 1)
- (data (i32.const 8) "\06\00\00\00a\00b\00i\00.\00t\00s")
+ (memory $0 0)
  (export "memory" (memory $0))
  (export "exported" (func $abi/exported))
  (export "exportedExported" (func $abi/exportedExported))
@@ -33,7 +32,7 @@
  )
  (func $start (; 5 ;) (type $v)
   (set_global $~lib/allocator/arena/startOffset
-   (i32.const 24)
+   (i32.const 8)
   )
   (set_global $~lib/allocator/arena/offset
    (get_global $~lib/allocator/arena/startOffset)

@@ -5,8 +5,7 @@
  (global $~lib/allocator/arena/startOffset (mut i32) (i32.const 0))
  (global $~lib/allocator/arena/offset (mut i32) (i32.const 0))
  (global $memcpy/dest (mut i32) (i32.const 0))
- (memory $0 1)
- (data (i32.const 8) "\t\00\00\00m\00e\00m\00c\00p\00y\00.\00t\00s")
+ (memory $0 0)
  (export "memory" (memory $0))
  (export "memcpy" (func $memcpy/memcpy))
  (start $start)
@@ -1406,7 +1405,7 @@
  (func $start (; 2 ;) (type $v)
   (block $folding-inner0
    (set_global $~lib/allocator/arena/startOffset
-    (i32.const 32)
+    (i32.const 8)
    )
    (set_global $~lib/allocator/arena/offset
     (get_global $~lib/allocator/arena/startOffset)

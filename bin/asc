@@ -9,7 +9,7 @@ if (/\busc$/.test(process.argv[1])) {
   const args = opts.options;
 
   // There are two steps to generate the wast file
-  if(args.textFile && args.applyText){
+  if(args.applyText){
   	usc.main(argv);
   	process.exitCode = usc.main(argv, null, null,true);
   } else {

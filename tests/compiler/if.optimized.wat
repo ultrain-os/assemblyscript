@@ -4,8 +4,7 @@
  (import "env" "abort" (func $~lib/env/abort))
  (global $~lib/allocator/arena/startOffset (mut i32) (i32.const 0))
  (global $~lib/allocator/arena/offset (mut i32) (i32.const 0))
- (memory $0 1)
- (data (i32.const 8) "\05\00\00\00i\00f\00.\00t\00s")
+ (memory $0 0)
  (export "memory" (memory $0))
  (export "ifThenElse" (func $if/ifThenElse))
  (export "ifThen" (func $if/ifThen))
@@ -43,7 +42,7 @@
  (func $start (; 4 ;) (type $v)
   (block $folding-inner0
    (set_global $~lib/allocator/arena/startOffset
-    (i32.const 24)
+    (i32.const 8)
    )
    (set_global $~lib/allocator/arena/offset
     (get_global $~lib/allocator/arena/startOffset)

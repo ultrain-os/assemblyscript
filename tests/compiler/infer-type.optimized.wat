@@ -10,8 +10,7 @@
  (global $infer-type/rI (mut i64) (i64.const 0))
  (global $infer-type/rf (mut f32) (f32.const 0))
  (global $infer-type/rF (mut f64) (f64.const 0))
- (memory $0 1)
- (data (i32.const 8) "\0d\00\00\00i\00n\00f\00e\00r\00-\00t\00y\00p\00e\00.\00t\00s")
+ (memory $0 0)
  (export "memory" (memory $0))
  (start $start)
  (func $infer-type/locals (; 0 ;) (type $v)
@@ -32,7 +31,7 @@
  (func $start (; 5 ;) (type $v)
   (local $0 i32)
   (set_global $~lib/allocator/arena/startOffset
-   (i32.const 40)
+   (i32.const 8)
   )
   (set_global $~lib/allocator/arena/offset
    (get_global $~lib/allocator/arena/startOffset)

@@ -5,8 +5,7 @@
  (global $~lib/allocator/arena/startOffset (mut i32) (i32.const 0))
  (global $~lib/allocator/arena/offset (mut i32) (i32.const 0))
  (global $static-this/Foo.bar (mut i32) (i32.const 42))
- (memory $0 1)
- (data (i32.const 8) "\0e\00\00\00s\00t\00a\00t\00i\00c\00-\00t\00h\00i\00s\00.\00t\00s")
+ (memory $0 0)
  (export "memory" (memory $0))
  (start $start)
  (func $static-this/Foo.getBar (; 1 ;) (type $i) (result i32)
@@ -14,7 +13,7 @@
  )
  (func $start (; 2 ;) (type $v)
   (set_global $~lib/allocator/arena/startOffset
-   (i32.const 40)
+   (i32.const 8)
   )
   (set_global $~lib/allocator/arena/offset
    (get_global $~lib/allocator/arena/startOffset)

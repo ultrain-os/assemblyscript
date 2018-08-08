@@ -6,8 +6,7 @@
  (global $~lib/allocator/arena/offset (mut i32) (i32.const 0))
  (global $retain-i32/si (mut i32) (i32.const 0))
  (global $retain-i32/ui (mut i32) (i32.const 0))
- (memory $0 1)
- (data (i32.const 8) "\0d\00\00\00r\00e\00t\00a\00i\00n\00-\00i\003\002\00.\00t\00s")
+ (memory $0 0)
  (export "memory" (memory $0))
  (start $start)
  (func $retain-i32/test (; 1 ;) (type $iiv) (param $0 i32) (param $1 i32)
@@ -17,7 +16,7 @@
   (local $0 i32)
   (block $folding-inner0
    (set_global $~lib/allocator/arena/startOffset
-    (i32.const 40)
+    (i32.const 8)
    )
    (set_global $~lib/allocator/arena/offset
     (get_global $~lib/allocator/arena/startOffset)

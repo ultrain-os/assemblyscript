@@ -7,13 +7,12 @@
  (import "my" "externalConstant" (global $declare/my.externalConstant i32))
  (global $~lib/allocator/arena/startOffset (mut i32) (i32.const 0))
  (global $~lib/allocator/arena/offset (mut i32) (i32.const 0))
- (memory $0 1)
- (data (i32.const 8) "\n\00\00\00d\00e\00c\00l\00a\00r\00e\00.\00t\00s")
+ (memory $0 0)
  (export "memory" (memory $0))
  (start $start)
  (func $start (; 3 ;) (type $v)
   (set_global $~lib/allocator/arena/startOffset
-   (i32.const 32)
+   (i32.const 8)
   )
   (set_global $~lib/allocator/arena/offset
    (get_global $~lib/allocator/arena/startOffset)

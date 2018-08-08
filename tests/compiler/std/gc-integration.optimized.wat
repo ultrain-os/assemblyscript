@@ -10,8 +10,7 @@
  (global $std/gc-integration/i (mut i32) (i32.const 0))
  (table 1 1 anyfunc)
  (elem (i32.const 0) $start~anonymous|0)
- (memory $0 1)
- (data (i32.const 8) "\15\00\00\00s\00t\00d\00/\00g\00c\00-\00i\00n\00t\00e\00g\00r\00a\00t\00i\00o\00n\00.\00t\00s")
+ (memory $0 0)
  (export "memory" (memory $0))
  (export "table" (table $0))
  (start $start)
@@ -38,7 +37,7 @@
  )
  (func $start (; 2 ;) (type $v)
   (set_global $~lib/allocator/arena/startOffset
-   (i32.const 56)
+   (i32.const 8)
   )
   (set_global $~lib/allocator/arena/offset
    (get_global $~lib/allocator/arena/startOffset)

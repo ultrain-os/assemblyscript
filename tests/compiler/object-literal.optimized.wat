@@ -9,7 +9,6 @@
  (global $~lib/allocator/arena/offset (mut i32) (i32.const 0))
  (memory $0 1)
  (data (i32.const 8) "\0b\00\00\00h\00e\00l\00l\00o\00 \00w\00o\00r\00l\00d")
- (data (i32.const 36) "\11\00\00\00o\00b\00j\00e\00c\00t\00-\00l\00i\00t\00e\00r\00a\00l\00.\00t\00s")
  (export "memory" (memory $0))
  (start $start)
  (func $~lib/allocator/arena/__memory_allocate (; 1 ;) (type $ii) (param $0 i32) (result i32)
@@ -302,7 +301,7 @@
  (func $start (; 9 ;) (type $v)
   (local $0 i32)
   (set_global $~lib/allocator/arena/startOffset
-   (i32.const 80)
+   (i32.const 40)
   )
   (set_global $~lib/allocator/arena/offset
    (get_global $~lib/allocator/arena/startOffset)

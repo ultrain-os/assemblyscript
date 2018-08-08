@@ -12,9 +12,6 @@
  (memory $0 1)
  (data (i32.const 8) "\10\00\00\00\03\00\00\00\0c")
  (data (i32.const 28) "\01\00\00\00\02")
- (data (i32.const 48) "\14\00\00\00s\00t\00d\00/\00a\00r\00r\00a\00y\00-\00l\00i\00t\00e\00r\00a\00l\00.\00t\00s")
- (data (i32.const 92) "\0d\00\00\00~\00l\00i\00b\00/\00a\00r\00r\00a\00y\00.\00t\00s")
- (data (i32.const 124) "\1c\00\00\00~\00l\00i\00b\00/\00i\00n\00t\00e\00r\00n\00a\00l\00/\00a\00r\00r\00a\00y\00b\00u\00f\00f\00e\00r\00.\00t\00s")
  (export "memory" (memory $0))
  (start $start)
  (func $~lib/array/Array<i32>#get:length (; 1 ;) (type $ii) (param $0 i32) (result i32)
@@ -595,7 +592,7 @@
   (local $0 i32)
   (block $folding-inner0
    (set_global $~lib/allocator/arena/startOffset
-    (i32.const 184)
+    (i32.const 48)
    )
    (set_global $~lib/allocator/arena/offset
     (get_global $~lib/allocator/arena/startOffset)

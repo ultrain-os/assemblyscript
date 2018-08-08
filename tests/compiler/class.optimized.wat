@@ -8,8 +8,7 @@
  (global $~lib/allocator/arena/startOffset (mut i32) (i32.const 0))
  (global $~lib/allocator/arena/offset (mut i32) (i32.const 0))
  (global $class/Animal.ONE (mut i32) (i32.const 1))
- (memory $0 1)
- (data (i32.const 8) "\08\00\00\00c\00l\00a\00s\00s\00.\00t\00s")
+ (memory $0 0)
  (export "memory" (memory $0))
  (export "test" (func $class/test))
  (start $start)
@@ -99,7 +98,7 @@
  )
  (func $start (; 5 ;) (type $v)
   (set_global $~lib/allocator/arena/startOffset
-   (i32.const 32)
+   (i32.const 8)
   )
   (set_global $~lib/allocator/arena/offset
    (get_global $~lib/allocator/arena/startOffset)

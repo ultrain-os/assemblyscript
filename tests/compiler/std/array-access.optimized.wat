@@ -7,8 +7,7 @@
  (global $~lib/allocator/arena/startOffset (mut i32) (i32.const 0))
  (global $~lib/allocator/arena/offset (mut i32) (i32.const 0))
  (memory $0 1)
- (data (i32.const 12) "\0e\00\00\00~\00l\00i\00b\00/\00s\00t\00r\00i\00n\00g\00.\00t\00s")
- (data (i32.const 44) "\04\00\00\00n\00u\00l\00l")
+ (data (i32.const 12) "\04\00\00\00n\00u\00l\00l")
  (export "memory" (memory $0))
  (export "i32ArrayArrayElementAccess" (func $std/array-access/i32ArrayArrayElementAccess))
  (export "stringArrayPropertyAccess" (func $std/array-access/stringArrayPropertyAccess))
@@ -156,7 +155,7 @@
     (get_local $1)
    )
    (set_local $1
-    (i32.const 44)
+    (i32.const 12)
    )
   )
   (if
@@ -256,7 +255,7 @@
  )
  (func $start (; 10 ;) (type $v)
   (set_global $~lib/allocator/arena/startOffset
-   (i32.const 56)
+   (i32.const 24)
   )
   (set_global $~lib/allocator/arena/offset
    (get_global $~lib/allocator/arena/startOffset)

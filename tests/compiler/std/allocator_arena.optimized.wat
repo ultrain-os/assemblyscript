@@ -10,8 +10,7 @@
  (global $std/allocator_arena/ptr1 (mut i32) (i32.const 0))
  (global $std/allocator_arena/ptr2 (mut i32) (i32.const 0))
  (global $std/allocator_arena/i (mut i32) (i32.const 0))
- (memory $0 1)
- (data (i32.const 8) "\16\00\00\00s\00t\00d\00/\00a\00l\00l\00o\00c\00a\00t\00o\00r\00_\00a\00r\00e\00n\00a\00.\00t\00s")
+ (memory $0 0)
  (export "memory" (memory $0))
  (start $start)
  (func $~lib/allocator/arena/__memory_allocate (; 1 ;) (type $ii) (param $0 i32) (result i32)
@@ -2222,7 +2221,7 @@
  )
  (func $start (; 14 ;) (type $v)
   (set_global $~lib/allocator/arena/startOffset
-   (i32.const 56)
+   (i32.const 8)
   )
   (set_global $~lib/allocator/arena/offset
    (get_global $~lib/allocator/arena/startOffset)
@@ -2357,7 +2356,7 @@
   (if
    (i32.ne
     (get_global $std/allocator_arena/ptr1)
-    (i32.const 56)
+    (i32.const 8)
    )
    (block
     (call $~lib/env/abort)

@@ -22,9 +22,6 @@
  (global $std/symbol/key4 (mut i32) (i32.const 0))
  (memory $0 1)
  (data (i32.const 8) "\03\00\00\001\002\003")
- (data (i32.const 20) "\0d\00\00\00s\00t\00d\00/\00s\00y\00m\00b\00o\00l\00.\00t\00s")
- (data (i32.const 52) "\13\00\00\00~\00l\00i\00b\00/\00a\00r\00r\00a\00y\00b\00u\00f\00f\00e\00r\00.\00t\00s")
- (data (i32.const 96) "\1c\00\00\00~\00l\00i\00b\00/\00i\00n\00t\00e\00r\00n\00a\00l\00/\00a\00r\00r\00a\00y\00b\00u\00f\00f\00e\00r\00.\00t\00s")
  (export "memory" (memory $0))
  (start $start)
  (func $~lib/symbol/Symbol (; 1 ;) (type $ii) (param $0 i32) (result i32)
@@ -1726,7 +1723,7 @@
  (func $start (; 28 ;) (type $v)
   (block $folding-inner0
    (set_global $~lib/allocator/arena/startOffset
-    (i32.const 160)
+    (i32.const 24)
    )
    (set_global $~lib/allocator/arena/offset
     (get_global $~lib/allocator/arena/startOffset)

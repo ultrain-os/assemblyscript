@@ -11,8 +11,7 @@
  (global $std/pointer/sub (mut i32) (i32.const 0))
  (global $std/pointer/nextOne (mut i32) (i32.const 0))
  (global $~argc (mut i32) (i32.const 0))
- (memory $0 1)
- (data (i32.const 8) "\0e\00\00\00s\00t\00d\00/\00p\00o\00i\00n\00t\00e\00r\00.\00t\00s")
+ (memory $0 0)
  (export "memory" (memory $0))
  (export "_setargc" (func $~setargc))
  (export "Pointer<Entry>#constructor" (func $std/pointer/Pointer<Entry>#constructor|trampoline))
@@ -23,7 +22,7 @@
  (func $start (; 2 ;) (type $v)
   (block $folding-inner0
    (set_global $~lib/allocator/arena/startOffset
-    (i32.const 40)
+    (i32.const 8)
    )
    (set_global $~lib/allocator/arena/offset
     (get_global $~lib/allocator/arena/startOffset)
