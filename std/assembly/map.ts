@@ -87,6 +87,20 @@ export class Map<K,V> {
     var entry = this.find(key, hash<K>(key));
     return entry ? entry.value : <V>unreachable();
   }
+  
+  keys(): K[]{
+    let keys = new Array<K>(this.size);
+    var startPtr = changetype<usize>(this.entries) + HEADER_SIZE_AB;
+    var endPtr = startPtr + <usize>this.entriesOffset * ENTRY_SIZE<K,V>();
+    while (startPtr != endPtr) {
+      let oldEntry = changetype<MapEntry<K,V>>(startPtr);
+      if (!(oldEntry.taggedNext & EMPTY)) {
+        keys.push(oldEntry.key);
+      }
+      startPtr += ENTRY_SIZE<K,V>();
+    }
+    return keys;
+  }
 
   set(key: K, value: V): void {
     var hashCode = hash<K>(key);
