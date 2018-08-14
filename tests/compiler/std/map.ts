@@ -56,3 +56,23 @@ test<i64,i32>();
 test<u64,i32>();
 test<f32,i32>();
 test<f64,i32>();
+
+var map = new Map<u64, u64>();
+map.set(12, 12);
+
+var keys = map.keys();
+assert(keys.length == 1);
+
+for (let index = 0; index < keys.length; index ++) {
+  assert(map.has(keys[index]));
+}
+
+map.set(12, 23);
+map.set(24,44);
+
+keys = map.keys();
+assert(keys.length == 2);
+
+for (let index = 0; index < keys.length; index ++) {
+  assert(map.has(keys[index]));
+}

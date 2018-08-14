@@ -524,6 +524,8 @@ declare class Map<K,V> {
   readonly size: i32;
   has(key: K): bool;
   set(key: K, value: V): void;
+  keys(): K[];
+  get(key: K): V;
   delete(key: K): bool;
   clear(): void;
 }

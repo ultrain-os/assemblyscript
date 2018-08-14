@@ -16,9 +16,13 @@
  (type $iFi (func (param i32 f64) (result i32)))
  (type $iFii (func (param i32 f64 i32) (result i32)))
  (type $iFiv (func (param i32 f64 i32)))
+ (type $iIIv (func (param i32 i64 i64)))
+ (type $iiI (func (param i32 i32) (result i64)))
  (import "env" "abort" (func $~lib/env/abort))
  (global $~lib/allocator/arena/startOffset (mut i32) (i32.const 0))
  (global $~lib/allocator/arena/offset (mut i32) (i32.const 0))
+ (global $std/map/map (mut i32) (i32.const 0))
+ (global $std/map/keys (mut i32) (i32.const 0))
  (memory $0 0)
  (export "memory" (memory $0))
  (start $start)
@@ -7987,7 +7991,2482 @@
   (call $~lib/env/abort)
   (unreachable)
  )
- (func $start (; 73 ;) (type $v)
+ (func $~lib/map/Map<u64_u64>#clear (; 73 ;) (type $iv) (param $0 i32)
+  (i32.store
+   (get_local $0)
+   (call $~lib/arraybuffer/ArrayBuffer#constructor
+    (i32.const 0)
+    (i32.const 16)
+    (i32.const 0)
+   )
+  )
+  (i32.store offset=4
+   (get_local $0)
+   (i32.const 3)
+  )
+  (i32.store offset=8
+   (get_local $0)
+   (call $~lib/arraybuffer/ArrayBuffer#constructor
+    (i32.const 0)
+    (i32.const 96)
+    (i32.const 1)
+   )
+  )
+  (i32.store offset=12
+   (get_local $0)
+   (i32.const 4)
+  )
+  (i32.store offset=16
+   (get_local $0)
+   (i32.const 0)
+  )
+  (i32.store offset=20
+   (get_local $0)
+   (i32.const 0)
+  )
+ )
+ (func $~lib/map/Map<u64_u64>#constructor (; 74 ;) (type $ii) (param $0 i32) (result i32)
+  (if
+   (i32.eqz
+    (get_local $0)
+   )
+   (block
+    (i32.store
+     (tee_local $0
+      (call $~lib/memory/memory.allocate
+       (i32.const 24)
+      )
+     )
+     (i32.const 0)
+    )
+    (i32.store offset=4
+     (get_local $0)
+     (i32.const 0)
+    )
+    (i32.store offset=8
+     (get_local $0)
+     (i32.const 0)
+    )
+    (i32.store offset=12
+     (get_local $0)
+     (i32.const 0)
+    )
+    (i32.store offset=16
+     (get_local $0)
+     (i32.const 0)
+    )
+    (i32.store offset=20
+     (get_local $0)
+     (i32.const 0)
+    )
+   )
+  )
+  (call $~lib/map/Map<u64_u64>#clear
+   (get_local $0)
+  )
+  (get_local $0)
+ )
+ (func $~lib/map/Map<u64_u64>#find (; 75 ;) (type $iIii) (param $0 i32) (param $1 i64) (param $2 i32) (result i32)
+  (set_local $2
+   (i32.load offset=8
+    (i32.add
+     (i32.load
+      (get_local $0)
+     )
+     (i32.shl
+      (i32.and
+       (get_local $2)
+       (i32.load offset=4
+        (get_local $0)
+       )
+      )
+      (i32.const 2)
+     )
+    )
+   )
+  )
+  (loop $continue|0
+   (if
+    (get_local $2)
+    (block
+     (if
+      (tee_local $0
+       (i32.eqz
+        (i32.and
+         (i32.load offset=16
+          (get_local $2)
+         )
+         (i32.const 1)
+        )
+       )
+      )
+      (set_local $0
+       (i64.eq
+        (i64.load
+         (get_local $2)
+        )
+        (get_local $1)
+       )
+      )
+     )
+     (if
+      (get_local $0)
+      (return
+       (get_local $2)
+      )
+     )
+     (set_local $2
+      (i32.and
+       (i32.load offset=16
+        (get_local $2)
+       )
+       (i32.const -2)
+      )
+     )
+     (br $continue|0)
+    )
+   )
+  )
+  (i32.const 0)
+ )
+ (func $~lib/map/Map<u64_u64>#rehash (; 76 ;) (type $iiv) (param $0 i32) (param $1 i32)
+  (local $2 i32)
+  (local $3 i32)
+  (local $4 i32)
+  (local $5 i32)
+  (local $6 i32)
+  (local $7 i32)
+  (local $8 i32)
+  (set_local $4
+   (call $~lib/arraybuffer/ArrayBuffer#constructor
+    (i32.const 0)
+    (i32.shl
+     (tee_local $2
+      (i32.add
+       (get_local $1)
+       (i32.const 1)
+      )
+     )
+     (i32.const 2)
+    )
+    (i32.const 0)
+   )
+  )
+  (set_local $5
+   (call $~lib/arraybuffer/ArrayBuffer#constructor
+    (i32.const 0)
+    (i32.mul
+     (tee_local $7
+      (i32.trunc_s/f64
+       (f64.mul
+        (f64.convert_s/i32
+         (get_local $2)
+        )
+        (f64.const 2.6666666666666665)
+       )
+      )
+     )
+     (i32.const 24)
+    )
+    (i32.const 1)
+   )
+  )
+  (set_local $8
+   (i32.add
+    (tee_local $3
+     (i32.add
+      (i32.load offset=8
+       (get_local $0)
+      )
+      (i32.const 8)
+     )
+    )
+    (i32.mul
+     (i32.load offset=16
+      (get_local $0)
+     )
+     (i32.const 24)
+    )
+   )
+  )
+  (set_local $2
+   (i32.add
+    (get_local $5)
+    (i32.const 8)
+   )
+  )
+  (loop $continue|0
+   (if
+    (i32.ne
+     (get_local $3)
+     (get_local $8)
+    )
+    (block
+     (if
+      (i32.eqz
+       (i32.and
+        (i32.load offset=16
+         (get_local $3)
+        )
+        (i32.const 1)
+       )
+      )
+      (block
+       (i64.store
+        (get_local $2)
+        (i64.load
+         (get_local $3)
+        )
+       )
+       (i64.store offset=8
+        (get_local $2)
+        (i64.load offset=8
+         (get_local $3)
+        )
+       )
+       (i32.store offset=16
+        (get_local $2)
+        (i32.load offset=8
+         (tee_local $6
+          (i32.add
+           (get_local $4)
+           (i32.shl
+            (i32.and
+             (tee_local $6
+              (call $~lib/internal/hash/hash64
+               (i64.load
+                (get_local $3)
+               )
+              )
+             )
+             (get_local $1)
+            )
+            (i32.const 2)
+           )
+          )
+         )
+        )
+       )
+       (i32.store offset=8
+        (get_local $6)
+        (get_local $2)
+       )
+       (set_local $2
+        (i32.add
+         (get_local $2)
+         (i32.const 24)
+        )
+       )
+      )
+     )
+     (set_local $3
+      (i32.add
+       (get_local $3)
+       (i32.const 24)
+      )
+     )
+     (br $continue|0)
+    )
+   )
+  )
+  (i32.store
+   (get_local $0)
+   (get_local $4)
+  )
+  (i32.store offset=4
+   (get_local $0)
+   (get_local $1)
+  )
+  (i32.store offset=8
+   (get_local $0)
+   (get_local $5)
+  )
+  (i32.store offset=12
+   (get_local $0)
+   (get_local $7)
+  )
+  (i32.store offset=16
+   (get_local $0)
+   (i32.load offset=20
+    (get_local $0)
+   )
+  )
+ )
+ (func $~lib/map/Map<u64_u64>#set (; 77 ;) (type $iIIv) (param $0 i32) (param $1 i64) (param $2 i64)
+  (local $3 i32)
+  (local $4 i32)
+  (local $5 i32)
+  (if
+   (tee_local $3
+    (call $~lib/map/Map<u64_u64>#find
+     (get_local $0)
+     (get_local $1)
+     (tee_local $5
+      (call $~lib/internal/hash/hash64
+       (get_local $1)
+      )
+     )
+    )
+   )
+   (i64.store offset=8
+    (get_local $3)
+    (get_local $2)
+   )
+   (block
+    (if
+     (i32.eq
+      (i32.load offset=16
+       (get_local $0)
+      )
+      (i32.load offset=12
+       (get_local $0)
+      )
+     )
+     (call $~lib/map/Map<u64_u64>#rehash
+      (get_local $0)
+      (tee_local $3
+       (if (result i32)
+        (i32.lt_s
+         (i32.load offset=20
+          (get_local $0)
+         )
+         (i32.trunc_s/f64
+          (f64.mul
+           (f64.convert_s/i32
+            (i32.load offset=12
+             (get_local $0)
+            )
+           )
+           (f64.const 0.75)
+          )
+         )
+        )
+        (i32.load offset=4
+         (get_local $0)
+        )
+        (i32.or
+         (i32.shl
+          (i32.load offset=4
+           (get_local $0)
+          )
+          (i32.const 1)
+         )
+         (i32.const 1)
+        )
+       )
+      )
+     )
+    )
+    (set_local $3
+     (i32.load offset=8
+      (get_local $0)
+     )
+    )
+    (i32.store offset=16
+     (get_local $0)
+     (i32.add
+      (tee_local $4
+       (i32.load offset=16
+        (get_local $0)
+       )
+      )
+      (i32.const 1)
+     )
+    )
+    (i64.store
+     (tee_local $3
+      (i32.add
+       (i32.add
+        (get_local $3)
+        (i32.const 8)
+       )
+       (i32.mul
+        (get_local $4)
+        (i32.const 24)
+       )
+      )
+     )
+     (get_local $1)
+    )
+    (i64.store offset=8
+     (get_local $3)
+     (get_local $2)
+    )
+    (i32.store offset=20
+     (get_local $0)
+     (i32.add
+      (i32.load offset=20
+       (get_local $0)
+      )
+      (i32.const 1)
+     )
+    )
+    (i32.store offset=16
+     (get_local $3)
+     (i32.load offset=8
+      (tee_local $4
+       (i32.add
+        (i32.load
+         (get_local $0)
+        )
+        (i32.shl
+         (i32.and
+          (get_local $5)
+          (i32.load offset=4
+           (get_local $0)
+          )
+         )
+         (i32.const 2)
+        )
+       )
+      )
+     )
+    )
+    (i32.store offset=8
+     (get_local $4)
+     (get_local $3)
+    )
+   )
+  )
+ )
+ (func $~lib/array/Array<u64>#constructor (; 78 ;) (type $iii) (param $0 i32) (param $1 i32) (result i32)
+  (local $2 i32)
+  (local $3 i32)
+  (if
+   (i32.gt_u
+    (get_local $1)
+    (i32.const 134217727)
+   )
+   (block
+    (call $~lib/env/abort)
+    (unreachable)
+   )
+  )
+  (set_local $2
+   (call $~lib/internal/arraybuffer/allocUnsafe
+    (tee_local $3
+     (i32.shl
+      (get_local $1)
+      (i32.const 3)
+     )
+    )
+   )
+  )
+  (if
+   (i32.eqz
+    (get_local $0)
+   )
+   (block
+    (i32.store
+     (tee_local $0
+      (call $~lib/memory/memory.allocate
+       (i32.const 8)
+      )
+     )
+     (i32.const 0)
+    )
+    (i32.store offset=4
+     (get_local $0)
+     (i32.const 0)
+    )
+   )
+  )
+  (i32.store
+   (get_local $0)
+   (get_local $2)
+  )
+  (i32.store offset=4
+   (get_local $0)
+   (get_local $1)
+  )
+  (call $~lib/memory/memory.fill
+   (i32.add
+    (get_local $2)
+    (i32.const 8)
+   )
+   (i32.const 0)
+   (get_local $3)
+  )
+  (get_local $0)
+ )
+ (func $~lib/memory/memcpy (; 79 ;) (type $iiiv) (param $0 i32) (param $1 i32) (param $2 i32)
+  (local $3 i32)
+  (local $4 i32)
+  (local $5 i32)
+  (loop $continue|0
+   (if
+    (tee_local $3
+     (if (result i32)
+      (get_local $2)
+      (i32.and
+       (get_local $1)
+       (i32.const 3)
+      )
+      (get_local $2)
+     )
+    )
+    (block
+     (set_local $0
+      (i32.add
+       (tee_local $4
+        (get_local $0)
+       )
+       (i32.const 1)
+      )
+     )
+     (set_local $1
+      (i32.add
+       (tee_local $3
+        (get_local $1)
+       )
+       (i32.const 1)
+      )
+     )
+     (i32.store8
+      (get_local $4)
+      (i32.load8_u
+       (get_local $3)
+      )
+     )
+     (set_local $2
+      (i32.sub
+       (get_local $2)
+       (i32.const 1)
+      )
+     )
+     (br $continue|0)
+    )
+   )
+  )
+  (if
+   (i32.eqz
+    (i32.and
+     (get_local $0)
+     (i32.const 3)
+    )
+   )
+   (block
+    (loop $continue|1
+     (if
+      (i32.ge_u
+       (get_local $2)
+       (i32.const 16)
+      )
+      (block
+       (i32.store
+        (get_local $0)
+        (i32.load
+         (get_local $1)
+        )
+       )
+       (i32.store
+        (i32.add
+         (get_local $0)
+         (i32.const 4)
+        )
+        (i32.load
+         (i32.add
+          (get_local $1)
+          (i32.const 4)
+         )
+        )
+       )
+       (i32.store
+        (i32.add
+         (get_local $0)
+         (i32.const 8)
+        )
+        (i32.load
+         (i32.add
+          (get_local $1)
+          (i32.const 8)
+         )
+        )
+       )
+       (i32.store
+        (i32.add
+         (get_local $0)
+         (i32.const 12)
+        )
+        (i32.load
+         (i32.add
+          (get_local $1)
+          (i32.const 12)
+         )
+        )
+       )
+       (set_local $1
+        (i32.add
+         (get_local $1)
+         (i32.const 16)
+        )
+       )
+       (set_local $0
+        (i32.add
+         (get_local $0)
+         (i32.const 16)
+        )
+       )
+       (set_local $2
+        (i32.sub
+         (get_local $2)
+         (i32.const 16)
+        )
+       )
+       (br $continue|1)
+      )
+     )
+    )
+    (if
+     (i32.and
+      (get_local $2)
+      (i32.const 8)
+     )
+     (block
+      (i32.store
+       (get_local $0)
+       (i32.load
+        (get_local $1)
+       )
+      )
+      (i32.store
+       (i32.add
+        (get_local $0)
+        (i32.const 4)
+       )
+       (i32.load
+        (i32.add
+         (get_local $1)
+         (i32.const 4)
+        )
+       )
+      )
+      (set_local $0
+       (i32.add
+        (get_local $0)
+        (i32.const 8)
+       )
+      )
+      (set_local $1
+       (i32.add
+        (get_local $1)
+        (i32.const 8)
+       )
+      )
+     )
+    )
+    (if
+     (i32.and
+      (get_local $2)
+      (i32.const 4)
+     )
+     (block
+      (i32.store
+       (get_local $0)
+       (i32.load
+        (get_local $1)
+       )
+      )
+      (set_local $0
+       (i32.add
+        (get_local $0)
+        (i32.const 4)
+       )
+      )
+      (set_local $1
+       (i32.add
+        (get_local $1)
+        (i32.const 4)
+       )
+      )
+     )
+    )
+    (if
+     (i32.and
+      (get_local $2)
+      (i32.const 2)
+     )
+     (block
+      (i32.store16
+       (get_local $0)
+       (i32.load16_u
+        (get_local $1)
+       )
+      )
+      (set_local $0
+       (i32.add
+        (get_local $0)
+        (i32.const 2)
+       )
+      )
+      (set_local $1
+       (i32.add
+        (get_local $1)
+        (i32.const 2)
+       )
+      )
+     )
+    )
+    (if
+     (i32.and
+      (get_local $2)
+      (i32.const 1)
+     )
+     (block
+      (set_local $3
+       (get_local $1)
+      )
+      (i32.store8
+       (get_local $0)
+       (i32.load8_u
+        (get_local $1)
+       )
+      )
+     )
+    )
+    (return)
+   )
+  )
+  (if
+   (i32.ge_u
+    (get_local $2)
+    (i32.const 32)
+   )
+   (block $break|2
+    (block $case2|2
+     (block $case1|2
+      (if
+       (i32.ne
+        (tee_local $3
+         (i32.and
+          (get_local $0)
+          (i32.const 3)
+         )
+        )
+        (i32.const 1)
+       )
+       (block
+        (br_if $case1|2
+         (i32.eq
+          (get_local $3)
+          (i32.const 2)
+         )
+        )
+        (br_if $case2|2
+         (i32.eq
+          (get_local $3)
+          (i32.const 3)
+         )
+        )
+        (br $break|2)
+       )
+      )
+      (set_local $5
+       (i32.load
+        (get_local $1)
+       )
+      )
+      (i32.store8
+       (get_local $0)
+       (i32.load8_u
+        (tee_local $3
+         (get_local $1)
+        )
+       )
+      )
+      (set_local $0
+       (tee_local $1
+        (i32.add
+         (get_local $0)
+         (i32.const 1)
+        )
+       )
+      )
+      (i32.store8
+       (get_local $1)
+       (i32.load8_u
+        (tee_local $1
+         (i32.add
+          (get_local $3)
+          (i32.const 1)
+         )
+        )
+       )
+      )
+      (set_local $0
+       (i32.add
+        (tee_local $4
+         (i32.add
+          (get_local $0)
+          (i32.const 1)
+         )
+        )
+        (i32.const 1)
+       )
+      )
+      (set_local $1
+       (i32.add
+        (tee_local $3
+         (i32.add
+          (get_local $1)
+          (i32.const 1)
+         )
+        )
+        (i32.const 1)
+       )
+      )
+      (i32.store8
+       (get_local $4)
+       (i32.load8_u
+        (get_local $3)
+       )
+      )
+      (set_local $2
+       (i32.sub
+        (get_local $2)
+        (i32.const 3)
+       )
+      )
+      (loop $continue|3
+       (if
+        (i32.ge_u
+         (get_local $2)
+         (i32.const 17)
+        )
+        (block
+         (i32.store
+          (get_local $0)
+          (i32.or
+           (i32.shr_u
+            (get_local $5)
+            (i32.const 24)
+           )
+           (i32.shl
+            (tee_local $3
+             (i32.load
+              (i32.add
+               (get_local $1)
+               (i32.const 1)
+              )
+             )
+            )
+            (i32.const 8)
+           )
+          )
+         )
+         (i32.store
+          (i32.add
+           (get_local $0)
+           (i32.const 4)
+          )
+          (i32.or
+           (i32.shr_u
+            (get_local $3)
+            (i32.const 24)
+           )
+           (i32.shl
+            (tee_local $5
+             (i32.load
+              (i32.add
+               (get_local $1)
+               (i32.const 5)
+              )
+             )
+            )
+            (i32.const 8)
+           )
+          )
+         )
+         (i32.store
+          (i32.add
+           (get_local $0)
+           (i32.const 8)
+          )
+          (i32.or
+           (i32.shr_u
+            (get_local $5)
+            (i32.const 24)
+           )
+           (i32.shl
+            (tee_local $3
+             (i32.load
+              (i32.add
+               (get_local $1)
+               (i32.const 9)
+              )
+             )
+            )
+            (i32.const 8)
+           )
+          )
+         )
+         (i32.store
+          (i32.add
+           (get_local $0)
+           (i32.const 12)
+          )
+          (i32.or
+           (i32.shr_u
+            (get_local $3)
+            (i32.const 24)
+           )
+           (i32.shl
+            (tee_local $5
+             (i32.load
+              (i32.add
+               (get_local $1)
+               (i32.const 13)
+              )
+             )
+            )
+            (i32.const 8)
+           )
+          )
+         )
+         (set_local $1
+          (i32.add
+           (get_local $1)
+           (i32.const 16)
+          )
+         )
+         (set_local $0
+          (i32.add
+           (get_local $0)
+           (i32.const 16)
+          )
+         )
+         (set_local $2
+          (i32.sub
+           (get_local $2)
+           (i32.const 16)
+          )
+         )
+         (br $continue|3)
+        )
+       )
+      )
+      (br $break|2)
+     )
+     (set_local $5
+      (i32.load
+       (get_local $1)
+      )
+     )
+     (i32.store8
+      (get_local $0)
+      (i32.load8_u
+       (get_local $1)
+      )
+     )
+     (set_local $0
+      (i32.add
+       (tee_local $4
+        (i32.add
+         (get_local $0)
+         (i32.const 1)
+        )
+       )
+       (i32.const 1)
+      )
+     )
+     (set_local $1
+      (i32.add
+       (tee_local $3
+        (i32.add
+         (get_local $1)
+         (i32.const 1)
+        )
+       )
+       (i32.const 1)
+      )
+     )
+     (i32.store8
+      (get_local $4)
+      (i32.load8_u
+       (get_local $3)
+      )
+     )
+     (set_local $2
+      (i32.sub
+       (get_local $2)
+       (i32.const 2)
+      )
+     )
+     (loop $continue|4
+      (if
+       (i32.ge_u
+        (get_local $2)
+        (i32.const 18)
+       )
+       (block
+        (i32.store
+         (get_local $0)
+         (i32.or
+          (i32.shr_u
+           (get_local $5)
+           (i32.const 16)
+          )
+          (i32.shl
+           (tee_local $3
+            (i32.load
+             (i32.add
+              (get_local $1)
+              (i32.const 2)
+             )
+            )
+           )
+           (i32.const 16)
+          )
+         )
+        )
+        (i32.store
+         (i32.add
+          (get_local $0)
+          (i32.const 4)
+         )
+         (i32.or
+          (i32.shr_u
+           (get_local $3)
+           (i32.const 16)
+          )
+          (i32.shl
+           (tee_local $5
+            (i32.load
+             (i32.add
+              (get_local $1)
+              (i32.const 6)
+             )
+            )
+           )
+           (i32.const 16)
+          )
+         )
+        )
+        (i32.store
+         (i32.add
+          (get_local $0)
+          (i32.const 8)
+         )
+         (i32.or
+          (i32.shr_u
+           (get_local $5)
+           (i32.const 16)
+          )
+          (i32.shl
+           (tee_local $3
+            (i32.load
+             (i32.add
+              (get_local $1)
+              (i32.const 10)
+             )
+            )
+           )
+           (i32.const 16)
+          )
+         )
+        )
+        (i32.store
+         (i32.add
+          (get_local $0)
+          (i32.const 12)
+         )
+         (i32.or
+          (i32.shr_u
+           (get_local $3)
+           (i32.const 16)
+          )
+          (i32.shl
+           (tee_local $5
+            (i32.load
+             (i32.add
+              (get_local $1)
+              (i32.const 14)
+             )
+            )
+           )
+           (i32.const 16)
+          )
+         )
+        )
+        (set_local $1
+         (i32.add
+          (get_local $1)
+          (i32.const 16)
+         )
+        )
+        (set_local $0
+         (i32.add
+          (get_local $0)
+          (i32.const 16)
+         )
+        )
+        (set_local $2
+         (i32.sub
+          (get_local $2)
+          (i32.const 16)
+         )
+        )
+        (br $continue|4)
+       )
+      )
+     )
+     (br $break|2)
+    )
+    (set_local $5
+     (i32.load
+      (get_local $1)
+     )
+    )
+    (set_local $0
+     (i32.add
+      (tee_local $4
+       (get_local $0)
+      )
+      (i32.const 1)
+     )
+    )
+    (set_local $1
+     (i32.add
+      (tee_local $3
+       (get_local $1)
+      )
+      (i32.const 1)
+     )
+    )
+    (i32.store8
+     (get_local $4)
+     (i32.load8_u
+      (get_local $3)
+     )
+    )
+    (set_local $2
+     (i32.sub
+      (get_local $2)
+      (i32.const 1)
+     )
+    )
+    (loop $continue|5
+     (if
+      (i32.ge_u
+       (get_local $2)
+       (i32.const 19)
+      )
+      (block
+       (i32.store
+        (get_local $0)
+        (i32.or
+         (i32.shr_u
+          (get_local $5)
+          (i32.const 8)
+         )
+         (i32.shl
+          (tee_local $3
+           (i32.load
+            (i32.add
+             (get_local $1)
+             (i32.const 3)
+            )
+           )
+          )
+          (i32.const 24)
+         )
+        )
+       )
+       (i32.store
+        (i32.add
+         (get_local $0)
+         (i32.const 4)
+        )
+        (i32.or
+         (i32.shr_u
+          (get_local $3)
+          (i32.const 8)
+         )
+         (i32.shl
+          (tee_local $5
+           (i32.load
+            (i32.add
+             (get_local $1)
+             (i32.const 7)
+            )
+           )
+          )
+          (i32.const 24)
+         )
+        )
+       )
+       (i32.store
+        (i32.add
+         (get_local $0)
+         (i32.const 8)
+        )
+        (i32.or
+         (i32.shr_u
+          (get_local $5)
+          (i32.const 8)
+         )
+         (i32.shl
+          (tee_local $3
+           (i32.load
+            (i32.add
+             (get_local $1)
+             (i32.const 11)
+            )
+           )
+          )
+          (i32.const 24)
+         )
+        )
+       )
+       (i32.store
+        (i32.add
+         (get_local $0)
+         (i32.const 12)
+        )
+        (i32.or
+         (i32.shr_u
+          (get_local $3)
+          (i32.const 8)
+         )
+         (i32.shl
+          (tee_local $5
+           (i32.load
+            (i32.add
+             (get_local $1)
+             (i32.const 15)
+            )
+           )
+          )
+          (i32.const 24)
+         )
+        )
+       )
+       (set_local $1
+        (i32.add
+         (get_local $1)
+         (i32.const 16)
+        )
+       )
+       (set_local $0
+        (i32.add
+         (get_local $0)
+         (i32.const 16)
+        )
+       )
+       (set_local $2
+        (i32.sub
+         (get_local $2)
+         (i32.const 16)
+        )
+       )
+       (br $continue|5)
+      )
+     )
+    )
+   )
+  )
+  (if
+   (i32.and
+    (get_local $2)
+    (i32.const 16)
+   )
+   (block
+    (i32.store8
+     (get_local $0)
+     (i32.load8_u
+      (tee_local $3
+       (get_local $1)
+      )
+     )
+    )
+    (set_local $0
+     (tee_local $1
+      (i32.add
+       (get_local $0)
+       (i32.const 1)
+      )
+     )
+    )
+    (i32.store8
+     (get_local $1)
+     (i32.load8_u
+      (tee_local $1
+       (i32.add
+        (get_local $3)
+        (i32.const 1)
+       )
+      )
+     )
+    )
+    (set_local $0
+     (tee_local $3
+      (i32.add
+       (get_local $0)
+       (i32.const 1)
+      )
+     )
+    )
+    (i32.store8
+     (get_local $3)
+     (i32.load8_u
+      (tee_local $1
+       (i32.add
+        (get_local $1)
+        (i32.const 1)
+       )
+      )
+     )
+    )
+    (set_local $0
+     (tee_local $3
+      (i32.add
+       (get_local $0)
+       (i32.const 1)
+      )
+     )
+    )
+    (i32.store8
+     (get_local $3)
+     (i32.load8_u
+      (tee_local $1
+       (i32.add
+        (get_local $1)
+        (i32.const 1)
+       )
+      )
+     )
+    )
+    (set_local $0
+     (tee_local $3
+      (i32.add
+       (get_local $0)
+       (i32.const 1)
+      )
+     )
+    )
+    (i32.store8
+     (get_local $3)
+     (i32.load8_u
+      (tee_local $1
+       (i32.add
+        (get_local $1)
+        (i32.const 1)
+       )
+      )
+     )
+    )
+    (set_local $0
+     (tee_local $3
+      (i32.add
+       (get_local $0)
+       (i32.const 1)
+      )
+     )
+    )
+    (i32.store8
+     (get_local $3)
+     (i32.load8_u
+      (tee_local $1
+       (i32.add
+        (get_local $1)
+        (i32.const 1)
+       )
+      )
+     )
+    )
+    (set_local $0
+     (tee_local $3
+      (i32.add
+       (get_local $0)
+       (i32.const 1)
+      )
+     )
+    )
+    (i32.store8
+     (get_local $3)
+     (i32.load8_u
+      (tee_local $1
+       (i32.add
+        (get_local $1)
+        (i32.const 1)
+       )
+      )
+     )
+    )
+    (set_local $0
+     (tee_local $3
+      (i32.add
+       (get_local $0)
+       (i32.const 1)
+      )
+     )
+    )
+    (i32.store8
+     (get_local $3)
+     (i32.load8_u
+      (tee_local $1
+       (i32.add
+        (get_local $1)
+        (i32.const 1)
+       )
+      )
+     )
+    )
+    (set_local $0
+     (tee_local $3
+      (i32.add
+       (get_local $0)
+       (i32.const 1)
+      )
+     )
+    )
+    (i32.store8
+     (get_local $3)
+     (i32.load8_u
+      (tee_local $1
+       (i32.add
+        (get_local $1)
+        (i32.const 1)
+       )
+      )
+     )
+    )
+    (set_local $0
+     (tee_local $3
+      (i32.add
+       (get_local $0)
+       (i32.const 1)
+      )
+     )
+    )
+    (i32.store8
+     (get_local $3)
+     (i32.load8_u
+      (tee_local $1
+       (i32.add
+        (get_local $1)
+        (i32.const 1)
+       )
+      )
+     )
+    )
+    (set_local $0
+     (tee_local $3
+      (i32.add
+       (get_local $0)
+       (i32.const 1)
+      )
+     )
+    )
+    (i32.store8
+     (get_local $3)
+     (i32.load8_u
+      (tee_local $1
+       (i32.add
+        (get_local $1)
+        (i32.const 1)
+       )
+      )
+     )
+    )
+    (set_local $0
+     (tee_local $3
+      (i32.add
+       (get_local $0)
+       (i32.const 1)
+      )
+     )
+    )
+    (i32.store8
+     (get_local $3)
+     (i32.load8_u
+      (tee_local $1
+       (i32.add
+        (get_local $1)
+        (i32.const 1)
+       )
+      )
+     )
+    )
+    (set_local $0
+     (tee_local $3
+      (i32.add
+       (get_local $0)
+       (i32.const 1)
+      )
+     )
+    )
+    (i32.store8
+     (get_local $3)
+     (i32.load8_u
+      (tee_local $1
+       (i32.add
+        (get_local $1)
+        (i32.const 1)
+       )
+      )
+     )
+    )
+    (set_local $0
+     (tee_local $3
+      (i32.add
+       (get_local $0)
+       (i32.const 1)
+      )
+     )
+    )
+    (i32.store8
+     (get_local $3)
+     (i32.load8_u
+      (tee_local $1
+       (i32.add
+        (get_local $1)
+        (i32.const 1)
+       )
+      )
+     )
+    )
+    (set_local $0
+     (tee_local $3
+      (i32.add
+       (get_local $0)
+       (i32.const 1)
+      )
+     )
+    )
+    (i32.store8
+     (get_local $3)
+     (i32.load8_u
+      (tee_local $1
+       (i32.add
+        (get_local $1)
+        (i32.const 1)
+       )
+      )
+     )
+    )
+    (set_local $0
+     (i32.add
+      (tee_local $4
+       (i32.add
+        (get_local $0)
+        (i32.const 1)
+       )
+      )
+      (i32.const 1)
+     )
+    )
+    (set_local $1
+     (i32.add
+      (tee_local $3
+       (i32.add
+        (get_local $1)
+        (i32.const 1)
+       )
+      )
+      (i32.const 1)
+     )
+    )
+    (i32.store8
+     (get_local $4)
+     (i32.load8_u
+      (get_local $3)
+     )
+    )
+   )
+  )
+  (if
+   (i32.and
+    (get_local $2)
+    (i32.const 8)
+   )
+   (block
+    (i32.store8
+     (get_local $0)
+     (i32.load8_u
+      (tee_local $3
+       (get_local $1)
+      )
+     )
+    )
+    (set_local $0
+     (tee_local $1
+      (i32.add
+       (get_local $0)
+       (i32.const 1)
+      )
+     )
+    )
+    (i32.store8
+     (get_local $1)
+     (i32.load8_u
+      (tee_local $1
+       (i32.add
+        (get_local $3)
+        (i32.const 1)
+       )
+      )
+     )
+    )
+    (set_local $0
+     (tee_local $3
+      (i32.add
+       (get_local $0)
+       (i32.const 1)
+      )
+     )
+    )
+    (i32.store8
+     (get_local $3)
+     (i32.load8_u
+      (tee_local $1
+       (i32.add
+        (get_local $1)
+        (i32.const 1)
+       )
+      )
+     )
+    )
+    (set_local $0
+     (tee_local $3
+      (i32.add
+       (get_local $0)
+       (i32.const 1)
+      )
+     )
+    )
+    (i32.store8
+     (get_local $3)
+     (i32.load8_u
+      (tee_local $1
+       (i32.add
+        (get_local $1)
+        (i32.const 1)
+       )
+      )
+     )
+    )
+    (set_local $0
+     (tee_local $3
+      (i32.add
+       (get_local $0)
+       (i32.const 1)
+      )
+     )
+    )
+    (i32.store8
+     (get_local $3)
+     (i32.load8_u
+      (tee_local $1
+       (i32.add
+        (get_local $1)
+        (i32.const 1)
+       )
+      )
+     )
+    )
+    (set_local $0
+     (tee_local $3
+      (i32.add
+       (get_local $0)
+       (i32.const 1)
+      )
+     )
+    )
+    (i32.store8
+     (get_local $3)
+     (i32.load8_u
+      (tee_local $1
+       (i32.add
+        (get_local $1)
+        (i32.const 1)
+       )
+      )
+     )
+    )
+    (set_local $0
+     (tee_local $3
+      (i32.add
+       (get_local $0)
+       (i32.const 1)
+      )
+     )
+    )
+    (i32.store8
+     (get_local $3)
+     (i32.load8_u
+      (tee_local $1
+       (i32.add
+        (get_local $1)
+        (i32.const 1)
+       )
+      )
+     )
+    )
+    (set_local $0
+     (i32.add
+      (tee_local $4
+       (i32.add
+        (get_local $0)
+        (i32.const 1)
+       )
+      )
+      (i32.const 1)
+     )
+    )
+    (set_local $1
+     (i32.add
+      (tee_local $3
+       (i32.add
+        (get_local $1)
+        (i32.const 1)
+       )
+      )
+      (i32.const 1)
+     )
+    )
+    (i32.store8
+     (get_local $4)
+     (i32.load8_u
+      (get_local $3)
+     )
+    )
+   )
+  )
+  (if
+   (i32.and
+    (get_local $2)
+    (i32.const 4)
+   )
+   (block
+    (i32.store8
+     (get_local $0)
+     (i32.load8_u
+      (tee_local $3
+       (get_local $1)
+      )
+     )
+    )
+    (set_local $0
+     (tee_local $1
+      (i32.add
+       (get_local $0)
+       (i32.const 1)
+      )
+     )
+    )
+    (i32.store8
+     (get_local $1)
+     (i32.load8_u
+      (tee_local $1
+       (i32.add
+        (get_local $3)
+        (i32.const 1)
+       )
+      )
+     )
+    )
+    (set_local $0
+     (tee_local $3
+      (i32.add
+       (get_local $0)
+       (i32.const 1)
+      )
+     )
+    )
+    (i32.store8
+     (get_local $3)
+     (i32.load8_u
+      (tee_local $1
+       (i32.add
+        (get_local $1)
+        (i32.const 1)
+       )
+      )
+     )
+    )
+    (set_local $0
+     (i32.add
+      (tee_local $4
+       (i32.add
+        (get_local $0)
+        (i32.const 1)
+       )
+      )
+      (i32.const 1)
+     )
+    )
+    (set_local $1
+     (i32.add
+      (tee_local $3
+       (i32.add
+        (get_local $1)
+        (i32.const 1)
+       )
+      )
+      (i32.const 1)
+     )
+    )
+    (i32.store8
+     (get_local $4)
+     (i32.load8_u
+      (get_local $3)
+     )
+    )
+   )
+  )
+  (if
+   (i32.and
+    (get_local $2)
+    (i32.const 2)
+   )
+   (block
+    (i32.store8
+     (get_local $0)
+     (i32.load8_u
+      (get_local $1)
+     )
+    )
+    (set_local $0
+     (i32.add
+      (tee_local $4
+       (i32.add
+        (get_local $0)
+        (i32.const 1)
+       )
+      )
+      (i32.const 1)
+     )
+    )
+    (set_local $1
+     (i32.add
+      (tee_local $3
+       (i32.add
+        (get_local $1)
+        (i32.const 1)
+       )
+      )
+      (i32.const 1)
+     )
+    )
+    (i32.store8
+     (get_local $4)
+     (i32.load8_u
+      (get_local $3)
+     )
+    )
+   )
+  )
+  (if
+   (i32.and
+    (get_local $2)
+    (i32.const 1)
+   )
+   (block
+    (set_local $3
+     (get_local $1)
+    )
+    (i32.store8
+     (get_local $0)
+     (i32.load8_u
+      (get_local $1)
+     )
+    )
+   )
+  )
+ )
+ (func $~lib/memory/memmove (; 80 ;) (type $iiiv) (param $0 i32) (param $1 i32) (param $2 i32)
+  (local $3 i32)
+  (local $4 i32)
+  (if
+   (i32.eq
+    (get_local $0)
+    (get_local $1)
+   )
+   (return)
+  )
+  (if
+   (i32.eqz
+    (tee_local $3
+     (i32.le_u
+      (i32.add
+       (get_local $1)
+       (get_local $2)
+      )
+      (get_local $0)
+     )
+    )
+   )
+   (set_local $3
+    (i32.le_u
+     (i32.add
+      (get_local $0)
+      (get_local $2)
+     )
+     (get_local $1)
+    )
+   )
+  )
+  (if
+   (get_local $3)
+   (block
+    (call $~lib/memory/memcpy
+     (get_local $0)
+     (get_local $1)
+     (get_local $2)
+    )
+    (return)
+   )
+  )
+  (if
+   (i32.lt_u
+    (get_local $0)
+    (get_local $1)
+   )
+   (block
+    (if
+     (i32.eq
+      (i32.and
+       (get_local $1)
+       (i32.const 7)
+      )
+      (i32.and
+       (get_local $0)
+       (i32.const 7)
+      )
+     )
+     (block
+      (loop $continue|0
+       (if
+        (i32.and
+         (get_local $0)
+         (i32.const 7)
+        )
+        (block
+         (if
+          (i32.eqz
+           (get_local $2)
+          )
+          (return)
+         )
+         (set_local $2
+          (i32.sub
+           (get_local $2)
+           (i32.const 1)
+          )
+         )
+         (set_local $0
+          (i32.add
+           (tee_local $3
+            (tee_local $4
+             (get_local $0)
+            )
+           )
+           (i32.const 1)
+          )
+         )
+         (set_local $1
+          (i32.add
+           (tee_local $3
+            (get_local $1)
+           )
+           (i32.const 1)
+          )
+         )
+         (i32.store8
+          (get_local $4)
+          (i32.load8_u
+           (get_local $3)
+          )
+         )
+         (br $continue|0)
+        )
+       )
+      )
+      (loop $continue|1
+       (if
+        (i32.ge_u
+         (get_local $2)
+         (i32.const 8)
+        )
+        (block
+         (i64.store
+          (get_local $0)
+          (i64.load
+           (get_local $1)
+          )
+         )
+         (set_local $2
+          (i32.sub
+           (get_local $2)
+           (i32.const 8)
+          )
+         )
+         (set_local $0
+          (i32.add
+           (get_local $0)
+           (i32.const 8)
+          )
+         )
+         (set_local $1
+          (i32.add
+           (get_local $1)
+           (i32.const 8)
+          )
+         )
+         (br $continue|1)
+        )
+       )
+      )
+     )
+    )
+    (loop $continue|2
+     (if
+      (get_local $2)
+      (block
+       (set_local $0
+        (i32.add
+         (tee_local $3
+          (tee_local $4
+           (get_local $0)
+          )
+         )
+         (i32.const 1)
+        )
+       )
+       (set_local $1
+        (i32.add
+         (tee_local $3
+          (get_local $1)
+         )
+         (i32.const 1)
+        )
+       )
+       (i32.store8
+        (get_local $4)
+        (i32.load8_u
+         (get_local $3)
+        )
+       )
+       (set_local $2
+        (i32.sub
+         (get_local $2)
+         (i32.const 1)
+        )
+       )
+       (br $continue|2)
+      )
+     )
+    )
+   )
+   (block
+    (if
+     (i32.eq
+      (i32.and
+       (get_local $1)
+       (i32.const 7)
+      )
+      (i32.and
+       (get_local $0)
+       (i32.const 7)
+      )
+     )
+     (block
+      (loop $continue|3
+       (if
+        (i32.and
+         (i32.add
+          (get_local $0)
+          (get_local $2)
+         )
+         (i32.const 7)
+        )
+        (block
+         (if
+          (i32.eqz
+           (get_local $2)
+          )
+          (return)
+         )
+         (i32.store8
+          (i32.add
+           (get_local $0)
+           (tee_local $2
+            (i32.sub
+             (get_local $2)
+             (i32.const 1)
+            )
+           )
+          )
+          (i32.load8_u
+           (i32.add
+            (get_local $1)
+            (get_local $2)
+           )
+          )
+         )
+         (br $continue|3)
+        )
+       )
+      )
+      (loop $continue|4
+       (if
+        (i32.ge_u
+         (get_local $2)
+         (i32.const 8)
+        )
+        (block
+         (i64.store
+          (i32.add
+           (get_local $0)
+           (tee_local $2
+            (i32.sub
+             (get_local $2)
+             (i32.const 8)
+            )
+           )
+          )
+          (i64.load
+           (i32.add
+            (get_local $1)
+            (get_local $2)
+           )
+          )
+         )
+         (br $continue|4)
+        )
+       )
+      )
+     )
+    )
+    (loop $continue|5
+     (if
+      (get_local $2)
+      (block
+       (i32.store8
+        (i32.add
+         (get_local $0)
+         (tee_local $2
+          (i32.sub
+           (get_local $2)
+           (i32.const 1)
+          )
+         )
+        )
+        (i32.load8_u
+         (i32.add
+          (get_local $1)
+          (get_local $2)
+         )
+        )
+       )
+       (br $continue|5)
+      )
+     )
+    )
+   )
+  )
+ )
+ (func $~lib/memory/memory.copy (; 81 ;) (type $iiiv) (param $0 i32) (param $1 i32) (param $2 i32)
+  (call $~lib/memory/memmove
+   (get_local $0)
+   (get_local $1)
+   (get_local $2)
+  )
+ )
+ (func $~lib/internal/arraybuffer/reallocUnsafe (; 82 ;) (type $iii) (param $0 i32) (param $1 i32) (result i32)
+  (local $2 i32)
+  (local $3 i32)
+  (if
+   (i32.gt_s
+    (get_local $1)
+    (tee_local $2
+     (i32.load
+      (get_local $0)
+     )
+    )
+   )
+   (block
+    (if
+     (i32.gt_s
+      (get_local $1)
+      (i32.const 1073741816)
+     )
+     (block
+      (call $~lib/env/abort)
+      (unreachable)
+     )
+    )
+    (if
+     (i32.le_s
+      (get_local $1)
+      (i32.sub
+       (call $~lib/internal/arraybuffer/computeSize
+        (get_local $2)
+       )
+       (i32.const 8)
+      )
+     )
+     (block
+      (i32.store
+       (get_local $0)
+       (get_local $1)
+      )
+      (call $~lib/memory/memory.fill
+       (i32.add
+        (i32.add
+         (get_local $0)
+         (i32.const 8)
+        )
+        (get_local $2)
+       )
+       (i32.const 0)
+       (i32.sub
+        (get_local $1)
+        (get_local $2)
+       )
+      )
+     )
+     (block
+      (call $~lib/memory/memory.copy
+       (i32.add
+        (tee_local $3
+         (call $~lib/internal/arraybuffer/allocUnsafe
+          (get_local $1)
+         )
+        )
+        (i32.const 8)
+       )
+       (i32.add
+        (get_local $0)
+        (i32.const 8)
+       )
+       (get_local $2)
+      )
+      (call $~lib/memory/memory.fill
+       (i32.add
+        (i32.add
+         (get_local $3)
+         (i32.const 8)
+        )
+        (get_local $2)
+       )
+       (i32.const 0)
+       (i32.sub
+        (get_local $1)
+        (get_local $2)
+       )
+      )
+      (return
+       (get_local $3)
+      )
+     )
+    )
+   )
+   (if
+    (i32.lt_s
+     (get_local $1)
+     (get_local $2)
+    )
+    (block
+     (if
+      (i32.lt_s
+       (get_local $1)
+       (i32.const 0)
+      )
+      (block
+       (call $~lib/env/abort)
+       (unreachable)
+      )
+     )
+     (i32.store
+      (get_local $0)
+      (get_local $1)
+     )
+    )
+   )
+  )
+  (get_local $0)
+ )
+ (func $~lib/array/Array<u64>#push (; 83 ;) (type $iIi) (param $0 i32) (param $1 i64) (result i32)
+  (local $2 i32)
+  (local $3 i32)
+  (local $4 i32)
+  (set_local $3
+   (i32.add
+    (tee_local $2
+     (i32.load offset=4
+      (get_local $0)
+     )
+    )
+    (i32.const 1)
+   )
+  )
+  (if
+   (i32.ge_u
+    (get_local $2)
+    (i32.shr_u
+     (i32.load
+      (tee_local $4
+       (i32.load
+        (get_local $0)
+       )
+      )
+     )
+     (i32.const 3)
+    )
+   )
+   (block
+    (if
+     (i32.ge_u
+      (get_local $2)
+      (i32.const 134217727)
+     )
+     (block
+      (call $~lib/env/abort)
+      (unreachable)
+     )
+    )
+    (i32.store
+     (get_local $0)
+     (tee_local $4
+      (call $~lib/internal/arraybuffer/reallocUnsafe
+       (get_local $4)
+       (i32.shl
+        (get_local $3)
+        (i32.const 3)
+       )
+      )
+     )
+    )
+   )
+  )
+  (i32.store offset=4
+   (get_local $0)
+   (get_local $3)
+  )
+  (i64.store offset=8
+   (i32.add
+    (get_local $4)
+    (i32.shl
+     (get_local $2)
+     (i32.const 3)
+    )
+   )
+   (get_local $1)
+  )
+  (get_local $3)
+ )
+ (func $~lib/map/Map<u64_u64>#keys (; 84 ;) (type $ii) (param $0 i32) (result i32)
+  (local $1 i32)
+  (local $2 i32)
+  (set_local $2
+   (call $~lib/array/Array<u64>#constructor
+    (i32.const 0)
+    (i32.const 0)
+   )
+  )
+  (set_local $0
+   (i32.add
+    (tee_local $1
+     (i32.add
+      (i32.load offset=8
+       (get_local $0)
+      )
+      (i32.const 8)
+     )
+    )
+    (i32.mul
+     (i32.load offset=16
+      (get_local $0)
+     )
+     (i32.const 24)
+    )
+   )
+  )
+  (loop $continue|0
+   (if
+    (i32.ne
+     (get_local $1)
+     (get_local $0)
+    )
+    (block
+     (if
+      (i32.eqz
+       (i32.and
+        (i32.load offset=16
+         (get_local $1)
+        )
+        (i32.const 1)
+       )
+      )
+      (drop
+       (call $~lib/array/Array<u64>#push
+        (get_local $2)
+        (i64.load
+         (get_local $1)
+        )
+       )
+      )
+     )
+     (set_local $1
+      (i32.add
+       (get_local $1)
+       (i32.const 24)
+      )
+     )
+     (br $continue|0)
+    )
+   )
+  )
+  (get_local $2)
+ )
+ (func $~lib/array/Array<u64>#get:length (; 85 ;) (type $ii) (param $0 i32) (result i32)
+  (i32.load offset=4
+   (get_local $0)
+  )
+ )
+ (func $~lib/array/Array<u64>#__get (; 86 ;) (type $iiI) (param $0 i32) (param $1 i32) (result i64)
+  (if (result i64)
+   (i32.lt_u
+    (get_local $1)
+    (i32.shr_u
+     (i32.load
+      (tee_local $0
+       (i32.load
+        (get_local $0)
+       )
+      )
+     )
+     (i32.const 3)
+    )
+   )
+   (i64.load offset=8
+    (i32.add
+     (get_local $0)
+     (i32.shl
+      (get_local $1)
+      (i32.const 3)
+     )
+    )
+   )
+   (unreachable)
+  )
+ )
+ (func $~lib/map/Map<u64_u64>#has (; 87 ;) (type $iIi) (param $0 i32) (param $1 i64) (result i32)
+  (i32.ne
+   (call $~lib/map/Map<u64_u64>#find
+    (get_local $0)
+    (get_local $1)
+    (call $~lib/internal/hash/hash64
+     (get_local $1)
+    )
+   )
+   (i32.const 0)
+  )
+ )
+ (func $start (; 88 ;) (type $v)
+  (local $0 i32)
   (set_global $~lib/allocator/arena/startOffset
    (i32.const 8)
   )
@@ -8004,5 +10483,130 @@
   (call $std/map/test<u64_i32>)
   (call $std/map/test<f32_i32>)
   (call $std/map/test<f64_i32>)
+  (set_global $std/map/map
+   (call $~lib/map/Map<u64_u64>#constructor
+    (i32.const 0)
+   )
+  )
+  (call $~lib/map/Map<u64_u64>#set
+   (get_global $std/map/map)
+   (i64.const 12)
+   (i64.const 12)
+  )
+  (set_global $std/map/keys
+   (call $~lib/map/Map<u64_u64>#keys
+    (get_global $std/map/map)
+   )
+  )
+  (if
+   (i32.ne
+    (call $~lib/array/Array<u64>#get:length
+     (get_global $std/map/keys)
+    )
+    (i32.const 1)
+   )
+   (block
+    (call $~lib/env/abort)
+    (unreachable)
+   )
+  )
+  (block $break|0
+   (loop $repeat|0
+    (br_if $break|0
+     (i32.ge_s
+      (get_local $0)
+      (call $~lib/array/Array<u64>#get:length
+       (get_global $std/map/keys)
+      )
+     )
+    )
+    (if
+     (call $~lib/map/Map<u64_u64>#has
+      (get_global $std/map/map)
+      (call $~lib/array/Array<u64>#__get
+       (get_global $std/map/keys)
+       (get_local $0)
+      )
+     )
+     (block
+      (set_local $0
+       (i32.add
+        (get_local $0)
+        (i32.const 1)
+       )
+      )
+      (br $repeat|0)
+     )
+     (block
+      (call $~lib/env/abort)
+      (unreachable)
+     )
+    )
+   )
+  )
+  (call $~lib/map/Map<u64_u64>#set
+   (get_global $std/map/map)
+   (i64.const 12)
+   (i64.const 23)
+  )
+  (call $~lib/map/Map<u64_u64>#set
+   (get_global $std/map/map)
+   (i64.const 24)
+   (i64.const 44)
+  )
+  (set_global $std/map/keys
+   (call $~lib/map/Map<u64_u64>#keys
+    (get_global $std/map/map)
+   )
+  )
+  (if
+   (i32.ne
+    (call $~lib/array/Array<u64>#get:length
+     (get_global $std/map/keys)
+    )
+    (i32.const 2)
+   )
+   (block
+    (call $~lib/env/abort)
+    (unreachable)
+   )
+  )
+  (block $break|1
+   (set_local $0
+    (i32.const 0)
+   )
+   (loop $repeat|1
+    (br_if $break|1
+     (i32.ge_s
+      (get_local $0)
+      (call $~lib/array/Array<u64>#get:length
+       (get_global $std/map/keys)
+      )
+     )
+    )
+    (if
+     (call $~lib/map/Map<u64_u64>#has
+      (get_global $std/map/map)
+      (call $~lib/array/Array<u64>#__get
+       (get_global $std/map/keys)
+       (get_local $0)
+      )
+     )
+     (block
+      (set_local $0
+       (i32.add
+        (get_local $0)
+        (i32.const 1)
+       )
+      )
+      (br $repeat|1)
+     )
+     (block
+      (call $~lib/env/abort)
+      (unreachable)
+     )
+    )
+   )
+  )
  )
 )
