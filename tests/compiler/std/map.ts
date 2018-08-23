@@ -68,6 +68,7 @@ for (let index = 0; index < keys.length; index ++) {
 }
 
 map.set(12, 23);
+assert(map.get(12) == 23);
 map.set(24,44);
 
 keys = map.keys();

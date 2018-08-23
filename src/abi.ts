@@ -30,7 +30,9 @@ import {
   ParameterNode,
   Expression,
   VariableLikeDeclarationStatement,
-  StringLiteralExpression
+  StringLiteralExpression,
+  ClassDeclaration,
+  MethodDeclaration
 } from "./ast";
 
 class Struct {
@@ -90,13 +92,14 @@ export class AbiHelper {
 class Table {
   name: string;
   type: string;
-  index_type: string = "int64";
+  index_type: string = "i64";
   keys_names: string[] = ["currency"];
   keys_types: string[] = ["uint64"];
 
-  constructor(name: string, type: string) {
+  constructor(name: string, type: string, indexType:string = "i64") {
     this.name = name;
     this.type = type;
+    this.index_type = indexType; 
   }
 }
 
@@ -271,18 +274,39 @@ export class Abi {
         let type = decorator.arguments[0].range.toString();
         let name = this.retrieveArgumentText(decorator.arguments[1]);
 
+        // let classPrototype:ClassPrototype = <ClassPrototype>this.resolveExpressionToElement(decorator.arguments[0]);
+        // let indexType = this.getClassPrimaryKey(classPrototype.declaration);
         this.abiInfo.tables.push(new Table(name, type));
-
         this.resolveExpressionToStruct(decorator.arguments[0]);
       }
     }
+  }
+
+  getClassPrimaryKey(classDeclaration: ClassDeclaration ): string {
+
+    if (!classDeclaration.members) {
+      throw new Error(`Class:${classDeclaration.name} not have primary key.`);
+    }
+    const primaryMethodName = "primaryKey";
+    for (let member of classDeclaration.members) {
+      if (member.kind == NodeKind.METHODDECLARATION && member.name.range.toString() == primaryMethodName) {
+        let method:MethodDeclaration = <MethodDeclaration>member;
+        let returnType =  method.signature.returnType; 
+        if (returnType.isNullable) {
+          throw new Error(`The primaryKey method of class:${classDeclaration.name} must return value.`);
+        } else {
+          return this.findScriptOriginalTypeName(returnType.range.toString());
+        }
+      }
+    }
+    throw new Error(`Class:${classDeclaration.name} not have primary key.`);
   }
 
   retrieveArgumentText(expr: Expression): string {
     var argu: string = expr.range.toString();
 
     if (this.isWrapWithQutation(argu)) {
-      return argu.substring(1, argu.length - 2);
+      return argu.substring(1, argu.length - 1);
     }
 
     var internalName = NodeUtil.getInternalName(expr);
@@ -296,6 +320,20 @@ export class Abi {
       }
     }
     throw new Error(`Cann't find constant ${internalName}`);
+  }
+
+
+
+  resolveExpressionToElement(expr: Expression): Element {
+
+    var internalPath = expr.range.source.internalPath;
+    var name = expr.range.toString();
+    var internalName = `${internalPath}/${name}`;
+    var element = this.program.elementsLookup.get(internalName);
+    if (!element || element.kind != ElementKind.CLASS_PROTOTYPE) {
+      throw new Error(`Element ${internalName} not found, pleasure make sure that class ${internalName} was existed.`);
+    }
+    return element;
   }
 
   /**
