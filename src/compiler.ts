@@ -2375,6 +2375,7 @@ export class Compiler extends DiagnosticEmitter {
     this.currentType = contextualType;
 
     var expr: ExpressionRef;
+    try {
     switch (expression.kind) {
       case NodeKind.ASSERTION: {
         expr = this.compileAssertionExpression(<AssertionExpression>expression, contextualType);
@@ -2456,6 +2457,11 @@ export class Compiler extends DiagnosticEmitter {
         );
         expr = this.module.createUnreachable();
       }
+    }
+    } catch (exception) {
+      let normalizePath = expression.range.source.normalizedPath;
+      console.log(`Compile expression failed. The normalizePath: ${normalizePath} around line: ${expression.range.line}.`);
+      throw exception;
     }
 
     var currentType = this.currentType;
