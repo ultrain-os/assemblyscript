@@ -31,6 +31,7 @@ var assemblyscript, isDev = false;
 (() => {
   try { // `asc` on the command line
     assemblyscript = require("../dist/assemblyscript.js");
+    throw new Error();
   } catch (e) {
     try { // `asc` on the command line without dist files
       require("ts-node").register({ project: path.join(__dirname, "..", "src", "tsconfig.json") });
@@ -999,12 +1000,7 @@ function insertSerializeMethodText(sourcePath, sourceText) {
     let data = sourceText.split(EOL);
     // console.log(`data.length :${data.length}`);
     for (let serialize of serializeArray) {
-      data.splice(serialize.line, 0, serialize.toSerialize());
-      // data.splice(serialize.line, 0, EOL);
-      data.splice(serialize.line, 0, serialize.toDeserialize());
-      // data.splice(serialize.line, 0, EOL);
-      data.splice(serialize.line, 0, serialize.toPrimarykey());
-      // console.log( `${serialize.line}`);
+      data.splice(serialize.line, 0, serialize.getInsertData());
     }
     console.log(`return sourceText: ${data.join(EOL)}`);
     return data.join(EOL);

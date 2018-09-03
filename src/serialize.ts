@@ -25,6 +25,7 @@ import {
     CommonTypeNode,
 } from "./ast";
 import { AbiHelper } from "./abi";
+import { INSTANCE_DELIMITER } from "./common";
 
 export enum VarialbeKind {
     BOOL, // boolean and bool
@@ -359,7 +360,33 @@ class SerializeGenerator {
     }
 }
 
-export class SerializePoint {
+export class InsertPoint {
+
+    range: Range;
+    insertData: string;
+
+    get line(): i32 {
+        return this.range.line -1;
+    }
+    get normalizedPath(): string {
+        return this.range.source.normalizedPath;
+    }
+
+    get classpath(): string {
+        return this.range.source.normalizedPath + this.range.toString();
+    }
+
+    getInsertData(): string {
+        return this.insertData;
+    }
+
+    constructor(range: Range, insertData:string = ""){
+        this.range = range;
+        this.insertData = insertData;
+    }
+}
+
+export class SerializePoint extends InsertPoint {
 
     private serialize: Array<string> = new Array<string>();
 
@@ -373,21 +400,8 @@ export class SerializePoint {
 
     needPrimaryKey: bool;
 
-    range: Range;
-
-    get line(): i32 {
-        return this.range.line;
-    }
-    get normalizedPath(): string {
-        return this.range.source.normalizedPath;
-    }
-
-    get classpath(): string {
-        return this.range.source.normalizedPath + this.range.toString();
-    }
-
     constructor(range: Range) {
-        this.range = range;
+        super(range);
         this.serialize.push(`    serialize(ds: DataStream): void {`);
         this.deserialize.push(`    deserialize(ds: DataStream): void {`);
         this.primaryKey.push(`     primaryKey(): id_type {`);
@@ -403,23 +417,22 @@ export class SerializePoint {
         this.deserialize.push(expr);
     }
 
-    toSerialize(): string {
-        if (!this.needSerialize) {
-            return "";
+    getInsertData(): string {
+        var insertData = [];
+
+        if (this.needDeserialize){
+            insertData.push(this.deserialize.join("\n"));
         }
-        return this.serialize.join("\n");
+        if (this.needSerialize) {
+            insertData.push(this.serialize.join("\n"));
+        }
+        if (this.needPrimaryKey) {
+            insertData.push(this.primaryKey.join("\n"))
+        }
+
+        return insertData.join("\n");
     }
 
-    toDeserialize(): string {
-        if (!this.needDeserialize) {
-            return "";
-        }
-        return this.deserialize.join("\n");
-    }
-
-    toPrimarykey(): string {
-        return  this.needPrimaryKey ? this.primaryKey.join("\n") : "";
-    }
 }
 
 export class SerializeHelper {
@@ -430,7 +443,7 @@ export class SerializeHelper {
 
     serializeClassname: Set<string> = new Set<string>();
 
-    fileSerializeLookup: Map<string, Array<SerializePoint>> = new Map<string, Array<SerializePoint>>();
+    fileSerializeLookup: Map<string, Array<InsertPoint>> = new Map<string, Array<InsertPoint>>();
 
     constructor(program: Program) {
         this.program = program;
@@ -464,15 +477,15 @@ export class SerializeHelper {
      * Add the serialize point
      * @param serialize The serialize point
      */
-    addSerializePoint(serialize: SerializePoint): void {
+    addSerializePoint(serialize: InsertPoint): void {
 
         var normalizedPath = serialize.normalizedPath;
-        var fileSerialize: Array<SerializePoint> | null = this.fileSerializeLookup.get(normalizedPath);
+        var fileSerialize: Array<InsertPoint> | null = this.fileSerializeLookup.get(normalizedPath);
 
         if (fileSerialize) {
             fileSerialize.push(serialize);
         } else {
-            fileSerialize = new Array<SerializePoint>();
+            fileSerialize = new Array<InsertPoint>();
             fileSerialize.push(serialize);
             this.fileSerializeLookup.set(normalizedPath, fileSerialize);
         }
@@ -484,7 +497,7 @@ export class SerializeHelper {
      */
     sortSerializePoints(): void {
         for (let [_, array] of this.fileSerializeLookup) {
-            let compartor = (a: SerializePoint, b: SerializePoint): i32 => {
+            let compartor = (a: InsertPoint, b: InsertPoint): i32 => {
                 return (b.line - a.line);
             };
             array.sort(compartor);

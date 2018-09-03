@@ -1,6 +1,6 @@
 import {
   SerializeHelper,
-  SerializePoint,
+  InsertPoint,
   VariableDeclaration,
   VarialbeKind,
   NodeUtil
@@ -34,6 +34,7 @@ import {
   ClassDeclaration,
   MethodDeclaration
 } from "./ast";
+import { Wrapper } from "./wrapper";
 
 class Struct {
 
@@ -125,7 +126,7 @@ export class Abi {
 
   elementLookup: Map<string, Element> = new Map();
 
-  fileSerializeLookup: Map<string, Array<SerializePoint>> = new Map<string, Array<SerializePoint>>();
+  fileSerializeLookup: Map<string, Array<InsertPoint>> = new Map<string, Array<InsertPoint>>();
 
   constructor(program: Program) {
 
@@ -547,7 +548,14 @@ export class Abi {
     // this.findDBManager();
     // this.printClassProtoTypeInfo();
 
+
     var serializeHelper: SerializeHelper = new SerializeHelper(this.program);
+    var wrapper:Wrapper = new Wrapper(this.program);
+
+    for (let index = 0; index < wrapper.insertPoints.length; index ++) {
+      serializeHelper.addSerializePoint(wrapper.insertPoints[index]);
+    }
+
     serializeHelper.resolve();
     this.fileSerializeLookup = serializeHelper.fileSerializeLookup;
 
