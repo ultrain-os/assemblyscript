@@ -401,7 +401,7 @@ export class SerializePoint extends InsertPoint {
     needPrimaryKey: bool;
 
     constructor(range: Range) {
-        super(range);
+        super(range.atEnd);
         this.serialize.push(`    serialize(ds: DataStream): void {`);
         this.deserialize.push(`    deserialize(ds: DataStream): void {`);
         this.primaryKey.push(`     primaryKey(): id_type {`);
@@ -451,7 +451,7 @@ export class SerializeHelper {
 
     static hasImplSerialize(classDeclaration: ClassDeclaration): bool {
         var classDeclareStr = classDeclaration.range.toString();
-        return classDeclareStr.includes(this.SERIALIZE_INTERFANCE);
+        return classDeclareStr.includes(this.SERIALIZE_INTERFANCE) && classDeclareStr.includes("implements");
     }
 
     resolve(): void {
