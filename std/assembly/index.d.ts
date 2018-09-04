@@ -687,10 +687,13 @@ declare function external(target: any, propertyKey: any, descriptor: any): any;
 
 // Decorators for the smart contract
 /** Annotates a method or function as contract */
-declare function action(target: any, propertyKey: any, descriptor: any): any;
+declare function action(target: any, propertyKey: any, descriptor: any): void;
 
 /** Annotates a class as database information */
-declare function database(target: Function, propertyKey: any, descriptor: any): any;
+declare function database(target: Function, propertyKey: any, descriptor: any): void;
+
+/** Annotates for the serializable object */
+declare function ignore(target: Function, propertyKey: any, descriptor: any): void;
 
 // declare type token_name = u64;
 // declare type region_id = u16;

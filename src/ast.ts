@@ -1124,6 +1124,7 @@ export enum DecoratorKind {
   INLINE,
   ACTION,
   DATABASE,
+  IGNORE,
   EXTERNAL,
   BUILTIN
 }
@@ -1156,6 +1157,7 @@ export function decoratorNameToKind(name: Expression): DecoratorKind {
       }
       case CharCode.i: {
         if (nameStr == "inline") return DecoratorKind.INLINE;
+        if (nameStr == "ignore") return DecoratorKind.IGNORE;
         break;
       }
       case CharCode.o: {

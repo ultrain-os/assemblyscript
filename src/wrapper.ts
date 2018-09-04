@@ -49,7 +49,7 @@ export class Wrapper {
             let _superCall = `        this._${superCall};`;
             if (stmt.kind == NodeKind.BLOCK) {
                 let blockStmt = <BlockStatement>stmt;
-                this.insertPoints.push(new InsertPoint(blockStmt.statements[0].range,_superCall));
+                this.insertPoints.push(new InsertPoint(blockStmt.statements[0].range.atEnd, _superCall));
             }
         }
 
@@ -61,7 +61,7 @@ export class Wrapper {
          var signature  = baseFunctionDeclaration.signature.range.toString();
          var method =  this.createSuperCall(signature, content);
         //  console.log(classPrototype.declaration.range.toString()  + "line" + classPrototype.declaration.range.line);
-         this.insertPoints.push(new InsertPoint(classPrototype.declaration.range, method));
+         this.insertPoints.push(new InsertPoint(classPrototype.declaration.range.atEnd, method));
         }
     }
     createSuperCall(signature: string, body: string): string {

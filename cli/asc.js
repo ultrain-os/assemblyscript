@@ -30,7 +30,7 @@ if (process.removeAllListeners) process.removeAllListeners("uncaughtException");
 var assemblyscript, isDev = false;
 (() => {
   try { // `asc` on the command line
-    assemblyscript = require("../dist/assemblyscript.js");
+    assemblyscript = require("../dist/assemblyscript");
     throw new Error();
   } catch (e) {
     try { // `asc` on the command line without dist files
@@ -309,7 +309,11 @@ exports.main = function main(argv, options, callback, isDispatch) {
     stats.parseCount++;
     stats.parseTime += measure(() => {
 
+      for (let key in exports.libraryFiles) {
+        console.log(`${key}`);
+      }      
       // if <pre> isDispathch == true </pre>, reproduce the code 
+      console.log(`sourcePath 001:${sourcePath}`);
       if (!isDispatch) {
         sourceText = exports.resolveSourceText(sourceText, null, exports.libraryFiles, null);
         parser = assemblyscript.parseFile(sourceText, sourcePath, true, parser);
@@ -360,6 +364,9 @@ exports.main = function main(argv, options, callback, isDispatch) {
         const plainName = sourcePath;
         const indexName = sourcePath + "/index";
         sourceText = readFile(path.join(baseDir, plainName + ".ts"));
+        console.log(`sourcePath ${sourcePath}`);
+        sourceText = exports.preParseFile(sourcePath, sourceText);
+
         if (sourceText !== null) {
           sourcePath = plainName + ".ts";
         } else {
@@ -397,12 +404,10 @@ exports.main = function main(argv, options, callback, isDispatch) {
       }
       stats.parseCount++;
       stats.parseTime += measure(() => {
-        // console.log(`source Text: ${sourceText}`);
-
         if (isDispatch) {
-          // console.log(`SourcePath :${sourcePath}`);
           sourceText = exports.insertSerializeMethodText(sourcePath, sourceText);
         }
+        console.log(`source path: ${sourcePath}`);
         assemblyscript.parseFile(sourceText, sourcePath, false, parser);
       });
     }
@@ -961,12 +966,14 @@ exports.tscOptions = {
 
 function resolveSourceText(sourceText, applyText, library, abiObj, filename) {
 
+  
   let memoryLib = "allocate/arena";
   let resultTextBuffer = new Array();
   if (library[memoryLib] == undefined) {
     resultTextBuffer.push(`import "allocator/arena";`);
   }
 
+  // add abi object
   if (abiObj) {
 
     let importedLibrary = ["NEX", "NameEx"];
@@ -993,6 +1000,12 @@ function resolveSourceText(sourceText, applyText, library, abiObj, filename) {
 exports.resolveSourceText = resolveSourceText;
 
 function insertSerializeMethodText(sourcePath, sourceText) {
+
+  if (!exports.abiObj) {
+    console.log(colorsUtil.stderr.yellow("WARN: ") + "unknown abi information" + EOL);
+    return "";
+  }
+
   let serializeLookup = exports.abiObj.fileSerializeLookup;
   if (serializeLookup.has(sourcePath)) {
 
@@ -1001,8 +1014,10 @@ function insertSerializeMethodText(sourcePath, sourceText) {
     // console.log(`data.length :${data.length}`);
     for (let serialize of serializeArray) {
       data.splice(serialize.line, 0, serialize.getInsertData());
+      console.log(`insertSerializeMethodText: ${sourcePath}, data: ${serialize.getInsertData()}`);
     }
-    console.log(`return sourceText: ${data.join(EOL)}`);
+    // console.log(`return sourceText: ${data.join(EOL)}`);
+    // console.log(`return sourcePath: ${sourcePath}`);
     return data.join(EOL);
   } else {
     return sourceText;
@@ -1010,3 +1025,17 @@ function insertSerializeMethodText(sourcePath, sourceText) {
 }
 
 exports.insertSerializeMethodText = insertSerializeMethodText;
+
+function preParseFile(sourcePath, sourceText) {
+
+  console.log(sourcePath);
+  if (sourcePath.indexOf("/ISerializable.ts") != -1) {
+    return path.read("./contract/serializable.ts");
+  }
+  if (sourcePath.indexOf("/dbmanager.ts") != -1) {
+    return path.read("./contract/dbmanager.ts")
+  }
+  return sourceText;
+}
+
+exports.preParseFile = preParseFile;

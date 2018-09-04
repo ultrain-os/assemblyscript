@@ -13,7 +13,8 @@ import {
     ClassPrototype,
     FunctionPrototype,
     Program,
-    FieldPrototype
+    FieldPrototype,
+    InterfacePrototype
 } from "./program";
 
 import {
@@ -23,6 +24,8 @@ import {
     NodeKind,
     Node,
     CommonTypeNode,
+    InterfaceDeclaration,
+    DecoratorKind,
 } from "./ast";
 import { AbiHelper } from "./abi";
 import { INSTANCE_DELIMITER } from "./common";
@@ -220,6 +223,7 @@ class SerializeGenerator {
         var internalPath = node.range.source.internalPath;
         var name = node.range.toString();
         var internalName = `${internalPath}/${name}`;
+        console.log(`getInternalName: ${internalName}`);
         return internalName;
     }
 
@@ -252,6 +256,7 @@ class SerializeGenerator {
 
         if (element && element.kind == ElementKind.CLASS_PROTOTYPE) {
             let hasImpl = SerializeHelper.hasImplSerialize((<ClassPrototype>element).declaration);
+            console.log(`${internalName} has imple serialize ${hasImpl}`);
             if (!hasImpl) {
                 throw new Error(`Class ${internalName} not implements the interface ${SerializeHelper.SERIALIZE_INTERFANCE}`);
             }
@@ -278,8 +283,19 @@ class SerializeGenerator {
                 let fieldDeclaration: FieldDeclaration = fieldPrototype.declaration;
                 let commonType: CommonTypeNode | null = fieldDeclaration.type;
 
-                if (commonType && commonType.kind == NodeKind.TYPE) {
+                let hasIgnoreDecorator = false;
+                let decorators = fieldDeclaration.decorators;
 
+                if (decorators) {
+                    for (let decorator of decorators) {
+                        if (decorator.decoratorKind == DecoratorKind.IGNORE) {
+                            hasIgnoreDecorator = true;
+                            break;
+                        }
+                    }
+                }
+               
+                if (commonType && commonType.kind == NodeKind.TYPE && hasIgnoreDecorator == false) {
                     let typeNode = <TypeNode>commonType;
                     if (this.needImplDeSerialize && this.checkFieldImplSerialize(commonType)) {
                         serializePoint.addSerializeExpr(this.serializeField(fieldName, typeNode));
@@ -310,7 +326,7 @@ class SerializeGenerator {
             } else if (paramDeclaration.kind == VarialbeKind.BOOL) {
                 body.push(`      let ${fieldName} = ds.readVector<u8>();`);
             } else if (paramDeclaration.kind == VarialbeKind.STRING) {
-
+                body.push(`      let ${fieldName} = ds.readStringVector();`);
             } else {
                 body.push(`      let ${fieldName} = ds.readComplexVector<${paramDeclaration.declareType}>();`);
             }
@@ -432,7 +448,6 @@ export class SerializePoint extends InsertPoint {
 
         return insertData.join("\n");
     }
-
 }
 
 export class SerializeHelper {
@@ -463,12 +478,24 @@ export class SerializeHelper {
                     let generator: SerializeGenerator = new SerializeGenerator(<ClassPrototype>element);
                     let serializePoint: SerializePoint = generator.getSerializePoints();
 
+                    // console.log(`SerializeHelper resolve: ${classDeclaration.name.range.toString()}`);
+
                     if (!this.serializeClassname.has(serializePoint.classpath)) {
+                        console.log(`SerializeHelper resolve: ${classDeclaration.name.range.toString()}`);
                         this.addSerializePoint(serializePoint);
-                        this.serializeClassname.add(serializePoint.classpath);
+                        // this.serializeClassname.add(serializePoint.classpath);
                     }
                 }
             }
+
+            // if (element && element.kind == ElementKind.INTERFACE_PROTOTYPE) {
+            //     var interfaceDeclaration: InterfaceDeclaration  = (<InterfacePrototype>element).declaration;
+            //     var interfaceName = interfaceDeclaration.name.range.toString();
+            //     if (interfaceName == SerializeHelper.SERIALIZE_INTERFANCE) {
+            //         let end = interfaceDeclaration.range.atEnd();
+            //         let serializeInsert = new InsertPoint(end, );
+            //     }
+            // }
         }
         this.sortSerializePoints();
     }
