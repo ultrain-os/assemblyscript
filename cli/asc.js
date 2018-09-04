@@ -318,6 +318,7 @@ exports.main = function main(argv, options, callback, isDispatch) {
         sourceText = exports.resolveSourceText(sourceText, null, exports.libraryFiles, null);
         parser = assemblyscript.parseFile(sourceText, sourcePath, true, parser);
       } else {
+        sourceText = exports.preParseFile(sourcePath, sourceText);
         sourceText = exports.insertSerializeMethodText(sourcePath, sourceText);
         let elementPath = sourcePath.split(".").slice(0,-1).join(".");
         sourceText = exports.resolveSourceText(sourceText, exports.applyText, exports.libraryFiles, exports.abiObj, elementPath);
@@ -365,7 +366,9 @@ exports.main = function main(argv, options, callback, isDispatch) {
         const indexName = sourcePath + "/index";
         sourceText = readFile(path.join(baseDir, plainName + ".ts"));
         console.log(`sourcePath ${sourcePath}`);
-        sourceText = exports.preParseFile(sourcePath, sourceText);
+
+        // sourceText = exports.preParseFile(sourcePath, sourceText);
+
 
         if (sourceText !== null) {
           sourcePath = plainName + ".ts";
@@ -402,9 +405,13 @@ exports.main = function main(argv, options, callback, isDispatch) {
       if (sourceText == null) {
         return callback(Error("Import file '" + sourcePath + ".ts' not found."));
       }
+      // sourceText = exports.preParseFile(sourcePath, sourceText);
+
       stats.parseCount++;
       stats.parseTime += measure(() => {
         if (isDispatch) {
+          sourceText = exports.preParseFile(sourcePath, sourceText);
+
           sourceText = exports.insertSerializeMethodText(sourcePath, sourceText);
         }
         console.log(`source path: ${sourcePath}`);
@@ -1007,6 +1014,12 @@ function insertSerializeMethodText(sourcePath, sourceText) {
   }
 
   let serializeLookup = exports.abiObj.fileSerializeLookup;
+
+  for (let key of serializeLookup){
+    console.log(`insert map key: ${key}`);
+  }
+  console.log(`insertSerializeMethodText sourcePath: ${sourcePath}`);
+
   if (serializeLookup.has(sourcePath)) {
 
     let serializeArray = serializeLookup.get(sourcePath);
@@ -1028,12 +1041,22 @@ exports.insertSerializeMethodText = insertSerializeMethodText;
 
 function preParseFile(sourcePath, sourceText) {
 
-  console.log(sourcePath);
-  if (sourcePath.indexOf("/ISerializable.ts") != -1) {
-    return path.read("./contract/serializable.ts");
+  console.log(`preParseFile: ${sourcePath}`);
+  if (sourcePath.indexOf("/ISerializable") != -1) {
+    console.log("path" + path.join( __dirname, "./contract/dbmanager.ts"));
+
+    return fs.readFileSync(path.join(__dirname, "./contract/serializable.ts"), { encoding: "utf8" });
   }
-  if (sourcePath.indexOf("/dbmanager.ts") != -1) {
-    return path.read("./contract/dbmanager.ts")
+  if (sourcePath.indexOf("/dbmanager") != -1) {
+    console.log("path" + path.join( __dirname, "./contract/dbmanager.ts"));
+
+    let res = fs.readFileSync(path.join( __dirname, "./contract/dbmanager.ts"), { encoding: "utf8" });
+    // console.log("0001" + res);
+    return res;
+  }
+
+  if (sourcePath.indexOf("/datastream") != -1) {
+    return fs.readFileSync(path.join(__dirname, "./contract/datastream.ts"), { encoding: "utf8" });
   }
   return sourceText;
 }

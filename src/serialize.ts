@@ -481,21 +481,12 @@ export class SerializeHelper {
                     // console.log(`SerializeHelper resolve: ${classDeclaration.name.range.toString()}`);
 
                     if (!this.serializeClassname.has(serializePoint.classpath)) {
-                        console.log(`SerializeHelper resolve: ${classDeclaration.name.range.toString()}`);
+                        console.log(`SerializeHelper resolve: ${classDeclaration.name.range.toString()}. ${serializePoint.getInsertData()}`);
                         this.addSerializePoint(serializePoint);
-                        // this.serializeClassname.add(serializePoint.classpath);
+                        this.serializeClassname.add(serializePoint.classpath);
                     }
                 }
             }
-
-            // if (element && element.kind == ElementKind.INTERFACE_PROTOTYPE) {
-            //     var interfaceDeclaration: InterfaceDeclaration  = (<InterfacePrototype>element).declaration;
-            //     var interfaceName = interfaceDeclaration.name.range.toString();
-            //     if (interfaceName == SerializeHelper.SERIALIZE_INTERFANCE) {
-            //         let end = interfaceDeclaration.range.atEnd();
-            //         let serializeInsert = new InsertPoint(end, );
-            //     }
-            // }
         }
         this.sortSerializePoints();
     }
@@ -508,6 +499,8 @@ export class SerializeHelper {
 
         var normalizedPath = serialize.normalizedPath;
         var fileSerialize: Array<InsertPoint> | null = this.fileSerializeLookup.get(normalizedPath);
+
+        console.log(`addSerializePoint normalizedPath ${normalizedPath}`);
 
         if (fileSerialize) {
             fileSerialize.push(serialize);

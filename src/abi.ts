@@ -418,7 +418,7 @@ export class Abi {
       body.push(`    let ${contractVarName} = new ${contractName}(receiver);`);
       body.push(`    let ds = ${contractVarName}.getDataStream();`);
       body.push(`    let action = new NameEx(actH, actL);`);
-      body.push(`    ${contractVarName}.onInit();`);
+      // body.push(`    ${contractVarName}.onInit();`);
 
 
       for (let instance of clzPrototype.instanceMembers.values()) {
@@ -474,7 +474,7 @@ export class Abi {
           body.push("    }");
         }
       }
-      body.push(`    ${contractVarName}.onStop();`);
+      // body.push(`    ${contractVarName}.onStop();`);
       body.push("  }");
 
       if (hasActionDecorator) {
