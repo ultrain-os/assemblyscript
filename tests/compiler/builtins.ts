@@ -1,3 +1,7 @@
+var a:bool = false;
+assert(a instanceof bool);
+
+
 var b: bool;
 
 // type checks
@@ -7,9 +11,24 @@ assert(!isInteger<f32>());
 assert(isFloat<f32>());
 assert(!isFloat<i32>());
 assert(isReference<string>());
+assert(isReference<string[]>());
 assert(!isReference<usize>());
 assert(isArray<i32[]>());
+assert(isArray<string[]>());
 assert(!isArray<usize>());
+
+
+assert(isInteger<bool>() && sizeof<bool>() == 1);
+
+assert(!isReference<account_name>());
+assert(isString<string>());
+assert(!isString<Map<string,string>>());
+assert(isReference<Map<string,string>>());
+
+assert(isInteger<u64>());
+assert(!isInteger<u64[]>());
+assert(isReference<u64[]>());
+
 
 assert(isInteger(<i32>1));
 assert(!isInteger(<f32>1));
@@ -21,6 +40,20 @@ assert(isString("1"));
 assert(!isString(1));
 assert(isArray(changetype<i32[]>(null)));
 assert(!isArray(changetype<usize>(null)));
+
+function checkGeneric<T>(): void {
+
+  if (isReference<T>()) {
+    assert(isReference<T>());
+  } else if (isArray<T>()) {
+    assert(isArray<T>());
+  } 
+  // assert(false);
+}
+
+checkGeneric<string>();
+checkGeneric<i32[]>();
+
 
 // evaluation
 

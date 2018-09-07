@@ -13,7 +13,8 @@ if (/\busc$/.test(process.argv[1])) {
   	usc.main(argv);
   	process.exitCode = usc.main(argv, null, null,true);
   } else {
-  	process.exitCode = usc.main(argv);
+    process.exitCode = usc.main(argv);
+    process.exitCode = usc.main(argv, null, null,false);
   }
   
 }

@@ -520,11 +520,14 @@ interface Number {}
 interface Object {}
 interface RegExp {}
 
-declare class Map<K,V> {
+declare class Map<K,V> implements Serializable{
   readonly size: i32;
   has(key: K): bool;
   set(key: K, value: V): void;
   keys(): K[];
+  values(): V[];
+  serialize(ds: DataStream): void;
+  deserialize(ds: DataStream): void;
   get(key: K): V;
   delete(key: K): bool;
   clear(): void;
@@ -695,20 +698,28 @@ declare function database(target: Function, propertyKey: any, descriptor: any): 
 /** Annotates for the serializable object */
 declare function ignore(target: Function, propertyKey: any, descriptor: any): void;
 
-// declare type token_name = u64;
-// declare type region_id = u16;
-// declare type id_type = u64;
+/** Object serializable interface */
+interface Serializable { }
 
-// declare type asset_symbol = u64;
-// declare type share_type = i16;
+declare class DataStream {
 
-// declare type symbol_name = u64;
-// declare type account_name = u64;
-// declare type permission_name = u64;
-// declare type table_name = u64;
-// declare type time = u32;
-// declare type scope_name = u64;
-// // export  type action_name = NameEx;
-// declare type weight_type = u16;
+  static measure<T extends Serializable>(obj: T): u32;
 
+  constructor(buffer: u32, len: u32);
+  size(): u32;
+  readVarint32(): u32;
+  writeVarint32(value: u32): void;
+  write<T>(value: T): void;
+  read<T>(): T;
+  toArray<T>(): T[];
+  readStringVector():string[];
+  writeStringVector(arr: string[]):void;
+  readVector<T>(): T[];
+  writeVector<T>(arr: T[]): void;
+  readComplexVector<T extends Serializable>(): T[];
+  writeComplexVector<T extends Serializable>(arr: T[]): void;
+  readString(): string;
+  writeString(str: string): void;
+  writeDouble(d: f64): void;
+}
 

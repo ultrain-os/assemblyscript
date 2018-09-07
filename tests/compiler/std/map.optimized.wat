@@ -24,6 +24,7 @@
  (global $~lib/allocator/arena/offset (mut i32) (i32.const 0))
  (global $std/map/map (mut i32) (i32.const 0))
  (global $std/map/keys (mut i32) (i32.const 0))
+ (global $std/map/values (mut i32) (i32.const 0))
  (memory $0 1)
  (data (i32.const 8) "\13\00\00\00~\00l\00i\00b\00/\00a\00r\00r\00a\00y\00b\00u\00f\00f\00e\00r\00.\00t\00s")
  (data (i32.const 56) "\1c\00\00\00~\00l\00i\00b\00/\00i\00n\00t\00e\00r\00n\00a\00l\00/\00a\00r\00r\00a\00y\00b\00u\00f\00f\00e\00r\00.\00t\00s")
@@ -10411,65 +10412,71 @@
   )
   (get_local $2)
  )
- (func $~lib/array/Array<u64>#__get (; 83 ;) (; has Stack IR ;) (type $iiI) (param $0 i32) (param $1 i32) (result i64)
-  (if (result i64)
-   (i32.lt_u
-    (get_local $1)
-    (i32.shr_u
-     (i32.load
-      (tee_local $0
-       (i32.load
-        (get_local $0)
+ (func $~lib/map/Map<u64_u64>#values (; 83 ;) (; has Stack IR ;) (type $ii) (param $0 i32) (result i32)
+  (local $1 i32)
+  (local $2 i32)
+  (set_local $2
+   (call $~lib/array/Array<u64>#constructor
+    (i32.const 0)
+    (i32.const 0)
+   )
+  )
+  (set_local $0
+   (i32.add
+    (tee_local $1
+     (i32.add
+      (i32.load offset=8
+       (get_local $0)
+      )
+      (i32.const 8)
+     )
+    )
+    (i32.mul
+     (i32.load offset=16
+      (get_local $0)
+     )
+     (i32.const 24)
+    )
+   )
+  )
+  (loop $continue|0
+   (if
+    (i32.ne
+     (get_local $1)
+     (get_local $0)
+    )
+    (block
+     (if
+      (i32.eqz
+       (i32.and
+        (i32.load offset=16
+         (get_local $1)
+        )
+        (i32.const 1)
+       )
+      )
+      (drop
+       (call $~lib/array/Array<u64>#push
+        (get_local $2)
+        (i64.load offset=8
+         (get_local $1)
+        )
        )
       )
      )
-     (i32.const 3)
-    )
-   )
-   (i64.load offset=8
-    (i32.add
-     (get_local $0)
-     (i32.shl
-      (get_local $1)
-      (i32.const 3)
-     )
-    )
-   )
-   (unreachable)
-  )
- )
- (func $~lib/map/Map<u64_u64>#has (; 84 ;) (; has Stack IR ;) (type $iIi) (param $0 i32) (param $1 i64) (result i32)
-  (i32.ne
-   (call $~lib/map/Map<u64_u64>#find
-    (get_local $0)
-    (get_local $1)
-    (call $~lib/internal/hash/hash64
-     (get_local $1)
-    )
-   )
-   (i32.const 0)
-  )
- )
- (func $~lib/map/Map<u64_u64>#get (; 85 ;) (; has Stack IR ;) (type $iII) (param $0 i32) (param $1 i64) (result i64)
-  (tee_local $1
-   (if (result i64)
-    (tee_local $0
-     (call $~lib/map/Map<u64_u64>#find
-      (get_local $0)
-      (get_local $1)
-      (call $~lib/internal/hash/hash64
+     (set_local $1
+      (i32.add
        (get_local $1)
+       (i32.const 24)
       )
      )
+     (br $continue|0)
     )
-    (i64.load offset=8
-     (get_local $0)
-    )
-    (unreachable)
    )
   )
+  (get_local $2)
  )
- (func $~lib/array/Array<u64>#includes (; 86 ;) (; has Stack IR ;) (type $iIii) (param $0 i32) (param $1 i64) (param $2 i32) (result i32)
+ (func $~lib/array/Array<u64>#includes (; 84 ;) (; has Stack IR ;) (type $iIii) (param $0 i32) (param $1 i64) (param $2 i32) (result i32)
   (local $3 i32)
   (local $4 i32)
   (if
@@ -10559,7 +10566,65 @@
   )
   (i32.const 0)
  )
- (func $start (; 87 ;) (; has Stack IR ;) (type $v)
+ (func $~lib/array/Array<u64>#__get (; 85 ;) (; has Stack IR ;) (type $iiI) (param $0 i32) (param $1 i32) (result i64)
+  (if (result i64)
+   (i32.lt_u
+    (get_local $1)
+    (i32.shr_u
+     (i32.load
+      (tee_local $0
+       (i32.load
+        (get_local $0)
+       )
+      )
+     )
+     (i32.const 3)
+    )
+   )
+   (i64.load offset=8
+    (i32.add
+     (get_local $0)
+     (i32.shl
+      (get_local $1)
+      (i32.const 3)
+     )
+    )
+   )
+   (unreachable)
+  )
+ )
+ (func $~lib/map/Map<u64_u64>#has (; 86 ;) (; has Stack IR ;) (type $iIi) (param $0 i32) (param $1 i64) (result i32)
+  (i32.ne
+   (call $~lib/map/Map<u64_u64>#find
+    (get_local $0)
+    (get_local $1)
+    (call $~lib/internal/hash/hash64
+     (get_local $1)
+    )
+   )
+   (i32.const 0)
+  )
+ )
+ (func $~lib/map/Map<u64_u64>#get (; 87 ;) (; has Stack IR ;) (type $iII) (param $0 i32) (param $1 i64) (result i64)
+  (tee_local $1
+   (if (result i64)
+    (tee_local $0
+     (call $~lib/map/Map<u64_u64>#find
+      (get_local $0)
+      (get_local $1)
+      (call $~lib/internal/hash/hash64
+       (get_local $1)
+      )
+     )
+    )
+    (i64.load offset=8
+     (get_local $0)
+    )
+    (unreachable)
+   )
+  )
+ )
+ (func $start (; 88 ;) (; has Stack IR ;) (type $v)
   (local $0 i32)
   (block $folding-inner0
    (set_global $~lib/allocator/arena/startOffset
@@ -10599,6 +10664,30 @@
       (get_global $std/map/keys)
      )
      (i32.const 1)
+    )
+    (br $folding-inner0)
+   )
+   (set_global $std/map/values
+    (call $~lib/map/Map<u64_u64>#values
+     (get_global $std/map/map)
+    )
+   )
+   (if
+    (i32.ne
+     (i32.load offset=4
+      (get_global $std/map/values)
+     )
+     (i32.const 1)
+    )
+    (br $folding-inner0)
+   )
+   (if
+    (i32.eqz
+     (call $~lib/array/Array<u64>#includes
+      (get_global $std/map/values)
+      (i64.const 12)
+      (i32.const 0)
+     )
     )
     (br $folding-inner0)
    )
@@ -10682,6 +10771,40 @@
      (call $~lib/array/Array<u64>#includes
       (get_global $std/map/keys)
       (i64.const 24)
+      (i32.const 0)
+     )
+    )
+    (br $folding-inner0)
+   )
+   (set_global $std/map/values
+    (call $~lib/map/Map<u64_u64>#values
+     (get_global $std/map/map)
+    )
+   )
+   (if
+    (i32.ne
+     (i32.load offset=4
+      (get_global $std/map/values)
+     )
+     (i32.const 2)
+    )
+    (br $folding-inner0)
+   )
+   (if
+    (i32.eqz
+     (call $~lib/array/Array<u64>#includes
+      (get_global $std/map/values)
+      (i64.const 23)
+      (i32.const 0)
+     )
+    )
+    (br $folding-inner0)
+   )
+   (if
+    (i32.eqz
+     (call $~lib/array/Array<u64>#includes
+      (get_global $std/map/values)
+      (i64.const 44)
       (i32.const 0)
      )
     )

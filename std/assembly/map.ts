@@ -6,6 +6,10 @@ import {
   hash
 } from "./internal/hash";
 
+import { DataStream } from "./datastream";
+import { Serializable} from "./iserializable";
+import { GenericUtil } from "./internal/generic";
+
 // A deterministic hash map based on CloseTable from https://github.com/jorendorff/dht
 
 const INITIAL_CAPACITY = 4;
@@ -89,7 +93,7 @@ export class Map<K,V> {
   }
   
   keys(): K[]{
-    let _keys = new Array<K>();
+    var _keys = new Array<K>();
     var startPtr = changetype<usize>(this.entries) + HEADER_SIZE_AB;
     var endPtr = startPtr + <usize>this.entriesOffset * ENTRY_SIZE<K,V>();
     while (startPtr != endPtr) {
@@ -100,6 +104,20 @@ export class Map<K,V> {
       startPtr += ENTRY_SIZE<K,V>();
     }
     return _keys;
+  }
+
+  values(): V[] {
+    var _values = new Array<V>();
+    var startPtr = changetype<usize>(this.entries) + HEADER_SIZE_AB;
+    var endPtr = startPtr + <usize>this.entriesOffset * ENTRY_SIZE<K,V>();
+    while (startPtr != endPtr) {
+      let oldEntry = changetype<MapEntry<K,V>>(startPtr);
+      if (!(oldEntry.taggedNext & EMPTY)) {
+        _values.push(oldEntry.value);
+      }
+      startPtr += ENTRY_SIZE<K,V>();
+    }
+    return _values;
   }
 
   set(key: K, value: V): void {
@@ -145,6 +163,68 @@ export class Map<K,V> {
       this.entriesCount < <i32>(this.entriesCapacity * FREE_FACTOR)
     ) this.rehash(halfBucketsMask);
     return true;
+  }
+
+  serialize(ds: DataStream): void {
+ 
+    var keys = this.keys();
+    var length = <u32>keys.length;
+    ds.writeVarint32(length);
+    for (let index:u32 = 0; index < length; index ++) {
+      let key = keys[index];
+      let value = this.get(key);
+
+      this.serializableItem<K>(key, ds);
+      this.serializableItem<V>(value,ds);
+    }
+  }
+
+  deserialize(ds: DataStream): void {
+    this.clear();
+    var len = ds.readVarint32();
+    for (let index:u32 = 0; index < len; index ++) {
+      let key = this.deserializableItem<K>(ds);
+      let value = this.deserializableItem<V>(ds);
+      this.set(key, value);
+    }
+  }
+
+  private serializableItem<T>(item: T, ds: DataStream): void {
+    var isArr = isArray<T>();
+    assert(isArr, "Map serializable value not support the array");
+
+    if (isString<T>()) {
+      ds.writeString(changetype<string>(item));
+    } else if (isReference<T>()) {
+      let serial = changetype <Serializable> (item);
+      serial.serialize(ds);
+    } else if (GenericUtil.isInt64<T>()) {
+      ds.write<u64>(changetype<u64>(item));
+    } else if (GenericUtil.isInt32<T>()) {
+      ds.write<u32>(changetype<u32>(item));
+    } else if (GenericUtil.isBool<T>()) {
+      ds.write<u8>(changetype<u8>(item));
+    }
+  }
+
+  private deserializableItem<T>(ds: DataStream): T {
+    var isArr = isArray<T>();
+    assert(isArr, "Map serializable value not support the array");
+
+    if (isString<T>()) {
+      return changetype<T>(ds.readString());
+    } else if (isReference<T>()) {
+      let item = {} as T;
+      (changetype<Serializable>(item)).deserialize(ds)
+      return item as T;
+    } else if (GenericUtil.isInt64<T>()) {
+      return changetype<T>(ds.read<u64>());
+    } else if (GenericUtil.isInt32<T>()) {
+      return changetype<T>(ds.read<u32>());
+    } else if (GenericUtil.isBool<T>()) {
+      return changetype<T>(ds.read<u8>());
+    }
+    throw new Error("The item of the map deserialize failed.");
   }
 
   private rehash(newBucketsMask: u32): void {

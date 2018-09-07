@@ -13,8 +13,7 @@ import {
     ClassPrototype,
     FunctionPrototype,
     Program,
-    FieldPrototype,
-    InterfacePrototype
+    FieldPrototype
 } from "./program";
 
 import {
@@ -24,11 +23,10 @@ import {
     NodeKind,
     Node,
     CommonTypeNode,
-    InterfaceDeclaration,
     DecoratorKind,
 } from "./ast";
 import { AbiHelper } from "./abi";
-import { INSTANCE_DELIMITER } from "./common";
+import { AstUtil } from "./util/astutil";
 
 export enum VarialbeKind {
     BOOL, // boolean and bool
@@ -223,7 +221,6 @@ class SerializeGenerator {
         var internalPath = node.range.source.internalPath;
         var name = node.range.toString();
         var internalName = `${internalPath}/${name}`;
-        console.log(`getInternalName: ${internalName}`);
         return internalName;
     }
 
@@ -256,7 +253,6 @@ class SerializeGenerator {
 
         if (element && element.kind == ElementKind.CLASS_PROTOTYPE) {
             let hasImpl = SerializeHelper.hasImplSerialize((<ClassPrototype>element).declaration);
-            console.log(`${internalName} has imple serialize ${hasImpl}`);
             if (!hasImpl) {
                 throw new Error(`Class ${internalName} not implements the interface ${SerializeHelper.SERIALIZE_INTERFANCE}`);
             }
@@ -268,6 +264,7 @@ class SerializeGenerator {
     getSerializePoints(): SerializePoint {
 
         var serializePoint: SerializePoint = new SerializePoint(this.classPrototype.declaration.range);
+        serializePoint.classDeclaration = this.classPrototype.declaration;
         serializePoint.needDeserialize = this.needImplDeSerialize;
         serializePoint.needSerialize = this.needImplSerialize;
         serializePoint.needPrimaryKey = this.needImplPrimary;
@@ -283,19 +280,7 @@ class SerializeGenerator {
                 let fieldDeclaration: FieldDeclaration = fieldPrototype.declaration;
                 let commonType: CommonTypeNode | null = fieldDeclaration.type;
 
-                let hasIgnoreDecorator = false;
-                let decorators = fieldDeclaration.decorators;
-
-                if (decorators) {
-                    for (let decorator of decorators) {
-                        if (decorator.decoratorKind == DecoratorKind.IGNORE) {
-                            hasIgnoreDecorator = true;
-                            break;
-                        }
-                    }
-                }
-               
-                if (commonType && commonType.kind == NodeKind.TYPE && hasIgnoreDecorator == false) {
+                if (commonType && commonType.kind == NodeKind.TYPE && !AstUtil.haveSpecifyDecorator(fieldDeclaration, DecoratorKind.IGNORE)) {
                     let typeNode = <TypeNode>commonType;
                     if (this.needImplDeSerialize && this.checkFieldImplSerialize(commonType)) {
                         serializePoint.addSerializeExpr(this.serializeField(fieldName, typeNode));
@@ -322,13 +307,13 @@ class SerializeGenerator {
 
         if (paramDeclaration.isArray) {
             if (paramDeclaration.kind == VarialbeKind.NUMBER) {
-                body.push(`      let ${fieldName} = ds.readVector<${paramDeclaration.abiType}>();`);
+                body.push(`      ds.writeVector<${paramDeclaration.abiType}>(this.${fieldName});`);
             } else if (paramDeclaration.kind == VarialbeKind.BOOL) {
-                body.push(`      let ${fieldName} = ds.readVector<u8>();`);
+                body.push(`      ds.writeVector<u8>(this.${fieldName});`);
             } else if (paramDeclaration.kind == VarialbeKind.STRING) {
-                body.push(`      let ${fieldName} = ds.readStringVector();`);
+                body.push(`      ds.writeStringVector(this.${fieldName});`);
             } else {
-                body.push(`      let ${fieldName} = ds.readComplexVector<${paramDeclaration.declareType}>();`);
+                body.push(`      ds.writeComplexVector<${paramDeclaration.declareType}>(this.${fieldName});`);
             }
         } else {
             if (paramDeclaration.kind == VarialbeKind.STRING) {
@@ -353,13 +338,13 @@ class SerializeGenerator {
 
         if (variableType.isArray) {
             if (variableType.kind == VarialbeKind.NUMBER) {
-                body.push(`      let ${fieldName} = ds.readVector<${variableType.factType}>();`);
+                body.push(`      this.${fieldName} = ds.readVector<${variableType.factType}>();`);
             } else if (variableType.kind == VarialbeKind.BOOL) {
-                body.push(`      let ${fieldName} = ds.readVector<u8>();`);
+                body.push(`      this.${fieldName} = ds.readVector<u8>();`);
             } else if (variableType.kind == VarialbeKind.STRING) {
-
+                body.push(`      this.${fieldName} = ds.readStringVector();`);
             } else {
-                body.push(`      let ${fieldName} = ds.readComplexVector<${variableType.baseType}>();`);
+                body.push(`      this.${fieldName} = ds.readComplexVector<${variableType.baseType}>();`);
             }
         } else {
             if (variableType.kind == VarialbeKind.STRING) {
@@ -416,6 +401,8 @@ export class SerializePoint extends InsertPoint {
 
     needPrimaryKey: bool;
 
+    classDeclaration: ClassDeclaration
+
     constructor(range: Range) {
         super(range.atEnd);
         this.serialize.push(`    serialize(ds: DataStream): void {`);
@@ -431,6 +418,10 @@ export class SerializePoint extends InsertPoint {
 
     addDeserializeExpr(expr: string): void {
         this.deserialize.push(expr);
+    }
+
+    get classpath(): string{
+        return this.range.source.normalizedPath + this.range.toString() + this.classDeclaration.name.range.toString();
     }
 
     getInsertData(): string {
@@ -452,7 +443,7 @@ export class SerializePoint extends InsertPoint {
 
 export class SerializeHelper {
 
-    static SERIALIZE_INTERFANCE: string = "ISerializable";
+    static SERIALIZE_INTERFANCE: string = "Serializable";
     /**Program  */
     program: Program;
 
@@ -478,10 +469,9 @@ export class SerializeHelper {
                     let generator: SerializeGenerator = new SerializeGenerator(<ClassPrototype>element);
                     let serializePoint: SerializePoint = generator.getSerializePoints();
 
-                    // console.log(`SerializeHelper resolve: ${classDeclaration.name.range.toString()}`);
+                    console.log(`serializePoint.classpath: ${serializePoint.classpath}`);
 
                     if (!this.serializeClassname.has(serializePoint.classpath)) {
-                        console.log(`SerializeHelper resolve: ${classDeclaration.name.range.toString()}. ${serializePoint.getInsertData()}`);
                         this.addSerializePoint(serializePoint);
                         this.serializeClassname.add(serializePoint.classpath);
                     }
@@ -499,9 +489,6 @@ export class SerializeHelper {
 
         var normalizedPath = serialize.normalizedPath;
         var fileSerialize: Array<InsertPoint> | null = this.fileSerializeLookup.get(normalizedPath);
-
-        console.log(`addSerializePoint normalizedPath ${normalizedPath}`);
-
         if (fileSerialize) {
             fileSerialize.push(serialize);
         } else {

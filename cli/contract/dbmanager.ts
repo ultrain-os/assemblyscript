@@ -1,22 +1,18 @@
 /**
  * @author fanliangqin@ultrain.io
  */
-
-import { Log } from "./log";
-import { DataStream } from "./datastream";
-import { ultrain_assert, RN } from "./utils";
+import { ultrain_assert } from "./utils";
 import { env as action } from "../internal/action.d";
 import { env as db } from "../internal/db.d";
-import { ISerializable } from "../lib/ISerializable";
 /**
  * class DBManager is used to manager reading or writing to system db.
- * the type T must be implements interface ISerializable,
+ * the type T must be implements interface Serializable,
  * reference {@link Account} or {@link CurrencyStats}
  *
  * @class DBManager
  */
 
-export class DBManager<T extends ISerializable> {
+export class DBManager<T extends Serializable> {
     public _tblname: u64;
     public _owner: u64;
     public _scope: u64;

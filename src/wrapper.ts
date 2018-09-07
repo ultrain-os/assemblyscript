@@ -49,7 +49,9 @@ export class Wrapper {
             let _superCall = `        this._${superCall};`;
             if (stmt.kind == NodeKind.BLOCK) {
                 let blockStmt = <BlockStatement>stmt;
-                this.insertPoints.push(new InsertPoint(blockStmt.statements[0].range.atEnd, _superCall));
+                if (blockStmt.statements.length >= 1){
+                    this.insertPoints.push(new InsertPoint(blockStmt.statements[0].range.atEnd, _superCall));
+                }
             }
         }
 

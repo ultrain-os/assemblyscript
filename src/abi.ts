@@ -35,6 +35,7 @@ import {
   MethodDeclaration
 } from "./ast";
 import { Wrapper } from "./wrapper";
+import { AstUtil } from "./util/astutil";
 
 class Struct {
 
@@ -371,15 +372,15 @@ export class Abi {
     struct.base = "";
     for (let member of members) {
       if (member.kind == NodeKind.FIELDDECLARATION) {
-        let filedDeclare: FieldDeclaration = <FieldDeclaration>member;
-        let filedName = member.name.range.toString();
-        let filedType = filedDeclare.type;
+        let fieldDeclare: FieldDeclaration = <FieldDeclaration>member;
+        let fieldName = member.name.range.toString();
+        let fieldType = fieldDeclare.type;
 
-        if (filedType) {
-          let declaration:VariableDeclaration = new VariableDeclaration(this.program, filedType).resolveAbiParameterType();
-          let fieldTypeName = filedType.range.toString();
+        if (fieldType && !AstUtil.haveSpecifyDecorator(fieldDeclare, DecoratorKind.IGNORE)) {
+          let declaration:VariableDeclaration = new VariableDeclaration(this.program, fieldType).resolveAbiParameterType();
+          let fieldTypeName = fieldType.range.toString();
           let type =  !declaration.isArray ? fieldTypeName :  `${declaration.getBasicTypeName(fieldTypeName)}[]`;
-          struct.fields.push({ name: filedName, type:type });
+          struct.fields.push({ name: fieldName, type:type });
         }
       }
     }
@@ -417,9 +418,8 @@ export class Abi {
       body.push(`  if (receiver == code) {`);
       body.push(`    let ${contractVarName} = new ${contractName}(receiver);`);
       body.push(`    let ds = ${contractVarName}.getDataStream();`);
-      body.push(`    let action = new NameEx(actH, actL);`);
-      // body.push(`    ${contractVarName}.onInit();`);
-
+      body.push(`    ${contractVarName}.setActionName(actH, actL);`);
+      body.push(`    ${contractVarName}.onInit();`);
 
       for (let instance of clzPrototype.instanceMembers.values()) {
         if (this.isActionFuncPrototype(instance)) {
@@ -433,7 +433,7 @@ export class Abi {
 
           this.checkName(funcName);
           //let action = new NameEx(actH, actL);
-          body.push(`    if (action == NEX("${funcName}")){`);
+          body.push(`    if (${contractVarName}.isAction("${funcName}")){`);
 
           let fields = new Array<string>();
           for (let index = 0; index < types.length; index++) {
@@ -474,7 +474,7 @@ export class Abi {
           body.push("    }");
         }
       }
-      // body.push(`    ${contractVarName}.onStop();`);
+      body.push(`    ${contractVarName}.onStop();`);
       body.push("  }");
 
       if (hasActionDecorator) {
@@ -547,7 +547,6 @@ export class Abi {
     // this.printElementLookUpInfo();
     // this.findDBManager();
     // this.printClassProtoTypeInfo();
-
 
     var serializeHelper: SerializeHelper = new SerializeHelper(this.program);
     var wrapper:Wrapper = new Wrapper(this.program);
