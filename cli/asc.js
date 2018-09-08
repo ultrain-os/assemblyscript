@@ -31,7 +31,6 @@ var assemblyscript, isDev = false;
 (() => {
   try { // `asc` on the command line
     assemblyscript = require("../dist/assemblyscript");
-    // throw new Error();
   } catch (e) {
     try { // `asc` on the command line without dist files
       require("ts-node").register({ project: path.join(__dirname, "..", "src", "tsconfig.json") });
@@ -316,7 +315,7 @@ exports.main = function main(argv, options, callback, isDispatch) {
         parser = assemblyscript.parseFile(sourceText, sourcePath, true, parser);
       } else {
         sourceText = exports.preParseFile(sourcePath, sourceText);
-        sourceText = exports.insertSerializeMethodText(sourcePath, sourceText);
+        sourceText = exports.insertCodes(sourcePath, sourceText);
         let elementPath = sourcePath.split(".").slice(0,-1).join(".");
         sourceText = exports.resolveSourceText(sourceText, exports.applyText, exports.abiObj, elementPath);
         parser = assemblyscript.parseFile(sourceText, sourcePath, true, parser);
@@ -405,7 +404,7 @@ exports.main = function main(argv, options, callback, isDispatch) {
           sourceText = exports.preParseFile(sourcePath, sourceText);
         }
         if (isDispatch) {
-          sourceText = exports.insertSerializeMethodText(sourcePath, sourceText);
+          sourceText = exports.insertCodes(sourcePath, sourceText);
         }
         assemblyscript.parseFile(sourceText, sourcePath, false, parser);
       });
@@ -968,28 +967,10 @@ exports.tscOptions = {
 };
 
 function resolveSourceText(sourceText, applyText, abiObj, filename) {
-
-  
   let memoryLib = "allocate/arena";
   let resultTextBuffer = new Array();
   if (exports.libraryFiles[memoryLib] == undefined) {
     resultTextBuffer.push(`import "allocator/arena";`);
-  }
-
-  // add abi object
-  if (abiObj) {
-
-    // let importedLibrary = ["NEX", "NameEx"];
-    // let nameSdkPath = "ContractSdk/src/name_ex";
-    // for (let lib of importedLibrary) {
-    //   let internalPath = path.join(filename, lib);
-    //   if (!abiObj.hasElement(internalPath)) {
-    //     if(library[nameSdkPath] == undefined){
-    //       throw new Error(`The Name, NameEx not existed on the default path, please imported explicit.`);
-    //     }
-    //     resultTextBuffer.push(`import { ${lib} }from "${nameSdkPath}";`);
-    //   }
-    // }
   }
 
   resultTextBuffer.push(sourceText);
@@ -1002,22 +983,19 @@ function resolveSourceText(sourceText, applyText, abiObj, filename) {
 
 exports.resolveSourceText = resolveSourceText;
 
-function insertSerializeMethodText(sourcePath, sourceText) {
+function insertCodes(sourcePath, sourceText) {
 
   if (!exports.abiObj) {
-    console.log(colorsUtil.stderr.yellow("WARN: ") + "unknown abi information" + EOL);
-    return "";
+    throw new Error(colorsUtil.stderr.yellow("WARN: ") + "unknown abi information" + EOL);
   }
 
-  let serializeLookup = exports.abiObj.fileSerializeLookup;
-  if (serializeLookup.has(sourcePath)) {
-
-    let serializeArray = serializeLookup.get(sourcePath);
+  let insertPointsLookup = exports.abiObj.insertPointsLookup;
+  if (insertPointsLookup.has(sourcePath)) {
+    let serializeArray = insertPointsLookup.get(sourcePath);
     let data = sourceText.split(EOL);
-    // console.log(`data.length :${data.length}`);
     for (let serialize of serializeArray) {
-      data.splice(serialize.line, 0, serialize.getInsertData());
-      // console.log(`insertSerializeMethodText dagta :${serialize.getInsertData()}`);
+      data.splice(serialize.line, 0, serialize.getInsertCode());
+      // console.log(`insert code: ${serialize.getInsertCode()}`);
     }
     return data.join(EOL);
   } else {
@@ -1025,42 +1003,14 @@ function insertSerializeMethodText(sourcePath, sourceText) {
   }
 }
 
-exports.insertSerializeMethodText = insertSerializeMethodText;
+exports.insertCodes = insertCodes;
 
 function preParseFile(sourcePath, sourceText) {
-
-  // console.log(`sourcePath: ${sourcePath}`);
-
-  // if (sourcePath.indexOf("iserializable") != -1) {
-  //   return fs.readFileSync(path.join(__dirname, "./contract/serializable.ts"), { encoding: "utf8" });
-  // }
   if (sourcePath.indexOf("/dbmanager") != -1) {
     let res = fs.readFileSync(path.join( __dirname, "./contract/dbmanager.ts"), { encoding: "utf8" });
     return res;
   }
-
-  // if (sourcePath.indexOf("/datastream") != -1) {
-  //   return fs.readFileSync(path.join(__dirname, "./contract/datastream.ts"), { encoding: "utf8" });
-  // }
   return sourceText;
-}
-
-exports.contractReplacedFile = {
-  "/ISerializable": "./contract/serializable.ts",
-  "/dbmanager": "./contract/dbmanager.ts",
-  "/datastream": "./contract/datastream.ts"
-}
-
-
-function _preParseFile(sourcePath) {
-
-  for (let key in exports.contractReplacedFile) {
-    if (sourcePath.indexOf(key)) {
-      let filePath = path.join(__dirname, exports.contractReplacedFile[key]);
-      return readFile(filePath);
-    }
-  }
-  return readFile(sourcePath);
 }
 
 exports.preParseFile = preParseFile;

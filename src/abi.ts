@@ -1,10 +1,10 @@
 import {
-  SerializeHelper,
+  SerializeInserter,
   InsertPoint,
-  VariableDeclaration,
+  TypeNodeInfo,
   VarialbeKind,
-  NodeUtil
-} from "./serialize";
+  SuperInserter
+} from "./inserter";
 
 import {
   Type,
@@ -34,8 +34,10 @@ import {
   ClassDeclaration,
   MethodDeclaration
 } from "./ast";
-import { Wrapper } from "./wrapper";
-import { AstUtil } from "./util/astutil";
+
+import { 
+  AstUtil 
+} from "./util/astutil";
 
 class Struct {
 
@@ -127,7 +129,7 @@ export class Abi {
 
   elementLookup: Map<string, Element> = new Map();
 
-  fileSerializeLookup: Map<string, Array<InsertPoint>> = new Map<string, Array<InsertPoint>>();
+  insertPointsLookup: Map<string, Array<InsertPoint>> = new Map<string, Array<InsertPoint>>();
 
   constructor(program: Program) {
 
@@ -226,20 +228,6 @@ export class Abi {
     return scriptType;
   }
 
-  // Check the FunctionPrototype weather has decoratorKind
-  checkFuncPrototypeDecorator(funcPrototype: FunctionPrototype, decoratorKind: DecoratorKind): bool {
-    var decorators = funcPrototype.declaration.decorators;
-    var isActionDecorator = false;
-    if (decorators) {
-      for (let decorator of decorators) {
-        if (decorator.decoratorKind == decoratorKind) {
-          isActionDecorator = true;
-        }
-      }
-    }
-    return isActionDecorator;
-  }
-
   isWrapWithQutation(str: string): bool {
 
     if (str == undefined || str == null) {
@@ -254,10 +242,9 @@ export class Abi {
   *
   */
   isActionFuncPrototype(element: Element): bool {
-
     if (element.kind == ElementKind.FUNCTION_PROTOTYPE) {
       let funcType = <FunctionPrototype>element;
-      return this.checkFuncPrototypeDecorator(funcType, DecoratorKind.ACTION);
+      return AstUtil.haveSpecifyDecorator(funcType.declaration, DecoratorKind.ACTION);
     }
     return false;
   }
@@ -311,7 +298,7 @@ export class Abi {
       return argu.substring(1, argu.length - 1);
     }
 
-    var internalName = NodeUtil.getInternalName(expr);
+    var internalName = AstUtil.getInternalName(expr);
     var element: Element | null = this.program.elementsLookup.get(internalName);
 
     if (element) {
@@ -377,9 +364,9 @@ export class Abi {
         let fieldType = fieldDeclare.type;
 
         if (fieldType && !AstUtil.haveSpecifyDecorator(fieldDeclare, DecoratorKind.IGNORE)) {
-          let declaration:VariableDeclaration = new VariableDeclaration(this.program, fieldType).resolveAbiParameterType();
+          let declaration:TypeNodeInfo = new TypeNodeInfo(this.program, fieldType);
           let fieldTypeName = fieldType.range.toString();
-          let type =  !declaration.isArray ? fieldTypeName :  `${declaration.getBasicTypeName(fieldTypeName)}[]`;
+          let type =  !declaration.isArray ? fieldTypeName :  `${AstUtil.getBasicTypeName(fieldTypeName)}[]`;
           struct.fields.push({ name: fieldName, type:type });
         }
       }
@@ -441,18 +428,17 @@ export class Abi {
             let parameterType = type.type.range.toString();
             let parameterName = type.name.range.toString();
 
-            let variableDeclaration: VariableDeclaration = new VariableDeclaration(this.program, type.type);
-            let abiType = variableDeclaration.resolveAbiParameterType();
+            let abiType: TypeNodeInfo = new TypeNodeInfo(this.program, type.type);
 
             if (abiType.isArray) {
               if (abiType.kind == VarialbeKind.NUMBER) {
-                body.push(`      let ${parameterName} = ds.readVector<${abiType.factType}>();`);
+                body.push(`      let ${parameterName} = ds.readVector<${abiType.ascFactType}>();`);
               } else if (abiType.kind == VarialbeKind.BOOL) {
                 body.push(`      let ${parameterName} = ds.readVector<u8>();`);
               } else if (abiType.kind == VarialbeKind.STRING) {
                 body.push(`      let ${parameterName} = ds.readStringVector();`);
               } else {
-                body.push(`      let ${parameterName} = ds.readComplexVector<${abiType.baseType}>();`);
+                body.push(`      let ${parameterName} = ds.readComplexVector<${abiType.ascBasicType}>();`);
               }
             } else {
               if (abiType.kind == VarialbeKind.STRING) {
@@ -460,9 +446,9 @@ export class Abi {
               } else if (abiType.kind == VarialbeKind.BOOL) {
                 body.push(`      let ${parameterName} = ds.read<u8>() != 0;`);
               } else if (abiType.kind == VarialbeKind.NUMBER) {
-                body.push(`      let ${parameterName} = ds.read<${abiType.factType}>();`);
+                body.push(`      let ${parameterName} = ds.read<${abiType.ascFactType}>();`);
               } else {
-                let internalName = NodeUtil.getInternalName(type.type);
+                let internalName = AstUtil.getInternalName(type.type);
                 this.retrieveStructByInternalName(internalName);
                 body.push(`      let ${parameterName} = new ${parameterType}();`);
                 body.push(`      ${parameterName}.deserialize(ds);`);
@@ -548,15 +534,19 @@ export class Abi {
     // this.findDBManager();
     // this.printClassProtoTypeInfo();
 
-    var serializeHelper: SerializeHelper = new SerializeHelper(this.program);
-    var wrapper:Wrapper = new Wrapper(this.program);
+    var serializeInserter: SerializeInserter = new SerializeInserter(this.program);
+    var superInserter: SuperInserter = new SuperInserter(this.program);
+    serializeInserter.resolve();
+    superInserter.resolve();
 
-    for (let index = 0; index < wrapper.insertPoints.length; index ++) {
-      serializeHelper.addSerializePoint(wrapper.insertPoints[index])
+    var serializePoints = serializeInserter.getInsertPoints();
+    var superPoints = superInserter.getInsertPoints();
+
+    for (let _points of superPoints) {
+      serializePoints.push(_points);
     }
 
-    serializeHelper.resolve();
-    this.fileSerializeLookup = serializeHelper.fileSerializeLookup;
+    this.insertPointsLookup = InsertPoint.toSortedMap(serializePoints);
 
     var dispatchBuffer = new Array<string>();
 

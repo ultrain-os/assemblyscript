@@ -1,5 +1,5 @@
 import { toUTF8Array } from "./utf8util";
-import { Serializable } from "./iserializable";
+import { Serializable } from "./serializable";
 /**
  * internal memory HEADER SIZE. NEVER used by users.
  */
@@ -83,7 +83,7 @@ export class DataStream {
         this.pos = 0;
     }
 
-    private isMesureMode(): boolean {
+    private isMeasureMode(): boolean {
         return this.buffer == 0;
     }
 
@@ -115,7 +115,7 @@ export class DataStream {
     }
 
     write<T>(value: T): void {
-        if (!this.isMesureMode()) {
+        if (!this.isMeasureMode()) {
             store<T>(this.buffer + this.pos, value);
         }
         this.pos += sizeof<T>();
@@ -230,7 +230,7 @@ export class DataStream {
         if (len == 0) return;
 
         let cstr = toUTF8Array(str);
-        if (!this.isMesureMode()) {
+        if (!this.isMeasureMode()) {
             var ptr: u32 = load<u32>(changetype<usize>(cstr)) + sizeof<u64>();
             memory.copy(this.buffer + this.pos, <usize>ptr, cstr.length - 1);
         }

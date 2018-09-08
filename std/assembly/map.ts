@@ -7,7 +7,7 @@ import {
 } from "./internal/hash";
 
 import { DataStream } from "./datastream";
-import { Serializable} from "./iserializable";
+import { Serializable} from "./serializable";
 import { GenericUtil } from "./internal/generic";
 
 // A deterministic hash map based on CloseTable from https://github.com/jorendorff/dht

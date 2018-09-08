@@ -57,40 +57,37 @@ test<u64,i32>();
 test<f32,i32>();
 test<f64,i32>();
 
+// test keys and values
 var map = new Map<u64, u64>();
-map.set(12, 12);
+map.set(1, 11);
 
 var keys: Array<u64> = map.keys();
 assert(keys.length == 1);
 
 var values: Array<u64> = map.values();
 assert(values.length == 1);
-assert(values.includes(12));
+assert(values.includes(11));
 
 for (let index = 0; index < keys.length; index ++) {
   assert(map.has(keys[index]));
 }
 
-map.set(12, 23);
-assert(map.get(12) == 23);
-map.set(24,44);
+map.set(1, 1);
+assert(map.get(1) == 1);
+map.set(2,22);
 
 keys = map.keys();
 assert(keys.length == 2);
-assert(keys.includes(12));
-assert(keys.includes(24));
+assert(keys.includes(1));
+assert(keys.includes(2));
 
 values = map.values();
 assert(values.length == 2);
-assert(values.includes(23));
-assert(values.includes(44));
+assert(values.includes(1));
+assert(values.includes(22));
 
 for (let index = 0; index < keys.length; index ++) {
   assert(map.has(keys[index]));
 }
 
-// serializable 
-let len = DataStream.measure<Map<u64, u64>>(map);
-let arr = new Uint8Array(len);
-let ds = new DataStream(changetype<usize>(arr.buffer), len);
-map.serialize(ds);
+
