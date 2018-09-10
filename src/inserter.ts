@@ -526,9 +526,19 @@ export class SuperInserter {
             let _superCall = `        this._${superCall};`;
             if (stmt.kind == NodeKind.BLOCK) {
                 let blockStmt = <BlockStatement>stmt;
-                if (blockStmt.statements.length >= 1) {
+                // for (let stmt of )
+
+                if (blockStmt.statements.length >= 1 && blockStmt.statements[0].range.toString().indexOf("super") != -1) {
+                    if (blockStmt.statements[0].kind == NodeKind.COMMENT) {
+                        return ;
+                    }
+                    // console.log(`=====superCall: ${_superCall}`);
                     this.insertPoints.push(new InsertPoint(blockStmt.statements[0].range.atEnd, _superCall));
+                } else {
+                    return ;
                 }
+            } else {
+                return ;
             }
         }
 
