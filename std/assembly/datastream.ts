@@ -172,6 +172,106 @@ export class DataStream {
 
         return arr;
     }
+    /**
+     * now, read array for Map
+     */
+    readArray<T>(): T {
+        let len = this.readVarint32();
+        let r = {length: 0} as T;
+        if (len == 0) {
+            return r;
+        }
+
+        r.length = len;
+        let v0 = r[0];
+        if (v0 instanceof i8) {
+            for (let i: u32 = 0; i < len; i++) {
+                r[i] = this.read<i8>();
+            }
+        } else if (v0 instanceof u8) {
+            for (let i: u32 = 0; i < len; i++) {
+                r[i] = this.read<u8>();
+            }
+        }  else if (v0 instanceof i16) {
+            for (let i: u32 = 0; i < len; i++) {
+                r[i] = this.read<i16>();
+            }
+        }  else if (v0 instanceof u16) {
+            for (let i: u32 = 0; i < len; i++) {
+                r[i] = this.read<u16>();
+            }
+        } else if (v0 instanceof i32) {
+            for (let i: u32 = 0; i < len; i++) {
+                r[i] = this.read<i32>();
+            }
+        } else if (v0 instanceof u32) {
+            for (let i: u32 = 0; i < len; i++) {
+                r[i] = this.read<u32>();
+            }
+        } else if (v0 instanceof i64) {
+            for (let i: u32 = 0; i < len; i++) {
+                r[i] = this.read<i64>();
+            }
+        } else if (v0 instanceof u64) {
+            for (let i: u32 = 0; i < len; i++) {
+                r[i] = this.read<u64>();
+            }
+        } else if (isString(v0)) {
+            for (let i: u32 = 0; i < len; i++) {
+                r[i] = this.readString();
+            }
+        } else if (isReference(v0)) {
+            for (let i: u32 = 0; i < len; i++) {
+                r[i].deserialize(this);
+            }
+        } else {
+            ultrain_assert(false, "DataStream.readArray() method only supports primitive types for u8, i8, u16, i16, u32, i32, u64, i64");
+        }
+        return r;
+    }
+
+    /**
+     * T is type of Array<xx>
+     */
+    writeArray<T>(val: T): void {
+        let len: u32 = <u32>val.length;
+        if (len > 0) {
+            let v0 = val[0];
+            if (v0 instanceof u8) {
+                this.writeVector<u8>(val);
+            } else if (v0 instanceof i8) {
+                this.writeVector<i8>(val);
+            } else if (v0 instanceof u16) {
+                this.writeVector<u16>(val);
+            } else if (v0 instanceof i16) {
+                this.writeVector<i16>(val);
+            } else if (v0 instanceof u32) {
+                this.writeVector<u32>(val);
+            } else if (v0 instanceof i32) {
+                this.writeVector<i32>(val);
+            } else if (v0 instanceof u64) {
+                this.writeVector<u64>(val);
+            } else if (v0 instanceof i64) {
+                this.writeVector<i64>(val);
+            } else if (isString(v0)) {
+                this.writeStringVector(val);
+            } else if (isReference(v0)) {
+                this.writeComplexArray<T>(val);
+            } else {
+                ultrain_assert(false, "DataStream.writeArray() method only supports primitive types for u8, i8, u16, i16, u32, i32, u64, i64");
+            }
+        } else {
+            this.writeVarint32(0);
+        }
+    }
+
+    writeComplexArray<T>(arr: T): void {
+        let len: u32 = <u32>arr.length;
+        this.writeVarint32(len);
+        for (let i: u32 = 0; i < len; i++) {
+            arr[i].serialize(this);
+        }
+     }
 
     writeVector<T>(arr: T[]): void {
         let len: u32 = <u32>arr.length;

@@ -116,6 +116,7 @@ export function nodeIsCallable(kind: NodeKind): bool {
   switch (kind) {
     case NodeKind.IDENTIFIER:
     case NodeKind.CALL:
+    case NodeKind.SUPER: // TODO
     case NodeKind.ELEMENTACCESS:
     case NodeKind.PROPERTYACCESS: return true;
   }
@@ -320,6 +321,21 @@ export abstract class Node {
     expr.arguments = args; setParent(args, expr);
     return expr;
   }
+
+
+  // static createSuperExpression(
+  //   expression: Expression,
+  //   typeArgs: CommonTypeNode[] | null,
+  //   args: Expression[],
+  //   range: Range
+  // ): CallExpression {
+  //   var expr = new CallExpression();
+  //   expr.range = range;
+  //   expr.expression = expression; expression.parent = expr;
+  //   expr.typeArguments = typeArgs; if (typeArgs) setParent(typeArgs, expr);
+  //   expr.arguments = args; setParent(args, expr);
+  //   return expr;
+  // }
 
   static createClassExpression(
     declaration: ClassDeclaration
@@ -1312,6 +1328,24 @@ export class CallExpression extends Expression {
   typeArguments: CommonTypeNode[] | null;
   /** Provided arguments. */
   arguments: Expression[];
+
+  print(): void {
+    if (this.typeArguments) {
+      console.log("callexpression:0000 " + this.range.toString());
+      console.log(`typeArguments length: ${this.typeArguments.length}`);
+      for (let type of this.typeArguments) {
+        console.log(`type: ${type.range.toString()}`);
+      }
+    }
+
+    if (this.arguments) {
+      console.log(`arguments length: ${this.arguments.length}`);
+      for (let type of this.arguments) {
+        console.log(`argument: ${type.range.toString()}`);
+      }
+    }
+
+  }
 }
 
 /** Represents a class expression using the 'class' keyword. */
@@ -1453,6 +1487,12 @@ export class StringLiteralExpression extends LiteralExpression {
 export class SuperExpression extends IdentifierExpression {
   kind = NodeKind.SUPER;
   text = "super";
+  /** Called expression. Usually an identifier or property access expression. */
+  expression: Expression;
+  /** Provided type arguments. */
+  typeArguments: CommonTypeNode[] | null;
+  /** Provided arguments. */
+  arguments: Expression[];
 }
 
 /** Represents a `this` expression. */

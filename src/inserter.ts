@@ -10,7 +10,11 @@ import {
     NodeKind,
     TypeNode,
     BlockStatement,
-    Statement
+    Statement,
+    Node,
+    ExpressionStatement,
+    CallExpression,
+    FunctionDeclaration
 } from "./ast";
 
 import {
@@ -34,6 +38,7 @@ import {
 import {
     AstUtil
 } from "./util/astutil";
+import { DiagnosticCode } from "./diagnosticMessages.generated";
 
 export enum VarialbeKind {
     BOOL, // boolean and bool
@@ -80,7 +85,8 @@ export class InsertPoint {
     }
 
     get line(): i32 {
-        return this.range.line - 1;
+        // console.log(`line: ${this.range.line } content:${this.range.toString()}`);
+        return this.range.line;
     }
     get normalizedPath(): string {
         return this.range.source.normalizedPath;
@@ -88,6 +94,10 @@ export class InsertPoint {
 
     get indentity(): string {
         return this.range.source.normalizedPath + this.range.toString();
+    }
+
+    toString(): string {
+        return this.range.toString();
     }
 
     addInsertCode(code: string): void {
@@ -404,7 +414,6 @@ export class SerializePoint extends InsertPoint {
     constructor(range: Range) {
         super(range.atEnd);
         this.serialize.push(`    serialize(ds: DataStream): void {`);
-
         this.deserialize.push(`    deserialize(ds: DataStream): void {`);
 
         this.primaryKey.push(`     primaryKey(): id_type {`);
@@ -485,16 +494,20 @@ export class SuperInserter {
 
     private insertPoints: Array<InsertPoint> = [];
 
+    private classNames: Set<string> = new Set<string>();
+
     constructor(program: Program) {
         this.program = program;
     }
-
     resolve(): void {
         for (let [_, element] of this.program.elementsLookup) {
             if (element && element.kind == ElementKind.CLASS_PROTOTYPE) {
                 let classPrototype = <ClassPrototype>element;
-                if (classPrototype.basePrototype) {
+                let classDeclaration = classPrototype.declaration;
+                let identity = classDeclaration.range.source.normalizedPath + classDeclaration.range.toString() + classDeclaration.name.range.toString();
+                if (classPrototype.basePrototype && !this.classNames.has(identity)) {
                     this.processSuper(classPrototype);
+                    this.classNames.add(identity);
                 }
             }
         }
@@ -505,6 +518,7 @@ export class SuperInserter {
     }
 
     private processSuper(classPrototype: ClassPrototype): void {
+    
         var constructorPrototype: FunctionPrototype | null = classPrototype.constructorPrototype;
         if (!classPrototype.basePrototype) {
             return;
@@ -513,47 +527,88 @@ export class SuperInserter {
         if (!constructorPrototype) {
             return;
         }
+        var insertCallSuper = this.checkAndGetSuperCallExpr(classPrototype, constructorPrototype.declaration);
         if (!baseConstructorPrototype) {
             return;
         }
-        var concreteFunctionDeclaration = constructorPrototype.declaration;
-
-        if (concreteFunctionDeclaration.body) {
-            let stmt = concreteFunctionDeclaration.body;
-            var bodyStmt = concreteFunctionDeclaration.body.range.toString();
-            let endIndex = bodyStmt.indexOf(";");
-            let superCall = bodyStmt.substring(1, endIndex).trim();
-            let _superCall = `        this._${superCall};`;
-            if (stmt.kind == NodeKind.BLOCK) {
-                let blockStmt = <BlockStatement>stmt;
-                // for (let stmt of )
-
-                if (blockStmt.statements.length >= 1 && blockStmt.statements[0].range.toString().indexOf("super") != -1) {
-                    if (blockStmt.statements[0].kind == NodeKind.COMMENT) {
-                        return ;
-                    }
-                    // console.log(`=====superCall: ${_superCall}`);
-                    this.insertPoints.push(new InsertPoint(blockStmt.statements[0].range.atEnd, _superCall));
-                } else {
-                    return ;
-                }
-            } else {
-                return ;
-            }
-        }
-
+        this.insertPoints.push(insertCallSuper);
         var baseFunctionDeclaration = baseConstructorPrototype.declaration;
         var body: Statement | null = baseFunctionDeclaration.body;
 
         if (body) {
-            var content = body.range.toString();
+            // var content = body.range.toString();
             var signature = baseFunctionDeclaration.signature.range.toString();
-            var method = this.createSuperCall(signature, content);
-            this.insertPoints.push(new InsertPoint(classPrototype.declaration.range.atEnd, method));
+            var method = this.createSuperCall(signature, body);
+            this.insertPoints.push(new InsertPoint(classPrototype.declaration.range, method));
         }
     }
 
-    private createSuperCall(signature: string, body: string): string {
-        return `    _super${signature}: void ${body}`;
+    private checkAndGetSuperCallExpr(classPrototype :ClassPrototype,concreteFunctionDeclaration: FunctionDeclaration): InsertPoint {
+        var className = classPrototype.simpleName;
+        if (!concreteFunctionDeclaration.body) {
+            throw new Error(`Class ${className}'s constructor should have super call.${this.location(concreteFunctionDeclaration.range)}`);
+        }
+        let stmt = concreteFunctionDeclaration.body;
+        if (stmt.kind == NodeKind.BLOCK) {
+            let blockStmt = <BlockStatement>stmt;
+            let superStmt:Statement|null = null;
+            for (let _stmt of blockStmt.statements) {
+                if (_stmt.kind != NodeKind.COMMENT) {
+                   superStmt = _stmt;
+                   console.log("_stmt.kind" + NodeKind[_stmt.kind]);
+                   break;
+                }
+            }
+            if (superStmt == null || superStmt.kind != NodeKind.EXPRESSION) {
+                throw new Error(`${className}'s constructor should have super call.${this.location(concreteFunctionDeclaration.range)}`);
+            }
+            let superExpr = <ExpressionStatement> superStmt;
+            if (superExpr.expression.kind != NodeKind.CALL) {
+                throw new Error(`Class ${className}'s constructor should have super call. ${this.location(concreteFunctionDeclaration.range)}`);
+            }
+            console.log(`superExpr.expression.kind: ${NodeKind[superExpr.expression.kind]}`);
+            let superCallExpr = (<CallExpression> superExpr.expression).expression.range.toString();
+            if (superCallExpr != "super") {
+                throw new Error(`Class ${className}'s constructor should have super call. ${this.location(concreteFunctionDeclaration.range)}`);
+            }
+            let callexpr =  superExpr.range.toString();
+            let _superCall = `        this._${callexpr};`;
+            return new InsertPoint(superStmt.range, _superCall);
+        }
+        throw new Error(`${className}'s constructor should have super call.${this.location(concreteFunctionDeclaration.range)}`);
+    }
+
+    private createSuperCall(signature: string, body: Statement): string {
+        if (body.kind == NodeKind.BLOCK) {
+            let blockStmt = <BlockStatement>body;
+            let content = [];
+            for (let _stmt of blockStmt.statements) {
+                if (_stmt.kind == NodeKind.COMMENT) {
+                    //Do nothing
+                    continue;
+                } else if (_stmt.kind == NodeKind.EXPRESSION) {
+                     if( (<ExpressionStatement>_stmt).expression.kind == NodeKind.CALL) {
+                       let callIdentity = (<CallExpression>(<ExpressionStatement>_stmt).expression).expression.range.toString();
+                       if (callIdentity == "super") {
+                           // Do nothing
+                           continue;
+                       }
+                       content.push(_stmt.range.toString())
+                     }
+                }
+                content.push(_stmt.range.toString());
+            }
+            return `    _super${signature}: void { ${content.join("\n")} }`;
+        }
+        return `    _super${signature}: void ${body.range.toString()}`;
+    }
+
+    private location(range: Range): string {
+        return  "in " +
+        range.source.normalizedPath +
+        ":" +
+        range.line.toString(10) +
+        ":" +
+        range.column.toString(10)
     }
 }

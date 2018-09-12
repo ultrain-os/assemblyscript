@@ -31,6 +31,7 @@ var assemblyscript, isDev = false;
 (() => {
   try { // `asc` on the command line
     assemblyscript = require("../dist/assemblyscript");
+    throw new Error();
   } catch (e) {
     try { // `asc` on the command line without dist files
       require("ts-node").register({ project: path.join(__dirname, "..", "src", "tsconfig.json") });
@@ -316,7 +317,7 @@ exports.main = function main(argv, options, callback, isDispatch) {
       } else {
         sourceText = exports.preParseFile(sourcePath, sourceText);
         sourceText = exports.insertCodes(sourcePath, sourceText);
-        let elementPath = sourcePath.split(".").slice(0,-1).join(".");
+        let elementPath = sourcePath.split(".").slice(0, -1).join(".");
         sourceText = exports.resolveSourceText(sourceText, exports.applyText, exports.abiObj, elementPath);
         parser = assemblyscript.parseFile(sourceText, sourcePath, true, parser);
       }
@@ -966,15 +967,13 @@ exports.tscOptions = {
   allowJs: false
 };
 
-function resolveSourceText(sourceText, applyText, abiObj, filename) {
+function resolveSourceText(sourceText, applyText) {
   let memoryLib = "allocate/arena";
   let resultTextBuffer = new Array();
   if (exports.libraryFiles[memoryLib] == undefined) {
-    resultTextBuffer.push(`import "allocator/arena";`);
+    // resultTextBuffer.push(`import "allocator/arena";`);
   }
-
   resultTextBuffer.push(sourceText);
-
   if (applyText) {
     resultTextBuffer.push(applyText);
   }
@@ -992,11 +991,20 @@ function insertCodes(sourcePath, sourceText) {
   let insertPointsLookup = exports.abiObj.insertPointsLookup;
   if (insertPointsLookup.has(sourcePath)) {
     let serializeArray = insertPointsLookup.get(sourcePath);
+
     let data = sourceText.split(EOL);
+
+    console.log(`sourceText ====== ${data.length}`);
+    console.log(sourceText);
+
     for (let serialize of serializeArray) {
-      data.splice(serialize.line, 0, serialize.getInsertCode());
-      // console.log(`insert code: ${serialize.getInsertCode()}`);
+      data.splice(serialize.line , 0, serialize.getInsertCode());
+      // console.log(`insert code: ${sourcePath}.line: ${serialize.line}, data: ${serialize.getInsertCode()}. Original data:${serialize.toString()}`);
+      // console.log(`${serialize.getInsertCode()}`);
+      // console.log(data.join(EOL));
     }
+    console.log("=============");
+    console.log(data.join(EOL));
     return data.join(EOL);
   } else {
     return sourceText;

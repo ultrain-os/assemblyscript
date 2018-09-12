@@ -1000,6 +1000,7 @@ export class Resolver extends DiagnosticEmitter {
               }
               if (!fieldType) {
                 if (reportMode == ReportMode.REPORT) {
+                  console.log(`reportMode == ReportMode.REPORT`);
                   this.error(
                     DiagnosticCode.Type_expected,
                     fieldDeclaration.name.range.atEnd
