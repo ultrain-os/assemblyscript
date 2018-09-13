@@ -2140,7 +2140,13 @@ export enum DecoratorFlags {
   /** Is using a different external name. */
   EXTERNAL = 1 << 7,
   /** Is a builtin. */
-  BUILTIN = 1 << 8
+  BUILTIN = 1 << 8,
+  /** Is a database */
+  DATABASE = 1 << 9,
+  /** Is a action */
+  ACTION = 1 << 10,
+  /** Is a ignore */
+  IGNORE = 1 << 11
 }
 
 export function decoratorKindToFlag(kind: DecoratorKind): DecoratorFlags {
@@ -2155,6 +2161,9 @@ export function decoratorKindToFlag(kind: DecoratorKind): DecoratorFlags {
     case DecoratorKind.INLINE: return DecoratorFlags.INLINE;
     case DecoratorKind.EXTERNAL: return DecoratorFlags.EXTERNAL;
     case DecoratorKind.BUILTIN: return DecoratorFlags.BUILTIN;
+    case DecoratorKind.DATABASE: return DecoratorFlags.DATABASE;
+    case DecoratorKind.IGNORE: return DecoratorFlags.IGNORE;
+    case DecoratorKind.ACTION: return DecoratorFlags.ACTION;
     default: return DecoratorFlags.NONE;
   }
 }

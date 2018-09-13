@@ -1,16 +1,20 @@
-import { 
+import {
     DeclarationStatement,
     DecoratorKind,
-    Node, 
+    Node,
     ClassDeclaration
 } from "../ast";
+
+import { 
+    ClassPrototype
+} from "../program";
 
 export class AstUtil {
 
     /**
      * Check the statment weather have the specify the decorator
-     * @param statement 
-     * @param decorator 
+     * @param statement Ast declaration statement
+     * @param decorator The specify decorators
      */
     static haveSpecifyDecorator(statement: DeclarationStatement, decorator: DecoratorKind): bool {
         var decorators = statement.decorators;
@@ -58,14 +62,14 @@ export class AstUtil {
     /**
      * Whether the declare type is array or not
      */
-    static isArray(declareType: string) {
-        return declareType.includes("[") || 
+    static isArray(declareType: string): bool {
+        return declareType.includes("[") ||
             (declareType.includes("Array") && declareType.includes("<") 
             && declareType.replace("Array", "").trim().indexOf("<") == 0);
     }
 
     /**
-     * 
+     * Test the class whether to implments the Serializable interface
      */
     static impledSerializable(classDeclaration: ClassDeclaration): bool {
         const interfaceName = "Serializable";
@@ -79,4 +83,14 @@ export class AstUtil {
         }
         return false;
     }
+
+    static extendedContract(classPrototype: ClassPrototype): bool {
+        const contractName = "Contract";
+        var basePrototype: ClassPrototype | null = classPrototype.basePrototype;
+        if (basePrototype && basePrototype.simpleName == contractName) {
+            return true;
+        }
+        return false;
+    }
+
 }

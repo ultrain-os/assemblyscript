@@ -225,7 +225,7 @@ export class DataStream {
                 r[i].deserialize(this);
             }
         } else {
-            ultrain_assert(false, "DataStream.readArray() method only supports primitive types for u8, i8, u16, i16, u32, i32, u64, i64");
+            assert(false, "DataStream.readArray() method only supports primitive types for u8, i8, u16, i16, u32, i32, u64, i64");
         }
         return r;
     }
@@ -258,7 +258,7 @@ export class DataStream {
             } else if (isReference(v0)) {
                 this.writeComplexArray<T>(val);
             } else {
-                ultrain_assert(false, "DataStream.writeArray() method only supports primitive types for u8, i8, u16, i16, u32, i32, u64, i64");
+                assert(false, "DataStream.writeArray() method only supports primitive types for u8, i8, u16, i16, u32, i32, u64, i64");
             }
         } else {
             this.writeVarint32(0);

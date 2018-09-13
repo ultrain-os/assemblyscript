@@ -11,7 +11,6 @@ import {
     TypeNode,
     BlockStatement,
     Statement,
-    Node,
     ExpressionStatement,
     CallExpression,
     FunctionDeclaration
@@ -57,7 +56,7 @@ export class InsertPoint {
 
     private static descComparator = (a: InsertPoint, b: InsertPoint): i32 => {
         return (b.line - a.line);
-    };
+    }
 
     static toSortedMap(insertPoints: Array<InsertPoint>): Map<string, Array<InsertPoint>> {
 
@@ -111,7 +110,7 @@ export class InsertPoint {
 
 /**
  * Various type
- * 1. abi Type, 
+ * 1. abi Type,
  * 2. declare type, account_name, u64, 
  * 3. asc type, u64, u64[]
  * 4. asc basic type, u64
@@ -172,7 +171,7 @@ export class TypeNodeInfo {
         }
     }
 
-    getAscBasicElement(): Element|null {
+    getAscBasicElement(): Element | null {
         var internalPath = this.commonTypeNode.range.source.internalPath;
         var basicTypePath = `${internalPath}/${this.ascBasicType}`;
         var basicElement = this.program.elementsLookup.get(basicTypePath);
@@ -186,7 +185,7 @@ export class TypeNodeInfo {
         }
         // console.log(`isIgnore basictype: ${basicType}`);
         var internalPath = `${this.commonTypeNode.range.source.internalPath}/${basicType}`;
-        var element: Element|null = this.program.elementsLookup.get(internalPath);
+        var element: Element | null = this.program.elementsLookup.get(internalPath);
 
         if (element && element.kind == ElementKind.CLASS_PROTOTYPE) {
             let prototype = <ClassPrototype>element;
@@ -303,7 +302,8 @@ class SerializeGenerator {
                 let fieldDeclaration: FieldDeclaration = fieldPrototype.declaration;
                 let commonType: CommonTypeNode | null = fieldDeclaration.type;
 
-                if (commonType && commonType.kind == NodeKind.TYPE && !AstUtil.haveSpecifyDecorator(fieldDeclaration, DecoratorKind.IGNORE)) {
+                if (commonType && commonType.kind == NodeKind.TYPE && 
+                    !AstUtil.haveSpecifyDecorator(fieldDeclaration, DecoratorKind.IGNORE)) {
                     let typeNode = <TypeNode>commonType;
                     if (this.needImplDeSerialize && this.checkFieldImplSerialize(commonType)) {
                         serializePoint.addSerializeExpr(this.serializeField(fieldName, typeNode));
@@ -396,7 +396,7 @@ export class SerializePoint extends InsertPoint {
 
     needPrimaryKey: bool;
 
-    classDeclaration: ClassDeclaration
+    classDeclaration: ClassDeclaration;
 
     constructor(range: Range) {
         super(range.atEnd);
@@ -430,7 +430,7 @@ export class SerializePoint extends InsertPoint {
             insertData.push(this.serialize.join("\n"));
         }
         if (this.needPrimaryKey) {
-            insertData.push(this.primaryKey.join("\n"))
+            insertData.push(this.primaryKey.join("\n"));
         }
         return insertData.join("\n");
     }
@@ -446,6 +446,7 @@ export class SerializeInserter {
 
     constructor(program: Program) {
         this.program = program;
+        this.resolve();
     }
 
     resolve(): void {
@@ -485,6 +486,7 @@ export class SuperInserter {
 
     constructor(program: Program) {
         this.program = program;
+        this.resolve();
     }
     resolve(): void {
         for (let [_, element] of this.program.elementsLookup) {
@@ -524,21 +526,21 @@ export class SuperInserter {
 
         if (body) {
             // var content = body.range.toString();
-            var signature = baseFunctionDeclaration.signature.range.toString();
-            var method = this.createSuperCall(signature, body);
+            let signature = baseFunctionDeclaration.signature.range.toString();
+            let method = this.createSuperCall(signature, body);
             this.insertPoints.push(new InsertPoint(classPrototype.declaration.range, method));
         }
     }
 
-    private checkAndGetSuperCallExpr(classPrototype :ClassPrototype,concreteFunctionDeclaration: FunctionDeclaration): InsertPoint {
+    private checkAndGetSuperCallExpr(classPrototype: ClassPrototype, concreteFunctionDeclaration: FunctionDeclaration): InsertPoint {
         var className = classPrototype.simpleName;
         if (!concreteFunctionDeclaration.body) {
             throw new Error(`Class ${className}'s constructor should have super call.${this.location(concreteFunctionDeclaration.range)}`);
         }
-        let stmt = concreteFunctionDeclaration.body;
+        var stmt = concreteFunctionDeclaration.body;
         if (stmt.kind == NodeKind.BLOCK) {
             let blockStmt = <BlockStatement>stmt;
-            let superStmt:Statement|null = null;
+            let superStmt: Statement | null = null;
             for (let _stmt of blockStmt.statements) {
                 if (_stmt.kind != NodeKind.COMMENT) {
                    superStmt = _stmt;
@@ -572,13 +574,13 @@ export class SuperInserter {
                     //Do nothing
                     continue;
                 } else if (_stmt.kind == NodeKind.EXPRESSION) {
-                     if( (<ExpressionStatement>_stmt).expression.kind == NodeKind.CALL) {
+                     if ((<ExpressionStatement>_stmt).expression.kind == NodeKind.CALL) {
                        let callIdentity = (<CallExpression>(<ExpressionStatement>_stmt).expression).expression.range.toString();
                        if (callIdentity == "super") {
                            // Do nothing
                            continue;
                        }
-                       content.push(_stmt.range.toString())
+                       content.push(_stmt.range.toString());
                      }
                 }
                 content.push(_stmt.range.toString());
@@ -594,6 +596,6 @@ export class SuperInserter {
         ":" +
         range.line.toString(10) +
         ":" +
-        range.column.toString(10)
+        range.column.toString(10);
     }
 }

@@ -1,14 +1,14 @@
 // serializable
-import { GenericUtil } from "../../../std/assembly/internal/generic";
+// import { GenericUtil } from "../../../std/assembly/internal/generic";
 
-var map = new Map<u64, u64>();
-map.set(1, 11);
-map.set(2, 22);
+// var map = new Map<u64, u64>();
+// map.set(1, 11);
+// map.set(2, 22);
 
-var len = DataStream.measure<Map<u64, u64>>(map);
-var arr = new Uint8Array(len);
-var ds = new DataStream(changetype<usize>(arr.buffer), len);
-map.serialize(ds);
+// var len = DataStream.measure<Map<u64, u64>>(map);
+// var arr = new Uint8Array(len);
+// var ds = new DataStream(changetype<usize>(arr.buffer), len);
+// map.serialize(ds);
 
 // class A implements Serializable{
 //     num:u64;
