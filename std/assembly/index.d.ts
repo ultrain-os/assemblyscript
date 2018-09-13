@@ -723,3 +723,18 @@ declare class DataStream {
   writeDouble(d: f64): void;
 }
 
+declare class ArrayMap<K, V> implements Serializable {
+  constructor(len: u32);
+  set(key: K, val: V[]): void;
+  get(key: K): V[];
+  remove(key: K): boolean;
+  size(): i32;
+  keys(): K[];
+  values(): V[][];
+  clear(): void;
+  contains(key: K): boolean;
+  serialize(ds: DataStream): void;
+  deserialize(ds: DataStream): void;
+  primaryKey(): u64;
+}
+

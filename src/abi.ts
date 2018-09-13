@@ -388,8 +388,8 @@ export class Abi {
       body.push(`    ${contractVarName}.onInit();`);
 
       for (let instance of clzPrototype.instanceMembers.values()) {
-        if (instance.kind == ElementKind.FUNCTION_PROTOTYPE && instance.hasDecorator(DecoratorFlags.ACTION)) {
-
+        // if (instance.kind == ElementKind.FUNCTION_PROTOTYPE && instance.hasDecorator(DecoratorFlags.ACTION)) {
+          if (instance.kind == ElementKind.FUNCTION_PROTOTYPE && this.isActionFuncPrototype(instance)) {
           this.resolveFunctionPrototype(<FunctionPrototype>instance);
           hasActionDecorators = true;
           let declaration: FunctionDeclaration = (<FunctionPrototype>instance).declaration; // FunctionDeclaration

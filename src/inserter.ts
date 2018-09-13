@@ -183,13 +183,22 @@ export class TypeNodeInfo {
         if (this.declareType.indexOf("<") != -1) {
             basicType = this.declareType.substr(0,this.declareType.indexOf("<")).trim();
         }
-        // console.log(`isIgnore basictype: ${basicType}`);
+
         var internalPath = `${this.commonTypeNode.range.source.internalPath}/${basicType}`;
         var element: Element | null = this.program.elementsLookup.get(internalPath);
+        // console.log(`isIgnore basictype: ${basicType} internalPath: ${internalPath}`);
 
-        if (element && element.kind == ElementKind.CLASS_PROTOTYPE) {
-            let prototype = <ClassPrototype>element;
-            return AstUtil.haveSpecifyDecorator(prototype.declaration, DecoratorKind.IGNORE);
+        if (element) {
+            if (element.kind == ElementKind.CLASS_PROTOTYPE) {
+                let prototype = <ClassPrototype>element;
+                return AstUtil.haveSpecifyDecorator(prototype.declaration, DecoratorKind.IGNORE);
+            }
+        } else {
+            var libEle: Element | null = this.program.elementsLookup.get(basicType);
+            if (libEle && libEle.kind == ElementKind.CLASS_PROTOTYPE) {
+                let prototype = <ClassPrototype>libEle;
+                return AstUtil.haveSpecifyDecorator(prototype.declaration, DecoratorKind.IGNORE); 
+            }
         }
         return false;
     }

@@ -2161,9 +2161,9 @@ export function decoratorKindToFlag(kind: DecoratorKind): DecoratorFlags {
     case DecoratorKind.INLINE: return DecoratorFlags.INLINE;
     case DecoratorKind.EXTERNAL: return DecoratorFlags.EXTERNAL;
     case DecoratorKind.BUILTIN: return DecoratorFlags.BUILTIN;
-    case DecoratorKind.DATABASE: return DecoratorFlags.DATABASE;
-    case DecoratorKind.IGNORE: return DecoratorFlags.IGNORE;
-    case DecoratorKind.ACTION: return DecoratorFlags.ACTION;
+    // case DecoratorKind.DATABASE: return DecoratorFlags.DATABASE;
+    // case DecoratorKind.IGNORE: return DecoratorFlags.IGNORE;
+    // case DecoratorKind.ACTION: return DecoratorFlags.ACTION;
     default: return DecoratorFlags.NONE;
   }
 }
