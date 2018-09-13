@@ -469,8 +469,6 @@ export class Range {
   }
 
   toString(): string {
-    // console.log(`AAAAAA`);
-    // console.log(this.source.text);
     return this.source.text.substring(this.start, this.end);
   }
 

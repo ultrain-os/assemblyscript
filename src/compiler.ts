@@ -332,7 +332,6 @@ export class Compiler extends DiagnosticEmitter {
 
     // compile entry file(s) while traversing reachable elements
     var sources = program.sources;
-    console.log(`Compile node kind super 001`);
 
     for (let i = 0, k = sources.length; i < k; ++i) {
       if (sources[i].isEntry) this.compileSource(sources[i]);
@@ -2386,12 +2385,6 @@ export class Compiler extends DiagnosticEmitter {
       }
       case NodeKind.CALL: {
         let exp = <CallExpression>expression;
-        console.log("NodeKind.CALL" + exp.expression.range.toString());
-        if (exp.expression.range.toString() == "super"){
-          // expr = this.compileNopExpression();
-          console.log("===super super");
-        }
-        
         expr = this.compileCallExpression(<CallExpression>expression, contextualType);
         break;
       }
@@ -2420,7 +2413,6 @@ export class Compiler extends DiagnosticEmitter {
         break;
       }
       case NodeKind.SUPER: {
-        console.log(`Compile node kind super`);
         expr = this.compileNopExpression();
         break;
       }
@@ -2461,7 +2453,6 @@ export class Compiler extends DiagnosticEmitter {
         break;
       }
       default: {
-        console.log(`compile expression`);
         this.error(
           DiagnosticCode.Operation_not_supported,
           expression.range
@@ -4979,7 +4970,6 @@ export class Compiler extends DiagnosticEmitter {
   }
 
   compileCallExpression(expression: CallExpression, contextualType: Type): ExpressionRef {
-    // expression.print();
     var module = this.module;
     var currentFunction = this.currentFunction;
     var target = this.resolver.resolveExpression(expression.expression, currentFunction); // reports
@@ -5194,7 +5184,6 @@ export class Compiler extends DiagnosticEmitter {
       case ElementKind.PROPERTY: // TODO
       // not supported
       default: {
-        console.log("ElementKind[target.kind]" + ElementKind[target.kind]);
         this.error(
           DiagnosticCode.Operation_not_supported,
           expression.range

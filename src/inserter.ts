@@ -39,6 +39,7 @@ import {
     AstUtil
 } from "./util/astutil";
 import { DiagnosticCode } from "./diagnosticMessages.generated";
+import { CommonFlags } from "./common";
 
 export enum VarialbeKind {
     BOOL, // boolean and bool
@@ -85,8 +86,7 @@ export class InsertPoint {
     }
 
     get line(): i32 {
-        // console.log(`line: ${this.range.line } content:${this.range.toString()}`);
-        return this.range.line;
+        return this.range.atEnd.line;
     }
     get normalizedPath(): string {
         return this.range.source.normalizedPath;
@@ -125,13 +125,10 @@ export class TypeNodeInfo {
     abiTypeLookup: Map<string, string> = new Map();
 
     commonTypeNode: CommonTypeNode;
-
     /** Parameter name, u64 */
     declareType: string;
     /** Base Parameter type */
     ascBasicType: string;
-    /** The abi field type, eg:account_name */
-    // abiType: string;
     /** The field fact type, eg: u64, u32 */
     ascFactType: string;
     /** Whether parameter or field is array  */
@@ -153,11 +150,6 @@ export class TypeNodeInfo {
      */
     private resolve(): void {
         var declareType = this.commonTypeNode.range.toString();
-        // var typeAlias = this.program.typeAliases.get(declareType);
-
-        // if (typeAlias) {
-        //     declareType = typeAlias.type.range.toString();
-        // }
         this.declareType = declareType;
 
         var basicTypeName: string = AstUtil.getBasicTypeName(declareType);
@@ -168,10 +160,7 @@ export class TypeNodeInfo {
             return;
         }
 
-        // this.abiType = this.findAbiType(basicTypeName);
         var _ascFactType: Type | null = this.findOriginalAscType(basicTypeName);
-
-        // TODO
         if (!_ascFactType) {
             this.kind = VarialbeKind.CLASS;
         } else if (_ascFactType.kind == TypeKind.BOOL) {
@@ -183,30 +172,28 @@ export class TypeNodeInfo {
         }
     }
 
-    /**
-     * Find the original type name
-     * eg: declare type account_name = u64;
-     *     declare type account_name_alias = account_name;
-     *     findAbiType("account_name_alias") return "account_name";
-     *
-     * eg: findAbiType("u64") return "u64";
-     * @param typeKindName
-     * */
-    // findAbiType(typeKindName: string): string {
+    getAscBasicElement(): Element|null {
+        var internalPath = this.commonTypeNode.range.source.internalPath;
+        var basicTypePath = `${internalPath}/${this.ascBasicType}`;
+        var basicElement = this.program.elementsLookup.get(basicTypePath);
+        return basicElement;
+    }
 
-    //     /**Watch the type whether was the root type */
-    //     var abiType: string | null = this.abiTypeLookup.get(typeKindName);
-    //     if (abiType) {
-    //         return typeKindName;
-    //     }
-    //     var typeAlias = this.program.typeAliases.get(typeKindName);
-    //     if (typeAlias) {
-    //         let typeName = typeAlias.type.range.toString();
-    //         return this.findAbiType(typeName);
-    //     } else {
-    //         return typeKindName;
-    //     }
-    // }
+    isIgnore(): boolean {
+        var basicType = this.declareType;
+        if (this.declareType.indexOf("<") != -1) {
+            basicType = this.declareType.substr(0,this.declareType.indexOf("<")).trim();
+        }
+        // console.log(`isIgnore basictype: ${basicType}`);
+        var internalPath = `${this.commonTypeNode.range.source.internalPath}/${basicType}`;
+        var element: Element|null = this.program.elementsLookup.get(internalPath);
+
+        if (element && element.kind == ElementKind.CLASS_PROTOTYPE) {
+            let prototype = <ClassPrototype>element;
+            return AstUtil.haveSpecifyDecorator(prototype.declaration, DecoratorKind.IGNORE);
+        }
+        return false;
+    }
 
     /**
      *  Find the script original type name
@@ -555,7 +542,6 @@ export class SuperInserter {
             for (let _stmt of blockStmt.statements) {
                 if (_stmt.kind != NodeKind.COMMENT) {
                    superStmt = _stmt;
-                   console.log("_stmt.kind" + NodeKind[_stmt.kind]);
                    break;
                 }
             }
@@ -566,7 +552,6 @@ export class SuperInserter {
             if (superExpr.expression.kind != NodeKind.CALL) {
                 throw new Error(`Class ${className}'s constructor should have super call. ${this.location(concreteFunctionDeclaration.range)}`);
             }
-            console.log(`superExpr.expression.kind: ${NodeKind[superExpr.expression.kind]}`);
             let superCallExpr = (<CallExpression> superExpr.expression).expression.range.toString();
             if (superCallExpr != "super") {
                 throw new Error(`Class ${className}'s constructor should have super call. ${this.location(concreteFunctionDeclaration.range)}`);

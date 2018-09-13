@@ -60,9 +60,9 @@ export class AstUtil {
      */
     static isArray(declareType: string) {
         return declareType.includes("[") || 
-            (declareType.includes("Array") &&declareType.includes("<"));
+            (declareType.includes("Array") && declareType.includes("<") 
+            && declareType.replace("Array", "").trim().indexOf("<") == 0);
     }
-
 
     /**
      * 

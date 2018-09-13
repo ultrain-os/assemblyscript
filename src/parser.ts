@@ -621,7 +621,6 @@ export class Parser extends DiagnosticEmitter {
             else parameters.push(param);
           } else {
             if (isSignature) {
-              console.log(`isSignature`);
               this.error(
                 DiagnosticCode.Type_expected,
                 tn.range()
@@ -795,8 +794,6 @@ export class Parser extends DiagnosticEmitter {
           ); // recoverable
         }
       } else if (!type) { // neither type nor initializer
-        console.log(`else if (!type`);
-
         this.error(
           DiagnosticCode.Type_expected,
           tn.range(tn.pos)
@@ -1266,7 +1263,6 @@ export class Parser extends DiagnosticEmitter {
         tn.range(tn.pos)
       );
       if (!isSetter) {
-        console.log(`!isSetter`);
         this.error(
           DiagnosticCode.Type_expected,
           returnType.range
@@ -1373,7 +1369,6 @@ export class Parser extends DiagnosticEmitter {
       if (!returnType) return null;
     } else {
       returnType = Node.createOmittedType(tn.range(tn.pos));
-      console.log(`!returnType`);
       this.error(
         DiagnosticCode.Type_expected,
         returnType.range
@@ -1846,7 +1841,6 @@ export class Parser extends DiagnosticEmitter {
       } else {
         returnType = Node.createOmittedType(tn.range(tn.pos));
         if (!isSetter && name.kind != NodeKind.CONSTRUCTOR) {
-          console.log(`!NodeKind.CONSTRUCTOR`);
           this.error(
             DiagnosticCode.Type_expected,
             returnType.range
@@ -1936,7 +1930,6 @@ export class Parser extends DiagnosticEmitter {
         type = this.parseType(tn);
         if (!type) return null;
       } else {
-        console.log(`ommonTypeNo`);
         this.error(
           DiagnosticCode.Type_expected,
           tn.range()

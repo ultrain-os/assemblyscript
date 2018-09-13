@@ -991,20 +991,15 @@ function insertCodes(sourcePath, sourceText) {
   let insertPointsLookup = exports.abiObj.insertPointsLookup;
   if (insertPointsLookup.has(sourcePath)) {
     let serializeArray = insertPointsLookup.get(sourcePath);
-
     let data = sourceText.split(EOL);
-
-    console.log(`sourceText ====== ${data.length}`);
-    console.log(sourceText);
-
     for (let serialize of serializeArray) {
       data.splice(serialize.line , 0, serialize.getInsertCode());
       // console.log(`insert code: ${sourcePath}.line: ${serialize.line}, data: ${serialize.getInsertCode()}. Original data:${serialize.toString()}`);
       // console.log(`${serialize.getInsertCode()}`);
       // console.log(data.join(EOL));
     }
-    console.log("=============");
-    console.log(data.join(EOL));
+    // console.log("=============");
+    // console.log(data.join(EOL));
     return data.join(EOL);
   } else {
     return sourceText;

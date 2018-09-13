@@ -32,7 +32,8 @@ import {
   VariableLikeDeclarationStatement,
   StringLiteralExpression,
   ClassDeclaration,
-  MethodDeclaration
+  MethodDeclaration,
+  CommonTypeNode
 } from "./ast";
 
 import { 
@@ -149,29 +150,37 @@ export class Abi {
   /**
   *  Add abi struct for abi info.
   */
-  toAbiStruct(methodName: string, signature: SignatureNode): Struct {
+  resolveSignatureToAbiStruct(methodName: string, signature: SignatureNode): Struct {
 
     var struct = new Struct();
     struct.name = methodName;
     struct.base = "";
 
-    var types = signature.parameters;
-    if (types) {
-      for (let type of types) {
-        let typeKind = type.type.range.toString();
-        this.addAbiTypeAlias(typeKind);
-        struct.fields.push({ name: type.name.range.toString(), type: type.type.range.toString() });
-      }
+    var parameters:ParameterNode[] = signature.parameters; 
+    for (let parameter of parameters) {
+      let type: CommonTypeNode = parameter.type;
+      let typeInfo = new TypeNodeInfo(this.program, type);
+      let abiType = typeInfo.isArray ? `${typeInfo.ascBasicType}[]` : typeInfo.declareType;
+      this.addAbiTypeAlias(typeInfo);
+      struct.fields.push({ "name" : parameter.name.range.toString(), "type": abiType });
     }
     return struct;
   }
 
-  addAbiTypeAlias(typeKindName: string): void {
+  addAbiTypeAlias(typeNodeInfo: TypeNodeInfo): void {
+    var typeKindName = typeNodeInfo.ascBasicType;
+
+    var basicElement = typeNodeInfo.getAscBasicElement();
+    if (basicElement &&  basicElement.kind == ElementKind.CLASS_PROTOTYPE) {
+      var classPrototype = <ClassPrototype>basicElement;
+      this.resolveClassPrototypeToStruct(classPrototype);  
+    }
 
     if (!this.typeAliasSet.has(typeKindName)) {
       // It's the assemblyscript internal type
       let originalTypeName = this.findContractOriginalType(typeKindName);
       let wasmType = this.abiTypeLookup.get(originalTypeName);
+      // console.log(`addAbiTypeAlias: ${typeKindName}`);
       if (wasmType) {
         this.abiInfo.types.push(new AbiTypeAlias(typeKindName, wasmType));
       }
@@ -329,10 +338,7 @@ export class Abi {
   *  Get struct from expression.
   */
   resolveExpressionToStruct(expr: Expression): void {
-
-    var internalPath = expr.range.source.internalPath;
-    var name = expr.range.toString();
-    var internalName = `${internalPath}/${name}`;
+    var internalName = AstUtil.getInternalName(expr);
     this.retrieveStructByInternalName(internalName);
   }
 
@@ -347,7 +353,6 @@ export class Abi {
   }
 
   resolveClassPrototypeToStruct(classPrototype: ClassPrototype): void {
-
     var members: DeclarationStatement[] = classPrototype.declaration.members;
     var struct = new Struct();
     struct.name = classPrototype.simpleName;
@@ -355,19 +360,21 @@ export class Abi {
     if (this.abiTypeLookup.get(struct.name)) {
       return;
     }
-
     struct.base = "";
     for (let member of members) {
       if (member.kind == NodeKind.FIELDDECLARATION) {
         let fieldDeclare: FieldDeclaration = <FieldDeclaration>member;
         let fieldName = member.name.range.toString();
-        let fieldType = fieldDeclare.type;
+        let fieldType: CommonTypeNode|null = fieldDeclare.type;
 
         if (fieldType && !AstUtil.haveSpecifyDecorator(fieldDeclare, DecoratorKind.IGNORE)) {
           let declaration:TypeNodeInfo = new TypeNodeInfo(this.program, fieldType);
           let fieldTypeName = fieldType.range.toString();
-          let type =  !declaration.isArray ? fieldTypeName :  `${AstUtil.getBasicTypeName(fieldTypeName)}[]`;
-          struct.fields.push({ name: fieldName, type:type });
+          if (declaration.isIgnore()){
+            continue;
+          }
+          let type =  declaration.isArray ? `${AstUtil.getBasicTypeName(fieldTypeName)}[]` : fieldTypeName;
+          struct.fields.push({"name": fieldName, "type": type });
         }
       }
     }
@@ -382,11 +389,8 @@ export class Abi {
     }
   }
 
-  static nameMap: string = "._0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-
   checkName(str: string): void {
-
-    assert(str.length > 0, `Action name should not empty`);
+    assert(str.length > 0, `Action name should not empty.`);
     assert(str.length <= 21, `Action Name:${str} should be less than 21 characters.`);
   }
 
@@ -419,7 +423,6 @@ export class Abi {
           let types = declaration.signature.parameters; // FunctionDeclaration parameter types
 
           this.checkName(funcName);
-          //let action = new NameEx(actH, actL);
           body.push(`    if (${contractVarName}.isAction("${funcName}")){`);
 
           let fields = new Array<string>();
@@ -477,7 +480,7 @@ export class Abi {
     var declaration: FunctionDeclaration = funcPrototype.declaration;
     var funcName = declaration.name.range.toString();
     var signature = funcPrototype.declaration.signature;
-    var struct = this.toAbiStruct(funcName, signature);
+    var struct = this.resolveSignatureToAbiStruct(funcName, signature);
 
     this.addStruct(struct);
     this.abiInfo.actions.push(new Action(funcName, funcName));
@@ -507,7 +510,7 @@ export class Abi {
     for (let key of keys) {
       let value = this.program.elementsLookup.get(key);
       if (value) {
-        console.log(`Element lookup key:${key}.Kind:${value.kind}`);
+        console.log(`Element lookup key:${key}.Kind:${ElementKind[value.kind]}`);
       }
     }
   }
@@ -523,7 +526,6 @@ export class Abi {
           console.log(`Element lookup key:${key}. Base prototype:${classPrototype.basePrototype.simpleName}`);
         }
       }
-
     }
   }
 
@@ -531,23 +533,19 @@ export class Abi {
 
     // this.printTypeAliasInfo();
     // this.printElementLookUpInfo();
-    // this.findDBManager();
     // this.printClassProtoTypeInfo();
 
     var serializeInserter: SerializeInserter = new SerializeInserter(this.program);
     var superInserter: SuperInserter = new SuperInserter(this.program);
     serializeInserter.resolve();
     superInserter.resolve();
-
     var serializePoints = serializeInserter.getInsertPoints();
     var superPoints = superInserter.getInsertPoints();
-
     for (let _points of superPoints) {
       serializePoints.push(_points);
     }
 
     this.insertPointsLookup = InsertPoint.toSortedMap(serializePoints);
-
     var dispatchBuffer = new Array<string>();
 
     for (let element of this.program.elementsLookup.values()) {
