@@ -1,8 +1,9 @@
+import "allocator/arena";
 class Base {
-    a: i32 = 0;
     constructor(a:i32) {
         this.a = a;
     }
+    a: i32 = 0;
 }
 export class Concrete extends Base {
     constructor(a: i32, b: i32) {
