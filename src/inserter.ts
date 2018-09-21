@@ -507,6 +507,7 @@ export class SuperInserter {
                 let classPrototype = <ClassPrototype>element;
                 let classDeclaration = classPrototype.declaration;
                 let identity = classDeclaration.range.source.normalizedPath + classDeclaration.range.toString() + classDeclaration.name.range.toString();
+                // console.log(`${classPrototype.simpleName}: atEnd line: ${classPrototype.declaration.range.atEnd.line} line: ${classPrototype.declaration.range.line} end: ${classPrototype.declaration.range.end} column:${classPrototype.declaration.range.column}`);
                 if (classPrototype.basePrototype && !this.classNames.has(identity)) {
                     this.processSuper(classPrototype);
                     this.classNames.add(identity);
