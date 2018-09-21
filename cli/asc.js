@@ -31,7 +31,7 @@ var assemblyscript, isDev = false;
 (() => {
   try { // `asc` on the command line
     assemblyscript = require("../dist/assemblyscript");
-    // throw new Error();
+    throw new Error();
   } catch (e) {
     try { // `asc` on the command line without dist files
       require("ts-node").register({ project: path.join(__dirname, "..", "src", "tsconfig.json") });
@@ -968,11 +968,7 @@ exports.tscOptions = {
 };
 
 function resolveSourceText(sourceText, applyText) {
-  let memoryLib = "allocate/arena";
   let resultTextBuffer = new Array();
-  if (exports.libraryFiles[memoryLib] == undefined) {
-    // resultTextBuffer.push(`import "allocator/arena";`);
-  }
   resultTextBuffer.push(sourceText);
   if (applyText) {
     resultTextBuffer.push(applyText);

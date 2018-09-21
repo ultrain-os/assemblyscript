@@ -898,10 +898,10 @@ export class Program extends DiagnosticEmitter {
       // remember classes that implement interfaces
       } else if (numImplementsTypes) {
         for (let i = 0; i < numImplementsTypes; ++i) {
-          this.warning( // TODO
-            DiagnosticCode.Operation_not_supported,
-            implementsTypes[i].range
-          );
+          // this.warning( // TODO
+          //   DiagnosticCode.Operation_not_supported,
+          //   implementsTypes[i].range
+          // );
         }
         queuedImplements.push(prototype);
       }

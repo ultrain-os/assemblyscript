@@ -85,7 +85,9 @@ export class InsertPoint {
     }
 
     get line(): i32 {
-        return this.range.atEnd.line;
+        // console.log(`columen: ${this.range.column}. line: ${this.range.atEnd.line}`);
+        return (this.range.column == 0) ?
+         this.range.atEnd.line -1 : this.range.atEnd.line;
     }
     get normalizedPath(): string {
         return this.range.source.normalizedPath;
@@ -493,6 +495,8 @@ export class SuperInserter {
 
     private classNames: Set<string> = new Set<string>();
 
+    private baseClassNames: Set<string> = new Set<string>();
+
     constructor(program: Program) {
         this.program = program;
         this.resolve();
@@ -536,11 +540,22 @@ export class SuperInserter {
         if (body) {
             // var content = body.range.toString();
             let signature = baseFunctionDeclaration.signature.range.toString();
-            let method = this.createSuperCall(signature, body);
-            this.insertPoints.push(new InsertPoint(classPrototype.declaration.range, method));
+            let method = this.createSuperCall(classPrototype.basePrototype.simpleName, signature, body);
+
+            let range = classPrototype.basePrototype.declaration.range;
+            let indentity =  range.source.normalizedPath + range.toString()        
+            if (!this.baseClassNames.has(indentity)) {
+                this.insertPoints.push(new InsertPoint(classPrototype.basePrototype.declaration.range, method));
+                this.baseClassNames.add(indentity);
+            }
         }
     }
 
+    /**
+     * 
+     * @param classPrototype concrete class prototype
+     * @param concreteFunctionDeclaration base class constructor
+     */
     private checkAndGetSuperCallExpr(classPrototype: ClassPrototype, concreteFunctionDeclaration: FunctionDeclaration): InsertPoint {
         var className = classPrototype.simpleName;
         if (!concreteFunctionDeclaration.body) {
@@ -568,13 +583,20 @@ export class SuperInserter {
                 throw new Error(`Class ${className}'s constructor should have super call. ${this.location(concreteFunctionDeclaration.range)}`);
             }
             let callexpr =  superExpr.range.toString();
-            let _superCall = `        this._${callexpr};`;
-            return new InsertPoint(superStmt.range, _superCall);
+            if (classPrototype.basePrototype) {
+                let baseClassName = classPrototype.basePrototype.simpleName;
+                let _superCall = `        this._${baseClassName}_${callexpr};`;
+                return new InsertPoint(superStmt.range, _superCall);
+            }
+   
         }
         throw new Error(`${className}'s constructor should have super call.${this.location(concreteFunctionDeclaration.range)}`);
     }
 
-    private createSuperCall(signature: string, body: Statement): string {
+    /**
+     * Create super call function 
+     */
+    private createSuperCall(baseClassname: string, signature: string, body: Statement): string {
         if (body.kind == NodeKind.BLOCK) {
             let blockStmt = <BlockStatement>body;
             let content = [];
@@ -594,9 +616,9 @@ export class SuperInserter {
                 }
                 content.push(_stmt.range.toString());
             }
-            return `    _super${signature}: void { ${content.join("\n")} }`;
+            return `    _${baseClassname}_super${signature}: void { ${content.join("\n")} }`;
         }
-        return `    _super${signature}: void ${body.range.toString()}`;
+        return `    _${baseClassname}_super${signature}: void ${body.range.toString()}`;
     }
 
     private location(range: Range): string {
