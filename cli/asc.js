@@ -973,7 +973,7 @@ function resolveSourceText(sourceText, applyText) {
   if (applyText) {
     resultTextBuffer.push(applyText);
   }
-  return resultTextBuffer.join("\n");
+  return resultTextBuffer.join(EOL);
 }
 
 exports.resolveSourceText = resolveSourceText;

@@ -37,8 +37,6 @@ import {
 import {
     AstUtil
 } from "./util/astutil";
-import { DiagnosticCode } from "./diagnosticMessages.generated";
-import { CommonFlags } from "./common";
 
 export enum VarialbeKind {
     BOOL, // boolean and bool
@@ -85,9 +83,7 @@ export class InsertPoint {
     }
 
     get line(): i32 {
-        // console.log(`columen: ${this.range.column}. line: ${this.range.atEnd.line}`);
-        return (this.range.column == 0) ?
-         this.range.atEnd.line -1 : this.range.atEnd.line;
+        return (this.range.column == 0) ? this.range.atEnd.line - 1 : this.range.atEnd.line;
     }
     get normalizedPath(): string {
         return this.range.source.normalizedPath;
