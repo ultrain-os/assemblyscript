@@ -1,7 +1,6 @@
 {
   "name": "ultrascript",
-  "version": "0.5.1",
-  "author": "Daniel Wirtz <dcode+assemblyscript@dcode.io>",
+  "version": "0.0.1",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
