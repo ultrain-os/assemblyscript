@@ -581,7 +581,7 @@ export class SuperInserter {
             let callexpr =  superExpr.range.toString();
             if (classPrototype.basePrototype) {
                 let baseClassName = classPrototype.basePrototype.simpleName;
-                let _superCall = `        this._${callexpr};`;
+                let _superCall = `        this._${baseClassName}_${callexpr};`;
                 return new InsertPoint(superStmt.range, _superCall);
             }
    
@@ -612,9 +612,9 @@ export class SuperInserter {
                 }
                 content.push(_stmt.range.toString());
             }
-            return `    _${functionName}${signature}: void { ${content.join("\n")} }`;
+            return `    _${functionName}_super${signature}: void { ${content.join("\n")} }`;
         }
-        return `    _${functionName}${signature}: void ${body.range.toString()}`;
+        return `    _${functionName}_super${signature}: void ${body.range.toString()}`;
     }
 
     private location(range: Range): string {
