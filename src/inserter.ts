@@ -37,8 +37,6 @@ import {
 import {
     AstUtil
 } from "./util/astutil";
-import { DiagnosticCode } from "./diagnosticMessages.generated";
-import { CommonFlags } from "./common";
 
 export enum VarialbeKind {
     BOOL, // boolean and bool
@@ -85,9 +83,7 @@ export class InsertPoint {
     }
 
     get line(): i32 {
-        // console.log(`columen: ${this.range.column}. line: ${this.range.atEnd.line}`);
-        return (this.range.column == 0) ?
-         this.range.atEnd.line -1 : this.range.atEnd.line;
+        return (this.range.column == 0) ? this.range.atEnd.line - 1 : this.range.atEnd.line;
     }
     get normalizedPath(): string {
         return this.range.source.normalizedPath;
@@ -507,7 +503,6 @@ export class SuperInserter {
                 let classPrototype = <ClassPrototype>element;
                 let classDeclaration = classPrototype.declaration;
                 let identity = classDeclaration.range.source.normalizedPath + classDeclaration.range.toString() + classDeclaration.name.range.toString();
-                // console.log(`${classPrototype.simpleName}: atEnd line: ${classPrototype.declaration.range.atEnd.line} line: ${classPrototype.declaration.range.line} end: ${classPrototype.declaration.range.end} column:${classPrototype.declaration.range.column}`);
                 if (classPrototype.basePrototype && !this.classNames.has(identity)) {
                     this.processSuper(classPrototype);
                     this.classNames.add(identity);
@@ -541,8 +536,8 @@ export class SuperInserter {
         if (body) {
             // var content = body.range.toString();
             let signature = baseFunctionDeclaration.signature.range.toString();
-            let method = this.createSuperCall(signature, body);
-
+            let method = this.createSuperCall(classPrototype.basePrototype.simpleName , signature, body);
+            
             let range = classPrototype.basePrototype.declaration.range;
             let indentity =  range.source.normalizedPath + range.toString()        
             if (!this.baseClassNames.has(indentity)) {
@@ -584,8 +579,12 @@ export class SuperInserter {
                 throw new Error(`Class ${className}'s constructor should have super call. ${this.location(concreteFunctionDeclaration.range)}`);
             }
             let callexpr =  superExpr.range.toString();
-            let _superCall = `        this._${callexpr};`;
-            return new InsertPoint(superStmt.range, _superCall);
+            if (classPrototype.basePrototype) {
+                let baseClassName = classPrototype.basePrototype.simpleName;
+                let _superCall = `        this._${callexpr};`;
+                return new InsertPoint(superStmt.range, _superCall);
+            }
+   
         }
         throw new Error(`${className}'s constructor should have super call.${this.location(concreteFunctionDeclaration.range)}`);
     }
@@ -593,7 +592,7 @@ export class SuperInserter {
     /**
      * Create super call function 
      */
-    private createSuperCall(signature: string, body: Statement): string {
+    private createSuperCall(functionName: string, signature: string, body: Statement): string {
         if (body.kind == NodeKind.BLOCK) {
             let blockStmt = <BlockStatement>body;
             let content = [];
@@ -613,9 +612,9 @@ export class SuperInserter {
                 }
                 content.push(_stmt.range.toString());
             }
-            return `    _super${signature}: void { ${content.join("\n")} }`;
+            return `    _${functionName}${signature}: void { ${content.join("\n")} }`;
         }
-        return `    _super${signature}: void ${body.range.toString()}`;
+        return `    _${functionName}${signature}: void ${body.range.toString()}`;
     }
 
     private location(range: Range): string {

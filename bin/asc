@@ -3,7 +3,7 @@ const usc = module.exports = require("../cli/asc.js");
 const optionsUtil = require("../cli/util/options");
 const options = exports.options = require("../cli/asc.json");
 
-if (/\busc$/.test(process.argv[1])) {
+if (/\busc|asc$/.test(process.argv[1])) {
   const argv = process.argv.slice(2);
   const opts = optionsUtil.parse(argv, options);
   const args = opts.options;

@@ -968,16 +968,12 @@ exports.tscOptions = {
 };
 
 function resolveSourceText(sourceText, applyText) {
-  // let memoryLib = "allocate/arena";
   let resultTextBuffer = new Array();
-  // if (exports.libraryFiles[memoryLib] == undefined) {
-    // resultTextBuffer.push(`import "allocator/arena";`);
-  // }
   resultTextBuffer.push(sourceText);
   if (applyText) {
     resultTextBuffer.push(applyText);
   }
-  return resultTextBuffer.join("\n");
+  return resultTextBuffer.join(EOL);
 }
 
 exports.resolveSourceText = resolveSourceText;

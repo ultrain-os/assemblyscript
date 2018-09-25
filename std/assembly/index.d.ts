@@ -689,6 +689,8 @@ declare function inline(target: any, propertyKey: any, descriptor: any): any;
 declare function external(target: any, propertyKey: any, descriptor: any): any;
 
 // Decorators for the smart contract
+/** Add decalare type for typed property descriptor */
+interface TypedPropertyDescriptor<T>{ }
 /** Annotates a method or function as contract */
 declare function action(target: any, propertyKey: any, descriptor: any): void;
 
