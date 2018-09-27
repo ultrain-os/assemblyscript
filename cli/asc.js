@@ -31,7 +31,7 @@ var assemblyscript, isDev = false;
 (() => {
   try { // `asc` on the command line
     assemblyscript = require("../dist/assemblyscript");
-    //   throw new Error();
+    // throw new Error();
   } catch (e) {
     try { // `asc` on the command line without dist files
       require("ts-node").register({ project: path.join(__dirname, "..", "src", "tsconfig.json") });
@@ -124,8 +124,15 @@ exports.compileString = (sources, options) => {
   return output;
 }
 
+exports.compileType = {
+  "DEFAULT": undefined, // Using the default asc.main function 
+  "GENERATED_INSERT_CODE": 1, // Traversal the AST to generate the insert code
+  "GENERATED_TARGET": 2, // Generate the target file that insered code
+  "GENERATED_APPLY_TARGET": 3 // Generate the target file with apply text
+}
+
 /** Runs the command line utility using the specified arguments array. */
-exports.main = function main(argv, options, callback, isDispatch) {
+exports.main = function main(argv, options, callback, exttype) {
   if (typeof options === "function") {
     callback = options;
     options = {};
@@ -310,19 +317,16 @@ exports.main = function main(argv, options, callback, isDispatch) {
     stats.parseTime += measure(() => {
 
       // if <pre> isDispathch == true </pre>, reproduce the code 
-      if (!isDispatch) {
-        sourceText = exports.preParseFile(sourcePath, sourceText);
-        sourceText = exports.resolveSourceText(sourceText, null, null);
-        parser = assemblyscript.parseFile(sourceText, sourcePath, true, parser);
-      } else {
-        sourceText = exports.preParseFile(sourcePath, sourceText);
+      sourceText = exports.replaceSdkLib(sourcePath, sourceText);
+      if (exttype == exports.compileType.GENERATED_TARGET || exttype == exports.compileType.GENERATED_APPLY_TARGET) {
         sourceText = exports.insertCodes(sourcePath, sourceText);
-        let elementPath = sourcePath.split(".").slice(0, -1).join(".");
-        sourceText = exports.resolveSourceText(sourceText, exports.applyText, exports.abiObj, elementPath);
-        parser = assemblyscript.parseFile(sourceText, sourcePath, true, parser);
       }
-    });
+      if (exttype == exports.compileType.GENERATED_APPLY_TARGET) {
+        sourceText = exports.insertDispatchText(sourceText, exports.applyText);
+      }
 
+      parser = assemblyscript.parseFile(sourceText, sourcePath, true, parser);
+    });
 
     // Process backlog
     while ((sourcePath = parser.nextFile()) != null) {
@@ -401,10 +405,10 @@ exports.main = function main(argv, options, callback, isDispatch) {
       stats.parseCount++;
       stats.parseTime += measure(() => {
 
-        if (isDispatch != undefined) {
-          sourceText = exports.preParseFile(sourcePath, sourceText);
+        if (exttype != undefined) {
+          sourceText = exports.replaceSdkLib(sourcePath, sourceText);
         }
-        if (isDispatch) {
+        if (exttype && exttype != 1) {
           sourceText = exports.insertCodes(sourcePath, sourceText);
         }
         assemblyscript.parseFile(sourceText, sourcePath, false, parser);
@@ -562,18 +566,18 @@ exports.main = function main(argv, options, callback, isDispatch) {
     });
   }
 
-  if (!isDispatch) {
+  if (exttype == 1) {
     exports.abiObj = program.toAbi();
     exports.applyText = exports.abiObj.dispatch;
   }
 
   // console.log("applyText:" + exports.applyText);
-  if (args.applyText && isDispatch) {
+  if (args.applyText && exttype) {
     console.log("The generated apply text:");
     console.log(exports.applyText);
   }
 
-  if (isDispatch == undefined) {
+  if (exttype == 0) {
     return ;
   }
 
@@ -735,7 +739,10 @@ exports.main = function main(argv, options, callback, isDispatch) {
     }
 
     // Write text (must be last)
+   
+
     if (args.textFile != null || !hasOutput) {
+
       let wat;
       if (args.textFile && args.textFile.length) {
         stats.emitCount++;
@@ -967,7 +974,7 @@ exports.tscOptions = {
   allowJs: false
 };
 
-function resolveSourceText(sourceText, applyText) {
+function insertDispathText(sourceText, applyText) {
   let resultTextBuffer = new Array();
   resultTextBuffer.push(sourceText);
   if (applyText) {
@@ -976,7 +983,7 @@ function resolveSourceText(sourceText, applyText) {
   return resultTextBuffer.join(EOL);
 }
 
-exports.resolveSourceText = resolveSourceText;
+exports.insertDispatchText = insertDispathText;
 
 function insertCodes(sourcePath, sourceText) {
 
@@ -990,8 +997,6 @@ function insertCodes(sourcePath, sourceText) {
     let data = sourceText.split(EOL);
     for (let serialize of serializeArray) {
       data.splice(serialize.line , 0, serialize.getInsertCode());
-      // console.log(`insert code: ${sourcePath}.line: ${serialize.line}, data: ${serialize.getInsertCode()}. Original data:${serialize.toString()}`);
-      // console.log(`${serialize.getInsertCode()}`);
     }
     return data.join(EOL);
   } else {
@@ -1001,12 +1006,10 @@ function insertCodes(sourcePath, sourceText) {
 
 exports.insertCodes = insertCodes;
 
-function preParseFile(sourcePath, sourceText) {
+function replacedSdkLib(sourcePath, sourceText) {
   if (sourcePath.indexOf("/dbmanager") != -1) {
-    let res = fs.readFileSync(path.join( __dirname, "./contract/dbmanager.ts"), { encoding: "utf8" });
-    return res;
+    return fs.readFileSync(path.join( __dirname, "./contract/dbmanager.ts"), { encoding: "utf8" });
   }
   return sourceText;
 }
-
-exports.preParseFile = preParseFile;
+exports.replaceSdkLib = replacedSdkLib;

@@ -10,11 +10,11 @@ if (/\busc|asc$/.test(process.argv[1])) {
 
   // There are two steps to generate the wast file
   if(args.applyText){
-  	usc.main(argv);
-  	process.exitCode = usc.main(argv, null, null,true);
+  	process.exitCode = usc.main(argv, null, null, 1);
+  	process.exitCode = usc.main(argv, null, null, 3);
   } else {
-    process.exitCode = usc.main(argv);
-    process.exitCode = usc.main(argv, null, null,false);
+    process.exitCode = usc.main(argv, null, null, 1);
+    process.exitCode = usc.main(argv, null, null, 2);
   }
-  
+  return process.exitCode;
 }

@@ -691,14 +691,15 @@ declare function external(target: any, propertyKey: any, descriptor: any): any;
 // Decorators for the smart contract
 /** Add decalare type for typed property descriptor */
 interface TypedPropertyDescriptor<T>{ }
+
 /** Annotates a method or function as contract */
-declare function action(target: any, propertyKey: any, descriptor: any): void;
+declare function action(target: any, propertyKey?: any, descriptor?: any): void;
 
 /** Annotates a class as database information */
-declare function database(target: Function, propertyKey: any, descriptor: any): void;
+declare function database(target: Function, propertyKey: any, descriptor?: any): any;
 
 /** Annotates for the serializable object */
-declare function ignore(target: Function, propertyKey: any, descriptor: any): void;
+declare function ignore(target: Function, propertyKey?: any, descriptor?: any): void;
 
 /** Object serializable interface */
 interface Serializable { }
