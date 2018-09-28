@@ -317,8 +317,8 @@ exports.main = function main(argv, options, callback, exttype) {
     stats.parseTime += measure(() => {
 
       // if <pre> isDispathch == true </pre>, reproduce the code 
-      sourceText = exports.replaceSdkLib(sourcePath, sourceText);
       if (exttype == exports.compileType.GENERATED_TARGET || exttype == exports.compileType.GENERATED_APPLY_TARGET) {
+        sourceText = exports.replaceSdkLib(sourcePath, sourceText);
         sourceText = exports.insertCodes(sourcePath, sourceText);
       }
       if (exttype == exports.compileType.GENERATED_APPLY_TARGET) {
@@ -405,10 +405,8 @@ exports.main = function main(argv, options, callback, exttype) {
       stats.parseCount++;
       stats.parseTime += measure(() => {
 
-        if (exttype != undefined) {
+        if (exttype == 2 || exttype == 3) {
           sourceText = exports.replaceSdkLib(sourcePath, sourceText);
-        }
-        if (exttype && exttype != 1) {
           sourceText = exports.insertCodes(sourcePath, sourceText);
         }
         assemblyscript.parseFile(sourceText, sourcePath, false, parser);
@@ -572,7 +570,7 @@ exports.main = function main(argv, options, callback, exttype) {
   }
 
   // console.log("applyText:" + exports.applyText);
-  if (args.applyText && exttype) {
+  if (args.applyText && exttype == 3) {
     console.log("The generated apply text:");
     console.log(exports.applyText);
   }
