@@ -2559,7 +2559,7 @@ export class Function extends Element {
       declaration
     );
     if (name) {
-      if (this.localsByName.has(name)) throw new Error("duplicate local name");
+      if (this.localsByName.has(name)) throw new Error(`duplicate local name: ${name}`);
       this.localsByName.set(name, local);
     }
     this.localsByIndex[local.index] = local;

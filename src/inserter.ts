@@ -129,7 +129,6 @@ export class TypeNodeInfo {
     /** The field fact type, eg: u64, u32 */
     ascFactType: string;
     /** Whether parameter or field is array  */
-
     get isArray(): bool {
         return AstUtil.isArray(this.declareType);
     }

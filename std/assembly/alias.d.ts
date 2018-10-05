@@ -11,6 +11,5 @@ declare type permission_name = u64;
 declare type table_name = u64;
 declare type time = u32;
 declare type scope_name = u64;
-declare type action_name = u64;
 declare type weight_type = u16;
 

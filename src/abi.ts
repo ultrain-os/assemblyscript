@@ -16,8 +16,7 @@ import {
   ClassPrototype,
   FunctionPrototype,
   Program,
-  VariableLikeElement,
-  DecoratorFlags
+  VariableLikeElement
 } from "./program";
 
 import {
@@ -32,8 +31,6 @@ import {
   Expression,
   VariableLikeDeclarationStatement,
   StringLiteralExpression,
-  ClassDeclaration,
-  MethodDeclaration,
   CommonTypeNode
 } from "./ast";
 
@@ -84,8 +81,8 @@ export class AbiHelper {
     ["u64", "uint64"],
     ["usize", "usize"],
     ["bool", "uint8"], // eos not support the bool
-    ["f32", "f32"],
-    ["f64", "f64"],
+    ["f32", "float32"],
+    ["f64", "float64"],
     ["boolean", "uint8"], // eos not suppot the bool
     ["account_name", "name"],
     ["permission_name", "name"],
@@ -274,6 +271,7 @@ export class Abi {
         }
         let type = decorator.arguments[0].range.toString();
         let name = this.getExprValue(decorator.arguments[1]);
+        this.checkDatabaseName(name);
         this.abiInfo.tables.push(new Table(name, type));
         this.resolveExpressionToStruct(decorator.arguments[0]);
       }
@@ -351,6 +349,7 @@ export class Abi {
           }
           let type =  declaration.isArray ? `${AstUtil.getBasicTypeName(fieldTypeName)}[]` : fieldTypeName;
           struct.fields.push({"name": fieldName, "type": type });
+          this.addAbiTypeAlias(declaration);
         }
       }
     }
@@ -369,6 +368,16 @@ export class Abi {
   checkName(str: string): void {
     assert(str.length > 0, `Action name should not empty.`);
     assert(str.length <= 21, `Action Name:${str} should be less than 21 characters.`);
+  }
+
+  checkDatabaseName(name: string): void {
+    assert(name.length > 0, `Table name should not empty.`);
+    assert(name.length <= 12, `Table name Name:${name} should be less than 12 characters.`);
+    const chars = "abcdefghijklmnopqrstuvwxyz12345.";
+    
+    for (let aChar of name) {
+      assert(chars.includes(aChar), `Table name:${name} should only contain the below chars:${chars}`); 
+    }
   }
 
   /**
@@ -448,6 +457,9 @@ export class Abi {
     return new Array();
   }
 
+  /**
+   * Resolve funciton prototype to abi
+   */
   resolveFunctionPrototype(funcPrototype: FunctionPrototype): void {
 
     var declaration: FunctionDeclaration = funcPrototype.declaration;
