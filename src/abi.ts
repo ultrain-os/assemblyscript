@@ -392,9 +392,9 @@ export class Abi {
 
       body.push(`  if (receiver == code) {`);
       body.push(`    let ${contractVarName} = new ${contractName}(receiver);`);
-      body.push(`    let ds = ${contractVarName}.getDataStream();`);
       body.push(`    ${contractVarName}.setActionName(actH, actL);`);
       body.push(`    ${contractVarName}.onInit();`);
+      body.push(`    let ds = ${contractVarName}.getDataStream();`);
 
       for (let instance of clzPrototype.instanceMembers.values()) {
         // if (instance.kind == ElementKind.FUNCTION_PROTOTYPE && instance.hasDecorator(DecoratorFlags.ACTION)) {

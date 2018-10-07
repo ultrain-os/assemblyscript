@@ -301,6 +301,7 @@ class SerializeGenerator {
             return serializePoint;
         }
 
+        var hasPrimaryidDecorator = false;
         for (let [fieldName, element] of this.classPrototype.instanceMembers) {
             if (element.kind == ElementKind.FIELD_PROTOTYPE) {
 
@@ -319,8 +320,25 @@ class SerializeGenerator {
                         serializePoint.addDeserializeExpr(this.deserializeField(fieldName, typeNode));
                     }
                 }
+
+                if (commonType && commonType.kind == NodeKind.TYPE && AstUtil.haveSpecifyDecorator(fieldDeclaration, DecoratorKind.PRIMARYID) ) {
+                    if (hasPrimaryidDecorator) {
+                        throw new Error(`Class ${this.classPrototype.simpleName} should only have only one primaryid decorators.`);
+                    }
+                    hasPrimaryidDecorator = true;
+                    let  paramDeclaration: TypeNodeInfo = new TypeNodeInfo(this.classPrototype.program, commonType);
+                    if ( paramDeclaration.ascFactType != 'u64'){
+                        throw new Error(`Class ${this.classPrototype.simpleName} field ${fieldName}'s type should be id_type.`);
+                    }
+                    serializePoint.addPrimaryKeyExpr(`      return this.${fieldName};`)
+                }
             }
         }
+
+        if (!hasPrimaryidDecorator) {
+            serializePoint.addPrimaryKeyExpr(`      return 0;`);
+        }
+        serializePoint.addPrimaryKeyExpr(`   }`);
         serializePoint.addDeserializeExpr(`   }`);
         serializePoint.addSerializeExpr(`   }`);
 
@@ -410,8 +428,6 @@ export class SerializePoint extends InsertPoint {
         this.deserialize.push(`    deserialize(ds: DataStream): void {`);
 
         this.primaryKey.push(`     primaryKey(): id_type {`);
-        this.primaryKey.push(`       return 0;`);
-        this.primaryKey.push(`    }`);
     }
 
     addSerializeExpr(expr: string): void {
@@ -420,6 +436,10 @@ export class SerializePoint extends InsertPoint {
 
     addDeserializeExpr(expr: string): void {
         this.deserialize.push(expr);
+    }
+
+    addPrimaryKeyExpr(expr: string): void {
+        this.primaryKey.push(expr);
     }
 
     get indentity(): string {

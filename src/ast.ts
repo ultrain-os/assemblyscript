@@ -1126,6 +1126,7 @@ export enum DecoratorKind {
   ACTION,
   DATABASE,
   IGNORE,
+  PRIMARYID,
   EXTERNAL,
   BUILTIN
 }
@@ -1163,6 +1164,10 @@ export function decoratorNameToKind(name: Expression): DecoratorKind {
       }
       case CharCode.o: {
         if (nameStr == "operator") return DecoratorKind.OPERATOR;
+        break;
+      }
+      case CharCode.p: {
+        if (nameStr == "primaryid") return DecoratorKind.PRIMARYID;
         break;
       }
       case CharCode.s: {

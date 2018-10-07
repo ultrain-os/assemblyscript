@@ -701,6 +701,10 @@ declare function database(target: Function, propertyKey: any, descriptor?: any):
 /** Annotates for the serializable object */
 declare function ignore(target: Function, propertyKey?: any, descriptor?: any): void;
 
+/** Annotates a class filed is the primary key */
+declare function primaryid(target: Function, propertyKey?: any, descriptor?: any): void;
+
+
 /** Object serializable interface */
 interface Serializable { }
 
