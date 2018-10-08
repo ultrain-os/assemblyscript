@@ -2462,7 +2462,7 @@ export class Compiler extends DiagnosticEmitter {
     }
     } catch (exception) {
       let normalizePath = expression.range.source.normalizedPath;
-      console.log(`Compile expression failed. The normalizePath: ${normalizePath} around line: ${expression.range.line}.`);
+      console.log(`Compile expression failure. The normalizePath: ${normalizePath} at line: ${expression.range.line} column: ${expression.range.column}.`);
       throw exception;
     }
 
