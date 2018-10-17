@@ -249,6 +249,26 @@ export class String {
     return !compareUnsafe(this, start, searchString, 0, searchLength);
   }
 
+  split(token: String): String[] {
+    var tokens = new Array<String>();
+    if (this.length <= token.length) {
+        tokens.push(changetype<String>(""));
+    } else {
+        let idx: i32 = this.indexOf(token, 0);
+        let start: i32 = 0;
+        while (idx > 0) {
+          let seg = this.substring(start, idx);
+          tokens.push(seg);
+
+          start = idx + token.length;
+          idx = this.indexOf(token, start);
+        }
+        let lastseg = this.substring(start, this.length);
+        tokens.push(lastseg);
+    }
+    return tokens;
+  }
+
   substr(start: i32, length: i32 = i32.MAX_VALUE): String {
     assert(this !== null);
     var intStart: isize = start;
