@@ -93,4 +93,18 @@ export class AstUtil {
         return false;
     }
 
+    static impledInterfaces(classPrototype: ClassPrototype): string[] {
+        var tempClz: ClassPrototype | null = classPrototype;
+        var interfaces: string[] = new Array<string>();
+        while (tempClz != null) {
+             let implTypes = tempClz.declaration.implementsTypes;
+             if (implTypes) {
+                for (let type of implTypes) {
+                    interfaces.push(type.name.range.toString());
+                }
+             }
+             tempClz = tempClz.basePrototype;
+        }
+        return interfaces;
+    }
 }
