@@ -1,11 +1,7 @@
+import { Serializable } from "./serializable";
+
 /**
- * @author fanliangqin@ultrain.io
- */
-import { ultrain_assert } from "./utils";
-import { env as action } from "../internal/action.d";
-import { env as db } from "../internal/db.d";
-/**
- * class DBManager is used to manager reading or writing to system db.
+ * class DBManager is used to manager reading or writing to system 
  * the type T must be implements interface Serializable,
  * reference {@link Account} or {@link CurrencyStats}
  *
@@ -38,14 +34,14 @@ export class DBManager<T extends Serializable> {
      * @param obj the data to be sotred.
      */
     public emplace(payer: u64, obj: T): void {
-        ultrain_assert(this._owner == action.current_receiver(), "can not create objects in table of another contract");
+        // ultrain_assert(this._owner == current_receiver(), "can not create objects in table of another contract");
         let len = DataStream.measure<T>(obj);
         let arr = new Uint8Array(len);
         let ds = new DataStream(<usize>arr.buffer, len);
         obj.serialize(ds);
 
         let primary = obj.primaryKey();
-        db.db_store_i64(this._scope, this._tblname, payer, primary, ds.buffer, ds.pos);
+        db_store_i64(this._scope, this._tblname, payer, primary, ds.buffer, ds.pos);
     }
     /**
      * update a row.
@@ -54,28 +50,28 @@ export class DBManager<T extends Serializable> {
      */
     public modify(payer: u64, newobj: T): void {
         let itr = this.find(newobj.primaryKey());
-        ultrain_assert(itr >= 0, "object passed to modify is not found in this DBManager.");
-        ultrain_assert(this._owner == action.current_receiver(), "can not modify objects in table of another contract.");
+        // ultrain_assert(itr >= 0, "object passed to modify is not found in this DBManager.");
+        // ultrain_assert(this._owner == current_receiver(), "can not modify objects in table of another contract.");
 
         let len = DataStream.measure<T>(newobj);
         let arr = new Uint8Array(len);
         let ds = new DataStream(<usize>arr.buffer, len);
         newobj.serialize(ds);
-        db.db_update_i64(itr, payer, ds.buffer, ds.pos);
+        db_update_i64(itr, payer, ds.buffer, ds.pos);
     }
 
     private loadObjectByPrimaryIterator(itr: i32, out: T): void {
-        let len: i32 = db.db_get_i64(itr, 0, 0);
+        let len: i32 = db_get_i64(itr, 0, 0);
 
         let arr = new Uint8Array(len);
         let ds = new DataStream(<usize>arr.buffer, len);
-        db.db_get_i64(itr, <usize>arr.buffer, len);
+        db_get_i64(itr, <usize>arr.buffer, len);
 
         out.deserialize(ds);
     }
 
     private find(primary: u64): i32 {
-        let itr: i32 = db.db_find_i64(this._owner, this._scope, this._tblname, primary);
+        let itr: i32 = db_find_i64(this._owner, this._scope, this._tblname, primary);
         return itr;
     }
 
@@ -90,7 +86,7 @@ export class DBManager<T extends Serializable> {
      * @returns true if the primary key exists, otherwise false.
      */
     public get(primary: u64, out: T): boolean {
-        let itr: i32 = db.db_find_i64(this._owner, this._scope, this._tblname, primary);
+        let itr: i32 = db_find_i64(this._owner, this._scope, this._tblname, primary);
         if (itr < 0) return false;
 
         this.loadObjectByPrimaryIterator(itr, out);
@@ -101,13 +97,13 @@ export class DBManager<T extends Serializable> {
      * @param primary primary key to be removed.
      */
     public erase(primary: u64): void {
-        ultrain_assert(this._owner == action.current_receiver(), "can not erase objects in table of another contract.");
+        // ultrain_assert(this._owner == current_receiver(), "can not erase objects in table of another contract.");
 
         let itr = this.find(primary);
-        // Log.s("db.erase for ").i(itr).flush()
+        // Log.s("erase for ").i(itr).flush()
         // if exists, remove it.
         if (itr >= 0) {
-            db.db_remove_i64(itr);
+            db_remove_i64(itr);
         } else {
             // what to do? assert or do nothing?
         }

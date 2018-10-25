@@ -745,3 +745,13 @@ declare class ArrayMap<K, V> implements Serializable {
   primaryKey(): u64;
 }
 
+declare class DBManager<T extends Serializable> {
+  constructor(tblname: u64, owner: u64, scope: u64);
+  emplace(payer: u64, obj: T): void;
+  modify(payer: u64, newobj: T): void;
+  find(primary: u64): i32;
+  exists(primary: u64): boolean;
+  get(primary: u64, out: T): boolean;
+  erase(primary: u64): void;
+}
+
