@@ -4,6 +4,61 @@
 import { ultrain_assert } from "./utils";
 import { env as action } from "../internal/action.d";
 import { env as db } from "../internal/db.d";
+
+export class Cursor<T extends Serializable> {
+    private _start: i32;
+    private _pos: i32;
+    private _count: u32;
+
+    constructor(code: u64, table: u64, scope: u64) {
+        var status = db.db_iterator_i64(code, scope, table);
+        this._start = <i32>(status & 0xffffffff);
+        this._count = <u32>(status >>> 32);
+        this._pos = this._start;
+    }
+
+    private upper_bound(): i32 {
+        return this._start + this._count - 1;
+    }
+
+    get count(): u32 {
+        return this._count;
+    }
+
+    get(): T {
+        ultrain_assert(this._pos >= this._start && this._pos <= this.upper_bound(), "cursor index out of range.");
+
+        var out = {} as T;
+        var len: i32 = db.db_get_i64(this._pos, 0, 0);
+        var arr = new Uint8Array(len);
+        var ds = new DataStream(<usize>arr.buffer, len);
+        db.db_get_i64(this._pos, <usize>arr.buffer, len);
+        out.deserialize(ds);
+        return out;
+    }
+
+    first(): void {
+        this._pos = this._start;
+    }
+
+    last(): void {
+        this._pos = this.upper_bound();
+    }
+
+    next(): void {
+        this._pos += 1;
+    }
+
+    previous(): void {
+        if (this._pos > this._start) {
+            this._pos -= 1;
+        }
+    }
+
+    hasNext(): boolean {
+        return this._start <= this._pos && this._pos <= this.upper_bound();
+    }
+}
 /**
  * class DBManager is used to manager reading or writing to system db.
  * the type T must be implements interface Serializable,
@@ -32,12 +87,16 @@ export class DBManager<T extends Serializable> {
 
     public getCode(): u64 { return this._owner; }
     public getScope(): u64 { return this._scope; }
+
+    public cursor(): Cursor<T> {
+        return new Cursor<T>(this._owner, this._tblname, this._scope);
+    }
     /**
      * insert a new record to database.
      * @param payer an account_name, who pays for the storing action. only payer can modify this object.
      * @param obj the data to be sotred.
      */
-    public emplace(payer: u64, obj: T): void {
+    public emplace(payer: account_name, obj: T): void {
         ultrain_assert(this._owner == action.current_receiver(), "can not create objects in table of another contract");
         let len = DataStream.measure<T>(obj);
         let arr = new Uint8Array(len);
