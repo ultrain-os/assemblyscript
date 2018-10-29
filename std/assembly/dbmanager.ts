@@ -1,7 +1,16 @@
-import { Serializable } from "./serializable";
+import {
+    db_find_i64,
+    db_get_i64,
+    db_store_i64,
+    db_update_i64,
+    db_remove_i64
+} from "./env";
 
+// import { ultrain_assert } from "./utils";
+// import { env as action } from "../internal/action.d";
+// import { env as db } from "../internal/db.d";
 /**
- * class DBManager is used to manager reading or writing to system 
+ * class DBManager is used to manager reading or writing to system db.
  * the type T must be implements interface Serializable,
  * reference {@link Account} or {@link CurrencyStats}
  *
@@ -9,9 +18,9 @@ import { Serializable } from "./serializable";
  */
 
 export class DBManager<T extends Serializable> {
-    public _tblname: u64;
-    public _owner: u64;
-    public _scope: u64;
+    private _tblname: u64;
+    private _owner: u64;
+    private _scope: u64;
     /**
      * create a table to persistent data.
      * @param tblname the table name
@@ -34,7 +43,7 @@ export class DBManager<T extends Serializable> {
      * @param obj the data to be sotred.
      */
     public emplace(payer: u64, obj: T): void {
-        // ultrain_assert(this._owner == current_receiver(), "can not create objects in table of another contract");
+        // ultrain_assert(this._owner == action.current_receiver(), "can not create objects in table of another contract");
         let len = DataStream.measure<T>(obj);
         let arr = new Uint8Array(len);
         let ds = new DataStream(<usize>arr.buffer, len);
@@ -51,7 +60,7 @@ export class DBManager<T extends Serializable> {
     public modify(payer: u64, newobj: T): void {
         let itr = this.find(newobj.primaryKey());
         // ultrain_assert(itr >= 0, "object passed to modify is not found in this DBManager.");
-        // ultrain_assert(this._owner == current_receiver(), "can not modify objects in table of another contract.");
+        // ultrain_assert(this._owner == action.current_receiver(), "can not modify objects in table of another contract.");
 
         let len = DataStream.measure<T>(newobj);
         let arr = new Uint8Array(len);
@@ -97,10 +106,10 @@ export class DBManager<T extends Serializable> {
      * @param primary primary key to be removed.
      */
     public erase(primary: u64): void {
-        // ultrain_assert(this._owner == current_receiver(), "can not erase objects in table of another contract.");
+        // ultrain_assert(this._owner == action.current_receiver(), "can not erase objects in table of another contract.");
 
         let itr = this.find(primary);
-        // Log.s("erase for ").i(itr).flush()
+        // Log.s("db.erase for ").i(itr).flush()
         // if exists, remove it.
         if (itr >= 0) {
             db_remove_i64(itr);

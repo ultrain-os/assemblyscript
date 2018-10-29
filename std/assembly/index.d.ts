@@ -709,7 +709,9 @@ declare function primaryid(target: Function, propertyKey?: any, descriptor?: any
 interface Serializable { }
 
 declare class DataStream {
-
+  buffer: u32;
+  len: u32;
+  pos: u32;
   static measure<T extends Serializable>(obj: T): u32;
 
   constructor(buffer: u32, len: u32);
@@ -747,11 +749,13 @@ declare class ArrayMap<K, V> implements Serializable {
 
 declare class DBManager<T extends Serializable> {
   constructor(tblname: u64, owner: u64, scope: u64);
+  getCode(): u64;
+  getScope(): u64;
   emplace(payer: u64, obj: T): void;
   modify(payer: u64, newobj: T): void;
-  find(primary: u64): i32;
   exists(primary: u64): boolean;
   get(primary: u64, out: T): boolean;
   erase(primary: u64): void;
 }
 
+declare function ultrain_assert(condition: boolean, msg: string): void;

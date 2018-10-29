@@ -77,12 +77,15 @@ exports.defaultOptimizeLevel = 2;
 /** Default Binaryen shrink level. */
 exports.defaultShrinkLevel = 1;
 
+exports.cachedDbmanager = null;
+
 /** Bundled library files. */
 exports.libraryFiles = exports.isBundle ? BUNDLE_LIBRARY : (() => { // set up if not a bundle
   const libDir = path.join(__dirname, "..", "std", "assembly");
   const libFiles = require("glob").sync("**/!(*.d).ts", { cwd: libDir });
   const bundled = {};
   libFiles.forEach(file => bundled[file.replace(/\.ts$/, "")] = fs.readFileSync(path.join(libDir, file), "utf8"));
+  exports.cachedDbmanager = bundled["dbmanager"];
   return bundled;
 })();
 
@@ -246,6 +249,11 @@ exports.main = function main(argv, options, callback, exttype) {
 
     Object.keys(exports.libraryFiles).forEach(libPath => {
       if (libPath.indexOf("/") >= 0) return; // in sub-directory: imported on demand
+      if (libPath == "dbmanager" && (exttype == undefined || exttype == 1)) {
+        exports.libraryFiles[libPath] = exports.getDbmanager();
+      } else if (libPath == "dbmanager" && (exttype == 2 || exttype == 3) ) {
+        exports.libraryFiles[libPath] = exports.cachedDbmanager;
+      }
       stats.parseCount++;
       stats.parseTime += measure(() => {
         parser = assemblyscript.parseFile(
@@ -318,7 +326,6 @@ exports.main = function main(argv, options, callback, exttype) {
 
       // if <pre> isDispathch == true </pre>, reproduce the code 
       if (exttype == exports.compileType.GENERATED_TARGET || exttype == exports.compileType.GENERATED_APPLY_TARGET) {
-        sourceText = exports.replaceSdkLib(sourcePath, sourceText);
         sourceText = exports.insertCodes(sourcePath, sourceText);
       }
       if (exttype == exports.compileType.GENERATED_APPLY_TARGET) {
@@ -406,7 +413,6 @@ exports.main = function main(argv, options, callback, exttype) {
       stats.parseTime += measure(() => {
 
         if (exttype == 2 || exttype == 3) {
-          sourceText = exports.replaceSdkLib(sourcePath, sourceText);
           sourceText = exports.insertCodes(sourcePath, sourceText);
         }
         assemblyscript.parseFile(sourceText, sourcePath, false, parser);
@@ -1005,10 +1011,7 @@ function insertCodes(sourcePath, sourceText) {
 
 exports.insertCodes = insertCodes;
 
-function replacedSdkLib(sourcePath, sourceText) {
-  if (sourcePath.indexOf("/dbmanager") != -1) {
-    return fs.readFileSync(path.join( __dirname, "./contract/dbmanager.ts"), { encoding: "utf8" });
-  }
-  return sourceText;
+function getDbmanager() {
+  return fs.readFileSync(path.join( __dirname, "./contract/dbmanager.ts"), { encoding: "utf8" });
 }
-exports.replaceSdkLib = replacedSdkLib;
+exports.getDbmanager = getDbmanager;
