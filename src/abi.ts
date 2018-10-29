@@ -69,6 +69,8 @@ class Action {
 
 export class AbiHelper {
 
+  static proposals: Set<string> = new Set<string>(["UIP09", "UIP06"]);
+
   static abiTypeLookup: Map<string, string> = new Map([
     ["i8", "int8"],
     ["i16", "int16"],
@@ -110,6 +112,7 @@ export class Abi {
 
   abiInfo: {
     version: string,
+    proposal: string, 
     types: Array<AbiTypeAlias>,
     structs: Array<Struct>,
     actions: Array<Action>,
@@ -136,6 +139,7 @@ export class Abi {
 
     this.abiInfo = {
       version: "ultraio:1.0",
+      proposal: "",
       types: new Array<AbiTypeAlias>(),
       structs: new Array<Struct>(),
       actions: new Array<Action>(),
@@ -451,6 +455,13 @@ export class Abi {
       body.push("  }");
       this.resolveDatabaseDecorator(clzPrototype.declaration);
       if (hasActionDecorators) {
+        let impledInterfaces = AstUtil.impledInterfaces(clzPrototype);
+        for (let impledInterface of impledInterfaces) {
+          if (AbiHelper.proposals.has(impledInterface)) {
+            this.abiInfo.proposal = impledInterface;
+            break;
+          }
+        }
         return body;
       }
     }
