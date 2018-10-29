@@ -747,8 +747,20 @@ declare class ArrayMap<K, V> implements Serializable {
   primaryKey(): u64;
 }
 
+declare class Cursor<T extends Serializable> {
+  private upper_bound(): i32;
+  get count(): u32;
+  get(): T;
+  first(): void;
+  last(): void;
+  next(): void;
+  previous(): void;
+  hasNext(): boolean;
+}
+
 declare class DBManager<T extends Serializable> {
   constructor(tblname: u64, owner: u64, scope: u64);
+  cursor(): Cursor<T>;
   getCode(): u64;
   getScope(): u64;
   emplace(payer: u64, obj: T): void;
@@ -759,3 +771,4 @@ declare class DBManager<T extends Serializable> {
 }
 
 declare function ultrain_assert(condition: boolean, msg: string): void;
+declare function current_receiver(): u64;

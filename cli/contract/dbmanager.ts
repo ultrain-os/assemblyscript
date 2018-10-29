@@ -1,3 +1,34 @@
+export class Cursor<T extends Serializable> {
+    private _start: i32;
+    private _pos: i32;
+    private _count: u32;
+
+    constructor(code: u64, table: u64, scope: u64) {
+    }
+
+    private upper_bound(): i32 {
+        return this._start + this._count - 1;
+    }
+
+    get count(): u32 {
+        return this._count;
+    }
+
+    get(): T { }
+
+    first(): void { }
+
+    last(): void { }
+
+    next(): void { }
+
+    previous(): void { }
+
+    hasNext(): boolean {
+        return false;
+    }
+}
+
 export class DBManager<T extends Serializable> {
     public _tblname: u64;
     public _owner: u64;
