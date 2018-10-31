@@ -57,8 +57,6 @@
  (import "JSMath" "sqrt" (func $~lib/math/JSMath.sqrt (param f64) (result f64)))
  (import "JSMath" "tanh" (func $~lib/math/JSMath.tanh (param f64) (result f64)))
  (import "JSMath" "trunc" (func $~lib/math/JSMath.trunc (param f64) (result f64)))
- (global $~lib/allocator/arena/startOffset (mut i32) (i32.const 0))
- (global $~lib/allocator/arena/offset (mut i32) (i32.const 0))
  (global $~lib/math/random_seeded (mut i32) (i32.const 0))
  (global $~lib/math/random_state0 (mut i64) (i64.const 0))
  (global $~lib/math/random_state1 (mut i64) (i64.const 0))
@@ -13978,12 +13976,6 @@
   (local $2 f64)
   (local $3 f32)
   (block $folding-inner0
-   (set_global $~lib/allocator/arena/startOffset
-    (i32.const 72)
-   )
-   (set_global $~lib/allocator/arena/offset
-    (get_global $~lib/allocator/arena/startOffset)
-   )
    (if
     (i32.eqz
      (call $std/math/check<f64>

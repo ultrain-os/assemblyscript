@@ -2,8 +2,6 @@
  (type $ii (func (param i32) (result i32)))
  (type $v (func))
  (import "env" "abort" (func $~lib/env/abort))
- (global $~lib/allocator/arena/startOffset (mut i32) (i32.const 0))
- (global $~lib/allocator/arena/offset (mut i32) (i32.const 0))
  (memory $0 1)
  (data (i32.const 8) "\t\00\00\00s\00w\00i\00t\00c\00h\00.\00t\00s")
  (export "memory" (memory $0))
@@ -146,12 +144,6 @@
  )
  (func $start (; 8 ;) (; has Stack IR ;) (type $v)
   (block $folding-inner0
-   (set_global $~lib/allocator/arena/startOffset
-    (i32.const 32)
-   )
-   (set_global $~lib/allocator/arena/offset
-    (get_global $~lib/allocator/arena/startOffset)
-   )
    (if
     (call $switch/doSwitch
      (i32.const 0)

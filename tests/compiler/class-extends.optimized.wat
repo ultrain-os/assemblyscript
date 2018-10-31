@@ -6,8 +6,6 @@
  (type $v (func))
  (type $FFF (func (param f64 f64) (result f64)))
  (import "env" "abort" (func $~lib/env/abort))
- (global $~lib/allocator/arena/startOffset (mut i32) (i32.const 0))
- (global $~lib/allocator/arena/offset (mut i32) (i32.const 0))
  (global $class-extends/a (mut i32) (i32.const 0))
  (global $class-extends/b (mut i32) (i32.const 0))
  (global $class-extends/ele1 (mut i32) (i32.const 12))
@@ -40,100 +38,13 @@
    (i32.const 3)
   )
  )
- (func $~lib/allocator/arena/__memory_allocate (; 2 ;) (; has Stack IR ;) (type $ii) (param $0 i32) (result i32)
-  (local $1 i32)
-  (local $2 i32)
-  (local $3 i32)
-  (if
-   (i32.gt_u
-    (get_local $0)
-    (i32.const 1073741824)
-   )
-   (unreachable)
-  )
-  (if
-   (i32.gt_u
-    (tee_local $2
-     (i32.and
-      (i32.add
-       (i32.add
-        (tee_local $1
-         (get_global $~lib/allocator/arena/offset)
-        )
-        (select
-         (get_local $0)
-         (i32.const 1)
-         (i32.gt_u
-          (get_local $0)
-          (i32.const 1)
-         )
-        )
-       )
-       (i32.const 7)
-      )
-      (i32.const -8)
-     )
-    )
-    (i32.shl
-     (tee_local $3
-      (current_memory)
-     )
-     (i32.const 16)
-    )
-   )
-   (if
-    (i32.lt_s
-     (grow_memory
-      (select
-       (get_local $3)
-       (tee_local $0
-        (i32.shr_u
-         (i32.and
-          (i32.add
-           (i32.sub
-            (get_local $2)
-            (get_local $1)
-           )
-           (i32.const 65535)
-          )
-          (i32.const -65536)
-         )
-         (i32.const 16)
-        )
-       )
-       (i32.gt_s
-        (get_local $3)
-        (get_local $0)
-       )
-      )
-     )
-     (i32.const 0)
-    )
-    (if
-     (i32.lt_s
-      (grow_memory
-       (get_local $0)
-      )
-      (i32.const 0)
-     )
-     (unreachable)
-    )
-   )
-  )
-  (set_global $~lib/allocator/arena/offset
-   (get_local $2)
-  )
-  (get_local $1)
+ (func $~lib/memory/memory.allocate (; 2 ;) (; has Stack IR ;) (type $ii) (param $0 i32) (result i32)
+  (unreachable)
  )
- (func $~lib/memory/memory.allocate (; 3 ;) (; has Stack IR ;) (type $ii) (param $0 i32) (result i32)
-  (call $~lib/allocator/arena/__memory_allocate
-   (get_local $0)
-  )
- )
- (func $class-extends/A#getName (; 4 ;) (; has Stack IR ;) (type $ii) (param $0 i32) (result i32)
+ (func $class-extends/A#getName (; 3 ;) (; has Stack IR ;) (type $ii) (param $0 i32) (result i32)
   (i32.const 8)
  )
- (func $~lib/internal/string/compareUnsafe (; 5 ;) (; has Stack IR ;) (type $iiiiii) (param $0 i32) (param $1 i32) (param $2 i32) (param $3 i32) (param $4 i32) (result i32)
+ (func $~lib/internal/string/compareUnsafe (; 4 ;) (; has Stack IR ;) (type $iiiiii) (param $0 i32) (param $1 i32) (param $2 i32) (param $3 i32) (param $4 i32) (result i32)
   (local $5 i32)
   (set_local $1
    (i32.add
@@ -198,7 +109,7 @@
   )
   (get_local $5)
  )
- (func $~lib/string/String.__eq (; 6 ;) (; has Stack IR ;) (type $iii) (param $0 i32) (param $1 i32) (result i32)
+ (func $~lib/string/String.__eq (; 5 ;) (; has Stack IR ;) (type $iii) (param $0 i32) (param $1 i32) (result i32)
   (local $2 i32)
   (if
    (i32.eq
@@ -254,10 +165,10 @@
    )
   )
  )
- (func $class-extends/getObject (; 7 ;) (; has Stack IR ;) (type $ii) (param $0 i32) (result i32)
+ (func $class-extends/getObject (; 6 ;) (; has Stack IR ;) (type $ii) (param $0 i32) (result i32)
   (get_local $0)
  )
- (func $class-extends/compare<i32> (; 8 ;) (; has Stack IR ;) (type $iii) (param $0 i32) (param $1 i32) (result i32)
+ (func $class-extends/compare<i32> (; 7 ;) (; has Stack IR ;) (type $iii) (param $0 i32) (param $1 i32) (result i32)
   (if (result i32)
    (i32.eq
     (get_local $0)
@@ -267,7 +178,7 @@
    (get_local $1)
   )
  )
- (func $class-extends/compare<f64> (; 9 ;) (; has Stack IR ;) (type $FFF) (param $0 f64) (param $1 f64) (result f64)
+ (func $class-extends/compare<f64> (; 8 ;) (; has Stack IR ;) (type $FFF) (param $0 f64) (param $1 f64) (result f64)
   (if (result f64)
    (f64.eq
     (get_local $0)
@@ -277,7 +188,7 @@
    (get_local $1)
   )
  )
- (func $class-extends/compare<String> (; 10 ;) (; has Stack IR ;) (type $iii) (param $0 i32) (param $1 i32) (result i32)
+ (func $class-extends/compare<String> (; 9 ;) (; has Stack IR ;) (type $iii) (param $0 i32) (param $1 i32) (result i32)
   (if (result i32)
    (call $~lib/string/String.__eq
     (get_local $0)
@@ -287,15 +198,9 @@
    (get_local $1)
   )
  )
- (func $start (; 11 ;) (; has Stack IR ;) (type $v)
+ (func $start (; 10 ;) (; has Stack IR ;) (type $v)
   (local $0 i32)
   (block $folding-inner0
-   (set_global $~lib/allocator/arena/startOffset
-    (i32.const 88)
-   )
-   (set_global $~lib/allocator/arena/offset
-    (get_global $~lib/allocator/arena/startOffset)
-   )
    (i32.store
     (tee_local $0
      (call $~lib/memory/memory.allocate

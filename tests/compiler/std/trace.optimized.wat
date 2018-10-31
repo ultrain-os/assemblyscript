@@ -2,8 +2,6 @@
  (type $iiFFFFFv (func (param i32 i32 f64 f64 f64 f64 f64)))
  (type $v (func))
  (import "env" "trace" (func $~lib/env/trace (param i32 i32 f64 f64 f64 f64 f64)))
- (global $~lib/allocator/arena/startOffset (mut i32) (i32.const 0))
- (global $~lib/allocator/arena/offset (mut i32) (i32.const 0))
  (global $~started (mut i32) (i32.const 0))
  (memory $0 1)
  (data (i32.const 8) "\0d\00\00\00z\00e\00r\00o\00_\00i\00m\00p\00l\00i\00c\00i\00t")
@@ -30,12 +28,6 @@
   )
  )
  (func $start (; 2 ;) (; has Stack IR ;) (type $v)
-  (set_global $~lib/allocator/arena/startOffset
-   (i32.const 216)
-  )
-  (set_global $~lib/allocator/arena/offset
-   (get_global $~lib/allocator/arena/startOffset)
-  )
   (call $~lib/env/trace
    (i32.const 8)
    (i32.const 0)

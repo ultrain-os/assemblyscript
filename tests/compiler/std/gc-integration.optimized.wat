@@ -2,8 +2,6 @@
  (type $iv (func (param i32)))
  (type $v (func))
  (import "env" "abort" (func $~lib/env/abort))
- (global $~lib/allocator/arena/startOffset (mut i32) (i32.const 0))
- (global $~lib/allocator/arena/offset (mut i32) (i32.const 0))
  (global $std/gc-integration/B.d (mut i32) (i32.const 16))
  (global $std/gc-integration/a_ref (mut i32) (i32.const 24))
  (global $std/gc-integration/b_ref (mut i32) (i32.const 32))
@@ -37,12 +35,6 @@
   )
  )
  (func $start (; 2 ;) (; has Stack IR ;) (type $v)
-  (set_global $~lib/allocator/arena/startOffset
-   (i32.const 56)
-  )
-  (set_global $~lib/allocator/arena/offset
-   (get_global $~lib/allocator/arena/startOffset)
-  )
   (call $~iterateRoots
    (i32.const 0)
   )

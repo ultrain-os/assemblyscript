@@ -1,21 +1,9 @@
 (module
  (type $ii (func (param i32) (result i32)))
- (type $v (func))
- (global $~lib/allocator/arena/startOffset (mut i32) (i32.const 0))
- (global $~lib/allocator/arena/offset (mut i32) (i32.const 0))
  (memory $0 0)
  (export "memory" (memory $0))
  (export "alias" (func $typealias/alias))
- (start $start)
  (func $typealias/alias (; 0 ;) (; has Stack IR ;) (type $ii) (param $0 i32) (result i32)
   (get_local $0)
- )
- (func $start (; 1 ;) (; has Stack IR ;) (type $v)
-  (set_global $~lib/allocator/arena/startOffset
-   (i32.const 8)
-  )
-  (set_global $~lib/allocator/arena/offset
-   (get_global $~lib/allocator/arena/startOffset)
-  )
  )
 )

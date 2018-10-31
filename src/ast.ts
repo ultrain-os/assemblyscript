@@ -116,7 +116,7 @@ export function nodeIsCallable(kind: NodeKind): bool {
   switch (kind) {
     case NodeKind.IDENTIFIER:
     case NodeKind.CALL:
-    case NodeKind.SUPER: // TODO
+    // case NodeKind.SUPER: // TODO
     case NodeKind.ELEMENTACCESS:
     case NodeKind.PROPERTYACCESS: return true;
   }

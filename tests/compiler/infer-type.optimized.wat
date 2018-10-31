@@ -4,8 +4,6 @@
  (type $I (func (result i64)))
  (type $f (func (result f32)))
  (type $F (func (result f64)))
- (global $~lib/allocator/arena/startOffset (mut i32) (i32.const 0))
- (global $~lib/allocator/arena/offset (mut i32) (i32.const 0))
  (global $infer-type/ri (mut i32) (i32.const 0))
  (global $infer-type/rI (mut i64) (i64.const 0))
  (global $infer-type/rf (mut f32) (f32.const 0))
@@ -31,12 +29,6 @@
  )
  (func $start (; 5 ;) (; has Stack IR ;) (type $v)
   (local $0 i32)
-  (set_global $~lib/allocator/arena/startOffset
-   (i32.const 40)
-  )
-  (set_global $~lib/allocator/arena/offset
-   (get_global $~lib/allocator/arena/startOffset)
-  )
   (call $infer-type/locals)
   (set_global $infer-type/ri
    (call $infer-type/reti)

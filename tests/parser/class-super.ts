@@ -9,5 +9,12 @@ export class B extends A {
     }
 }
 
-var b = new B(1, 2);
-  
+class Base {
+
+}
+
+class Concrete extends Base {
+    constructor(){
+        super();
+    }
+}

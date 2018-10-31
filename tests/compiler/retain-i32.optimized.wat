@@ -2,8 +2,6 @@
  (type $iiv (func (param i32 i32)))
  (type $v (func))
  (import "env" "abort" (func $~lib/env/abort))
- (global $~lib/allocator/arena/startOffset (mut i32) (i32.const 0))
- (global $~lib/allocator/arena/offset (mut i32) (i32.const 0))
  (global $retain-i32/si (mut i32) (i32.const 0))
  (global $retain-i32/ui (mut i32) (i32.const 0))
  (memory $0 1)
@@ -16,12 +14,6 @@
  (func $start (; 2 ;) (; has Stack IR ;) (type $v)
   (local $0 i32)
   (block $folding-inner0
-   (set_global $~lib/allocator/arena/startOffset
-    (i32.const 40)
-   )
-   (set_global $~lib/allocator/arena/offset
-    (get_global $~lib/allocator/arena/startOffset)
-   )
    (call $retain-i32/test
     (i32.const 0)
     (i32.const 127)

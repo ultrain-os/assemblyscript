@@ -6,8 +6,6 @@
  (type $FFF (func (param f64 f64) (result f64)))
  (type $iiii (func (param i32 i32 i32) (result i32)))
  (import "env" "abort" (func $~lib/env/abort))
- (global $~lib/allocator/arena/startOffset (mut i32) (i32.const 0))
- (global $~lib/allocator/arena/offset (mut i32) (i32.const 0))
  (global $function-types/i32Adder (mut i32) (i32.const 0))
  (global $~argc (mut i32) (i32.const 0))
  (global $function-types/i64Adder (mut i32) (i32.const 0))
@@ -90,12 +88,6 @@
  )
  (func $start (; 10 ;) (; has Stack IR ;) (type $v)
   (block $folding-inner0
-   (set_global $~lib/allocator/arena/startOffset
-    (i32.const 48)
-   )
-   (set_global $~lib/allocator/arena/offset
-    (get_global $~lib/allocator/arena/startOffset)
-   )
    (set_global $function-types/i32Adder
     (call $function-types/makeAdder<i32>)
    )

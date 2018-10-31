@@ -1,8 +1,6 @@
 (module
  (type $i (func (result i32)))
  (type $v (func))
- (global $~lib/allocator/arena/startOffset (mut i32) (i32.const 0))
- (global $~lib/allocator/arena/offset (mut i32) (i32.const 0))
  (global $namespace/Outer.Inner.aVar (mut i32) (i32.const 0))
  (memory $0 0)
  (export "memory" (memory $0))
@@ -14,12 +12,6 @@
   (i32.const 3)
  )
  (func $start (; 2 ;) (; has Stack IR ;) (type $v)
-  (set_global $~lib/allocator/arena/startOffset
-   (i32.const 8)
-  )
-  (set_global $~lib/allocator/arena/offset
-   (get_global $~lib/allocator/arena/startOffset)
-  )
   (drop
    (call $namespace/Outer.Inner.aFunc)
   )

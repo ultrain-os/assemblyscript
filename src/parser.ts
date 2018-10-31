@@ -1367,6 +1367,10 @@ export class Parser extends DiagnosticEmitter {
     if (tn.skip(Token.COLON)) {
       returnType = this.parseType(tn);
       if (!returnType) return null;
+    // TODO To support super()
+    } else if (tn.skip(Token.SEMICOLON)) {
+      returnType = null;
+      if (!returnType) return null;
     } else {
       returnType = Node.createOmittedType(tn.range(tn.pos));
       this.error(

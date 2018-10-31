@@ -2,8 +2,6 @@
  (type $ii (func (param i32) (result i32)))
  (type $Ii (func (param i64) (result i32)))
  (type $v (func))
- (global $~lib/allocator/arena/startOffset (mut i32) (i32.const 0))
- (global $~lib/allocator/arena/offset (mut i32) (i32.const 0))
  (memory $0 1)
  (data (i32.const 16) "\01\00\00\00a")
  (data (i32.const 24) "\02\00\00\00a\00b")
@@ -206,12 +204,6 @@
   )
  )
  (func $start (; 4 ;) (; has Stack IR ;) (type $v)
-  (set_global $~lib/allocator/arena/startOffset
-   (i32.const 48)
-  )
-  (set_global $~lib/allocator/arena/offset
-   (get_global $~lib/allocator/arena/startOffset)
-  )
   (drop
    (call $std/hash/check
     (call $~lib/internal/hash/hashStr

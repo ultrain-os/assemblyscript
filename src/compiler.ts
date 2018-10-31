@@ -2384,7 +2384,6 @@ export class Compiler extends DiagnosticEmitter {
         break;
       }
       case NodeKind.CALL: {
-        let exp = <CallExpression>expression;
         expr = this.compileCallExpression(<CallExpression>expression, contextualType);
         break;
       }
@@ -2404,6 +2403,7 @@ export class Compiler extends DiagnosticEmitter {
       case NodeKind.FALSE:
       case NodeKind.NULL:
       case NodeKind.THIS:
+      case NodeKind.SUPER: 
       case NodeKind.TRUE: {
         expr = this.compileIdentifierExpression(
           <IdentifierExpression>expression,
@@ -2412,10 +2412,11 @@ export class Compiler extends DiagnosticEmitter {
         );
         break;
       }
-      case NodeKind.SUPER: {
-        expr = this.compileNopExpression();
-        break;
-      }
+      // TODO To remove, to support the super();
+      // case NodeKind.SUPER: {
+      //   expr = this.compileNopExpression();
+      //   break;
+      // }
       case NodeKind.INSTANCEOF: {
         expr = this.compileInstanceOfExpression(<InstanceOfExpression>expression, contextualType);
         break;
