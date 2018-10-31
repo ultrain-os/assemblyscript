@@ -1,8 +1,6 @@
 (module
  (type $v (func))
  (import "env" "abort" (func $~lib/env/abort))
- (global $~lib/allocator/arena/startOffset (mut i32) (i32.const 0))
- (global $~lib/allocator/arena/offset (mut i32) (i32.const 0))
  (global $comma/a (mut i32) (i32.const 0))
  (global $comma/b (mut i32) (i32.const 0))
  (memory $0 1)
@@ -12,12 +10,6 @@
  (func $start (; 1 ;) (; has Stack IR ;) (type $v)
   (local $0 i32)
   (block $folding-inner0
-   (set_global $~lib/allocator/arena/startOffset
-    (i32.const 32)
-   )
-   (set_global $~lib/allocator/arena/offset
-    (get_global $~lib/allocator/arena/startOffset)
-   )
    (set_global $comma/a
     (i32.add
      (tee_local $0

@@ -1,8 +1,6 @@
 (module
  (type $iii (func (param i32 i32) (result i32)))
  (type $v (func))
- (global $~lib/allocator/arena/startOffset (mut i32) (i32.const 0))
- (global $~lib/allocator/arena/offset (mut i32) (i32.const 0))
  (global $export/a i32 (i32.const 1))
  (global $export/b i32 (i32.const 2))
  (global $export/c i32 (i32.const 3))
@@ -15,7 +13,6 @@
  (export "b" (global $export/b))
  (export "renamed_c" (global $export/c))
  (export "ns.two" (func $export/ns.two))
- (start $start)
  (func $export/add (; 0 ;) (; has Stack IR ;) (type $iii) (param $0 i32) (param $1 i32) (result i32)
   (i32.add
    (get_local $0)
@@ -36,13 +33,5 @@
  )
  (func $export/ns.two (; 3 ;) (; has Stack IR ;) (type $v)
   (nop)
- )
- (func $start (; 4 ;) (; has Stack IR ;) (type $v)
-  (set_global $~lib/allocator/arena/startOffset
-   (i32.const 8)
-  )
-  (set_global $~lib/allocator/arena/offset
-   (get_global $~lib/allocator/arena/startOffset)
-  )
  )
 )

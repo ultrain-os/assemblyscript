@@ -3,8 +3,6 @@
  (type $v (func))
  (type $ii (func (param i32) (result i32)))
  (import "env" "abort" (func $~lib/env/abort))
- (global $~lib/allocator/arena/startOffset (mut i32) (i32.const 0))
- (global $~lib/allocator/arena/offset (mut i32) (i32.const 0))
  (global $~argc (mut i32) (i32.const 0))
  (table 1 1 anyfunc)
  (elem (i32.const 0) $inlining/test_funcs~anonymous|0)
@@ -39,12 +37,6 @@
   )
  )
  (func $start (; 4 ;) (; has Stack IR ;) (type $v)
-  (set_global $~lib/allocator/arena/startOffset
-   (i32.const 40)
-  )
-  (set_global $~lib/allocator/arena/offset
-   (get_global $~lib/allocator/arena/startOffset)
-  )
   (if
    (i32.ne
     (call $inlining/test)

@@ -10650,8 +10650,8 @@
    )
    (call $~lib/map/Map<u64_u64>#set
     (get_global $std/map/map)
-    (i64.const 12)
-    (i64.const 12)
+    (i64.const 1)
+    (i64.const 11)
    )
    (set_global $std/map/keys
     (call $~lib/map/Map<u64_u64>#keys
@@ -10685,7 +10685,7 @@
     (i32.eqz
      (call $~lib/array/Array<u64>#includes
       (get_global $std/map/values)
-      (i64.const 12)
+      (i64.const 11)
       (i32.const 0)
      )
     )
@@ -10724,23 +10724,23 @@
    )
    (call $~lib/map/Map<u64_u64>#set
     (get_global $std/map/map)
-    (i64.const 12)
-    (i64.const 23)
+    (i64.const 1)
+    (i64.const 1)
    )
    (if
     (i64.ne
      (call $~lib/map/Map<u64_u64>#get
       (get_global $std/map/map)
-      (i64.const 12)
+      (i64.const 1)
      )
-     (i64.const 23)
+     (i64.const 1)
     )
     (br $folding-inner0)
    )
    (call $~lib/map/Map<u64_u64>#set
     (get_global $std/map/map)
-    (i64.const 24)
-    (i64.const 44)
+    (i64.const 2)
+    (i64.const 22)
    )
    (set_global $std/map/keys
     (call $~lib/map/Map<u64_u64>#keys
@@ -10760,7 +10760,7 @@
     (i32.eqz
      (call $~lib/array/Array<u64>#includes
       (get_global $std/map/keys)
-      (i64.const 12)
+      (i64.const 1)
       (i32.const 0)
      )
     )
@@ -10770,7 +10770,7 @@
     (i32.eqz
      (call $~lib/array/Array<u64>#includes
       (get_global $std/map/keys)
-      (i64.const 24)
+      (i64.const 2)
       (i32.const 0)
      )
     )
@@ -10794,7 +10794,7 @@
     (i32.eqz
      (call $~lib/array/Array<u64>#includes
       (get_global $std/map/values)
-      (i64.const 23)
+      (i64.const 1)
       (i32.const 0)
      )
     )
@@ -10804,7 +10804,7 @@
     (i32.eqz
      (call $~lib/array/Array<u64>#includes
       (get_global $std/map/values)
-      (i64.const 44)
+      (i64.const 22)
       (i32.const 0)
      )
     )

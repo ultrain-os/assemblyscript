@@ -1,12 +1,8 @@
 (module
  (type $ii (func (param i32) (result i32)))
- (type $v (func))
- (global $~lib/allocator/arena/startOffset (mut i32) (i32.const 0))
- (global $~lib/allocator/arena/offset (mut i32) (i32.const 0))
  (memory $0 0)
  (export "memory" (memory $0))
  (export "fib" (func $recursive/fib))
- (start $start)
  (func $recursive/fib (; 0 ;) (; has Stack IR ;) (type $ii) (param $0 i32) (result i32)
   (if
    (i32.le_s
@@ -30,14 +26,6 @@
      (i32.const 2)
     )
    )
-  )
- )
- (func $start (; 1 ;) (; has Stack IR ;) (type $v)
-  (set_global $~lib/allocator/arena/startOffset
-   (i32.const 8)
-  )
-  (set_global $~lib/allocator/arena/offset
-   (get_global $~lib/allocator/arena/startOffset)
   )
  )
 )

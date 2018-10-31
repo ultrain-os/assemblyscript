@@ -1001,7 +1001,7 @@ function insertCodes(sourcePath, sourceText) {
     let data = sourceText.split(EOL);
     for (let serialize of serializeArray) {
       data.splice(serialize.line , 0, serialize.getInsertCode());
-      // console.log(`insert code: ${serialize.getInsertCode()}`);
+      // console.log(`insert code: ${serialize.getInsertCode()}. serialize.line: ${serialize.line}`);
     }
     return data.join(EOL);
   } else {

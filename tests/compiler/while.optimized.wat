@@ -1,8 +1,6 @@
 (module
  (type $v (func))
  (import "env" "abort" (func $~lib/env/abort))
- (global $~lib/allocator/arena/startOffset (mut i32) (i32.const 0))
- (global $~lib/allocator/arena/offset (mut i32) (i32.const 0))
  (global $while/n (mut i32) (i32.const 10))
  (global $while/m (mut i32) (i32.const 0))
  (global $while/o (mut i32) (i32.const 0))
@@ -13,12 +11,6 @@
  (func $start (; 1 ;) (; has Stack IR ;) (type $v)
   (local $0 i32)
   (block $folding-inner0
-   (set_global $~lib/allocator/arena/startOffset
-    (i32.const 32)
-   )
-   (set_global $~lib/allocator/arena/offset
-    (get_global $~lib/allocator/arena/startOffset)
-   )
    (loop $continue|0
     (if
      (get_global $while/n)

@@ -178,7 +178,7 @@ export class TypeNodeInfo {
     isIgnore(): boolean {
         var basicType = this.declareType;
         if (this.declareType.indexOf("<") != -1) {
-            basicType = this.declareType.substr(0,this.declareType.indexOf("<")).trim();
+            basicType = this.declareType.substr(0, this.declareType.indexOf("<")).trim();
         }
 
         var internalPath = `${this.commonTypeNode.range.source.internalPath}/${basicType}`;
@@ -194,7 +194,7 @@ export class TypeNodeInfo {
             var libEle: Element | null = this.program.elementsLookup.get(basicType);
             if (libEle && libEle.kind == ElementKind.CLASS_PROTOTYPE) {
                 let prototype = <ClassPrototype>libEle;
-                return AstUtil.haveSpecifyDecorator(prototype.declaration, DecoratorKind.IGNORE); 
+                return AstUtil.haveSpecifyDecorator(prototype.declaration, DecoratorKind.IGNORE);
             }
         }
         return false;
@@ -309,7 +309,7 @@ class SerializeGenerator {
                 let fieldDeclaration: FieldDeclaration = fieldPrototype.declaration;
                 let commonType: CommonTypeNode | null = fieldDeclaration.type;
 
-                if (commonType && commonType.kind == NodeKind.TYPE && 
+                if (commonType && commonType.kind == NodeKind.TYPE &&
                     !AstUtil.haveSpecifyDecorator(fieldDeclaration, DecoratorKind.IGNORE)) {
                     let typeNode = <TypeNode>commonType;
                     if (this.needImplDeSerialize && this.checkFieldImplSerialize(commonType)) {
@@ -321,13 +321,13 @@ class SerializeGenerator {
                     }
                 }
 
-                if (commonType && commonType.kind == NodeKind.TYPE && AstUtil.haveSpecifyDecorator(fieldDeclaration, DecoratorKind.PRIMARYID) ) {
+                if (commonType && commonType.kind == NodeKind.TYPE && AstUtil.haveSpecifyDecorator(fieldDeclaration, DecoratorKind.PRIMARYID)) {
                     if (hasPrimaryidDecorator) {
                         throw new Error(`Class ${this.classPrototype.simpleName} should only have only one primaryid decorators.`);
                     }
                     hasPrimaryidDecorator = true;
-                    let  paramDeclaration: TypeNodeInfo = new TypeNodeInfo(this.classPrototype.program, commonType);
-                    if ( paramDeclaration.ascFactType != 'u64'){
+                    let paramDeclaration: TypeNodeInfo = new TypeNodeInfo(this.classPrototype.program, commonType);
+                    if (paramDeclaration.ascFactType != 'u64') {
                         throw new Error(`Class ${this.classPrototype.simpleName} field ${fieldName}'s type should be id_type.`);
                     }
                     serializePoint.addPrimaryKeyExpr(`      return this.${fieldName};`)
@@ -524,7 +524,7 @@ export class SuperInserter {
                 let identity = classDeclaration.range.source.normalizedPath + classDeclaration.range.toString() + classDeclaration.name.range.toString();
                 // console.log(`${classPrototype.simpleName}: atEnd line: ${classPrototype.declaration.range.atEnd.line} line: ${classPrototype.declaration.range.line} end: ${classPrototype.declaration.range.end} column:${classPrototype.declaration.range.column}`);
                 if (classPrototype.basePrototype && !this.classNames.has(identity)) {
-                    this.processSuper(classPrototype);
+                    this.processConstructor(classPrototype);
                     this.classNames.add(identity);
                 }
             }
@@ -535,114 +535,159 @@ export class SuperInserter {
         return this.insertPoints;
     }
 
-    private processSuper(classPrototype: ClassPrototype): void {
-    
-        var constructorPrototype: FunctionPrototype | null = classPrototype.constructorPrototype;
-        if (!classPrototype.basePrototype) {
-            return;
-        }
-        var baseConstructorPrototype: FunctionPrototype | null = classPrototype.basePrototype.constructorPrototype;
+    /**
+     * The class prototype has base class 
+     * @param classPrototype 
+     */
+    private processConstructor(classPrototype: ClassPrototype): void {
+        var constructorPrototype = classPrototype.constructorPrototype;
         if (!constructorPrototype) {
             return;
         }
-        var insertCallSuper = this.checkAndGetSuperCallExpr(classPrototype, constructorPrototype.declaration);
-        if (!baseConstructorPrototype) {
+        if (!classPrototype.basePrototype) {
             return;
         }
-        this.insertPoints.push(insertCallSuper);
-        var baseFunctionDeclaration = baseConstructorPrototype.declaration;
-        var body: Statement | null = baseFunctionDeclaration.body;
+        if (!classPrototype.basePrototype.constructorPrototype) {            
+            return;
+        }
 
-        if (body) {
-            // var content = body.range.toString();
-            let signature = baseFunctionDeclaration.signature.range.toString();
-            let method = this.createSuperCall(classPrototype.basePrototype.simpleName, signature, body);
+        // Add call super method
+        var constructorResolver = new ConstructorResolver(constructorPrototype);
+        var superInserter = constructorResolver.generateSuperExprInserter();
+        this.insertPoints.push(superInserter);
 
-            let range = classPrototype.basePrototype.declaration.range;
-            let indentity =  range.source.normalizedPath + range.toString()        
-            if (!this.baseClassNames.has(indentity)) {
-                this.insertPoints.push(new InsertPoint(classPrototype.basePrototype.declaration.range, method));
-                this.baseClassNames.add(indentity);
-            }
+        // Add constructor replaced method
+        var baseConstructorResolver = new ConstructorResolver(classPrototype.basePrototype.constructorPrototype);
+        if (!this.baseClassNames.has(baseConstructorResolver.getClassIdentity())) {
+            this.insertPoints.push(baseConstructorResolver.generateConstructorInsert());
+            this.baseClassNames.add(baseConstructorResolver.getClassIdentity());
         }
     }
+}
 
-    /**
-     * 
-     * @param classPrototype concrete class prototype
-     * @param concreteFunctionDeclaration base class constructor
-     */
-    private checkAndGetSuperCallExpr(classPrototype: ClassPrototype, concreteFunctionDeclaration: FunctionDeclaration): InsertPoint {
-        var className = classPrototype.simpleName;
-        if (!concreteFunctionDeclaration.body) {
-            throw new Error(`Class ${className}'s constructor should have super call.${this.location(concreteFunctionDeclaration.range)}`);
+
+
+class ConstructorResolver {
+    private classPrototype: ClassPrototype;
+    private constructorPrototype: FunctionPrototype;
+    private stmtsWithoutComments: Statement[];
+    private havingSuperExpr:bool;
+
+
+    constructor(constructorPrototype: FunctionPrototype) {
+
+        if (constructorPrototype.classPrototype) {
+            this.classPrototype = constructorPrototype.classPrototype;
+        } else {
+            throw new Error(`Function ${constructorPrototype.simpleName} should belong a class prototype`);
         }
-        var stmt = concreteFunctionDeclaration.body;
-        if (stmt.kind == NodeKind.BLOCK) {
-            let blockStmt = <BlockStatement>stmt;
-            let superStmt: Statement | null = null;
-            for (let _stmt of blockStmt.statements) {
-                if (_stmt.kind != NodeKind.COMMENT) {
-                   superStmt = _stmt;
-                   break;
-                }
-            }
-            if (superStmt == null || superStmt.kind != NodeKind.EXPRESSION) {
-                throw new Error(`${className}'s constructor should have super call.${this.location(concreteFunctionDeclaration.range)}`);
-            }
-            let superExpr = <ExpressionStatement> superStmt;
-            if (superExpr.expression.kind != NodeKind.CALL) {
-                throw new Error(`Class ${className}'s constructor should have super call. ${this.location(concreteFunctionDeclaration.range)}`);
-            }
-            let superCallExpr = (<CallExpression> superExpr.expression).expression.range.toString();
-            if (superCallExpr != "super") {
-                throw new Error(`Class ${className}'s constructor should have super call. ${this.location(concreteFunctionDeclaration.range)}`);
-            }
-            let callexpr =  superExpr.range.toString();
-            if (classPrototype.basePrototype) {
-                let baseClassName = classPrototype.basePrototype.simpleName;
-                let _superCall = `        this._${baseClassName}_${callexpr};`;
-                return new InsertPoint(superStmt.range, _superCall);
-            }
-   
-        }
-        throw new Error(`${className}'s constructor should have super call.${this.location(concreteFunctionDeclaration.range)}`);
+
+        this.constructorPrototype = constructorPrototype;
+        this.setStmtsWithoutComments()
+        this.setHavingSuperExpr();
     }
 
-    /**
-     * Create super call function 
-     */
-    private createSuperCall(baseClassname: string, signature: string, body: Statement): string {
-        if (body.kind == NodeKind.BLOCK) {
-            let blockStmt = <BlockStatement>body;
-            let content = [];
-            for (let _stmt of blockStmt.statements) {
-                if (_stmt.kind == NodeKind.COMMENT) {
-                    //Do nothing
-                    continue;
-                } else if (_stmt.kind == NodeKind.EXPRESSION) {
-                     if ((<ExpressionStatement>_stmt).expression.kind == NodeKind.CALL) {
-                       let callIdentity = (<CallExpression>(<ExpressionStatement>_stmt).expression).expression.range.toString();
-                       if (callIdentity == "super") {
-                           // Do nothing
-                           continue;
-                       }
-                       content.push(_stmt.range.toString());
-                     }
-                }
-                content.push(_stmt.range.toString());
-            }
-            return `    _${baseClassname}_super${signature}: void { ${content.join("\n")} }`;
+    private setHavingSuperExpr() {
+        if (this.stmtsWithoutComments.length == 0) {
+            this.havingSuperExpr = false; 
+        } else {
+            this.havingSuperExpr =  this.stmtsWithoutComments[0].range.toString() == "super";
         }
-        return `    _${baseClassname}_super${signature}: void ${body.range.toString()}`;
     }
 
     private location(range: Range): string {
-        return  "in " +
-        range.source.normalizedPath +
-        ":" +
-        range.line.toString(10) +
-        ":" +
-        range.column.toString(10);
+        return "in " +
+            range.source.normalizedPath +
+            ":" +
+            range.line.toString(10) +
+            ":" +
+            range.column.toString(10);
+    }
+
+    public getClassIdentity(): string {
+        var range = this.classPrototype.declaration.range;
+        return range.source.normalizedPath + range.toString();
+    }
+
+    private setStmtsWithoutComments(): void {
+        let body = this.constructorPrototype.declaration.body;
+        let isBlockBody = (body != null && body.kind == NodeKind.BLOCK);
+        this.stmtsWithoutComments = new Array<Statement>();
+        if (isBlockBody) {
+            let blockStatements = <BlockStatement>this.constructorPrototype.declaration.body;
+            for (let _stmt of blockStatements.statements) {
+                if (_stmt.kind != NodeKind.COMMENT) {
+                    this.stmtsWithoutComments.push(_stmt);
+                }
+            }
+        }
+    }
+
+    public getSuperExpr(): string {
+        if (!this.havingSuperExpr) {
+            throw new Error(`Class ${this.getClassName()} should have super expression, at ${this.location(this.constructorPrototype.declaration.range)}`);
+        }
+        var keyword = this.stmtsWithoutComments[0].range.toString();
+        if (this.stmtsWithoutComments.length == 1 ) {
+            return `${keyword}()`;
+        }
+        var params = this.stmtsWithoutComments[1].range.toString();
+        return (params.startsWith("(")) ? `${keyword}${params}` : `${keyword}()`;
+    }
+
+    private havingBaseConstructorMethod(){
+        if (this.classPrototype.basePrototype 
+            && this.classPrototype.basePrototype.constructorPrototype) {
+                return true;
+        }
+        return false;
+    }
+
+    public generateConstructor(): string {
+        var index = 0;
+        var contents = new Array<string>();
+        if (this.havingSuperExpr) {
+            index = 1;
+            if (this.havingBaseConstructorMethod()) {
+                let callSuperExpr = this.generateCallSuperExpr();
+                contents.push(callSuperExpr);
+            }
+            if (this.stmtsWithoutComments.length >=2) {
+                index = this.stmtsWithoutComments[1].range.toString().startsWith("(") ? 2 : index;
+            }
+        }
+        for (let i = index; i < this.stmtsWithoutComments.length; i++) {
+            contents.push(this.stmtsWithoutComments[i].range.toString());
+        }
+        return `_${this.getClassName()}_super${this.getSignature()} : void { ${contents.join(";\n")}; }`;
+    }
+
+    public generateConstructorInsert(): InsertPoint {
+        var range = this.classPrototype.declaration.range;
+        return new InsertPoint(range, this.generateConstructor());
+    }
+
+    private generateCallSuperExpr(): string {
+        return `this._${this.getBaseClassName()}_${this.getSuperExpr()};`;
+    }
+
+    public generateSuperExprInserter(): InsertPoint {
+        let expr = this.generateCallSuperExpr();
+        return new InsertPoint(this.stmtsWithoutComments[1].range, expr);
+    }
+
+    private getClassName(): string {
+        return this.classPrototype.simpleName;
+    }
+
+    private getBaseClassName(): string {
+        if (!this.classPrototype.basePrototype) {
+            throw new Error(`Class ${this.getClassName()} should have super class.`);
+        }
+        return this.classPrototype.basePrototype.simpleName;
+    }
+
+    private getSignature(): string {
+        return this.constructorPrototype.declaration.signature.range.toString();
     }
 }

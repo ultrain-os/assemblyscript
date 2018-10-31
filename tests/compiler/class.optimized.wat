@@ -5,8 +5,6 @@
  (type $ii (func (param i32) (result i32)))
  (type $iiii (func (param i32 i32 i32) (result i32)))
  (type $ifff (func (param i32 f32 f32) (result f32)))
- (global $~lib/allocator/arena/startOffset (mut i32) (i32.const 0))
- (global $~lib/allocator/arena/offset (mut i32) (i32.const 0))
  (global $class/Animal.ONE (mut i32) (i32.const 1))
  (memory $0 1)
  (data (i32.const 8) "\08\00\00\00c\00l\00a\00s\00s\00.\00t\00s")
@@ -98,12 +96,6 @@
   (get_local $0)
  )
  (func $start (; 5 ;) (; has Stack IR ;) (type $v)
-  (set_global $~lib/allocator/arena/startOffset
-   (i32.const 32)
-  )
-  (set_global $~lib/allocator/arena/offset
-   (get_global $~lib/allocator/arena/startOffset)
-  )
   (drop
    (call $class/Animal.add
     (i32.const 1)
