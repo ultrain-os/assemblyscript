@@ -112,7 +112,7 @@ export class Abi {
 
   abiInfo: {
     version: string,
-    proposal: string, 
+    // proposal: string, 
     types: Array<AbiTypeAlias>,
     structs: Array<Struct>,
     actions: Array<Action>,
@@ -139,7 +139,6 @@ export class Abi {
 
     this.abiInfo = {
       version: "ultraio:1.0",
-      proposal: "",
       types: new Array<AbiTypeAlias>(),
       structs: new Array<Struct>(),
       actions: new Array<Action>(),
@@ -456,9 +455,11 @@ export class Abi {
       this.resolveDatabaseDecorator(clzPrototype.declaration);
       if (hasActionDecorators) {
         let impledInterfaces = AstUtil.impledInterfaces(clzPrototype);
+        // TODO To enhancement the code to add proprosal field
         for (let impledInterface of impledInterfaces) {
           if (AbiHelper.proposals.has(impledInterface)) {
-            this.abiInfo.proposal = impledInterface;
+            // this.abiInfo.proposal = impledInterface;
+            this.abiInfo.version = `${this.abiInfo.version}:${impledInterface}`;
             break;
           }
         }
