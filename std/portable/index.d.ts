@@ -247,12 +247,14 @@ declare class Array<T> {
   [key: number]: T;
   length: i32;
   constructor(capacity?: i32);
+  fill(value: T, start?: i32, end?: i32): this;
   every(callbackfn: (element: T, index: i32, array?: Array<T>) => bool): bool;
   findIndex(predicate: (element: T, index: i32, array?: Array<T>) => bool): i32;
   includes(searchElement: T, fromIndex?: i32): bool;
   indexOf(searchElement: T, fromIndex?: i32): i32;
   lastIndexOf(searchElement: T, fromIndex?: i32): i32;
-  push(element: T): void;
+  push(element: T): i32;
+  concat(items: T[]): T[];
   pop(): T;
   forEach(callbackfn: (value: T, index: i32, array: Array<T>) => void): void;
   map<U>(callbackfn: (value: T, index: i32, array: Array<T>) => U): Array<U>;
@@ -264,10 +266,10 @@ declare class Array<T> {
   unshift(element: T): i32;
   slice(from?: i32, to?: i32): T[];
   splice(start: i32, deleteCount?: i32): void;
-  reverse(): T[];
   sort(comparator?: (a: T, b: T) => i32): this;
-
-  join(delim: string): string;
+  join(separator?: string): string;
+  reverse(): T[];
+  toString(): string;
 }
 
 declare class Uint8Array extends Array<u8> {}
@@ -303,10 +305,13 @@ declare class String {
   trim(): string;
   trimLeft(): string;
   trimRight(): string;
+  trimStart(): string;
+  trimEnd(): string;
   padStart(targetLength: i32, padString?: string): string;
   padEnd(targetLength: i32, padString?: string): string;
   replace(search: string, replacement: string): string;
   repeat(count?: i32): string;
+  split(separator?: string, limit?: i32): string[];
   toString(): string;
 }
 
@@ -351,6 +356,7 @@ declare class Map<K,V> {
   entries(): Iterable<[K, V]>;
   keys(): Iterable<K>;
   values(): Iterable<V>;
+  delete(key: K): bool;
   [Symbol.iterator](): Iterator<[K,V]>;
 }
 

@@ -1,151 +1,128 @@
 (module
  (type $v (func))
  (import "env" "abort" (func $~lib/env/abort))
- (global $comma/a (mut i32) (i32.const 0))
- (global $comma/b (mut i32) (i32.const 0))
  (memory $0 1)
  (data (i32.const 8) "\08\00\00\00c\00o\00m\00m\00a\00.\00t\00s")
+ (table $0 1 anyfunc)
+ (elem (i32.const 0) $null)
+ (global $comma/a (mut i32) (i32.const 0))
+ (global $comma/b (mut i32) (i32.const 0))
  (export "memory" (memory $0))
+ (export "table" (table $0))
  (start $start)
- (func $start (; 1 ;) (; has Stack IR ;) (type $v)
+ (func $start (; 1 ;) (type $v)
   (local $0 i32)
-  (block $folding-inner0
-   (set_global $comma/a
-    (i32.add
-     (tee_local $0
-      (get_global $comma/a)
-     )
-     (i32.const 1)
-    )
-   )
-   (set_global $comma/b
-    (get_local $0)
-   )
-   (if
-    (i32.ne
-     (get_global $comma/a)
-     (i32.const 1)
-    )
-    (br $folding-inner0)
-   )
-   (if
-    (get_global $comma/b)
-    (br $folding-inner0)
-   )
-   (set_global $comma/a
-    (i32.add
-     (get_global $comma/a)
-     (i32.const 1)
-    )
-   )
-   (set_global $comma/b
-    (get_global $comma/a)
-   )
-   (if
-    (i32.ne
-     (get_global $comma/a)
-     (i32.const 2)
-    )
-    (br $folding-inner0)
-   )
-   (if
-    (i32.ne
-     (get_global $comma/b)
-     (i32.const 2)
-    )
-    (br $folding-inner0)
-   )
-   (set_global $comma/b
-    (i32.const 0)
-   )
-   (set_global $comma/a
-    (get_global $comma/b)
-   )
-   (set_global $comma/a
-    (i32.add
-     (get_global $comma/a)
-     (i32.const 1)
-    )
-   )
-   (set_global $comma/b
-    (get_global $comma/a)
-   )
-   (if
-    (i32.ne
-     (get_global $comma/a)
-     (i32.const 1)
-    )
-    (br $folding-inner0)
-   )
-   (if
-    (i32.ne
-     (get_global $comma/b)
-     (i32.const 1)
-    )
-    (br $folding-inner0)
-   )
-   (set_global $comma/a
-    (i32.add
-     (get_global $comma/a)
-     (i32.const 1)
-    )
-   )
-   (set_global $comma/b
-    (get_global $comma/a)
-   )
-   (set_global $comma/a
-    (get_global $comma/b)
-   )
-   (if
-    (i32.ne
-     (get_global $comma/a)
-     (i32.const 2)
-    )
-    (br $folding-inner0)
-   )
-   (if
-    (i32.ne
-     (get_global $comma/b)
-     (i32.const 2)
-    )
-    (br $folding-inner0)
-   )
-   (block $break|0
-    (set_local $0
-     (i32.const 0)
-    )
-    (loop $repeat|0
-     (br_if $break|0
-      (i32.ge_s
-       (get_local $0)
-       (get_global $comma/a)
-      )
-     )
-     (set_global $comma/a
-      (i32.sub
-       (get_global $comma/a)
-       (i32.const 1)
-      )
-     )
-     (set_local $0
-      (i32.add
-       (get_local $0)
-       (i32.const 1)
-      )
-     )
-     (br $repeat|0)
-    )
-   )
-   (if
-    (i32.ne
-     (get_local $0)
-     (i32.const 1)
-    )
-    (br $folding-inner0)
-   )
-   (return)
-  )
-  (call $~lib/env/abort)
-  (unreachable)
+  block $folding-inner0
+   get_global $comma/a
+   tee_local $0
+   i32.const 1
+   i32.add
+   set_global $comma/a
+   get_local $0
+   set_global $comma/b
+   get_global $comma/a
+   i32.const 1
+   i32.ne
+   if
+    br $folding-inner0
+   end
+   get_global $comma/b
+   if
+    br $folding-inner0
+   end
+   get_global $comma/a
+   i32.const 1
+   i32.add
+   set_global $comma/a
+   get_global $comma/a
+   set_global $comma/b
+   get_global $comma/a
+   i32.const 2
+   i32.ne
+   if
+    br $folding-inner0
+   end
+   get_global $comma/b
+   i32.const 2
+   i32.ne
+   if
+    br $folding-inner0
+   end
+   i32.const 0
+   set_global $comma/b
+   get_global $comma/b
+   set_global $comma/a
+   get_global $comma/a
+   i32.const 1
+   i32.add
+   set_global $comma/a
+   get_global $comma/a
+   set_global $comma/b
+   get_global $comma/a
+   i32.const 1
+   i32.ne
+   if
+    br $folding-inner0
+   end
+   get_global $comma/b
+   i32.const 1
+   i32.ne
+   if
+    br $folding-inner0
+   end
+   get_global $comma/a
+   i32.const 1
+   i32.add
+   set_global $comma/a
+   get_global $comma/a
+   set_global $comma/b
+   get_global $comma/b
+   set_global $comma/a
+   get_global $comma/a
+   i32.const 2
+   i32.ne
+   if
+    br $folding-inner0
+   end
+   get_global $comma/b
+   i32.const 2
+   i32.ne
+   if
+    br $folding-inner0
+   end
+   block $break|0
+    i32.const 0
+    set_local $0
+    loop $repeat|0
+     get_local $0
+     get_global $comma/a
+     i32.ge_s
+     br_if $break|0
+     get_global $comma/a
+     i32.const 1
+     i32.sub
+     set_global $comma/a
+     get_local $0
+     i32.const 1
+     i32.add
+     set_local $0
+     br $repeat|0
+     unreachable
+    end
+    unreachable
+   end
+   get_local $0
+   i32.const 1
+   i32.ne
+   if
+    br $folding-inner0
+   end
+   return
+  end
+  call $~lib/env/abort
+  unreachable
+ )
+ (func $null (; 2 ;) (type $v)
+  nop
  )
 )

@@ -1,70 +1,56 @@
 (module
- (type $ii (func (param i32) (result i32)))
  (type $v (func))
- (type $FF (func (param f64) (result f64)))
- (type $ff (func (param f32) (result f32)))
+ (type $FUNCSIG$i (func (result i32)))
+ (type $FUNCSIG$d (func (result f64)))
+ (type $FUNCSIG$f (func (result f32)))
  (import "env" "abort" (func $~lib/env/abort))
  (memory $0 1)
  (data (i32.const 8) "\10\00\00\00c\00a\00l\00l\00-\00i\00n\00f\00e\00r\00r\00e\00d\00.\00t\00s")
+ (table $0 1 anyfunc)
+ (elem (i32.const 0) $null)
  (export "memory" (memory $0))
+ (export "table" (table $0))
  (start $start)
- (func $call-inferred/foo<i32> (; 1 ;) (; has Stack IR ;) (type $ii) (param $0 i32) (result i32)
-  (get_local $0)
+ (func $call-inferred/foo<i32> (; 1 ;) (type $FUNCSIG$i) (result i32)
+  i32.const 42
  )
- (func $call-inferred/foo<f64> (; 2 ;) (; has Stack IR ;) (type $FF) (param $0 f64) (result f64)
-  (get_local $0)
+ (func $call-inferred/foo<f64> (; 2 ;) (type $FUNCSIG$d) (result f64)
+  f64.const 42
  )
- (func $call-inferred/foo<f32> (; 3 ;) (; has Stack IR ;) (type $ff) (param $0 f32) (result f32)
-  (get_local $0)
+ (func $call-inferred/foo<f32> (; 3 ;) (type $FUNCSIG$f) (result f32)
+  f32.const 42
  )
- (func $start (; 4 ;) (; has Stack IR ;) (type $v)
-  (if
-   (i32.ne
-    (call $call-inferred/foo<i32>
-     (i32.const 42)
-    )
-    (i32.const 42)
-   )
-   (block
-    (call $~lib/env/abort)
-    (unreachable)
-   )
-  )
-  (if
-   (f64.ne
-    (call $call-inferred/foo<f64>
-     (f64.const 42)
-    )
-    (f64.const 42)
-   )
-   (block
-    (call $~lib/env/abort)
-    (unreachable)
-   )
-  )
-  (if
-   (f32.ne
-    (call $call-inferred/foo<f32>
-     (f32.const 42)
-    )
-    (f32.const 42)
-   )
-   (block
-    (call $~lib/env/abort)
-    (unreachable)
-   )
-  )
-  (if
-   (f32.ne
-    (call $call-inferred/foo<f32>
-     (f32.const 42)
-    )
-    (f32.const 42)
-   )
-   (block
-    (call $~lib/env/abort)
-    (unreachable)
-   )
-  )
+ (func $start (; 4 ;) (type $v)
+  call $call-inferred/foo<i32>
+  i32.const 42
+  i32.ne
+  if
+   call $~lib/env/abort
+   unreachable
+  end
+  call $call-inferred/foo<f64>
+  f64.const 42
+  f64.ne
+  if
+   call $~lib/env/abort
+   unreachable
+  end
+  call $call-inferred/foo<f32>
+  f32.const 42
+  f32.ne
+  if
+   call $~lib/env/abort
+   unreachable
+  end
+  call $call-inferred/foo<f32>
+  f32.const 42
+  f32.ne
+  if
+   call $~lib/env/abort
+   unreachable
+  end
+ )
+ (func $null (; 5 ;) (type $v)
+  nop
  )
 )

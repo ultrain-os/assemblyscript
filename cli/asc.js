@@ -245,8 +245,7 @@ exports.main = function main(argv, options, callback, exttype) {
   var parser = null;
 
   // Include library files
-  if (!args.noLib) { // bundled
-
+  if (!args.noLib) {
     Object.keys(exports.libraryFiles).forEach(libPath => {
       if (libPath.indexOf("/") >= 0) return; // in sub-directory: imported on demand
       if (libPath == "dbmanager" && (exttype == undefined || exttype == 1)) {
@@ -263,6 +262,16 @@ exports.main = function main(argv, options, callback, exttype) {
           parser
         );
       });
+    });
+  } else { // always include builtins
+    stats.parseCount++;
+    stats.parseTime += measure(() => {
+      parser = assemblyscript.parseFile(
+        exports.libraryFiles["builtins"],
+        exports.libraryPrefix + "builtins.ts",
+        false,
+        parser
+      );
     });
   }
 
