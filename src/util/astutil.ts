@@ -93,6 +93,10 @@ export class AstUtil {
         return false;
     }
 
+    /**
+     * Get interfaces that class prototype implements.
+     * @param classPrototype classPrototype
+     */
     static impledInterfaces(classPrototype: ClassPrototype): string[] {
         var tempClz: ClassPrototype | null = classPrototype;
         var interfaces: string[] = new Array<string>();

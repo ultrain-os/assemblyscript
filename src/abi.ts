@@ -21,7 +21,6 @@ import {
 
 import {
   DecoratorKind,
-  DecoratorNode,
   SignatureNode,
   FunctionDeclaration,
   DeclarationStatement,
@@ -82,15 +81,17 @@ export class AbiHelper {
     ["u32", "uint32"],
     ["u64", "uint64"],
     ["usize", "usize"],
-    ["bool", "uint8"], // eos not support the bool
+    // ["bool", "bool"], // eos not support the bool
     ["f32", "float32"],
     ["f64", "float64"],
-    ["boolean", "uint8"], // eos not suppot the bool
+    ["boolean", "bool"], // eos not suppot the bool
     ["account_name", "name"],
     ["permission_name", "name"],
     ["action_name", "name"],
     ["weight_type", "uint16"],
-    ["Asset", "asset"]
+    ["Asset", "asset"],
+    ["Map", "map"],
+    ["ArrayMap", "arraymap"]
   ]);
 }
 
@@ -161,9 +162,9 @@ export class Abi {
     for (let parameter of parameters) {
       let type: CommonTypeNode = parameter.type;
       let typeInfo = new TypeNodeInfo(this.program, type);
-      let abiType = typeInfo.isArray ? `${typeInfo.ascBasicType}[]` : typeInfo.declareType;
+      // let abiType = typeInfo.isArray ? `${typeInfo.ascBasicType}[]` : typeInfo.declareType;
       this.addAbiTypeAlias(typeInfo);
-      struct.fields.push({ "name" : parameter.name.range.toString(), "type": abiType });
+      struct.fields.push({ "name" : parameter.name.range.toString(), "type": typeInfo.getAbiType() });
     }
     return struct;
   }
@@ -238,6 +239,10 @@ export class Abi {
     return scriptType;
   }
 
+  /**
+   *
+   * @param str string
+   */
   isWrapWithQutation(str: string): bool {
 
     if (str == undefined || str == null) {
@@ -350,7 +355,8 @@ export class Abi {
           if (declaration.isIgnore()) {
             continue;
           }
-          let type =  declaration.isArray ? `${AstUtil.getBasicTypeName(fieldTypeName)}[]` : fieldTypeName;
+          // let type =  declaration.isArray ? `${AstUtil.getBasicTypeName(fieldTypeName)}[]` : fieldTypeName;
+          let type = declaration.getAbiType();
           struct.fields.push({"name": fieldName, "type": type });
           this.addAbiTypeAlias(declaration);
         }

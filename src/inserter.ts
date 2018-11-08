@@ -159,6 +159,7 @@ export class TypeNodeInfo {
         var _ascFactType: Type | null = this.findOriginalAscType(basicTypeName);
         if (!_ascFactType) {
             this.kind = VarialbeKind.CLASS;
+            console.log(`ascFactType: ${_ascFactType}`);
         } else if (_ascFactType.kind == TypeKind.BOOL) {
             this.kind = VarialbeKind.BOOL;
             this.ascFactType = _ascFactType.toString();
@@ -168,11 +169,23 @@ export class TypeNodeInfo {
         }
     }
 
+    getAbiType(): string {
+        let abiType = this.isArray ? `${this.ascBasicType}[]` : this.declareType;
+        if (this.isMap()) {
+            abiType = this.declareType.substr(0, this.declareType.indexOf("<"));
+        }
+        return abiType;
+    }
+
     getAscBasicElement(): Element | null {
         var internalPath = this.commonTypeNode.range.source.internalPath;
         var basicTypePath = `${internalPath}/${this.ascBasicType}`;
         var basicElement = this.program.elementsLookup.get(basicTypePath);
         return basicElement;
+    }
+
+    private isMap(): bool {
+        return this.declareType.indexOf("Map<") != -1 || this.declareType.indexOf("ArrayMap<") != -1;
     }
 
     isIgnore(): boolean {
@@ -226,6 +239,7 @@ export class TypeNodeInfo {
         var originalType: Type | null = this.program.typesLookup.get(originalName);
         return originalType;
     }
+
 }
 
 /**
