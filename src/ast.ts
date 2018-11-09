@@ -118,7 +118,8 @@ export function nodeIsCallable(kind: NodeKind): bool {
     case NodeKind.CALL:
     // case NodeKind.SUPER: // TODO
     case NodeKind.ELEMENTACCESS:
-    case NodeKind.PROPERTYACCESS: return true;
+    case NodeKind.PROPERTYACCESS:
+    case NodeKind.PARENTHESIZED: return true;
   }
   return false;
 }

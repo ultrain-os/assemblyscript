@@ -70,6 +70,11 @@ export class AbiHelper {
 
   static proposals: Set<string> = new Set<string>(["UIP09", "UIP06"]);
 
+  /**
+   * Main node support internal abi type
+   * bool
+   * 
+   */
   static abiTypeLookup: Map<string, string> = new Map([
     ["i8", "int8"],
     ["i16", "int16"],
@@ -81,10 +86,16 @@ export class AbiHelper {
     ["u32", "uint32"],
     ["u64", "uint64"],
     ["usize", "usize"],
+<<<<<<< HEAD
     // ["bool", "bool"], // eos not support the bool
     ["f32", "float32"],
     ["f64", "float64"],
     ["boolean", "bool"], // eos not suppot the bool
+=======
+    ["f32", "float32"],
+    ["f64", "float64"],
+    ["boolean", "uint8"], 
+>>>>>>> master
     ["account_name", "name"],
     ["permission_name", "name"],
     ["action_name", "name"],
