@@ -86,16 +86,9 @@ export class AbiHelper {
     ["u32", "uint32"],
     ["u64", "uint64"],
     ["usize", "usize"],
-<<<<<<< HEAD
-    // ["bool", "bool"], // eos not support the bool
     ["f32", "float32"],
     ["f64", "float64"],
-    ["boolean", "bool"], // eos not suppot the bool
-=======
-    ["f32", "float32"],
-    ["f64", "float64"],
-    ["boolean", "uint8"], 
->>>>>>> master
+    ["boolean", "bool"], 
     ["account_name", "name"],
     ["permission_name", "name"],
     ["action_name", "name"],
