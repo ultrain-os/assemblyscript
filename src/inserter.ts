@@ -171,7 +171,7 @@ export class TypeNodeInfo {
 
     getAbiType(): string {
         let abiType = this.isArray ? `${this.ascBasicType}[]` : this.declareType;
-        if (this.isMap()) {
+        if (this.isMap) {
             abiType = this.declareType.substr(0, this.declareType.indexOf("<"));
         }
         return abiType;
@@ -184,7 +184,7 @@ export class TypeNodeInfo {
         return basicElement;
     }
 
-    private isMap(): bool {
+    get isMap(): bool {
         return this.declareType.indexOf("Map<") != -1 || this.declareType.indexOf("ArrayMap<") != -1;
     }
 

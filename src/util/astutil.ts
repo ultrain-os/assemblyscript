@@ -37,7 +37,8 @@ export class AstUtil {
         var internalPath = node.range.source.internalPath;
         var name = node.range.toString();
         var internalName = `${internalPath}/${name}`;
-        return internalName;
+        return internalName.replace(",", "_");
+        // return internalName;
     }
 
     /**
@@ -66,6 +67,14 @@ export class AstUtil {
         return declareType.includes("[") ||
             (declareType.includes("Array") && declareType.includes("<") 
             && declareType.replace("Array", "").trim().indexOf("<") == 0);
+    }
+
+    /**
+     * Whether the declare type is map
+     * @param declareType the declare type
+     */
+    static isMap(declareType: string): bool {
+        return declareType.indexOf("Map<") != 0 || declareType.indexOf("ArrayMap<") != 0;
     }
 
     /**

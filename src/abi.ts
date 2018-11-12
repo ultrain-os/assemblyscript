@@ -440,6 +440,14 @@ export class Abi {
               } else {
                 body.push(`      let ${parameterName} = ds.readComplexVector<${abiType.ascBasicType}>();`);
               }
+            } else if (abiType.isMap) {
+              body.push(`     let mapsize = ds.read<i32>();`);
+              body.push(`     let ${parameterName} = new Map<string,string>()`);
+              body.push(`     for(let index = 0; index < mapsize; index ++) {`);
+              body.push(`           let key = ds.readString();`);
+              body.push(`           let value = ds.readString();`);
+              body.push(`            ${parameterName}.set(key, value);`);
+              body.push(`      }`);
             } else {
               if (abiType.kind == VarialbeKind.STRING) {
                 body.push(`      let ${parameterName} = ds.readString();`);
@@ -517,7 +525,7 @@ export class Abi {
     for (let key of keys) {
       let value = this.program.elementsLookup.get(key);
       if (value) {
-        console.log(`Element lookup key:${key}.Kind:${ElementKind[value.kind]}`);
+        console.log(`Element lookup key:${key}. Kind:${ElementKind[value.kind]}`);
       }
     }
   }
@@ -538,9 +546,9 @@ export class Abi {
 
   resolve(): void {
 
-    // this.printTypeAliasInfo();
-    // this.printElementLookUpInfo();
-    // this.printClassProtoTypeInfo();
+    this.printTypeAliasInfo();
+    this.printElementLookUpInfo();
+    this.printClassProtoTypeInfo();
 
     var serializeInserter: SerializeInserter = new SerializeInserter(this.program);
     var superInserter: SuperInserter = new SuperInserter(this.program);
