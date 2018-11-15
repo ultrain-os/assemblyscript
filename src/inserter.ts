@@ -172,7 +172,13 @@ export class TypeNodeInfo {
     getAbiType(): string {
         let abiType = this.isArray ? `${this.ascBasicType}[]` : this.declareType;
         if (this.isMap) {
-            abiType = this.declareType.substr(0, this.declareType.indexOf("<"));
+            // console.log(this.declareType);
+            // abiType = this.declareType.substr(0, this.declareType.indexOf("<"));
+            abiType = this.declareType.replace(",", "_");
+            abiType = abiType.replace("Map<", "map_");
+            abiType = abiType.replace(">", "");
+            abiType = abiType.replace(" ", "");
+
         }
         return abiType;
     }

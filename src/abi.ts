@@ -356,9 +356,9 @@ export class Abi {
         if (fieldType && !AstUtil.haveSpecifyDecorator(fieldDeclare, DecoratorKind.IGNORE)) {
           let declaration: TypeNodeInfo = new TypeNodeInfo(this.program, fieldType);
           let fieldTypeName = fieldType.range.toString();
-          if (declaration.isIgnore()) {
-            continue;
-          }
+          // if (declaration.isIgnore()) {
+          //   continue;
+          // }
           // let type =  declaration.isArray ? `${AstUtil.getBasicTypeName(fieldTypeName)}[]` : fieldTypeName;
           let type = declaration.getAbiType();
           struct.fields.push({"name": fieldName, "type": type });
@@ -546,9 +546,9 @@ export class Abi {
 
   resolve(): void {
 
-    this.printTypeAliasInfo();
-    this.printElementLookUpInfo();
-    this.printClassProtoTypeInfo();
+    // this.printTypeAliasInfo();
+    // this.printElementLookUpInfo();
+    // this.printClassProtoTypeInfo();
 
     var serializeInserter: SerializeInserter = new SerializeInserter(this.program);
     var superInserter: SuperInserter = new SuperInserter(this.program);
