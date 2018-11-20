@@ -44,7 +44,7 @@ class Struct {
   fields: Array<Object> = new Array<Object>();
 }
 
-class AbiTypeAlias {
+export class AbiTypeAlias {
   new_type_name: string;
   type: string;
 
@@ -80,7 +80,7 @@ export class AbiHelper {
     ["i16", "int16"],
     ["i32", "int32"],
     ["i64", "int64"],
-    ["isize", ""],
+    ["isize", "uin32"],
     ["u8", "uint8"],
     ["u16", "uint16"],
     ["u32", "uint32"],
@@ -88,14 +88,15 @@ export class AbiHelper {
     ["usize", "usize"],
     ["f32", "float32"],
     ["f64", "float64"],
+    ["bool", "bool"],
     ["boolean", "bool"], 
+    ["string", "string"],
+    ["String", "string"],
     ["account_name", "name"],
     ["permission_name", "name"],
     ["action_name", "name"],
     ["weight_type", "uint16"],
-    ["Asset", "asset"],
-    ["Map", "map"],
-    ["ArrayMap", "arraymap"]
+    ["Asset", "asset"]
   ]);
 }
 
@@ -166,7 +167,6 @@ export class Abi {
     for (let parameter of parameters) {
       let type: CommonTypeNode = parameter.type;
       let typeInfo = new TypeNodeInfo(this.program, type);
-      // let abiType = typeInfo.isArray ? `${typeInfo.ascBasicType}[]` : typeInfo.declareType;
       this.addAbiTypeAlias(typeInfo);
       struct.fields.push({ "name" : parameter.name.range.toString(), "type": typeInfo.getAbiType() });
     }
@@ -174,23 +174,34 @@ export class Abi {
   }
 
   addAbiTypeAlias(typeNodeInfo: TypeNodeInfo): void {
-    var typeKindName = typeNodeInfo.ascBasicType;
-
-    var basicElement = typeNodeInfo.getAscBasicElement();
-    if (basicElement &&  basicElement.kind == ElementKind.CLASS_PROTOTYPE) {
-      let classPrototype = <ClassPrototype>basicElement;
-      this.parseClassPrototypeToStruct(classPrototype);
+    let ascTypes = typeNodeInfo.getAscTypes();
+    for (let ascType of ascTypes) {
+      this.addAbiTypeAliasByAscType(ascType);
+      let element = typeNodeInfo.findElement(ascType);
+      if (element && element.kind == ElementKind.CLASS_PROTOTYPE) {
+        let classPrototype = <ClassPrototype> element;
+        this.parseClassPrototypeToStruct(classPrototype);
+      }
     }
+  }
 
-    if (!this.typeAliasSet.has(typeKindName)) {
+  private isBasicType(ascType: string): bool {
+    let originalTypeName = this.findContractOriginalType(ascType);
+    let wasmType = this.abiTypeLookup.get(originalTypeName);
+    return wasmType ? true : false;
+  }
+
+  private addAbiTypeAliasByAscType(ascType: string): void {
+
+    if (!this.typeAliasSet.has(ascType)) {
       // It's the assemblyscript internal type
-      let originalTypeName = this.findContractOriginalType(typeKindName);
+      let originalTypeName = this.findContractOriginalType(ascType);
       let wasmType = this.abiTypeLookup.get(originalTypeName);
       // console.log(`addAbiTypeAlias: ${typeKindName}`);
-      if (wasmType) {
-        this.abiInfo.types.push(new AbiTypeAlias(typeKindName, wasmType));
+      if (wasmType && ascType != wasmType) {
+        this.abiInfo.types.push(new AbiTypeAlias(ascType, wasmType));
       }
-      this.typeAliasSet.add(typeKindName);
+      this.typeAliasSet.add(ascType);
     }
   }
 
@@ -343,7 +354,7 @@ export class Abi {
     var members: DeclarationStatement[] = classPrototype.declaration.members;
     var struct = new Struct();
     struct.name = classPrototype.simpleName;
-    if (this.abiTypeLookup.get(struct.name)) {
+    if (this.abiTypeLookup.get(struct.name) || AstUtil.haveSpecifyDecorator(classPrototype.declaration, DecoratorKind.IGNORE)) {
       return null;
     }
     struct.base = "";
@@ -355,11 +366,6 @@ export class Abi {
 
         if (fieldType && !AstUtil.haveSpecifyDecorator(fieldDeclare, DecoratorKind.IGNORE)) {
           let declaration: TypeNodeInfo = new TypeNodeInfo(this.program, fieldType);
-          let fieldTypeName = fieldType.range.toString();
-          // if (declaration.isIgnore()) {
-          //   continue;
-          // }
-          // let type =  declaration.isArray ? `${AstUtil.getBasicTypeName(fieldTypeName)}[]` : fieldTypeName;
           let type = declaration.getAbiType();
           struct.fields.push({"name": fieldName, "type": type });
           this.addAbiTypeAlias(declaration);
@@ -520,6 +526,16 @@ export class Abi {
     }
   }
 
+  printInstanceLookupInfo(): void {
+    var keys = this.program.instancesLookup.keys();
+    for (let key of keys) {
+      let value = this.program.instancesLookup.get(key);
+      if (value) {
+        console.log(`instance lookup key:${key}. Kind:${ElementKind[value.kind]}`);
+      }
+    }
+  }
+
   printElementLookUpInfo(): void {
     var keys = this.program.elementsLookup.keys();
     for (let key of keys) {
@@ -534,9 +550,18 @@ export class Abi {
     var keys = this.program.elementsLookup.keys();
     for (let key of keys) {
       let value: Element | null = this.program.elementsLookup.get(key);
+      // console.log(`value.kind: ${ElementKind[value.kind]}`);
+
       if (value && value.kind == ElementKind.CLASS_PROTOTYPE) {
         // console.log(`Element lookup key:${key}.Kind:${value.kind}`);
         let classPrototype: ClassPrototype = <ClassPrototype>value;
+        
+        if (classPrototype.instances) {
+          for (let instance of classPrototype.instances) {
+            console.log(`class instance: ${instance.toString()}`);
+          }
+        }
+
         if (classPrototype.basePrototype) {
           console.log(`Element lookup key:${key}. Base prototype:${classPrototype.basePrototype.simpleName}`);
         }
@@ -548,6 +573,7 @@ export class Abi {
 
     // this.printTypeAliasInfo();
     // this.printElementLookUpInfo();
+    // this.printInstanceLookupInfo();
     // this.printClassProtoTypeInfo();
 
     var serializeInserter: SerializeInserter = new SerializeInserter(this.program);

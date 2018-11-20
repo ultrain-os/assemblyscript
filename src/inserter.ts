@@ -10,10 +10,7 @@ import {
     NodeKind,
     TypeNode,
     BlockStatement,
-    Statement,
-    ExpressionStatement,
-    CallExpression,
-    FunctionDeclaration
+    Statement
 } from "./ast";
 
 import {
@@ -37,6 +34,7 @@ import {
 import {
     AstUtil
 } from "./util/astutil";
+import { Collections } from "./util/collectionutil";
 
 export enum VarialbeKind {
     BOOL, // boolean and bool
@@ -130,118 +128,121 @@ export class TypeNodeInfo {
     ascFactType: string;
     /** Whether parameter or field is array  */
     get isArray(): bool {
-        return AstUtil.isArray(this.declareType);
+        return AstUtil.isArrayType(this.declareType);
+    }
+
+    get isMap(): bool {
+        return AstUtil.isMapType(this.declareType);
+    }
+
+    get isString(): bool {
+        return this.ascBasicType == "string" || this.ascBasicType == "String";
     }
 
     constructor(program: Program, commonTypeNode: CommonTypeNode) {
         this.program = program;
         this.commonTypeNode = commonTypeNode;
         this.abiTypeLookup = AbiHelper.abiTypeLookup;
+        this.declareType = this.commonTypeNode.range.toString().replace(" ", "");
         this.resolve();
     }
+
+    private getSerializableType(): string {
+        return this.isArray ?  AstUtil.getArrayTypeArgument(this.declareType) : this.getTypeName();
+    }
+
 
     /**
      * string TypeKind is 9, and usize TypeKind is also 9.
      * @param type
      */
     private resolve(): void {
-        var declareType = this.commonTypeNode.range.toString();
-        this.declareType = declareType;
-
-        var basicTypeName: string = AstUtil.getBasicTypeName(declareType);
+        var basicTypeName = this.getSerializableType();
         this.ascBasicType = basicTypeName;
-        if (basicTypeName == "string" || basicTypeName == "String") {
+        if (this.isString) {
             this.kind = VarialbeKind.STRING;
             this.ascFactType = "string";
             return;
         }
 
-        var _ascFactType: Type | null = this.findOriginalAscType(basicTypeName);
-        if (!_ascFactType) {
+        var ascType: Type | null = this.findOriginalAscType(basicTypeName);
+        if (!ascType) {
             this.kind = VarialbeKind.CLASS;
-            console.log(`ascFactType: ${_ascFactType}`);
-        } else if (_ascFactType.kind == TypeKind.BOOL) {
+        } else if (ascType.kind == TypeKind.BOOL) {
             this.kind = VarialbeKind.BOOL;
-            this.ascFactType = _ascFactType.toString();
+            this.ascFactType = ascType.toString();
         } else {
             this.kind = VarialbeKind.NUMBER;
-            this.ascFactType = _ascFactType.toString();
+            this.ascFactType = ascType.toString();
         }
     }
 
     getAbiType(): string {
         let abiType = this.isArray ? `${this.ascBasicType}[]` : this.declareType;
         if (this.isMap) {
-            // console.log(this.declareType);
-            // abiType = this.declareType.substr(0, this.declareType.indexOf("<"));
-            abiType = this.declareType.replace(",", "_");
-            abiType = abiType.replace("Map<", "map_");
-            abiType = abiType.replace(">", "");
-            abiType = abiType.replace(" ", "");
-
+            abiType = this.declareType;
+            if (abiType.indexOf("Map<") == 0) {
+                abiType = abiType.replace("Map<", "");
+                abiType = abiType.replace(">", "{}");
+            }
+            if (abiType.indexOf("ArrayMap<") == 0) {
+                abiType = abiType.replace("ArrayMap<", "");
+                abiType = abiType.replace(">", "[]{}");
+            }
         }
         return abiType;
     }
 
-    getAscBasicElement(): Element | null {
-        var internalPath = this.commonTypeNode.range.source.internalPath;
-        var basicTypePath = `${internalPath}/${this.ascBasicType}`;
-        var basicElement = this.program.elementsLookup.get(basicTypePath);
-        return basicElement;
+    /**
+     * Get asc type, it maybe basic type or class type.
+     */
+    getAscTypes(): string[] {
+        var typeArguments = AstUtil.getTypeArguments(this.declareType);
+        return (!Collections.isEmptyArray(typeArguments)) ? typeArguments : Collections.newArray(this.ascBasicType);
     }
 
-    get isMap(): bool {
-        return this.declareType.indexOf("Map<") != -1 || this.declareType.indexOf("ArrayMap<") != -1;
-    }
-
-    isIgnore(): boolean {
+    private getTypeName(): string {
         var basicType = this.declareType;
         if (this.declareType.indexOf("<") != -1) {
             basicType = this.declareType.substr(0, this.declareType.indexOf("<")).trim();
         }
+        return basicType;
+    }
 
-        var internalPath = `${this.commonTypeNode.range.source.internalPath}/${basicType}`;
-        var element: Element | null = this.program.elementsLookup.get(internalPath);
-        // console.log(`isIgnore basictype: ${basicType} internalPath: ${internalPath}`);
-
-        if (element) {
-            if (element.kind == ElementKind.CLASS_PROTOTYPE) {
-                let prototype = <ClassPrototype>element;
-                return AstUtil.haveSpecifyDecorator(prototype.declaration, DecoratorKind.IGNORE);
-            }
-        } else {
-            var libEle: Element | null = this.program.elementsLookup.get(basicType);
-            if (libEle && libEle.kind == ElementKind.CLASS_PROTOTYPE) {
-                let prototype = <ClassPrototype>libEle;
-                return AstUtil.haveSpecifyDecorator(prototype.declaration, DecoratorKind.IGNORE);
-            }
-        }
-        return false;
+    /**
+     * the typename maybe global scope or local scope.
+     * So search the local firtst, then search the global scope.
+     * 
+     * @param typeName typename without type arguments
+     */
+    findElement(typeName: string): Element | null {
+        var internalPath = `${this.commonTypeNode.range.source.internalPath}/${typeName}`;
+        var element = this.program.elementsLookup.get(internalPath);
+        return element ? element : this.program.elementsLookup.get(typeName);
     }
 
     /**
      *  Find the script original type name
-     *  @param typeKindName
+     *  @param ascTypeName
      *
      */
-    private findOriginalAscTypeName(typeKindName: string): string {
-        var typeAlias = this.program.typeAliases.get(typeKindName);
+    private findOriginalAscTypeName(ascTypeName: string): string {
+        var typeAlias = this.program.typeAliases.get(ascTypeName);
         if (typeAlias) {
-            let commonaTypeName = typeAlias.type.range.toString();
-            return this.findOriginalAscTypeName(commonaTypeName);
+            let aliasTypeName = typeAlias.type.range.toString();
+            return this.findOriginalAscTypeName(aliasTypeName);
         }
-        return typeKindName;
+        return ascTypeName;
     }
 
     /**
     * Find assemblyscript original type name
     * eg: account_name return 'u64'
     *
-    * @param typeKindName
+    * @param ascTypeName
     */
-    private findOriginalAscType(typeKindName: string): Type | null {
-        var originalName = this.findOriginalAscTypeName(typeKindName);
-        //Get the AssemblyScript original type
+    private findOriginalAscType(ascTypeName: string): Type | null {
+        var originalName = this.findOriginalAscTypeName(ascTypeName);
         var originalType: Type | null = this.program.typesLookup.get(originalName);
         return originalType;
     }

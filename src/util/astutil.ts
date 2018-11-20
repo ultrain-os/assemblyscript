@@ -46,7 +46,8 @@ export class AstUtil {
      * If the type name is string[], so the basic type name is string
      * @param declareType
      */
-    static getBasicTypeName(declareType: string): string {
+    static getArrayTypeArgument(declareType: string): string {
+        assert(AstUtil.isArrayType(declareType));
         var bracketIndex = declareType.indexOf("[");
         if (bracketIndex != -1) {
             let index = declareType.indexOf(" ") == -1 ? bracketIndex : declareType.indexOf(" ");
@@ -63,18 +64,36 @@ export class AstUtil {
     /**
      * Whether the declare type is array or not
      */
-    static isArray(declareType: string): bool {
-        return declareType.includes("[") ||
-            (declareType.includes("Array") && declareType.includes("<") 
-            && declareType.replace("Array", "").trim().indexOf("<") == 0);
+    static isArrayType(declareType: string): bool {
+        var typeWithoutSpace = declareType.replace(" ", "");
+        return declareType.includes("[") || typeWithoutSpace.indexOf("Array<") == 0;
     }
 
     /**
      * Whether the declare type is map
      * @param declareType the declare type
      */
-    static isMap(declareType: string): bool {
-        return declareType.indexOf("Map<") != 0 || declareType.indexOf("ArrayMap<") != 0;
+    static isMapType(declareType: string): bool {
+        var typeWithoutSpace = declareType.replace(" ", "");
+        return typeWithoutSpace.indexOf("Map<") == 0 || typeWithoutSpace.indexOf("ArrayMap<") == 0;
+    }
+
+    private static getMapTypeArguments(declareType: string): string[] {
+        assert(AstUtil.isMapType(declareType));
+        var sPos = declareType.indexOf("<");
+        var ePos = declareType.indexOf(">");
+        var genericArgu = declareType.substring(sPos + 1, ePos).replace(" ", "");
+        return genericArgu.split(",");
+    }
+
+    static getTypeArguments(declareType: string): string[] {
+        var typeArguments = new Array<string>();
+        if (AstUtil.isMapType(declareType)) {
+            return AstUtil.getMapTypeArguments(declareType);
+        } else if (AstUtil.isArrayType(declareType)) {
+            typeArguments.push(AstUtil.getArrayTypeArgument(declareType));
+        }
+        return typeArguments;
     }
 
     /**
