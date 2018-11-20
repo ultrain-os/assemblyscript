@@ -2412,7 +2412,7 @@ export class Compiler extends DiagnosticEmitter {
       case NodeKind.FALSE:
       case NodeKind.NULL:
       case NodeKind.THIS:
-      case NodeKind.SUPER: 
+      case NodeKind.SUPER:
       case NodeKind.TRUE: {
         expr = this.compileIdentifierExpression(
           <IdentifierExpression>expression,
@@ -7720,7 +7720,7 @@ function mangleImportName(
 
   //change the namespace import method
   if (declaration.parent && declaration.parent.kind == NodeKind.NAMESPACEDECLARATION) {
-    mangleImportName_moduleName = "env"
+    mangleImportName_moduleName = "env";
     mangleImportName_elementName = declaration.name.range.toString();
   }
 

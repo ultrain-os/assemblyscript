@@ -151,7 +151,6 @@ export class TypeNodeInfo {
         return this.isArray ?  AstUtil.getArrayTypeArgument(this.declareType) : this.getTypeName();
     }
 
-
     /**
      * string TypeKind is 9, and usize TypeKind is also 9.
      * @param type
@@ -178,7 +177,7 @@ export class TypeNodeInfo {
     }
 
     getAbiType(): string {
-        let abiType = this.isArray ? `${this.ascBasicType}[]` : this.declareType;
+        var abiType = this.isArray ? `${this.ascBasicType}[]` : this.declareType;
         if (this.isMap) {
             abiType = this.declareType;
             if (abiType.indexOf("Map<") == 0) {
@@ -348,10 +347,10 @@ class SerializeGenerator {
                     }
                     hasPrimaryidDecorator = true;
                     let paramDeclaration: TypeNodeInfo = new TypeNodeInfo(this.classPrototype.program, commonType);
-                    if (paramDeclaration.ascFactType != 'u64') {
+                    if (paramDeclaration.ascFactType != "u64") {
                         throw new Error(`Class ${this.classPrototype.simpleName} field ${fieldName}'s type should be id_type.`);
                     }
-                    serializePoint.addPrimaryKeyExpr(`      return this.${fieldName};`)
+                    serializePoint.addPrimaryKeyExpr(`      return this.${fieldName};`);
                 }
             }
         }
@@ -568,7 +567,7 @@ export class SuperInserter {
         if (!classPrototype.basePrototype) {
             return;
         }
-        if (!classPrototype.basePrototype.constructorPrototype) {            
+        if (!classPrototype.basePrototype.constructorPrototype) {
             return;
         }
 
@@ -604,11 +603,11 @@ class ConstructorResolver {
         }
 
         this.constructorPrototype = constructorPrototype;
-        this.setStmtsWithoutComments()
+        this.setStmtsWithoutComments();
         this.setHavingSuperExpr();
     }
 
-    private setHavingSuperExpr() {
+    private setHavingSuperExpr(): void {
         if (this.stmtsWithoutComments.length == 0) {
             this.havingSuperExpr = false; 
         } else {
@@ -625,14 +624,14 @@ class ConstructorResolver {
             range.column.toString(10);
     }
 
-    public getClassIdentity(): string {
+    getClassIdentity(): string {
         var range = this.classPrototype.declaration.range;
         return range.source.normalizedPath + range.toString();
     }
 
     private setStmtsWithoutComments(): void {
-        let body = this.constructorPrototype.declaration.body;
-        let isBlockBody = (body != null && body.kind == NodeKind.BLOCK);
+        var body = this.constructorPrototype.declaration.body;
+        var isBlockBody = (body != null && body.kind == NodeKind.BLOCK);
         this.stmtsWithoutComments = new Array<Statement>();
         if (isBlockBody) {
             let blockStatements = <BlockStatement>this.constructorPrototype.declaration.body;
@@ -644,7 +643,7 @@ class ConstructorResolver {
         }
     }
 
-    public getSuperExpr(): string {
+    getSuperExpr(): string {
         if (!this.havingSuperExpr) {
             throw new Error(`Class ${this.getClassName()} should have super expression, at ${this.location(this.constructorPrototype.declaration.range)}`);
         }
@@ -656,7 +655,7 @@ class ConstructorResolver {
         return (params.startsWith("(")) ? `${keyword}${params}` : `${keyword}()`;
     }
 
-    private havingBaseConstructorMethod(){
+    private havingBaseConstructorMethod(): bool{
         if (this.classPrototype.basePrototype 
             && this.classPrototype.basePrototype.constructorPrototype) {
                 return true;
@@ -664,7 +663,7 @@ class ConstructorResolver {
         return false;
     }
 
-    public generateConstructor(): string {
+    generateConstructor(): string {
         var index = 0;
         var contents = new Array<string>();
         if (this.havingSuperExpr) {
@@ -683,7 +682,7 @@ class ConstructorResolver {
         return `_${this.getClassName()}_super${this.getSignature()} : void { ${contents.join(";\n")}; }`;
     }
 
-    public generateConstructorInsert(): InsertPoint {
+    generateConstructorInsert(): InsertPoint {
         var range = this.classPrototype.declaration.range;
         return new InsertPoint(range, this.generateConstructor());
     }
@@ -692,8 +691,8 @@ class ConstructorResolver {
         return `this._${this.getBaseClassName()}_${this.getSuperExpr()};`;
     }
 
-    public generateSuperExprInserter(): InsertPoint {
-        let expr = this.generateCallSuperExpr();
+    generateSuperExprInserter(): InsertPoint {
+        var expr = this.generateCallSuperExpr();
         return new InsertPoint(this.stmtsWithoutComments[1].range, expr);
     }
 

@@ -107,7 +107,7 @@ class Table {
   keys_names: string[] = ["currency"];
   keys_types: string[] = ["uint64"];
 
-  constructor(name: string, type: string, indexType:string = "i64") {
+  constructor(name: string, type: string, indexType: string = "i64") {
     this.name = name;
     this.type = type;
     this.index_type = indexType;
@@ -174,7 +174,7 @@ export class Abi {
   }
 
   addAbiTypeAlias(typeNodeInfo: TypeNodeInfo): void {
-    let ascTypes = typeNodeInfo.getAscTypes();
+    var ascTypes = typeNodeInfo.getAscTypes();
     for (let ascType of ascTypes) {
       this.addAbiTypeAliasByAscType(ascType);
       let element = typeNodeInfo.findElement(ascType);
@@ -186,8 +186,8 @@ export class Abi {
   }
 
   private isBasicType(ascType: string): bool {
-    let originalTypeName = this.findContractOriginalType(ascType);
-    let wasmType = this.abiTypeLookup.get(originalTypeName);
+    var originalTypeName = this.findContractOriginalType(ascType);
+    var wasmType = this.abiTypeLookup.get(originalTypeName);
     return wasmType ? true : false;
   }
 
