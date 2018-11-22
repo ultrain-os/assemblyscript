@@ -77,7 +77,11 @@ exports.defaultOptimizeLevel = 2;
 /** Default Binaryen shrink level. */
 exports.defaultShrinkLevel = 1;
 
+/** The cachedDbnanager content */
 exports.cachedDbmanager = null;
+
+/** The wordspace base dir */
+exports.baseDir = "./";
 
 /** Bundled library files. */
 exports.libraryFiles = exports.isBundle ? BUNDLE_LIBRARY : (() => { // set up if not a bundle
@@ -221,6 +225,7 @@ exports.main = function main(argv, options, callback, exttype) {
 
   // Set up base directory
   const baseDir = args.baseDir ? path.resolve(args.baseDir) : ".";
+  exports.baseDir = baseDir;
 
   // Set up transforms
   const transforms = [];
@@ -581,10 +586,14 @@ exports.main = function main(argv, options, callback, exttype) {
 
   if (exttype == 1) {
     exports.abiObj = program.toAbi();
+    let lookup = exports.abiObj.insertPointsLookup;
+    for (let [file, obj] of lookup) {
+      let filepath = path.resolve(baseDir, file);
+      lookup.set(filepath, obj);
+    }
     exports.applyText = exports.abiObj.dispatch;
   }
 
-  // console.log("applyText:" + exports.applyText);
   if (args.applyText && exttype == 3) {
     console.log("The generated apply text:");
     console.log(exports.applyText);
@@ -1005,12 +1014,14 @@ function insertCodes(sourcePath, sourceText) {
   }
 
   let insertPointsLookup = exports.abiObj.insertPointsLookup;
-  if (insertPointsLookup.has(sourcePath)) {
-    let serializeArray = insertPointsLookup.get(sourcePath);
+
+  var concretePath = path.resolve(exports.baseDir, sourcePath);
+  if (insertPointsLookup.has(concretePath)) {
+    let serializeArray = insertPointsLookup.get(concretePath);
     let data = sourceText.split(EOL);
     for (let serialize of serializeArray) {
       data.splice(serialize.line , 0, serialize.getInsertCode());
-      // console.log(`insert code: ${serialize.getInsertCode()}. serialize.line: ${serialize.line}`);
+      // console.log(`insert code: ${serialize.getInsertCode()}. Serialize line: ${serialize.line}. Path: ${sourcePath}`);
     }
     return data.join(EOL);
   } else {
