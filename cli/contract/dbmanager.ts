@@ -51,8 +51,8 @@ export class DBManager<T extends Serializable> {
     }
     /**
      * update a row.
-     * @param newobj the updated data to be stored.
      * @param payer account name who pays for the updating action.
+     * @param newobj the updated data to be stored.
      */
     public modify(payer: u64, newobj: T): void {
     }
@@ -74,5 +74,11 @@ export class DBManager<T extends Serializable> {
      * @param primary primary key to be removed.
      */
     public erase(primary: u64): void {
+    }
+    /**
+     * to remove all items of this db.
+     */
+    public dropAll(): i32 {
+        return -1;
     }
 }

@@ -4,7 +4,8 @@ import {
     db_store_i64,
     db_update_i64,
     db_remove_i64,
-    db_iterator_i64
+    db_iterator_i64,
+    db_drop_i64
 } from "./env";
 
 export class Cursor<T extends Serializable> {
@@ -165,5 +166,9 @@ export class DBManager<T extends Serializable> {
         } else {
             // what to do? assert or do nothing?
         }
+    }
+
+    public dropAll(): i32 {
+        return db_drop_i64(this._owner, this._scope, this._tblname);
     }
 }
