@@ -389,6 +389,9 @@ class SerializeGenerator {
             } else if (paramDeclaration.kind == VarialbeKind.NUMBER) {
                 body.push(`      ds.write<${paramDeclaration.declareType}>(this.${fieldName});`);
             } else {
+                body.push(`      if (!this.${fieldName}) {`);
+                body.push(`          this.${fieldName} = { } as ${paramDeclaration.declareType};`);
+                body.push(`      }`)
                 body.push(`      this.${fieldName}.serialize(ds);`);
             }
         }
@@ -419,6 +422,9 @@ class SerializeGenerator {
             } else if (variableType.kind == VarialbeKind.NUMBER) {
                 body.push(`      this.${fieldName} = ds.read<${variableType.ascFactType}>();`);
             } else {
+                body.push(`      if (!this.${fieldName}) {`);
+                body.push(`          this.${fieldName} = { } as ${variableType.declareType};`);
+                body.push(`      }`)
                 body.push(`      this.${fieldName}.deserialize(ds);`);
             }
         }
