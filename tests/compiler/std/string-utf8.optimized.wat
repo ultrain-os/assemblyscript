@@ -3,7 +3,6 @@
  (type $v (func))
  (type $iii (func (param i32 i32) (result i32)))
  (type $iiiv (func (param i32 i32 i32)))
- (type $FUNCSIG$v (func))
  (type $FUNCSIG$iiii (func (param i32 i32 i32) (result i32)))
  (import "env" "abort" (func $~lib/env/abort))
  (memory $0 1)
@@ -1518,10 +1517,7 @@
    end
   end
  )
- (func $~lib/allocator/arena/__memory_free (; 7 ;) (type $FUNCSIG$v)
-  nop
- )
- (func $~lib/string/String.fromUTF8 (; 8 ;) (type $iii) (param $0 i32) (param $1 i32) (result i32)
+ (func $~lib/string/String.fromUTF8 (; 7 ;) (type $iii) (param $0 i32) (param $1 i32) (result i32)
   (local $2 i32)
   (local $3 i32)
   (local $4 i32)
@@ -1545,34 +1541,33 @@
    i32.lt_u
    if
     get_local $2
-    tee_local $4
+    tee_local $3
     i32.const 1
     i32.add
     set_local $2
     get_local $0
-    get_local $4
+    get_local $3
     i32.add
     i32.load8_u
-    tee_local $4
+    tee_local $3
     i32.const 128
     i32.lt_u
-    if
+    if (result i32)
      get_local $6
-     get_local $3
-     i32.add
      get_local $4
-     i32.store16
+     i32.add
      get_local $3
+     i32.store16
+     get_local $4
      i32.const 2
      i32.add
-     set_local $3
     else     
-     get_local $4
+     get_local $3
      i32.const 191
      i32.gt_u
      tee_local $5
      if
-      get_local $4
+      get_local $3
       i32.const 224
       i32.lt_u
       set_local $5
@@ -1594,9 +1589,9 @@
       i32.add
       set_local $2
       get_local $6
-      get_local $3
-      i32.add
       get_local $4
+      i32.add
+      get_local $3
       i32.const 31
       i32.and
       i32.const 6
@@ -1609,17 +1604,13 @@
       i32.and
       i32.or
       i32.store16
-      get_local $3
-      i32.const 2
-      i32.add
-      set_local $3
      else      
-      get_local $4
+      get_local $3
       i32.const 239
       i32.gt_u
       tee_local $5
       if
-       get_local $4
+       get_local $3
        i32.const 365
        i32.lt_u
        set_local $5
@@ -1636,9 +1627,9 @@
         unreachable
        end
        get_local $6
-       get_local $3
-       i32.add
        get_local $4
+       i32.add
+       get_local $3
        i32.const 7
        i32.and
        i32.const 18
@@ -1653,7 +1644,6 @@
        i32.const 12
        i32.shl
        i32.or
-       tee_local $4
        get_local $0
        get_local $2
        i32.const 1
@@ -1666,13 +1656,12 @@
        i32.const 6
        i32.shl
        i32.or
-       tee_local $4
+       tee_local $3
        get_local $0
        get_local $2
        i32.const 1
        i32.add
        tee_local $2
-       tee_local $5
        i32.add
        i32.load8_u
        i32.const 63
@@ -1680,19 +1669,19 @@
        i32.or
        i32.const 65536
        i32.sub
-       tee_local $4
+       tee_local $3
        i32.const 10
        i32.shr_u
        i32.const 55296
        i32.add
        i32.store16
        get_local $6
-       get_local $3
+       get_local $4
        i32.const 2
        i32.add
-       tee_local $3
+       tee_local $4
        i32.add
-       get_local $4
+       get_local $3
        i32.const 1023
        i32.and
        i32.const 56320
@@ -1709,9 +1698,9 @@
         unreachable
        end
        get_local $6
-       get_local $3
-       i32.add
        get_local $4
+       i32.add
+       get_local $3
        i32.const 15
        i32.and
        i32.const 12
@@ -1726,13 +1715,12 @@
        i32.const 6
        i32.shl
        i32.or
-       tee_local $4
+       tee_local $3
        get_local $0
        get_local $2
        i32.const 1
        i32.add
        tee_local $2
-       tee_local $5
        i32.add
        i32.load8_u
        i32.const 63
@@ -1740,16 +1728,16 @@
        i32.or
        i32.store16
       end
-      get_local $3
-      i32.const 2
-      i32.add
-      set_local $3
       get_local $2
       i32.const 1
       i32.add
       set_local $2
      end
+     get_local $4
+     i32.const 2
+     i32.add
     end
+    set_local $4
     br $continue|0
    end
   end
@@ -1760,21 +1748,19 @@
    call $~lib/env/abort
    unreachable
   end
-  get_local $3
+  get_local $4
   i32.const 1
   i32.shr_u
   call $~lib/internal/string/allocateUnsafe
   tee_local $0
   i32.const 4
   i32.add
-  tee_local $4
   get_local $6
-  get_local $3
+  get_local $4
   call $~lib/internal/memory/memmove
-  call $~lib/allocator/arena/__memory_free
   get_local $0
  )
- (func $~lib/internal/string/compareUnsafe (; 9 ;) (type $FUNCSIG$iiii) (param $0 i32) (param $1 i32) (param $2 i32) (result i32)
+ (func $~lib/internal/string/compareUnsafe (; 8 ;) (type $FUNCSIG$iiii) (param $0 i32) (param $1 i32) (param $2 i32) (result i32)
   (local $3 i32)
   (local $4 i32)
   get_local $0
@@ -1799,11 +1785,11 @@
     i32.sub
     set_local $2
     get_local $3
-    i32.const 1
+    i32.const 2
     i32.add
     set_local $3
     get_local $1
-    i32.const 1
+    i32.const 2
     i32.add
     set_local $1
     br $continue|0
@@ -1811,7 +1797,7 @@
   end
   get_local $4
  )
- (func $~lib/string/String.__eq (; 10 ;) (type $iii) (param $0 i32) (param $1 i32) (result i32)
+ (func $~lib/string/String.__eq (; 9 ;) (type $iii) (param $0 i32) (param $1 i32) (result i32)
   (local $2 i32)
   get_local $0
   get_local $1
@@ -1850,7 +1836,7 @@
   call $~lib/internal/string/compareUnsafe
   i32.eqz
  )
- (func $start (; 11 ;) (type $v)
+ (func $start (; 10 ;) (type $v)
   block $folding-inner0
    i32.const 192
    set_global $~lib/allocator/arena/startOffset
@@ -1862,9 +1848,7 @@
    get_global $std/string-utf8/len
    i32.const 11
    i32.ne
-   if
-    br $folding-inner0
-   end
+   br_if $folding-inner0
    get_global $std/string-utf8/str
    call $~lib/string/String#toUTF8
    set_global $std/string-utf8/ptr
@@ -1872,86 +1856,62 @@
    i32.load8_u
    i32.const 240
    i32.ne
-   if
-    br $folding-inner0
-   end
+   br_if $folding-inner0
    get_global $std/string-utf8/ptr
    i32.load8_u offset=1
    i32.const 144
    i32.ne
-   if
-    br $folding-inner0
-   end
+   br_if $folding-inner0
    get_global $std/string-utf8/ptr
    i32.load8_u offset=2
    i32.const 144
    i32.ne
-   if
-    br $folding-inner0
-   end
+   br_if $folding-inner0
    get_global $std/string-utf8/ptr
    i32.load8_u offset=3
    i32.const 183
    i32.ne
-   if
-    br $folding-inner0
-   end
+   br_if $folding-inner0
    get_global $std/string-utf8/ptr
    i32.load8_u offset=4
    i32.const 104
    i32.ne
-   if
-    br $folding-inner0
-   end
+   br_if $folding-inner0
    get_global $std/string-utf8/ptr
    i32.load8_u offset=5
    i32.const 105
    i32.ne
-   if
-    br $folding-inner0
-   end
+   br_if $folding-inner0
    get_global $std/string-utf8/ptr
    i32.load8_u offset=6
    i32.const 240
    i32.ne
-   if
-    br $folding-inner0
-   end
+   br_if $folding-inner0
    get_global $std/string-utf8/ptr
    i32.load8_u offset=7
    i32.const 164
    i32.ne
-   if
-    br $folding-inner0
-   end
+   br_if $folding-inner0
    get_global $std/string-utf8/ptr
    i32.load8_u offset=8
    i32.const 173
    i32.ne
-   if
-    br $folding-inner0
-   end
+   br_if $folding-inner0
    get_global $std/string-utf8/ptr
    i32.load8_u offset=9
    i32.const 162
    i32.ne
-   if
-    br $folding-inner0
-   end
+   br_if $folding-inner0
    get_global $std/string-utf8/ptr
    i32.load8_u offset=10
-   if
-    br $folding-inner0
-   end
+   br_if $folding-inner0
    get_global $std/string-utf8/ptr
    i32.const 0
    call $~lib/string/String.fromUTF8
    i32.const 64
    call $~lib/string/String.__eq
    i32.eqz
-   if
-    br $folding-inner0
-   end
+   br_if $folding-inner0
    get_global $std/string-utf8/ptr
    get_global $std/string-utf8/len
    i32.const 1
@@ -1960,18 +1920,14 @@
    get_global $std/string-utf8/str
    call $~lib/string/String.__eq
    i32.eqz
-   if
-    br $folding-inner0
-   end
+   br_if $folding-inner0
    get_global $std/string-utf8/ptr
    i32.const 4
    call $~lib/string/String.fromUTF8
    i32.const 160
    call $~lib/string/String.__eq
    i32.eqz
-   if
-    br $folding-inner0
-   end
+   br_if $folding-inner0
    get_global $std/string-utf8/ptr
    i32.const 4
    i32.add
@@ -1980,9 +1936,7 @@
    i32.const 168
    call $~lib/string/String.__eq
    i32.eqz
-   if
-    br $folding-inner0
-   end
+   br_if $folding-inner0
    get_global $std/string-utf8/ptr
    i32.const 6
    i32.add
@@ -1991,9 +1945,7 @@
    i32.const 176
    call $~lib/string/String.__eq
    i32.eqz
-   if
-    br $folding-inner0
-   end
+   br_if $folding-inner0
    get_global $std/string-utf8/ptr
    i32.const 10
    i32.add
@@ -2002,16 +1954,13 @@
    i32.const 184
    call $~lib/string/String.__eq
    i32.eqz
-   if
-    br $folding-inner0
-   end
-   call $~lib/allocator/arena/__memory_free
+   br_if $folding-inner0
    return
   end
   call $~lib/env/abort
   unreachable
  )
- (func $null (; 12 ;) (type $v)
+ (func $null (; 11 ;) (type $v)
   nop
  )
 )

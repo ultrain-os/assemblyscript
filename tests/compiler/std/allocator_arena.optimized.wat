@@ -5,7 +5,6 @@
  (type $FUNCSIG$vi (func (param i32)))
  (type $FUNCSIG$vii (func (param i32 i32)))
  (type $FUNCSIG$iii (func (param i32 i32) (result i32)))
- (type $FUNCSIG$v (func))
  (import "env" "abort" (func $~lib/env/abort))
  (memory $0 1)
  (data (i32.const 8) "\16\00\00\00s\00t\00d\00/\00a\00l\00l\00o\00c\00a\00t\00o\00r\00_\00a\00r\00e\00n\00a\00.\00t\00s")
@@ -1423,14 +1422,7 @@
   end
   tee_local $0
  )
- (func $~lib/allocator/arena/__memory_free (; 6 ;) (type $FUNCSIG$v)
-  nop
- )
- (func $~lib/allocator/arena/__memory_reset (; 7 ;) (type $v)
-  get_global $~lib/allocator/arena/startOffset
-  set_global $~lib/allocator/arena/offset
- )
- (func $start (; 8 ;) (type $v)
+ (func $start (; 6 ;) (type $v)
   i32.const 56
   set_global $~lib/allocator/arena/startOffset
   get_global $~lib/allocator/arena/startOffset
@@ -1516,9 +1508,8 @@
    call $~lib/env/abort
    unreachable
   end
-  call $~lib/allocator/arena/__memory_free
-  call $~lib/allocator/arena/__memory_free
-  call $~lib/allocator/arena/__memory_reset
+  get_global $~lib/allocator/arena/startOffset
+  set_global $~lib/allocator/arena/offset
   call $~lib/allocator/arena/__memory_allocate
   set_global $std/allocator_arena/ptr1
   get_global $std/allocator_arena/ptr1
@@ -1529,7 +1520,7 @@
    unreachable
   end
  )
- (func $null (; 9 ;) (type $v)
+ (func $null (; 7 ;) (type $v)
   nop
  )
 )

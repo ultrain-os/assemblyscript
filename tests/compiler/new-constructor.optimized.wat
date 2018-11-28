@@ -1,7 +1,6 @@
 (module
  (type $ii (func (param i32) (result i32)))
  (type $v (func))
- (type $FUNCSIG$i (func (result i32)))
  (import "env" "abort" (func $~lib/env/abort))
  (memory $0 1)
  (data (i32.const 8) "\12\00\00\00n\00e\00w\00-\00c\00o\00n\00s\00t\00r\00u\00c\00t\00o\00r\00.\00t\00s")
@@ -75,16 +74,13 @@
   set_global $~lib/allocator/arena/offset
   get_local $1
  )
- (func $~lib/memory/memory.allocate (; 2 ;) (type $FUNCSIG$i) (result i32)
-  i32.const 12
-  call $~lib/allocator/arena/__memory_allocate
- )
- (func $start (; 3 ;) (type $v)
+ (func $start (; 2 ;) (type $v)
   i32.const 48
   set_global $~lib/allocator/arena/startOffset
   get_global $~lib/allocator/arena/startOffset
   set_global $~lib/allocator/arena/offset
-  call $~lib/memory/memory.allocate
+  i32.const 12
+  call $~lib/allocator/arena/__memory_allocate
   set_global $new-constructor/car
   get_global $new-constructor/car
   i64.load
@@ -95,7 +91,7 @@
    unreachable
   end
  )
- (func $null (; 4 ;) (type $v)
+ (func $null (; 3 ;) (type $v)
   nop
  )
 )

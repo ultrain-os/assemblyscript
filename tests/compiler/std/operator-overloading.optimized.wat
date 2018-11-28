@@ -4,9 +4,7 @@
  (type $v (func))
  (type $FFF (func (param f64 f64) (result f64)))
  (type $FiF (func (param f64 i32) (result f64)))
- (type $FUNCSIG$i (func (result i32)))
  (type $FUNCSIG$iii (func (param i32 i32) (result i32)))
- (type $FUNCSIG$ii (func (param i32) (result i32)))
  (import "env" "abort" (func $~lib/env/abort))
  (memory $0 1)
  (data (i32.const 8) "\1b\00\00\00s\00t\00d\00/\00o\00p\00e\00r\00a\00t\00o\00r\00-\00o\00v\00e\00r\00l\00o\00a\00d\00i\00n\00g\00.\00t\00s")
@@ -145,13 +143,10 @@
   set_global $~lib/allocator/arena/offset
   get_local $1
  )
- (func $~lib/memory/memory.allocate (; 2 ;) (type $FUNCSIG$i) (result i32)
+ (func $std/operator-overloading/Tester#constructor (; 2 ;) (type $FUNCSIG$iii) (param $0 i32) (param $1 i32) (result i32)
+  (local $2 i32)
   i32.const 8
   call $~lib/allocator/arena/__memory_allocate
- )
- (func $std/operator-overloading/Tester#constructor (; 3 ;) (type $FUNCSIG$iii) (param $0 i32) (param $1 i32) (result i32)
-  (local $2 i32)
-  call $~lib/memory/memory.allocate
   tee_local $2
   get_local $0
   i32.store
@@ -160,72 +155,7 @@
   i32.store offset=4
   get_local $2
  )
- (func $std/operator-overloading/Tester.add (; 4 ;) (type $iii) (param $0 i32) (param $1 i32) (result i32)
-  get_local $0
-  i32.load
-  get_local $1
-  i32.load
-  i32.add
-  get_local $0
-  i32.load offset=4
-  get_local $1
-  i32.load offset=4
-  i32.add
-  call $std/operator-overloading/Tester#constructor
- )
- (func $std/operator-overloading/Tester.sub (; 5 ;) (type $iii) (param $0 i32) (param $1 i32) (result i32)
-  get_local $0
-  i32.load
-  get_local $1
-  i32.load
-  i32.sub
-  get_local $0
-  i32.load offset=4
-  get_local $1
-  i32.load offset=4
-  i32.sub
-  call $std/operator-overloading/Tester#constructor
- )
- (func $std/operator-overloading/Tester.mul (; 6 ;) (type $iii) (param $0 i32) (param $1 i32) (result i32)
-  get_local $0
-  i32.load
-  get_local $1
-  i32.load
-  i32.mul
-  get_local $0
-  i32.load offset=4
-  get_local $1
-  i32.load offset=4
-  i32.mul
-  call $std/operator-overloading/Tester#constructor
- )
- (func $std/operator-overloading/Tester.div (; 7 ;) (type $iii) (param $0 i32) (param $1 i32) (result i32)
-  get_local $0
-  i32.load
-  get_local $1
-  i32.load
-  i32.div_s
-  get_local $0
-  i32.load offset=4
-  get_local $1
-  i32.load offset=4
-  i32.div_s
-  call $std/operator-overloading/Tester#constructor
- )
- (func $std/operator-overloading/Tester.mod (; 8 ;) (type $iii) (param $0 i32) (param $1 i32) (result i32)
-  get_local $0
-  i32.load
-  get_local $1
-  i32.load
-  i32.rem_s
-  get_local $0
-  i32.load offset=4
-  get_local $1
-  i32.load offset=4
-  i32.rem_s
-  call $std/operator-overloading/Tester#constructor
- )
- (func $~lib/math/NativeMath.scalbn (; 9 ;) (type $FiF) (param $0 f64) (param $1 i32) (result f64)
+ (func $~lib/math/NativeMath.scalbn (; 3 ;) (type $FiF) (param $0 f64) (param $1 i32) (result f64)
   get_local $1
   i32.const 1023
   i32.gt_s
@@ -299,7 +229,7 @@
   f64.reinterpret/i64
   f64.mul
  )
- (func $~lib/math/NativeMath.pow (; 10 ;) (type $FFF) (param $0 f64) (param $1 f64) (result f64)
+ (func $~lib/math/NativeMath.pow (; 4 ;) (type $FFF) (param $0 f64) (param $1 f64) (result f64)
   (local $2 f64)
   (local $3 f64)
   (local $4 i32)
@@ -1168,6 +1098,7 @@
     get_local $2
     f64.mul
     set_local $3
+    get_local $13
     f64.const 1
     get_local $2
     get_local $2
@@ -1241,9 +1172,7 @@
      i64.or
      f64.reinterpret/i64
     end
-    set_local $2
-    get_local $13
-    get_local $2
+    tee_local $2
     f64.mul
     return
    end
@@ -1260,8 +1189,7 @@
   f64.const 1.e+300
   f64.mul
  )
- (func $std/operator-overloading/Tester.pow (; 11 ;) (type $iii) (param $0 i32) (param $1 i32) (result i32)
-  (local $2 i32)
+ (func $std/operator-overloading/Tester.pow (; 5 ;) (type $iii) (param $0 i32) (param $1 i32) (result i32)
   get_local $0
   i32.load
   f64.convert_s/i32
@@ -1270,7 +1198,6 @@
   f64.convert_s/i32
   call $~lib/math/NativeMath.pow
   i32.trunc_s/f64
-  set_local $2
   get_local $0
   i32.load offset=4
   f64.convert_s/i32
@@ -1279,289 +1206,12 @@
   f64.convert_s/i32
   call $~lib/math/NativeMath.pow
   i32.trunc_s/f64
-  set_local $0
-  get_local $2
-  get_local $0
   call $std/operator-overloading/Tester#constructor
  )
- (func $std/operator-overloading/Tester.and (; 12 ;) (type $iii) (param $0 i32) (param $1 i32) (result i32)
-  get_local $0
-  i32.load
-  get_local $1
-  i32.load
-  i32.and
-  get_local $0
-  i32.load offset=4
-  get_local $1
-  i32.load offset=4
-  i32.and
-  call $std/operator-overloading/Tester#constructor
- )
- (func $std/operator-overloading/Tester.or (; 13 ;) (type $iii) (param $0 i32) (param $1 i32) (result i32)
-  get_local $0
-  i32.load
-  get_local $1
-  i32.load
-  i32.or
-  get_local $0
-  i32.load offset=4
-  get_local $1
-  i32.load offset=4
-  i32.or
-  call $std/operator-overloading/Tester#constructor
- )
- (func $std/operator-overloading/Tester.xor (; 14 ;) (type $iii) (param $0 i32) (param $1 i32) (result i32)
-  get_local $0
-  i32.load
-  get_local $1
-  i32.load
-  i32.xor
-  get_local $0
-  i32.load offset=4
-  get_local $1
-  i32.load offset=4
-  i32.xor
-  call $std/operator-overloading/Tester#constructor
- )
- (func $std/operator-overloading/Tester.equals (; 15 ;) (type $iii) (param $0 i32) (param $1 i32) (result i32)
-  (local $2 i32)
-  get_local $0
-  i32.load
-  get_local $1
-  i32.load
-  i32.eq
-  tee_local $2
-  if
-   get_local $0
-   i32.load offset=4
-   get_local $1
-   i32.load offset=4
-   i32.eq
-   set_local $2
-  end
-  get_local $2
- )
- (func $std/operator-overloading/Tester.notEquals (; 16 ;) (type $iii) (param $0 i32) (param $1 i32) (result i32)
-  (local $2 i32)
-  get_local $0
-  i32.load
-  get_local $1
-  i32.load
-  i32.ne
-  tee_local $2
-  if
-   get_local $0
-   i32.load offset=4
-   get_local $1
-   i32.load offset=4
-   i32.ne
-   set_local $2
-  end
-  get_local $2
- )
- (func $std/operator-overloading/Tester.greater (; 17 ;) (type $iii) (param $0 i32) (param $1 i32) (result i32)
-  (local $2 i32)
-  get_local $0
-  i32.load
-  get_local $1
-  i32.load
-  i32.gt_s
-  tee_local $2
-  if
-   get_local $0
-   i32.load offset=4
-   get_local $1
-   i32.load offset=4
-   i32.gt_s
-   set_local $2
-  end
-  get_local $2
- )
- (func $std/operator-overloading/Tester.greaterEquals (; 18 ;) (type $iii) (param $0 i32) (param $1 i32) (result i32)
-  (local $2 i32)
-  get_local $0
-  i32.load
-  get_local $1
-  i32.load
-  i32.ge_s
-  tee_local $2
-  if
-   get_local $0
-   i32.load offset=4
-   get_local $1
-   i32.load offset=4
-   i32.ge_s
-   set_local $2
-  end
-  get_local $2
- )
- (func $std/operator-overloading/Tester.less (; 19 ;) (type $iii) (param $0 i32) (param $1 i32) (result i32)
-  (local $2 i32)
-  get_local $0
-  i32.load
-  get_local $1
-  i32.load
-  i32.lt_s
-  tee_local $2
-  if
-   get_local $0
-   i32.load offset=4
-   get_local $1
-   i32.load offset=4
-   i32.lt_s
-   set_local $2
-  end
-  get_local $2
- )
- (func $std/operator-overloading/Tester.lessEquals (; 20 ;) (type $iii) (param $0 i32) (param $1 i32) (result i32)
-  (local $2 i32)
-  get_local $0
-  i32.load
-  get_local $1
-  i32.load
-  i32.le_s
-  tee_local $2
-  if
-   get_local $0
-   i32.load offset=4
-   get_local $1
-   i32.load offset=4
-   i32.le_s
-   set_local $2
-  end
-  get_local $2
- )
- (func $std/operator-overloading/Tester.shr (; 21 ;) (type $FUNCSIG$ii) (param $0 i32) (result i32)
-  get_local $0
-  i32.load
-  i32.const 3
-  i32.shr_s
-  get_local $0
-  i32.load offset=4
-  i32.const 3
-  i32.shr_s
-  call $std/operator-overloading/Tester#constructor
- )
- (func $std/operator-overloading/Tester.shu (; 22 ;) (type $FUNCSIG$ii) (param $0 i32) (result i32)
-  get_local $0
-  i32.load
-  i32.const 3
-  i32.shr_u
-  get_local $0
-  i32.load offset=4
-  i32.const 3
-  i32.shr_u
-  call $std/operator-overloading/Tester#constructor
- )
- (func $std/operator-overloading/Tester.shl (; 23 ;) (type $FUNCSIG$ii) (param $0 i32) (result i32)
-  get_local $0
-  i32.load
-  i32.const 3
-  i32.shl
-  get_local $0
-  i32.load offset=4
-  i32.const 3
-  i32.shl
-  call $std/operator-overloading/Tester#constructor
- )
- (func $std/operator-overloading/Tester.pos (; 24 ;) (type $ii) (param $0 i32) (result i32)
-  get_local $0
-  i32.load
-  get_local $0
-  i32.load offset=4
-  call $std/operator-overloading/Tester#constructor
- )
- (func $std/operator-overloading/Tester.neg (; 25 ;) (type $ii) (param $0 i32) (result i32)
-  i32.const 0
-  get_local $0
-  i32.load
-  i32.sub
-  i32.const 0
-  get_local $0
-  i32.load offset=4
-  i32.sub
-  call $std/operator-overloading/Tester#constructor
- )
- (func $std/operator-overloading/Tester.not (; 26 ;) (type $ii) (param $0 i32) (result i32)
-  get_local $0
-  i32.load
-  i32.const -1
-  i32.xor
-  get_local $0
-  i32.load offset=4
-  i32.const -1
-  i32.xor
-  call $std/operator-overloading/Tester#constructor
- )
- (func $std/operator-overloading/Tester.excl (; 27 ;) (type $ii) (param $0 i32) (result i32)
-  (local $1 i32)
-  get_local $0
-  i32.load
-  i32.eqz
-  tee_local $1
-  if
-   get_local $0
-   i32.load offset=4
-   i32.eqz
-   set_local $1
-  end
-  get_local $1
- )
- (func $std/operator-overloading/Tester#inc (; 28 ;) (type $ii) (param $0 i32) (result i32)
-  get_local $0
-  get_local $0
-  i32.load
-  i32.const 1
-  i32.add
-  i32.store
-  get_local $0
-  get_local $0
-  i32.load offset=4
-  i32.const 1
-  i32.add
-  i32.store offset=4
-  get_local $0
- )
- (func $std/operator-overloading/Tester#dec (; 29 ;) (type $ii) (param $0 i32) (result i32)
-  get_local $0
-  get_local $0
-  i32.load
-  i32.const 1
-  i32.sub
-  i32.store
-  get_local $0
-  get_local $0
-  i32.load offset=4
-  i32.const 1
-  i32.sub
-  i32.store offset=4
-  get_local $0
- )
- (func $std/operator-overloading/Tester#postInc (; 30 ;) (type $ii) (param $0 i32) (result i32)
-  get_local $0
-  i32.load
-  i32.const 1
-  i32.add
-  get_local $0
-  i32.load offset=4
-  i32.const 1
-  i32.add
-  call $std/operator-overloading/Tester#constructor
- )
- (func $std/operator-overloading/Tester#postDec (; 31 ;) (type $ii) (param $0 i32) (result i32)
-  get_local $0
-  i32.load
-  i32.const 1
-  i32.sub
-  get_local $0
-  i32.load offset=4
-  i32.const 1
-  i32.sub
-  call $std/operator-overloading/Tester#constructor
- )
- (func $start (; 32 ;) (type $v)
+ (func $start (; 6 ;) (type $v)
   (local $0 i32)
   (local $1 i32)
+  (local $2 i32)
   block $folding-inner0
    i32.const 72
    set_global $~lib/allocator/arena/startOffset
@@ -1576,8 +1226,18 @@
    call $std/operator-overloading/Tester#constructor
    set_global $std/operator-overloading/a2
    get_global $std/operator-overloading/a1
+   tee_local $0
+   i32.load
    get_global $std/operator-overloading/a2
-   call $std/operator-overloading/Tester.add
+   tee_local $1
+   i32.load
+   i32.add
+   get_local $0
+   i32.load offset=4
+   get_local $1
+   i32.load offset=4
+   i32.add
+   call $std/operator-overloading/Tester#constructor
    set_global $std/operator-overloading/a
    get_global $std/operator-overloading/a
    i32.load
@@ -1593,9 +1253,7 @@
    end
    get_local $0
    i32.eqz
-   if
-    br $folding-inner0
-   end
+   br_if $folding-inner0
    i32.const 2
    i32.const 3
    call $std/operator-overloading/Tester#constructor
@@ -1605,8 +1263,18 @@
    call $std/operator-overloading/Tester#constructor
    set_global $std/operator-overloading/s2
    get_global $std/operator-overloading/s1
+   tee_local $0
+   i32.load
    get_global $std/operator-overloading/s2
-   call $std/operator-overloading/Tester.sub
+   tee_local $1
+   i32.load
+   i32.sub
+   get_local $0
+   i32.load offset=4
+   get_local $1
+   i32.load offset=4
+   i32.sub
+   call $std/operator-overloading/Tester#constructor
    set_global $std/operator-overloading/s
    get_global $std/operator-overloading/s
    i32.load
@@ -1621,9 +1289,7 @@
    end
    get_local $0
    i32.eqz
-   if
-    br $folding-inner0
-   end
+   br_if $folding-inner0
    i32.const 2
    i32.const 5
    call $std/operator-overloading/Tester#constructor
@@ -1633,8 +1299,18 @@
    call $std/operator-overloading/Tester#constructor
    set_global $std/operator-overloading/m2
    get_global $std/operator-overloading/m1
+   tee_local $0
+   i32.load
    get_global $std/operator-overloading/m2
-   call $std/operator-overloading/Tester.mul
+   tee_local $1
+   i32.load
+   i32.mul
+   get_local $0
+   i32.load offset=4
+   get_local $1
+   i32.load offset=4
+   i32.mul
+   call $std/operator-overloading/Tester#constructor
    set_global $std/operator-overloading/m
    get_global $std/operator-overloading/m
    i32.load
@@ -1650,9 +1326,7 @@
    end
    get_local $0
    i32.eqz
-   if
-    br $folding-inner0
-   end
+   br_if $folding-inner0
    i32.const 6
    i32.const 50
    call $std/operator-overloading/Tester#constructor
@@ -1662,8 +1336,18 @@
    call $std/operator-overloading/Tester#constructor
    set_global $std/operator-overloading/d2
    get_global $std/operator-overloading/d1
+   tee_local $0
+   i32.load
    get_global $std/operator-overloading/d2
-   call $std/operator-overloading/Tester.div
+   tee_local $1
+   i32.load
+   i32.div_s
+   get_local $0
+   i32.load offset=4
+   get_local $1
+   i32.load offset=4
+   i32.div_s
+   call $std/operator-overloading/Tester#constructor
    set_global $std/operator-overloading/d
    get_global $std/operator-overloading/d
    i32.load
@@ -1679,9 +1363,7 @@
    end
    get_local $0
    i32.eqz
-   if
-    br $folding-inner0
-   end
+   br_if $folding-inner0
    i32.const 10
    i32.const 10
    call $std/operator-overloading/Tester#constructor
@@ -1691,8 +1373,18 @@
    call $std/operator-overloading/Tester#constructor
    set_global $std/operator-overloading/f2
    get_global $std/operator-overloading/f1
+   tee_local $0
+   i32.load
    get_global $std/operator-overloading/f2
-   call $std/operator-overloading/Tester.mod
+   tee_local $1
+   i32.load
+   i32.rem_s
+   get_local $0
+   i32.load offset=4
+   get_local $1
+   i32.load offset=4
+   i32.rem_s
+   call $std/operator-overloading/Tester#constructor
    set_global $std/operator-overloading/f
    get_global $std/operator-overloading/f
    i32.load
@@ -1707,9 +1399,7 @@
    end
    get_local $0
    i32.eqz
-   if
-    br $folding-inner0
-   end
+   br_if $folding-inner0
    i32.const 2
    i32.const 3
    call $std/operator-overloading/Tester#constructor
@@ -1736,9 +1426,7 @@
    end
    get_local $0
    i32.eqz
-   if
-    br $folding-inner0
-   end
+   br_if $folding-inner0
    i32.const 255
    i32.const 15
    call $std/operator-overloading/Tester#constructor
@@ -1748,8 +1436,18 @@
    call $std/operator-overloading/Tester#constructor
    set_global $std/operator-overloading/n2
    get_global $std/operator-overloading/n1
+   tee_local $0
+   i32.load
    get_global $std/operator-overloading/n2
-   call $std/operator-overloading/Tester.and
+   tee_local $1
+   i32.load
+   i32.and
+   get_local $0
+   i32.load offset=4
+   get_local $1
+   i32.load offset=4
+   i32.and
+   call $std/operator-overloading/Tester#constructor
    set_global $std/operator-overloading/n
    get_global $std/operator-overloading/n
    i32.load
@@ -1765,9 +1463,7 @@
    end
    get_local $0
    i32.eqz
-   if
-    br $folding-inner0
-   end
+   br_if $folding-inner0
    i32.const 3855
    i32.const 255
    call $std/operator-overloading/Tester#constructor
@@ -1777,8 +1473,18 @@
    call $std/operator-overloading/Tester#constructor
    set_global $std/operator-overloading/o2
    get_global $std/operator-overloading/o1
+   tee_local $0
+   i32.load
    get_global $std/operator-overloading/o2
-   call $std/operator-overloading/Tester.or
+   tee_local $1
+   i32.load
+   i32.or
+   get_local $0
+   i32.load offset=4
+   get_local $1
+   i32.load offset=4
+   i32.or
+   call $std/operator-overloading/Tester#constructor
    set_global $std/operator-overloading/o
    get_global $std/operator-overloading/o
    i32.load
@@ -1794,9 +1500,7 @@
    end
    get_local $0
    i32.eqz
-   if
-    br $folding-inner0
-   end
+   br_if $folding-inner0
    i32.const 255
    i32.const 255
    call $std/operator-overloading/Tester#constructor
@@ -1806,8 +1510,18 @@
    call $std/operator-overloading/Tester#constructor
    set_global $std/operator-overloading/x2
    get_global $std/operator-overloading/x1
+   tee_local $0
+   i32.load
    get_global $std/operator-overloading/x2
-   call $std/operator-overloading/Tester.xor
+   tee_local $1
+   i32.load
+   i32.xor
+   get_local $0
+   i32.load offset=4
+   get_local $1
+   i32.load offset=4
+   i32.xor
+   call $std/operator-overloading/Tester#constructor
    set_global $std/operator-overloading/x
    get_global $std/operator-overloading/x
    i32.load
@@ -1823,9 +1537,7 @@
    end
    get_local $0
    i32.eqz
-   if
-    br $folding-inner0
-   end
+   br_if $folding-inner0
    i32.const 1
    i32.const -2
    call $std/operator-overloading/Tester#constructor
@@ -1835,15 +1547,27 @@
    call $std/operator-overloading/Tester#constructor
    set_global $std/operator-overloading/eq2
    get_global $std/operator-overloading/eq1
+   tee_local $1
+   i32.load
    get_global $std/operator-overloading/eq2
-   call $std/operator-overloading/Tester.equals
+   tee_local $2
+   i32.load
+   i32.eq
+   tee_local $0
+   if
+    get_local $1
+    i32.load offset=4
+    get_local $2
+    i32.load offset=4
+    i32.eq
+    set_local $0
+   end
+   get_local $0
    set_global $std/operator-overloading/eq
    get_global $std/operator-overloading/eq
    i32.const 1
    i32.ne
-   if
-    br $folding-inner0
-   end
+   br_if $folding-inner0
    i32.const 1
    i32.const 0
    call $std/operator-overloading/Tester#constructor
@@ -1853,31 +1577,67 @@
    call $std/operator-overloading/Tester#constructor
    set_global $std/operator-overloading/eq4
    get_global $std/operator-overloading/eq3
+   tee_local $1
+   i32.load
    get_global $std/operator-overloading/eq4
-   call $std/operator-overloading/Tester.equals
+   tee_local $2
+   i32.load
+   i32.eq
+   tee_local $0
+   if
+    get_local $1
+    i32.load offset=4
+    get_local $2
+    i32.load offset=4
+    i32.eq
+    set_local $0
+   end
+   get_local $0
    set_global $std/operator-overloading/eqf
    get_global $std/operator-overloading/eqf
-   if
-    br $folding-inner0
-   end
+   br_if $folding-inner0
    get_global $std/operator-overloading/eq1
+   tee_local $1
+   i32.load
    get_global $std/operator-overloading/eq2
-   call $std/operator-overloading/Tester.notEquals
+   tee_local $2
+   i32.load
+   i32.ne
+   tee_local $0
+   if
+    get_local $1
+    i32.load offset=4
+    get_local $2
+    i32.load offset=4
+    i32.ne
+    set_local $0
+   end
+   get_local $0
    set_global $std/operator-overloading/eq
    get_global $std/operator-overloading/eq
-   if
-    br $folding-inner0
-   end
+   br_if $folding-inner0
    get_global $std/operator-overloading/eq3
+   tee_local $1
+   i32.load
    get_global $std/operator-overloading/eq4
-   call $std/operator-overloading/Tester.notEquals
+   tee_local $2
+   i32.load
+   i32.ne
+   tee_local $0
+   if
+    get_local $1
+    i32.load offset=4
+    get_local $2
+    i32.load offset=4
+    i32.ne
+    set_local $0
+   end
+   get_local $0
    set_global $std/operator-overloading/eqf
    get_global $std/operator-overloading/eqf
    i32.const 1
    i32.ne
-   if
-    br $folding-inner0
-   end
+   br_if $folding-inner0
    i32.const 2
    i32.const 2147483647
    call $std/operator-overloading/Tester#constructor
@@ -1887,15 +1647,27 @@
    call $std/operator-overloading/Tester#constructor
    set_global $std/operator-overloading/gt2
    get_global $std/operator-overloading/gt1
+   tee_local $1
+   i32.load
    get_global $std/operator-overloading/gt2
-   call $std/operator-overloading/Tester.greater
+   tee_local $2
+   i32.load
+   i32.gt_s
+   tee_local $0
+   if
+    get_local $1
+    i32.load offset=4
+    get_local $2
+    i32.load offset=4
+    i32.gt_s
+    set_local $0
+   end
+   get_local $0
    set_global $std/operator-overloading/gt
    get_global $std/operator-overloading/gt
    i32.const 1
    i32.ne
-   if
-    br $folding-inner0
-   end
+   br_if $folding-inner0
    i32.const 2
    i32.const 2
    call $std/operator-overloading/Tester#constructor
@@ -1905,15 +1677,27 @@
    call $std/operator-overloading/Tester#constructor
    set_global $std/operator-overloading/gte2
    get_global $std/operator-overloading/gte1
+   tee_local $1
+   i32.load
    get_global $std/operator-overloading/gte2
-   call $std/operator-overloading/Tester.greaterEquals
+   tee_local $2
+   i32.load
+   i32.ge_s
+   tee_local $0
+   if
+    get_local $1
+    i32.load offset=4
+    get_local $2
+    i32.load offset=4
+    i32.ge_s
+    set_local $0
+   end
+   get_local $0
    set_global $std/operator-overloading/gte
    get_global $std/operator-overloading/gte
    i32.const 1
    i32.ne
-   if
-    br $folding-inner0
-   end
+   br_if $folding-inner0
    i32.const 5
    i32.const -1
    call $std/operator-overloading/Tester#constructor
@@ -1923,15 +1707,27 @@
    call $std/operator-overloading/Tester#constructor
    set_global $std/operator-overloading/le2
    get_global $std/operator-overloading/le1
+   tee_local $1
+   i32.load
    get_global $std/operator-overloading/le2
-   call $std/operator-overloading/Tester.less
+   tee_local $2
+   i32.load
+   i32.lt_s
+   tee_local $0
+   if
+    get_local $1
+    i32.load offset=4
+    get_local $2
+    i32.load offset=4
+    i32.lt_s
+    set_local $0
+   end
+   get_local $0
    set_global $std/operator-overloading/le
    get_global $std/operator-overloading/le
    i32.const 1
    i32.ne
-   if
-    br $folding-inner0
-   end
+   br_if $folding-inner0
    i32.const 4
    i32.const 3
    call $std/operator-overloading/Tester#constructor
@@ -1941,21 +1737,41 @@
    call $std/operator-overloading/Tester#constructor
    set_global $std/operator-overloading/leq2
    get_global $std/operator-overloading/leq1
+   tee_local $1
+   i32.load
    get_global $std/operator-overloading/leq2
-   call $std/operator-overloading/Tester.lessEquals
+   tee_local $2
+   i32.load
+   i32.le_s
+   tee_local $0
+   if
+    get_local $1
+    i32.load offset=4
+    get_local $2
+    i32.load offset=4
+    i32.le_s
+    set_local $0
+   end
+   get_local $0
    set_global $std/operator-overloading/leq
    get_global $std/operator-overloading/leq
    i32.const 1
    i32.ne
-   if
-    br $folding-inner0
-   end
+   br_if $folding-inner0
    i32.const 8
    i32.const 16
    call $std/operator-overloading/Tester#constructor
    set_global $std/operator-overloading/shr
    get_global $std/operator-overloading/shr
-   call $std/operator-overloading/Tester.shr
+   tee_local $0
+   i32.load
+   i32.const 3
+   i32.shr_s
+   get_local $0
+   i32.load offset=4
+   i32.const 3
+   i32.shr_s
+   call $std/operator-overloading/Tester#constructor
    set_global $std/operator-overloading/sres
    get_global $std/operator-overloading/sres
    i32.load
@@ -1971,15 +1787,21 @@
    end
    get_local $0
    i32.eqz
-   if
-    br $folding-inner0
-   end
+   br_if $folding-inner0
    i32.const -8
    i32.const -16
    call $std/operator-overloading/Tester#constructor
    set_global $std/operator-overloading/shu
    get_global $std/operator-overloading/shu
-   call $std/operator-overloading/Tester.shu
+   tee_local $0
+   i32.load
+   i32.const 3
+   i32.shr_u
+   get_local $0
+   i32.load offset=4
+   i32.const 3
+   i32.shr_u
+   call $std/operator-overloading/Tester#constructor
    set_global $std/operator-overloading/ures
    get_global $std/operator-overloading/ures
    i32.load
@@ -1995,15 +1817,21 @@
    end
    get_local $0
    i32.eqz
-   if
-    br $folding-inner0
-   end
+   br_if $folding-inner0
    i32.const 1
    i32.const 2
    call $std/operator-overloading/Tester#constructor
    set_global $std/operator-overloading/shl
    get_global $std/operator-overloading/shl
-   call $std/operator-overloading/Tester.shl
+   tee_local $0
+   i32.load
+   i32.const 3
+   i32.shl
+   get_local $0
+   i32.load offset=4
+   i32.const 3
+   i32.shl
+   call $std/operator-overloading/Tester#constructor
    set_global $std/operator-overloading/sres
    get_global $std/operator-overloading/sres
    i32.load
@@ -2019,15 +1847,17 @@
    end
    get_local $0
    i32.eqz
-   if
-    br $folding-inner0
-   end
+   br_if $folding-inner0
    i32.const 1
    i32.const -2
    call $std/operator-overloading/Tester#constructor
    set_global $std/operator-overloading/pos
    get_global $std/operator-overloading/pos
-   call $std/operator-overloading/Tester.pos
+   tee_local $0
+   i32.load
+   get_local $0
+   i32.load offset=4
+   call $std/operator-overloading/Tester#constructor
    set_global $std/operator-overloading/pres
    get_global $std/operator-overloading/pres
    i32.load
@@ -2045,15 +1875,21 @@
    end
    get_local $0
    i32.eqz
-   if
-    br $folding-inner0
-   end
+   br_if $folding-inner0
    i32.const -1
    i32.const -2
    call $std/operator-overloading/Tester#constructor
    set_global $std/operator-overloading/neg
+   i32.const 0
    get_global $std/operator-overloading/neg
-   call $std/operator-overloading/Tester.neg
+   tee_local $0
+   i32.load
+   i32.sub
+   i32.const 0
+   get_local $0
+   i32.load offset=4
+   i32.sub
+   call $std/operator-overloading/Tester#constructor
    set_global $std/operator-overloading/nres
    get_global $std/operator-overloading/nres
    i32.load
@@ -2075,15 +1911,21 @@
    end
    get_local $0
    i32.eqz
-   if
-    br $folding-inner0
-   end
+   br_if $folding-inner0
    i32.const 255
    i32.const 16
    call $std/operator-overloading/Tester#constructor
    set_global $std/operator-overloading/not
    get_global $std/operator-overloading/not
-   call $std/operator-overloading/Tester.not
+   tee_local $0
+   i32.load
+   i32.const -1
+   i32.xor
+   get_local $0
+   i32.load offset=4
+   i32.const -1
+   i32.xor
+   call $std/operator-overloading/Tester#constructor
    set_global $std/operator-overloading/res
    get_global $std/operator-overloading/res
    i32.load
@@ -2105,15 +1947,23 @@
    end
    get_local $0
    i32.eqz
-   if
-    br $folding-inner0
-   end
+   br_if $folding-inner0
    i32.const 0
    i32.const 0
    call $std/operator-overloading/Tester#constructor
    set_global $std/operator-overloading/excl
    get_global $std/operator-overloading/excl
-   call $std/operator-overloading/Tester.excl
+   tee_local $1
+   i32.load
+   i32.eqz
+   tee_local $0
+   if
+    get_local $1
+    i32.load offset=4
+    i32.eqz
+    set_local $0
+   end
+   get_local $0
    set_global $std/operator-overloading/bres
    get_global $std/operator-overloading/bres
    set_local $1
@@ -2130,21 +1980,29 @@
    get_local $1
    get_local $0
    i32.ne
-   if
-    br $folding-inner0
-   end
+   br_if $folding-inner0
    get_global $std/operator-overloading/bres
    i32.const 1
    i32.ne
-   if
-    br $folding-inner0
-   end
+   br_if $folding-inner0
    i32.const 0
    i32.const 1
    call $std/operator-overloading/Tester#constructor
    set_global $std/operator-overloading/incdec
    get_global $std/operator-overloading/incdec
-   call $std/operator-overloading/Tester#inc
+   tee_local $0
+   get_local $0
+   i32.load
+   i32.const 1
+   i32.add
+   i32.store
+   get_local $0
+   get_local $0
+   i32.load offset=4
+   i32.const 1
+   i32.add
+   i32.store offset=4
+   get_local $0
    set_global $std/operator-overloading/incdec
    get_global $std/operator-overloading/incdec
    i32.load
@@ -2160,11 +2018,21 @@
    end
    get_local $0
    i32.eqz
-   if
-    br $folding-inner0
-   end
+   br_if $folding-inner0
    get_global $std/operator-overloading/incdec
-   call $std/operator-overloading/Tester#dec
+   tee_local $0
+   get_local $0
+   i32.load
+   i32.const 1
+   i32.sub
+   i32.store
+   get_local $0
+   get_local $0
+   i32.load offset=4
+   i32.const 1
+   i32.sub
+   i32.store offset=4
+   get_local $0
    set_global $std/operator-overloading/incdec
    get_global $std/operator-overloading/incdec
    i32.load
@@ -2179,16 +2047,21 @@
    end
    get_local $0
    i32.eqz
-   if
-    br $folding-inner0
-   end
+   br_if $folding-inner0
    i32.const 0
    i32.const 1
    call $std/operator-overloading/Tester#constructor
    set_global $std/operator-overloading/incdec
    get_global $std/operator-overloading/incdec
    tee_local $0
-   call $std/operator-overloading/Tester#postInc
+   i32.load
+   i32.const 1
+   i32.add
+   get_local $0
+   i32.load offset=4
+   i32.const 1
+   i32.add
+   call $std/operator-overloading/Tester#constructor
    set_global $std/operator-overloading/incdec
    get_local $0
    set_global $std/operator-overloading/tmp
@@ -2205,9 +2078,7 @@
    end
    get_local $0
    i32.eqz
-   if
-    br $folding-inner0
-   end
+   br_if $folding-inner0
    get_global $std/operator-overloading/incdec
    i32.load
    i32.const 1
@@ -2222,12 +2093,17 @@
    end
    get_local $0
    i32.eqz
-   if
-    br $folding-inner0
-   end
+   br_if $folding-inner0
    get_global $std/operator-overloading/incdec
    tee_local $0
-   call $std/operator-overloading/Tester#postDec
+   i32.load
+   i32.const 1
+   i32.sub
+   get_local $0
+   i32.load offset=4
+   i32.const 1
+   i32.sub
+   call $std/operator-overloading/Tester#constructor
    set_global $std/operator-overloading/incdec
    get_local $0
    set_global $std/operator-overloading/tmp
@@ -2245,9 +2121,7 @@
    end
    get_local $0
    i32.eqz
-   if
-    br $folding-inner0
-   end
+   br_if $folding-inner0
    get_global $std/operator-overloading/incdec
    i32.load
    i32.eqz
@@ -2261,9 +2135,7 @@
    end
    get_local $0
    i32.eqz
-   if
-    br $folding-inner0
-   end
+   br_if $folding-inner0
    i32.const 1
    i32.const 2
    call $std/operator-overloading/Tester#constructor
@@ -2311,9 +2183,7 @@
    end
    get_local $1
    i32.eqz
-   if
-    br $folding-inner0
-   end
+   br_if $folding-inner0
    i32.const 1
    i32.const 2
    call $std/operator-overloading/Tester#constructor
@@ -2361,15 +2231,13 @@
    end
    get_local $0
    i32.eqz
-   if
-    br $folding-inner0
-   end
+   br_if $folding-inner0
    return
   end
   call $~lib/env/abort
   unreachable
  )
- (func $null (; 33 ;) (type $v)
+ (func $null (; 7 ;) (type $v)
   nop
  )
 )

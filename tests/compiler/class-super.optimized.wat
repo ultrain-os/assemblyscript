@@ -3,7 +3,6 @@
  (type $ii (func (param i32) (result i32)))
  (type $v (func))
  (type $iiv (func (param i32 i32)))
- (type $FUNCSIG$i (func (result i32)))
  (memory $0 0)
  (table $0 1 anyfunc)
  (elem (i32.const 0) $null)
@@ -88,46 +87,44 @@
   set_global $~lib/allocator/arena/offset
   get_local $1
  )
- (func $~lib/memory/memory.allocate (; 1 ;) (type $FUNCSIG$i) (result i32)
-  i32.const 4
-  call $~lib/allocator/arena/__memory_allocate
- )
- (func $class-super/Concrete#constructor (; 2 ;) (type $iiii) (param $0 i32) (param $1 i32) (param $2 i32) (result i32)
+ (func $class-super/Concrete#constructor (; 1 ;) (type $iiii) (param $0 i32) (param $1 i32) (param $2 i32) (result i32)
   get_local $0
   i32.eqz
   if
-   call $~lib/memory/memory.allocate
+   i32.const 4
+   call $~lib/allocator/arena/__memory_allocate
    tee_local $0
    i32.const 0
    i32.store
   end
   get_local $0
  )
- (func $class-super/ConcreteD#constructor (; 3 ;) (type $ii) (param $0 i32) (result i32)
+ (func $class-super/ConcreteD#constructor (; 2 ;) (type $ii) (param $0 i32) (result i32)
   get_local $0
   i32.eqz
   if
-   call $~lib/memory/memory.allocate
+   i32.const 4
+   call $~lib/allocator/arena/__memory_allocate
    tee_local $0
    i32.const 0
    i32.store
   end
   get_local $0
  )
- (func $start (; 4 ;) (type $v)
+ (func $start (; 3 ;) (type $v)
   i32.const 8
   set_global $~lib/allocator/arena/startOffset
   get_global $~lib/allocator/arena/startOffset
   set_global $~lib/allocator/arena/offset
  )
- (func $null (; 5 ;) (type $v)
+ (func $null (; 4 ;) (type $v)
   nop
  )
- (func $Concrete#get:a (; 6 ;) (type $ii) (param $0 i32) (result i32)
+ (func $Concrete#get:a (; 5 ;) (type $ii) (param $0 i32) (result i32)
   get_local $0
   i32.load
  )
- (func $Concrete#set:a (; 7 ;) (type $iiv) (param $0 i32) (param $1 i32)
+ (func $Concrete#set:a (; 6 ;) (type $iiv) (param $0 i32) (param $1 i32)
   get_local $0
   get_local $1
   i32.store

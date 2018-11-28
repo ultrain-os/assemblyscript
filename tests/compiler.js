@@ -86,6 +86,7 @@ tests.forEach(filename => {
     "--baseDir", basedir,
     "--validate",
     "--measure",
+    "--debug",
     "--textFile" // -> stdout
   ], {
     stdout: stdout,
@@ -136,9 +137,9 @@ tests.forEach(filename => {
       filename,
       "--baseDir", basedir,
       "--validate",
-      "-O3",
       "--measure",
-      "--binaryFile" // -> stdout
+      "--binaryFile", // -> stdout
+      "-O3"
     ];
     if (args.create) cmd.push(
       "--textFile", basename + ".optimized.wat"
@@ -183,7 +184,7 @@ tests.forEach(filename => {
                 console.log(colorsUtil.red("  abort: " + getString(msg) + " at " + getString(file) + ":" + line + ":" + column));
               },
               trace: function(msg, n) {
-                console.log("  " + getString(msg) + (n ? " " : "") + Array.prototype.slice.call(arguments, 2, 2 + n).join(", "));
+                console.log("  trace: " + getString(msg) + (n ? " " : "") + Array.prototype.slice.call(arguments, 2, 2 + n).join(", "));
               },
               externalFunction: function() { },
               externalConstant: 1
@@ -191,7 +192,8 @@ tests.forEach(filename => {
             math: {
               mod: function(a, b) { return a % b; }
             },
-            Math: Math,
+            Math,
+            Date,
 
             // tests/declare
             declare: {

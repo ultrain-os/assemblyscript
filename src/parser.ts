@@ -2118,7 +2118,7 @@ export class Parser extends DiagnosticEmitter {
       let identifier = Node.createIdentifierExpression(tn.readIdentifier(), tn.range());
       let asIdentifier: IdentifierExpression | null = null;
       if (tn.skip(Token.AS)) {
-        if (tn.skipIdentifierName()) {
+        if (tn.skipIdentifier(IdentifierHandling.ALWAYS)) {
           asIdentifier = Node.createIdentifierExpression(tn.readIdentifier(), tn.range());
         } else {
           this.error(
@@ -2234,7 +2234,7 @@ export class Parser extends DiagnosticEmitter {
 
     // before: Identifier ('as' Identifier)?
 
-    if (tn.skipIdentifierName()) {
+    if (tn.skipIdentifier(IdentifierHandling.ALWAYS)) {
       let identifier = Node.createIdentifierExpression(tn.readIdentifier(), tn.range());
       let asIdentifier: IdentifierExpression | null = null;
       if (tn.skip(Token.AS)) {
@@ -3405,15 +3405,19 @@ export class Parser extends DiagnosticEmitter {
           break;
         }
         default: {
-          next = this.parseExpression(tn,
-            isRightAssociative(token)
-              ? nextPrecedence
-              : nextPrecedence + 1
-          );
-          if (!next) return null;
 
           // PropertyAccessExpression
           if (token == Token.DOT) {
+            if (tn.skipIdentifier()) {
+              next = Node.createIdentifierExpression(tn.readIdentifier(), tn.range());
+            } else {
+              next = this.parseExpression(tn,
+                isRightAssociative(token)
+                  ? nextPrecedence
+                  : nextPrecedence + 1
+              );
+              if (!next) return null;
+            }
             if (next.kind == NodeKind.IDENTIFIER) { // expr '.' Identifier
               expr = Node.createPropertyAccessExpression(
                 expr,
@@ -3433,6 +3437,12 @@ export class Parser extends DiagnosticEmitter {
 
           // BinaryExpression
           } else {
+            next = this.parseExpression(tn,
+              isRightAssociative(token)
+                ? nextPrecedence
+                : nextPrecedence + 1
+            );
+            if (!next) return null;
             expr = Node.createBinaryExpression(token, expr, next, tn.range(startPos, tn.pos));
           }
           break;

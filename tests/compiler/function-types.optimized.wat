@@ -1,11 +1,8 @@
 (module
- (type $i (func (result i32)))
  (type $iii (func (param i32 i32) (result i32)))
  (type $v (func))
  (type $III (func (param i64 i64) (result i64)))
  (type $FFF (func (param f64 f64) (result f64)))
- (type $iiii (func (param i32 i32 i32) (result i32)))
- (type $FUNCSIG$i (func (result i32)))
  (import "env" "abort" (func $~lib/env/abort))
  (memory $0 1)
  (data (i32.const 8) "\11\00\00\00f\00u\00n\00c\00t\00i\00o\00n\00-\00t\00y\00p\00e\00s\00.\00t\00s")
@@ -22,64 +19,20 @@
   get_local $1
   i32.add
  )
- (func $function-types/makeAdder<i32> (; 2 ;) (type $i) (result i32)
-  i32.const 1
- )
- (func $function-types/makeAdder<i64>~anonymous|2 (; 3 ;) (type $III) (param $0 i64) (param $1 i64) (result i64)
+ (func $function-types/makeAdder<i64>~anonymous|2 (; 2 ;) (type $III) (param $0 i64) (param $1 i64) (result i64)
   get_local $0
   get_local $1
   i64.add
  )
- (func $function-types/makeAdder<i64> (; 4 ;) (type $i) (result i32)
-  i32.const 2
- )
- (func $function-types/makeAdder<f64>~anonymous|3 (; 5 ;) (type $FFF) (param $0 f64) (param $1 f64) (result f64)
+ (func $function-types/makeAdder<f64>~anonymous|3 (; 3 ;) (type $FFF) (param $0 f64) (param $1 f64) (result f64)
   get_local $0
   get_local $1
   f64.add
  )
- (func $function-types/makeAdder<f64> (; 6 ;) (type $i) (result i32)
-  i32.const 3
- )
- (func $function-types/doAddWithFn<i32> (; 7 ;) (type $iiii) (param $0 i32) (param $1 i32) (param $2 i32) (result i32)
-  i32.const 2
-  set_global $~argc
-  get_local $0
-  get_local $1
-  get_local $2
-  call_indirect (type $iii)
- )
- (func $function-types/doAdd<i32> (; 8 ;) (type $FUNCSIG$i) (result i32)
-  i32.const 2
-  set_global $~argc
-  i32.const 3
-  i32.const 4
-  call $function-types/makeAdder<i32>
-  call_indirect (type $iii)
- )
- (func $function-types/makeAndAdd<i32>|trampoline (; 9 ;) (type $FUNCSIG$i) (result i32)
+ (func $start (; 4 ;) (type $v)
   (local $0 i32)
-  block $1of1
-   block $0of1
-    block $outOfRange
-     get_global $~argc
-     i32.const 2
-     i32.sub
-     br_table $0of1 $1of1 $outOfRange
-    end
-    unreachable
-   end
-   call $function-types/makeAdder<i32>
-   set_local $0
-  end
-  i32.const 1
-  i32.const 2
-  get_local $0
-  call $function-types/doAddWithFn<i32>
- )
- (func $start (; 10 ;) (type $v)
   block $folding-inner0
-   call $function-types/makeAdder<i32>
+   i32.const 1
    set_global $function-types/i32Adder
    i32.const 2
    set_global $~argc
@@ -89,10 +42,8 @@
    call_indirect (type $iii)
    i32.const 3
    i32.ne
-   if
-    br $folding-inner0
-   end
-   call $function-types/makeAdder<i64>
+   br_if $folding-inner0
+   i32.const 2
    set_global $function-types/i64Adder
    i32.const 2
    set_global $~argc
@@ -102,67 +53,82 @@
    call_indirect (type $III)
    i64.const 30
    i64.ne
-   if
-    br $folding-inner0
-   end
+   br_if $folding-inner0
    i32.const 2
    set_global $~argc
    f64.const 1.5
    f64.const 2.5
-   call $function-types/makeAdder<f64>
+   i32.const 3
    call_indirect (type $FFF)
    f64.const 4
    f64.ne
-   if
-    br $folding-inner0
-   end
+   br_if $folding-inner0
+   i32.const 2
+   set_global $~argc
    i32.const 2
    i32.const 3
    get_global $function-types/i32Adder
-   call $function-types/doAddWithFn<i32>
+   call_indirect (type $iii)
    i32.const 5
    i32.ne
-   if
-    br $folding-inner0
-   end
-   call $function-types/doAdd<i32>
+   br_if $folding-inner0
+   i32.const 2
+   set_global $~argc
+   i32.const 3
+   i32.const 4
+   i32.const 1
+   call_indirect (type $iii)
    i32.const 7
    i32.ne
-   if
-    br $folding-inner0
-   end
+   br_if $folding-inner0
+   i32.const 2
+   set_global $~argc
    i32.const 4
    i32.const 5
    i32.const 4
-   call $function-types/doAddWithFn<i32>
+   call_indirect (type $iii)
    i32.const 9
    i32.ne
-   if
-    br $folding-inner0
+   br_if $folding-inner0
+   i32.const 2
+   set_global $~argc
+   block $1of1
+    block $0of1
+     block $outOfRange
+      get_global $~argc
+      i32.const 2
+      i32.sub
+      br_table $0of1 $1of1 $outOfRange
+     end
+     unreachable
+    end
+    i32.const 1
+    set_local $0
    end
    i32.const 2
    set_global $~argc
-   call $function-types/makeAndAdd<i32>|trampoline
-   i32.const 3
-   i32.ne
-   if
-    br $folding-inner0
-   end
    i32.const 1
    i32.const 2
-   call $function-types/makeAdder<i32>
-   call $function-types/doAddWithFn<i32>
+   get_local $0
+   call_indirect (type $iii)
    i32.const 3
    i32.ne
-   if
-    br $folding-inner0
-   end
+   br_if $folding-inner0
+   i32.const 2
+   set_global $~argc
+   i32.const 1
+   i32.const 2
+   i32.const 1
+   call_indirect (type $iii)
+   i32.const 3
+   i32.ne
+   br_if $folding-inner0
    return
   end
   call $~lib/env/abort
   unreachable
  )
- (func $null (; 11 ;) (type $v)
+ (func $null (; 5 ;) (type $v)
   nop
  )
 )

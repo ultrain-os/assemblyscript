@@ -6,7 +6,7 @@
  (data (i32.const 8) "\0b\00\00\00b\00u\00i\00l\00t\00i\00n\00s\00.\00t\00s")
  (data (i32.const 40) "\01\00\00\001")
  (table $0 2 anyfunc)
- (elem (i32.const 0) $builtins/checkGeneric<String> $start~anonymous|1)
+ (elem (i32.const 0) $builtins/test $start~anonymous|1)
  (global $builtins/b (mut i32) (i32.const 0))
  (global $builtins/i (mut i32) (i32.const 0))
  (global $builtins/I (mut i64) (i64.const 0))
@@ -18,18 +18,16 @@
  (global $builtins/fn (mut i32) (i32.const 1))
  (export "memory" (memory $0))
  (export "table" (table $0))
- (export "test" (func $builtins/checkGeneric<String>))
+ (export "test" (func $builtins/test))
  (start $start)
- (func $builtins/checkGeneric<String> (; 1 ;) (type $v)
+ (func $start~anonymous|1 (; 1 ;) (type $iiv) (param $0 i32) (param $1 i32)
   nop
  )
- (func $start~anonymous|1 (; 2 ;) (type $iiv) (param $0 i32) (param $1 i32)
+ (func $builtins/test (; 2 ;) (type $v)
   nop
  )
  (func $start (; 3 ;) (type $v)
   block $folding-inner0
-   call $builtins/checkGeneric<String>
-   call $builtins/checkGeneric<String>
    i32.const 31
    set_global $builtins/i
    i32.const 0
@@ -45,25 +43,19 @@
    get_global $builtins/i
    i32.const 42
    i32.ne
-   if
-    br $folding-inner0
-   end
+   br_if $folding-inner0
    i32.const 2
    set_global $builtins/i
    get_global $builtins/i
    i32.const 2
    i32.ne
-   if
-    br $folding-inner0
-   end
+   br_if $folding-inner0
    i32.const 1
    set_global $builtins/i
    get_global $builtins/i
    i32.const 1
    i32.ne
-   if
-    br $folding-inner0
-   end
+   br_if $folding-inner0
    i64.const 63
    set_global $builtins/I
    i64.const 0
@@ -79,25 +71,19 @@
    get_global $builtins/I
    i64.const 42
    i64.ne
-   if
-    br $folding-inner0
-   end
+   br_if $folding-inner0
    i64.const 2
    set_global $builtins/I
    get_global $builtins/I
    i64.const 2
    i64.ne
-   if
-    br $folding-inner0
-   end
+   br_if $folding-inner0
    i64.const 1
    set_global $builtins/I
    get_global $builtins/i
    i32.const 1
    i32.ne
-   if
-    br $folding-inner0
-   end
+   br_if $folding-inner0
    f32.const nan:0x400000
    set_global $builtins/f
    f32.const inf

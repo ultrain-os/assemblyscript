@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@protobufjs/utf8": "^1.1.0",
-    "binaryen": "52.0.0-nightly.20181104",
+    "binaryen": "55.0.0-nightly.20181122",
     "glob": "^7.1.3",
     "long": "^4.0.0"
   },

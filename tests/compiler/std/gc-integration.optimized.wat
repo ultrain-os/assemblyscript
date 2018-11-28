@@ -1,7 +1,6 @@
 (module
  (type $iv (func (param i32)))
  (type $v (func))
- (type $FUNCSIG$v (func))
  (import "env" "abort" (func $~lib/env/abort))
  (memory $0 1)
  (data (i32.const 8) "\15\00\00\00s\00t\00d\00/\00g\00c\00-\00i\00n\00t\00e\00g\00r\00a\00t\00i\00o\00n\00.\00t\00s")
@@ -30,19 +29,6 @@
   end
  )
  (func $start (; 2 ;) (type $v)
-  call $~iterateRoots
-  get_global $std/gc-integration/i
-  i32.const 4
-  i32.ne
-  if
-   call $~lib/env/abort
-   unreachable
-  end
- )
- (func $null (; 3 ;) (type $v)
-  nop
- )
- (func $~iterateRoots (; 4 ;) (type $FUNCSIG$v)
   i32.const 8
   i32.const 1
   call_indirect (type $iv)
@@ -55,5 +41,15 @@
   get_global $std/gc-integration/b_ref
   i32.const 1
   call_indirect (type $iv)
+  get_global $std/gc-integration/i
+  i32.const 4
+  i32.ne
+  if
+   call $~lib/env/abort
+   unreachable
+  end
+ )
+ (func $null (; 3 ;) (type $v)
+  nop
  )
 )

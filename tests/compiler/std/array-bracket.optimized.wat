@@ -19,17 +19,7 @@
  (export "memory" (memory $0))
  (export "table" (table $0))
  (start $start)
- (func $~lib/internal/arraybuffer/computeSize (; 1 ;) (type $ii) (param $0 i32) (result i32)
-  i32.const 1
-  i32.const 32
-  get_local $0
-  i32.const 7
-  i32.add
-  i32.clz
-  i32.sub
-  i32.shl
- )
- (func $~lib/internal/memory/memset (; 2 ;) (type $FUNCSIG$vii) (param $0 i32) (param $1 i32)
+ (func $~lib/internal/memory/memset (; 1 ;) (type $FUNCSIG$vii) (param $0 i32) (param $1 i32)
   (local $2 i32)
   get_local $1
   i32.eqz
@@ -248,7 +238,7 @@
    end
   end
  )
- (func $~lib/allocator/arena/__memory_allocate (; 3 ;) (type $ii) (param $0 i32) (result i32)
+ (func $~lib/allocator/arena/__memory_allocate (; 2 ;) (type $ii) (param $0 i32) (result i32)
   (local $1 i32)
   (local $2 i32)
   (local $3 i32)
@@ -310,7 +300,7 @@
   set_global $~lib/allocator/arena/offset
   get_local $1
  )
- (func $~lib/internal/arraybuffer/allocateUnsafe (; 4 ;) (type $ii) (param $0 i32) (result i32)
+ (func $~lib/internal/arraybuffer/allocateUnsafe (; 3 ;) (type $ii) (param $0 i32) (result i32)
   (local $1 i32)
   get_local $0
   i32.const 1073741816
@@ -319,15 +309,21 @@
    call $~lib/env/abort
    unreachable
   end
+  i32.const 1
+  i32.const 32
   get_local $0
-  call $~lib/internal/arraybuffer/computeSize
+  i32.const 7
+  i32.add
+  i32.clz
+  i32.sub
+  i32.shl
   call $~lib/allocator/arena/__memory_allocate
   tee_local $1
   get_local $0
   i32.store
   get_local $1
  )
- (func $~lib/internal/memory/memcpy (; 5 ;) (type $iiiv) (param $0 i32) (param $1 i32) (param $2 i32)
+ (func $~lib/internal/memory/memcpy (; 4 ;) (type $iiiv) (param $0 i32) (param $1 i32) (param $2 i32)
   (local $3 i32)
   (local $4 i32)
   (local $5 i32)
@@ -1231,7 +1227,7 @@
    i32.store8
   end
  )
- (func $~lib/internal/memory/memmove (; 6 ;) (type $iiiv) (param $0 i32) (param $1 i32) (param $2 i32)
+ (func $~lib/internal/memory/memmove (; 5 ;) (type $iiiv) (param $0 i32) (param $1 i32) (param $2 i32)
   (local $3 i32)
   (local $4 i32)
   get_local $0
@@ -1431,9 +1427,10 @@
    end
   end
  )
- (func $~lib/internal/arraybuffer/reallocateUnsafe (; 7 ;) (type $iii) (param $0 i32) (param $1 i32) (result i32)
+ (func $~lib/internal/arraybuffer/reallocateUnsafe (; 6 ;) (type $iii) (param $0 i32) (param $1 i32) (result i32)
   (local $2 i32)
   (local $3 i32)
+  (local $4 i32)
   get_local $1
   get_local $0
   i32.load
@@ -1447,11 +1444,15 @@
     call $~lib/env/abort
     unreachable
    end
-   get_local $2
-   call $~lib/internal/arraybuffer/computeSize
-   set_local $3
    get_local $1
-   get_local $3
+   i32.const 1
+   i32.const 32
+   get_local $2
+   i32.const 7
+   i32.add
+   i32.clz
+   i32.sub
+   i32.shl
    i32.const 8
    i32.sub
    i32.le_s
@@ -1474,14 +1475,13 @@
     tee_local $3
     i32.const 8
     i32.add
+    tee_local $4
     get_local $0
     i32.const 8
     i32.add
     get_local $2
     call $~lib/internal/memory/memmove
-    get_local $3
-    i32.const 8
-    i32.add
+    get_local $4
     get_local $2
     i32.add
     get_local $1
@@ -1510,56 +1510,55 @@
   end
   get_local $0
  )
- (func $~lib/array/Array<u8>#push (; 8 ;) (type $iii) (param $0 i32) (param $1 i32) (result i32)
+ (func $~lib/array/Array<u8>#push (; 7 ;) (type $iii) (param $0 i32) (param $1 i32) (result i32)
   (local $2 i32)
   (local $3 i32)
   (local $4 i32)
   get_local $0
   i32.load offset=4
-  tee_local $3
+  tee_local $2
   i32.const 1
   i32.add
-  set_local $4
-  get_local $3
+  set_local $3
+  get_local $2
   get_local $0
   i32.load
-  tee_local $2
+  tee_local $4
   i32.load
   i32.ge_u
   if
-   get_local $3
+   get_local $2
    i32.const 1073741816
    i32.ge_u
    if
     call $~lib/env/abort
     unreachable
    end
-   get_local $2
-   get_local $4
-   call $~lib/internal/arraybuffer/reallocateUnsafe
-   set_local $2
    get_local $0
-   get_local $2
+   get_local $4
+   get_local $3
+   call $~lib/internal/arraybuffer/reallocateUnsafe
+   tee_local $4
    i32.store
   end
   get_local $0
-  get_local $4
-  i32.store offset=4
-  get_local $2
   get_local $3
+  i32.store offset=4
+  get_local $4
+  get_local $2
   i32.add
   get_local $1
   i32.store8 offset=8
-  get_local $4
+  get_local $3
  )
- (func $std/array-bracket/toArray (; 9 ;) (type $FUNCSIG$i) (result i32)
+ (func $std/array-bracket/toArray (; 8 ;) (type $FUNCSIG$i) (result i32)
   (local $0 i32)
-  block $break|0
-   loop $repeat|0
-    get_local $0
-    i32.const 12
-    i32.ge_s
-    br_if $break|0
+  loop $repeat|0
+   get_local $0
+   i32.const 12
+   i32.ge_s
+   i32.eqz
+   if
     i32.const 16
     get_local $0
     call $~lib/array/Array<u8>#push
@@ -1569,23 +1568,18 @@
     i32.add
     set_local $0
     br $repeat|0
-    unreachable
    end
-   unreachable
   end
   i32.const 16
  )
- (func $~lib/memory/memory.allocate (; 10 ;) (type $FUNCSIG$i) (result i32)
-  i32.const 8
-  call $~lib/allocator/arena/__memory_allocate
- )
- (func $~lib/array/Array<u8>#constructor (; 11 ;) (type $FUNCSIG$i) (result i32)
+ (func $~lib/array/Array<u8>#constructor (; 9 ;) (type $FUNCSIG$i) (result i32)
   (local $0 i32)
   (local $1 i32)
   i32.const 0
   call $~lib/internal/arraybuffer/allocateUnsafe
   set_local $1
-  call $~lib/memory/memory.allocate
+  i32.const 8
+  call $~lib/allocator/arena/__memory_allocate
   tee_local $0
   i32.const 0
   i32.store
@@ -1605,17 +1599,17 @@
   call $~lib/internal/memory/memset
   get_local $0
  )
- (func $std/array-bracket/newArray (; 12 ;) (type $FUNCSIG$i) (result i32)
+ (func $std/array-bracket/newArray (; 10 ;) (type $FUNCSIG$i) (result i32)
   (local $0 i32)
   (local $1 i32)
   call $~lib/array/Array<u8>#constructor
   set_local $1
-  block $break|0
-   loop $repeat|0
-    get_local $0
-    i32.const 12
-    i32.ge_s
-    br_if $break|0
+  loop $repeat|0
+   get_local $0
+   i32.const 12
+   i32.ge_s
+   i32.eqz
+   if
     get_local $1
     get_local $0
     call $~lib/array/Array<u8>#push
@@ -1625,13 +1619,11 @@
     i32.add
     set_local $0
     br $repeat|0
-    unreachable
    end
-   unreachable
   end
   get_local $1
  )
- (func $start (; 13 ;) (type $v)
+ (func $start (; 11 ;) (type $v)
   i32.const 168
   set_global $~lib/allocator/arena/startOffset
   get_global $~lib/allocator/arena/startOffset
@@ -1667,7 +1659,7 @@
    unreachable
   end
  )
- (func $null (; 14 ;) (type $v)
+ (func $null (; 12 ;) (type $v)
   nop
  )
 )

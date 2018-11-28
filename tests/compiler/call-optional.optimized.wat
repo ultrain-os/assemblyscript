@@ -11,14 +11,7 @@
  (export "memory" (memory $0))
  (export "table" (table $0))
  (start $start)
- (func $call-optional/opt (; 1 ;) (type $iiii) (param $0 i32) (param $1 i32) (param $2 i32) (result i32)
-  get_local $0
-  get_local $1
-  i32.add
-  get_local $2
-  i32.add
- )
- (func $call-optional/opt|trampoline (; 2 ;) (type $iiii) (param $0 i32) (param $1 i32) (param $2 i32) (result i32)
+ (func $call-optional/opt|trampoline (; 1 ;) (type $iiii) (param $0 i32) (param $1 i32) (param $2 i32) (result i32)
   block $2of2
    block $1of2
     block $0of2
@@ -38,40 +31,70 @@
   end
   get_local $0
   get_local $1
+  i32.add
   get_local $2
-  call $call-optional/opt
+  i32.add
  )
- (func $start (; 3 ;) (type $v)
+ (func $start (; 2 ;) (type $v)
+  (local $0 i32)
+  (local $1 i32)
   block $folding-inner0
    i32.const 1
    set_global $~argc
-   i32.const 3
-   i32.const 0
-   i32.const 0
-   call $call-optional/opt|trampoline
-   if
-    br $folding-inner0
+   block $2of2
+    block $1of2
+     block $0of2
+      block $outOfRange
+       get_global $~argc
+       i32.const 1
+       i32.sub
+       br_table $0of2 $1of2 $2of2 $outOfRange
+      end
+      unreachable
+     end
+     i32.const -1
+     set_local $0
+    end
+    i32.const -2
+    set_local $1
    end
+   get_local $0
+   i32.const 3
+   i32.add
+   get_local $1
+   i32.add
+   br_if $folding-inner0
    i32.const 2
    set_global $~argc
-   i32.const 3
    i32.const 4
+   set_local $0
    i32.const 0
-   call $call-optional/opt|trampoline
-   i32.const 5
-   i32.ne
-   if
-    br $folding-inner0
+   set_local $1
+   block $2of21
+    block $1of22
+     block $0of23
+      block $outOfRange4
+       get_global $~argc
+       i32.const 1
+       i32.sub
+       br_table $0of23 $1of22 $2of21 $outOfRange4
+      end
+      unreachable
+     end
+     i32.const -1
+     set_local $0
+    end
+    i32.const -2
+    set_local $1
    end
+   get_local $0
    i32.const 3
-   i32.const 4
+   i32.add
+   get_local $1
+   i32.add
    i32.const 5
-   call $call-optional/opt
-   i32.const 12
    i32.ne
-   if
-    br $folding-inner0
-   end
+   br_if $folding-inner0
    i32.const 1
    set_global $~argc
    i32.const 3
@@ -79,9 +102,7 @@
    i32.const 0
    get_global $call-optional/optIndirect
    call_indirect (type $iiii)
-   if
-    br $folding-inner0
-   end
+   br_if $folding-inner0
    i32.const 2
    set_global $~argc
    i32.const 3
@@ -91,9 +112,7 @@
    call_indirect (type $iiii)
    i32.const 5
    i32.ne
-   if
-    br $folding-inner0
-   end
+   br_if $folding-inner0
    i32.const 3
    set_global $~argc
    i32.const 3
@@ -103,15 +122,13 @@
    call_indirect (type $iiii)
    i32.const 12
    i32.ne
-   if
-    br $folding-inner0
-   end
+   br_if $folding-inner0
    return
   end
   call $~lib/env/abort
   unreachable
  )
- (func $null (; 4 ;) (type $v)
+ (func $null (; 3 ;) (type $v)
   nop
  )
 )

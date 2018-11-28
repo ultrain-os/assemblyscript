@@ -77,11 +77,7 @@
   set_global $~lib/allocator/arena/offset
   get_local $1
  )
- (func $~lib/memory/memory.allocate (; 2 ;) (type $ii) (param $0 i32) (result i32)
-  get_local $0
-  call $~lib/allocator/arena/__memory_allocate
- )
- (func $~lib/internal/string/compareUnsafe (; 3 ;) (type $FUNCSIG$iiii) (param $0 i32) (param $1 i32) (param $2 i32) (result i32)
+ (func $~lib/internal/string/compareUnsafe (; 2 ;) (type $FUNCSIG$iiii) (param $0 i32) (param $1 i32) (param $2 i32) (result i32)
   (local $3 i32)
   (local $4 i32)
   get_local $0
@@ -106,11 +102,11 @@
     i32.sub
     set_local $2
     get_local $3
-    i32.const 1
+    i32.const 2
     i32.add
     set_local $3
     get_local $1
-    i32.const 1
+    i32.const 2
     i32.add
     set_local $1
     br $continue|0
@@ -118,7 +114,7 @@
   end
   get_local $4
  )
- (func $~lib/string/String.__eq (; 4 ;) (type $FUNCSIG$ii) (param $0 i32) (result i32)
+ (func $~lib/string/String.__eq (; 3 ;) (type $FUNCSIG$ii) (param $0 i32) (result i32)
   (local $1 i32)
   get_local $0
   i32.const 8
@@ -156,7 +152,7 @@
   call $~lib/internal/string/compareUnsafe
   i32.eqz
  )
- (func $object-literal/bar (; 5 ;) (type $iv) (param $0 i32)
+ (func $object-literal/bar (; 4 ;) (type $iv) (param $0 i32)
   get_local $0
   i32.load
   i32.const 1
@@ -174,34 +170,14 @@
    unreachable
   end
  )
- (func $object-literal/bar2 (; 6 ;) (type $iv) (param $0 i32)
-  get_local $0
-  i32.load
-  i32.const 2
-  i32.ne
-  if
-   call $~lib/env/abort
-   unreachable
-  end
- )
- (func $object-literal/Foo2#test (; 7 ;) (type $iv) (param $0 i32)
-  get_local $0
-  i32.load
-  i32.const 3
-  i32.ne
-  if
-   call $~lib/env/abort
-   unreachable
-  end
- )
- (func $start (; 8 ;) (type $v)
+ (func $start (; 5 ;) (type $v)
   (local $0 i32)
   i32.const 80
   set_global $~lib/allocator/arena/startOffset
   get_global $~lib/allocator/arena/startOffset
   set_global $~lib/allocator/arena/offset
   i32.const 8
-  call $~lib/memory/memory.allocate
+  call $~lib/allocator/arena/__memory_allocate
   tee_local $0
   i32.const 1
   i32.store
@@ -211,21 +187,33 @@
   get_local $0
   call $object-literal/bar
   i32.const 4
-  call $~lib/memory/memory.allocate
+  call $~lib/allocator/arena/__memory_allocate
   tee_local $0
   i32.const 2
   i32.store
   get_local $0
-  call $object-literal/bar2
+  i32.load
+  i32.const 2
+  i32.ne
+  if
+   call $~lib/env/abort
+   unreachable
+  end
   i32.const 4
-  call $~lib/memory/memory.allocate
+  call $~lib/allocator/arena/__memory_allocate
   tee_local $0
   i32.const 3
   i32.store
   get_local $0
-  call $object-literal/Foo2#test
+  i32.load
+  i32.const 3
+  i32.ne
+  if
+   call $~lib/env/abort
+   unreachable
+  end
  )
- (func $null (; 9 ;) (type $v)
+ (func $null (; 6 ;) (type $v)
   nop
  )
 )

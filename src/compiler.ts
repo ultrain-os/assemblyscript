@@ -2572,7 +2572,10 @@ export class Compiler extends DiagnosticEmitter {
 
         // f32 to int
         if (fromType.kind == TypeKind.F32) {
-          if (toType.is(TypeFlags.SIGNED)) {
+          if (toType == Type.bool) {
+            expr = module.createBinary(BinaryOp.NeF32, expr, module.createF32(0));
+            wrapMode = WrapMode.NONE;
+          } else if (toType.is(TypeFlags.SIGNED)) {
             if (toType.is(TypeFlags.LONG)) {
               expr = module.createUnary(UnaryOp.TruncF32ToI64, expr);
             } else {
@@ -2588,7 +2591,10 @@ export class Compiler extends DiagnosticEmitter {
 
         // f64 to int
         } else {
-          if (toType.is(TypeFlags.SIGNED)) {
+          if (toType == Type.bool) {
+            expr = module.createBinary(BinaryOp.NeF64, expr, module.createF64(0));
+            wrapMode = WrapMode.NONE;
+          } else if (toType.is(TypeFlags.SIGNED)) {
             if (toType.is(TypeFlags.LONG)) {
               expr = module.createUnary(UnaryOp.TruncF64ToI64, expr);
             } else {
@@ -2655,7 +2661,10 @@ export class Compiler extends DiagnosticEmitter {
       if (fromType.is(TypeFlags.LONG)) {
 
         // i64 to i32 or smaller
-        if (!toType.is(TypeFlags.LONG)) {
+        if (toType == Type.bool) {
+          expr = module.createBinary(BinaryOp.NeI64, expr, module.createI64(0));
+          wrapMode = WrapMode.NONE;
+        } else if (!toType.is(TypeFlags.LONG)) {
           expr = module.createUnary(UnaryOp.WrapI64, expr); // discards upper bits
         }
 
@@ -5504,7 +5513,13 @@ export class Compiler extends DiagnosticEmitter {
       );
       return module.createUnreachable();
     }
-    return module.createBlock(returnLabel, body, returnType.toNativeType());
+    return flow.is(FlowFlags.RETURNS)
+      ? module.createBlock(returnLabel, body, returnType.toNativeType())
+      : body.length > 1
+        ? module.createBlock(null, body, returnType.toNativeType())
+        : body.length
+          ? body[0]
+          : module.createNop();
   }
 
   /** Gets the trampoline for the specified function. */
@@ -7527,9 +7542,10 @@ export class Compiler extends DiagnosticEmitter {
       }
       case TypeKind.BOOL: {
         if (flow.canOverflow(expr, type)) {
-          expr = module.createBinary(BinaryOp.AndI32,
+          // bool is special in that it compares to 0 instead of masking with 0x1
+          expr = module.createBinary(BinaryOp.NeI32,
             expr,
-            module.createI32(0x1)
+            module.createI32(0)
           );
         }
         break;

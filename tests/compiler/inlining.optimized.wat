@@ -18,7 +18,7 @@
  (func $inlining/test_funcs~anonymous|1 (; 2 ;) (type $ii) (param $0 i32) (result i32)
   get_local $0
  )
- (func $inlining/test_funcs (; 3 ;) (type $v)
+ (func $start (; 3 ;) (type $v)
   i32.const 1
   set_global $~argc
   i32.const 2
@@ -31,17 +31,7 @@
    unreachable
   end
  )
- (func $start (; 4 ;) (type $v)
-  call $inlining/test
-  i32.const 3
-  i32.ne
-  if
-   call $~lib/env/abort
-   unreachable
-  end
-  call $inlining/test_funcs
- )
- (func $null (; 5 ;) (type $v)
+ (func $null (; 4 ;) (type $v)
   nop
  )
 )
