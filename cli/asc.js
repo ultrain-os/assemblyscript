@@ -594,7 +594,7 @@ exports.main = function main(argv, options, callback, exttype) {
     exports.applyText = exports.abiObj.dispatch;
   }
 
-  if (args.applyText && exttype == 3) {
+  if (args.applyText && exttype == 3 && args.log == true) {
     console.log("The generated apply text:");
     console.log(exports.applyText);
   }

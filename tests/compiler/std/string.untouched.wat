@@ -16,6 +16,10 @@
  (type $iFi (func (param i32 f64) (result i32)))
  (type $iIiIiIii (func (param i32 i64 i32 i64 i32 i64 i32) (result i32)))
  (type $iv (func (param i32)))
+ (type $Iii (func (param i64 i32) (result i32)))
+ (type $FFF (func (param f64 f64) (result f64)))
+ (type $FiF (func (param f64 i32) (result f64)))
+ (type $IIi (func (param i64 i64) (result i32)))
  (import "env" "abort" (func $~lib/env/abort))
  (memory $0 1)
  (data (i32.const 8) "\10\00\00\00h\00i\00,\00 \00I\00\'\00m\00 \00a\00 \00s\00t\00r\00i\00n\00g\00")
@@ -172,6 +176,23 @@
  (data (i32.const 5704) "\08\00\00\001\00.\001\00e\00+\001\002\008\00")
  (data (i32.const 5728) "\07\00\00\001\00.\001\00e\00-\006\004\00")
  (data (i32.const 5752) "\0b\00\00\000\00.\000\000\000\000\003\005\006\008\009\00")
+ (data (i32.const 5784) "\02\00\00\000\000\00")
+ (data (i32.const 5792) "\03\00\00\000\000\000\00")
+ (data (i32.const 5808) "\04\00\00\000\000\000\000\00")
+ (data (i32.const 5824) "\05\00\00\000\000\000\000\000\00")
+ (data (i32.const 5840) "\06\00\00\000\000\000\000\000\000\00")
+ (data (i32.const 5856) "\07\00\00\000\000\000\000\000\000\000\00")
+ (data (i32.const 5880) "\08\00\00\000\000\000\000\000\000\000\000\00")
+ (data (i32.const 5904) "$\00\00\00\00\00\00\00\00\01\00\00\e0\01\00\00\98\16\00\00\a0\16\00\00\b0\16\00\00\c0\16\00\00\d0\16\00\00\e0\16\00\00\f8\16\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00")
+ (data (i32.const 5968) "\10\17\00\00\t\00\00\00")
+ (data (i32.const 5976) "\05\00\00\001\000\000\000\000\00")
+ (data (i32.const 5992) "\06\00\00\001\000\000\000\00.\000\00")
+ (data (i32.const 6008) "\06\00\00\001\000\000\00.\000\000\00")
+ (data (i32.const 6024) "\06\00\00\000\00.\000\000\000\000\00")
+ (data (i32.const 6040) "\06\00\00\000\00.\000\000\000\001\00")
+ (data (i32.const 6056) "\07\00\00\001\001\00.\001\001\001\001\00")
+ (data (i32.const 6080) "\0b\00\00\001\00.\000\000\000\000\00 \00U\00G\00A\00S\00")
+ (data (i32.const 6112) "\0e\00\00\001\00.\000\000\000\000\000\000\000\000\00 \00A\00B\00C\00")
  (table $0 1 anyfunc)
  (elem (i32.const 0) $null)
  (global $~lib/internal/allocator/AL_BITS i32 (i32.const 3))
@@ -236,7 +257,9 @@
  (global $Infinity f64 (f64.const inf))
  (global $~lib/builtins/f64.EPSILON f64 (f64.const 2.220446049250313e-16))
  (global $~lib/builtins/f64.MAX_VALUE f64 (f64.const 1797693134862315708145274e284))
- (global $HEAP_BASE i32 (i32.const 5780))
+ (global $std/string/CHAR_A i32 (i32.const 65))
+ (global $std/string/CHAR_Z i32 (i32.const 90))
+ (global $HEAP_BASE i32 (i32.const 6144))
  (export "memory" (memory $0))
  (export "table" (table $0))
  (export "getString" (func $std/string/getString))
@@ -6646,7 +6669,1397 @@
   end
   get_local $3
  )
- (func $start (; 61 ;) (type $v)
+ (func $~lib/math/NativeMath.scalbn (; 61 ;) (type $FiF) (param $0 f64) (param $1 i32) (result f64)
+  (local $2 f64)
+  (local $3 i32)
+  (local $4 i32)
+  get_local $0
+  set_local $2
+  get_local $1
+  i32.const 1023
+  i32.gt_s
+  if
+   get_local $2
+   f64.const 8988465674311579538646525e283
+   f64.mul
+   set_local $2
+   get_local $1
+   i32.const 1023
+   i32.sub
+   set_local $1
+   get_local $1
+   i32.const 1023
+   i32.gt_s
+   if
+    get_local $2
+    f64.const 8988465674311579538646525e283
+    f64.mul
+    set_local $2
+    get_local $1
+    i32.const 1023
+    i32.sub
+    tee_local $3
+    i32.const 1023
+    tee_local $4
+    get_local $3
+    get_local $4
+    i32.lt_s
+    select
+    set_local $1
+   end
+  else   
+   get_local $1
+   i32.const -1022
+   i32.lt_s
+   if
+    get_local $2
+    f64.const 2.2250738585072014e-308
+    f64.const 9007199254740992
+    f64.mul
+    f64.mul
+    set_local $2
+    get_local $1
+    i32.const 1022
+    i32.const 53
+    i32.sub
+    i32.add
+    set_local $1
+    get_local $1
+    i32.const -1022
+    i32.lt_s
+    if
+     get_local $2
+     f64.const 2.2250738585072014e-308
+     f64.const 9007199254740992
+     f64.mul
+     f64.mul
+     set_local $2
+     get_local $1
+     i32.const 1022
+     i32.add
+     i32.const 53
+     i32.sub
+     tee_local $3
+     i32.const -1022
+     tee_local $4
+     get_local $3
+     get_local $4
+     i32.gt_s
+     select
+     set_local $1
+    end
+   end
+  end
+  get_local $2
+  i64.const 1023
+  get_local $1
+  i64.extend_s/i32
+  i64.add
+  i64.const 52
+  i64.shl
+  f64.reinterpret/i64
+  f64.mul
+ )
+ (func $~lib/math/NativeMath.pow (; 62 ;) (type $FFF) (param $0 f64) (param $1 f64) (result f64)
+  (local $2 i64)
+  (local $3 i32)
+  (local $4 i32)
+  (local $5 i32)
+  (local $6 i32)
+  (local $7 i32)
+  (local $8 i32)
+  (local $9 i32)
+  (local $10 i32)
+  (local $11 i32)
+  (local $12 i32)
+  (local $13 i32)
+  (local $14 f64)
+  (local $15 f64)
+  (local $16 f64)
+  (local $17 f64)
+  (local $18 f64)
+  (local $19 f64)
+  (local $20 f64)
+  (local $21 f64)
+  (local $22 f64)
+  (local $23 f64)
+  (local $24 f64)
+  (local $25 f64)
+  (local $26 i32)
+  (local $27 i32)
+  (local $28 f64)
+  (local $29 f64)
+  (local $30 f64)
+  (local $31 f64)
+  (local $32 f64)
+  (local $33 f64)
+  (local $34 f64)
+  (local $35 f64)
+  (local $36 f64)
+  (local $37 f64)
+  (local $38 f64)
+  (local $39 f64)
+  (local $40 i32)
+  get_local $0
+  i64.reinterpret/f64
+  set_local $2
+  get_local $2
+  i64.const 32
+  i64.shr_u
+  i32.wrap/i64
+  set_local $3
+  get_local $2
+  i32.wrap/i64
+  set_local $4
+  get_local $1
+  i64.reinterpret/f64
+  set_local $2
+  get_local $2
+  i64.const 32
+  i64.shr_u
+  i32.wrap/i64
+  set_local $5
+  get_local $2
+  i32.wrap/i64
+  set_local $6
+  get_local $3
+  i32.const 2147483647
+  i32.and
+  set_local $7
+  get_local $5
+  i32.const 2147483647
+  i32.and
+  set_local $8
+  get_local $8
+  get_local $6
+  i32.or
+  i32.const 0
+  i32.eq
+  if
+   f64.const 1
+   return
+  end
+  get_local $7
+  i32.const 2146435072
+  i32.gt_s
+  tee_local $9
+  if (result i32)
+   get_local $9
+  else   
+   get_local $7
+   i32.const 2146435072
+   i32.eq
+   tee_local $9
+   if (result i32)
+    get_local $4
+    i32.const 0
+    i32.ne
+   else    
+    get_local $9
+   end
+  end
+  tee_local $9
+  if (result i32)
+   get_local $9
+  else   
+   get_local $8
+   i32.const 2146435072
+   i32.gt_s
+  end
+  tee_local $9
+  if (result i32)
+   get_local $9
+  else   
+   get_local $8
+   i32.const 2146435072
+   i32.eq
+   tee_local $9
+   if (result i32)
+    get_local $6
+    i32.const 0
+    i32.ne
+   else    
+    get_local $9
+   end
+  end
+  if
+   get_local $0
+   get_local $1
+   f64.add
+   return
+  end
+  i32.const 0
+  set_local $10
+  get_local $3
+  i32.const 0
+  i32.lt_s
+  if
+   get_local $8
+   i32.const 1128267776
+   i32.ge_s
+   if
+    i32.const 2
+    set_local $10
+   else    
+    get_local $8
+    i32.const 1072693248
+    i32.ge_s
+    if
+     get_local $8
+     i32.const 20
+     i32.shr_s
+     i32.const 1023
+     i32.sub
+     set_local $11
+     i32.const 52
+     i32.const 20
+     get_local $11
+     i32.const 20
+     i32.gt_s
+     select
+     get_local $11
+     i32.sub
+     set_local $9
+     get_local $6
+     get_local $8
+     get_local $11
+     i32.const 20
+     i32.gt_s
+     select
+     set_local $12
+     get_local $12
+     get_local $9
+     i32.shr_s
+     set_local $13
+     get_local $13
+     get_local $9
+     i32.shl
+     get_local $12
+     i32.eq
+     if
+      i32.const 2
+      get_local $13
+      i32.const 1
+      i32.and
+      i32.sub
+      set_local $10
+     end
+    end
+   end
+  end
+  get_local $6
+  i32.const 0
+  i32.eq
+  if
+   get_local $8
+   i32.const 2146435072
+   i32.eq
+   if
+    get_local $7
+    i32.const 1072693248
+    i32.sub
+    get_local $4
+    i32.or
+    i32.const 0
+    i32.eq
+    if
+     f64.const nan:0x8000000000000
+     return
+    else     
+     get_local $7
+     i32.const 1072693248
+     i32.ge_s
+     if
+      get_local $5
+      i32.const 0
+      i32.ge_s
+      if (result f64)
+       get_local $1
+      else       
+       f64.const 0
+      end
+      return
+     else      
+      get_local $5
+      i32.const 0
+      i32.ge_s
+      if (result f64)
+       f64.const 0
+      else       
+       get_local $1
+       f64.neg
+      end
+      return
+     end
+     unreachable
+    end
+    unreachable
+    unreachable
+   end
+   get_local $8
+   i32.const 1072693248
+   i32.eq
+   if
+    get_local $5
+    i32.const 0
+    i32.ge_s
+    if
+     get_local $0
+     return
+    end
+    f64.const 1
+    get_local $0
+    f64.div
+    return
+   end
+   get_local $5
+   i32.const 1073741824
+   i32.eq
+   if
+    get_local $0
+    get_local $0
+    f64.mul
+    return
+   end
+   get_local $5
+   i32.const 1071644672
+   i32.eq
+   if
+    get_local $3
+    i32.const 0
+    i32.ge_s
+    if
+     get_local $0
+     f64.sqrt
+     return
+    end
+   end
+  end
+  get_local $0
+  f64.abs
+  set_local $14
+  get_local $4
+  i32.const 0
+  i32.eq
+  if
+   get_local $7
+   i32.const 2146435072
+   i32.eq
+   tee_local $13
+   if (result i32)
+    get_local $13
+   else    
+    get_local $7
+    i32.const 0
+    i32.eq
+   end
+   tee_local $13
+   if (result i32)
+    get_local $13
+   else    
+    get_local $7
+    i32.const 1072693248
+    i32.eq
+   end
+   if
+    get_local $14
+    set_local $15
+    get_local $5
+    i32.const 0
+    i32.lt_s
+    if
+     f64.const 1
+     get_local $15
+     f64.div
+     set_local $15
+    end
+    get_local $3
+    i32.const 0
+    i32.lt_s
+    if
+     get_local $7
+     i32.const 1072693248
+     i32.sub
+     get_local $10
+     i32.or
+     i32.const 0
+     i32.eq
+     if
+      get_local $15
+      get_local $15
+      f64.sub
+      get_local $15
+      get_local $15
+      f64.sub
+      f64.div
+      set_local $15
+     else      
+      get_local $10
+      i32.const 1
+      i32.eq
+      if
+       get_local $15
+       f64.neg
+       set_local $15
+      end
+     end
+    end
+    get_local $15
+    return
+   end
+  end
+  f64.const 1
+  set_local $16
+  get_local $3
+  i32.const 0
+  i32.lt_s
+  if
+   get_local $10
+   i32.const 0
+   i32.eq
+   if
+    get_local $0
+    get_local $0
+    f64.sub
+    get_local $0
+    get_local $0
+    f64.sub
+    f64.div
+    return
+   end
+   get_local $10
+   i32.const 1
+   i32.eq
+   if
+    f64.const -1
+    set_local $16
+   end
+  end
+  get_local $8
+  i32.const 1105199104
+  i32.gt_s
+  if
+   get_local $8
+   i32.const 1139802112
+   i32.gt_s
+   if
+    get_local $7
+    i32.const 1072693247
+    i32.le_s
+    if
+     get_local $5
+     i32.const 0
+     i32.lt_s
+     if (result f64)
+      f64.const 1.e+300
+      f64.const 1.e+300
+      f64.mul
+     else      
+      f64.const 1e-300
+      f64.const 1e-300
+      f64.mul
+     end
+     return
+    end
+    get_local $7
+    i32.const 1072693248
+    i32.ge_s
+    if
+     get_local $5
+     i32.const 0
+     i32.gt_s
+     if (result f64)
+      f64.const 1.e+300
+      f64.const 1.e+300
+      f64.mul
+     else      
+      f64.const 1e-300
+      f64.const 1e-300
+      f64.mul
+     end
+     return
+    end
+   end
+   get_local $7
+   i32.const 1072693247
+   i32.lt_s
+   if
+    get_local $5
+    i32.const 0
+    i32.lt_s
+    if (result f64)
+     get_local $16
+     f64.const 1.e+300
+     f64.mul
+     f64.const 1.e+300
+     f64.mul
+    else     
+     get_local $16
+     f64.const 1e-300
+     f64.mul
+     f64.const 1e-300
+     f64.mul
+    end
+    return
+   end
+   get_local $7
+   i32.const 1072693248
+   i32.gt_s
+   if
+    get_local $5
+    i32.const 0
+    i32.gt_s
+    if (result f64)
+     get_local $16
+     f64.const 1.e+300
+     f64.mul
+     f64.const 1.e+300
+     f64.mul
+    else     
+     get_local $16
+     f64.const 1e-300
+     f64.mul
+     f64.const 1e-300
+     f64.mul
+    end
+    return
+   end
+   get_local $14
+   f64.const 1
+   f64.sub
+   set_local $22
+   get_local $22
+   get_local $22
+   f64.mul
+   f64.const 0.5
+   get_local $22
+   f64.const 0.3333333333333333
+   get_local $22
+   f64.const 0.25
+   f64.mul
+   f64.sub
+   f64.mul
+   f64.sub
+   f64.mul
+   set_local $25
+   f64.const 1.4426950216293335
+   get_local $22
+   f64.mul
+   set_local $23
+   get_local $22
+   f64.const 1.9259629911266175e-08
+   f64.mul
+   get_local $25
+   f64.const 1.4426950408889634
+   f64.mul
+   f64.sub
+   set_local $24
+   get_local $23
+   get_local $24
+   f64.add
+   set_local $17
+   get_local $17
+   i64.reinterpret/f64
+   i64.const -4294967296
+   i64.and
+   f64.reinterpret/i64
+   set_local $17
+   get_local $24
+   get_local $17
+   get_local $23
+   f64.sub
+   f64.sub
+   set_local $18
+  else   
+   i32.const 0
+   set_local $27
+   get_local $7
+   i32.const 1048576
+   i32.lt_s
+   if
+    get_local $14
+    f64.const 9007199254740992
+    f64.mul
+    set_local $14
+    get_local $27
+    i32.const 53
+    i32.sub
+    set_local $27
+    get_local $14
+    i64.reinterpret/f64
+    i64.const 32
+    i64.shr_u
+    i32.wrap/i64
+    set_local $7
+   end
+   get_local $27
+   get_local $7
+   i32.const 20
+   i32.shr_s
+   i32.const 1023
+   i32.sub
+   i32.add
+   set_local $27
+   get_local $7
+   i32.const 1048575
+   i32.and
+   set_local $26
+   get_local $26
+   i32.const 1072693248
+   i32.or
+   set_local $7
+   get_local $26
+   i32.const 235662
+   i32.le_s
+   if
+    i32.const 0
+    set_local $11
+   else    
+    get_local $26
+    i32.const 767610
+    i32.lt_s
+    if
+     i32.const 1
+     set_local $11
+    else     
+     i32.const 0
+     set_local $11
+     get_local $27
+     i32.const 1
+     i32.add
+     set_local $27
+     get_local $7
+     i32.const 1048576
+     i32.sub
+     set_local $7
+    end
+   end
+   get_local $14
+   i64.reinterpret/f64
+   i64.const 4294967295
+   i64.and
+   get_local $7
+   i64.extend_s/i32
+   i64.const 32
+   i64.shl
+   i64.or
+   f64.reinterpret/i64
+   set_local $14
+   f64.const 1.5
+   f64.const 1
+   get_local $11
+   select
+   set_local $34
+   get_local $14
+   get_local $34
+   f64.sub
+   set_local $23
+   f64.const 1
+   get_local $14
+   get_local $34
+   f64.add
+   f64.div
+   set_local $24
+   get_local $23
+   get_local $24
+   f64.mul
+   set_local $28
+   get_local $28
+   set_local $30
+   get_local $30
+   i64.reinterpret/f64
+   i64.const -4294967296
+   i64.and
+   f64.reinterpret/i64
+   set_local $30
+   get_local $7
+   i32.const 1
+   i32.shr_s
+   i32.const 536870912
+   i32.or
+   i32.const 524288
+   i32.add
+   get_local $11
+   i32.const 18
+   i32.shl
+   i32.add
+   i64.extend_s/i32
+   i64.const 32
+   i64.shl
+   f64.reinterpret/i64
+   set_local $32
+   get_local $14
+   get_local $32
+   get_local $34
+   f64.sub
+   f64.sub
+   set_local $33
+   get_local $24
+   get_local $23
+   get_local $30
+   get_local $32
+   f64.mul
+   f64.sub
+   get_local $30
+   get_local $33
+   f64.mul
+   f64.sub
+   f64.mul
+   set_local $31
+   get_local $28
+   get_local $28
+   f64.mul
+   set_local $29
+   get_local $29
+   get_local $29
+   f64.mul
+   f64.const 0.5999999999999946
+   get_local $29
+   f64.const 0.4285714285785502
+   get_local $29
+   f64.const 0.33333332981837743
+   get_local $29
+   f64.const 0.272728123808534
+   get_local $29
+   f64.const 0.23066074577556175
+   get_local $29
+   f64.const 0.20697501780033842
+   f64.mul
+   f64.add
+   f64.mul
+   f64.add
+   f64.mul
+   f64.add
+   f64.mul
+   f64.add
+   f64.mul
+   f64.add
+   f64.mul
+   set_local $21
+   get_local $21
+   get_local $31
+   get_local $30
+   get_local $28
+   f64.add
+   f64.mul
+   f64.add
+   set_local $21
+   get_local $30
+   get_local $30
+   f64.mul
+   set_local $29
+   f64.const 3
+   get_local $29
+   f64.add
+   get_local $21
+   f64.add
+   set_local $32
+   get_local $32
+   i64.reinterpret/f64
+   i64.const -4294967296
+   i64.and
+   f64.reinterpret/i64
+   set_local $32
+   get_local $21
+   get_local $32
+   f64.const 3
+   f64.sub
+   get_local $29
+   f64.sub
+   f64.sub
+   set_local $33
+   get_local $30
+   get_local $32
+   f64.mul
+   set_local $23
+   get_local $31
+   get_local $32
+   f64.mul
+   get_local $33
+   get_local $28
+   f64.mul
+   f64.add
+   set_local $24
+   get_local $23
+   get_local $24
+   f64.add
+   set_local $19
+   get_local $19
+   i64.reinterpret/f64
+   i64.const -4294967296
+   i64.and
+   f64.reinterpret/i64
+   set_local $19
+   get_local $24
+   get_local $19
+   get_local $23
+   f64.sub
+   f64.sub
+   set_local $20
+   f64.const 0.9617967009544373
+   get_local $19
+   f64.mul
+   set_local $35
+   f64.const 1.350039202129749e-08
+   f64.const 0
+   get_local $11
+   select
+   set_local $36
+   f64.const -7.028461650952758e-09
+   get_local $19
+   f64.mul
+   get_local $20
+   f64.const 0.9617966939259756
+   f64.mul
+   f64.add
+   get_local $36
+   f64.add
+   set_local $37
+   get_local $27
+   f64.convert_s/i32
+   set_local $22
+   f64.const 0.5849624872207642
+   f64.const 0
+   get_local $11
+   select
+   set_local $38
+   get_local $35
+   get_local $37
+   f64.add
+   get_local $38
+   f64.add
+   get_local $22
+   f64.add
+   set_local $17
+   get_local $17
+   i64.reinterpret/f64
+   i64.const -4294967296
+   i64.and
+   f64.reinterpret/i64
+   set_local $17
+   get_local $37
+   get_local $17
+   get_local $22
+   f64.sub
+   get_local $38
+   f64.sub
+   get_local $35
+   f64.sub
+   f64.sub
+   set_local $18
+  end
+  get_local $1
+  set_local $39
+  get_local $39
+  i64.reinterpret/f64
+  i64.const -4294967296
+  i64.and
+  f64.reinterpret/i64
+  set_local $39
+  get_local $1
+  get_local $39
+  f64.sub
+  get_local $17
+  f64.mul
+  get_local $1
+  get_local $18
+  f64.mul
+  f64.add
+  set_local $20
+  get_local $39
+  get_local $17
+  f64.mul
+  set_local $19
+  get_local $20
+  get_local $19
+  f64.add
+  set_local $15
+  get_local $15
+  i64.reinterpret/f64
+  set_local $2
+  get_local $2
+  i64.const 32
+  i64.shr_u
+  i32.wrap/i64
+  set_local $26
+  get_local $2
+  i32.wrap/i64
+  set_local $40
+  get_local $26
+  i32.const 1083179008
+  i32.ge_s
+  if
+   get_local $26
+   i32.const 1083179008
+   i32.sub
+   get_local $40
+   i32.or
+   i32.const 0
+   i32.ne
+   if
+    get_local $16
+    f64.const 1.e+300
+    f64.mul
+    f64.const 1.e+300
+    f64.mul
+    return
+   end
+   get_local $20
+   f64.const 8.008566259537294e-17
+   f64.add
+   get_local $15
+   get_local $19
+   f64.sub
+   f64.gt
+   if
+    get_local $16
+    f64.const 1.e+300
+    f64.mul
+    f64.const 1.e+300
+    f64.mul
+    return
+   end
+  else   
+   get_local $26
+   i32.const 2147483647
+   i32.and
+   i32.const 1083231232
+   i32.ge_s
+   if
+    get_local $26
+    i32.const -1064252416
+    i32.sub
+    get_local $40
+    i32.or
+    i32.const 0
+    i32.ne
+    if
+     get_local $16
+     f64.const 1e-300
+     f64.mul
+     f64.const 1e-300
+     f64.mul
+     return
+    end
+    get_local $20
+    get_local $15
+    get_local $19
+    f64.sub
+    f64.le
+    if
+     get_local $16
+     f64.const 1e-300
+     f64.mul
+     f64.const 1e-300
+     f64.mul
+     return
+    end
+   end
+  end
+  get_local $26
+  i32.const 2147483647
+  i32.and
+  set_local $40
+  get_local $40
+  i32.const 20
+  i32.shr_s
+  i32.const 1023
+  i32.sub
+  set_local $11
+  i32.const 0
+  set_local $27
+  get_local $40
+  i32.const 1071644672
+  i32.gt_s
+  if
+   get_local $26
+   i32.const 1048576
+   get_local $11
+   i32.const 1
+   i32.add
+   i32.shr_s
+   i32.add
+   set_local $27
+   get_local $27
+   i32.const 2147483647
+   i32.and
+   i32.const 20
+   i32.shr_s
+   i32.const 1023
+   i32.sub
+   set_local $11
+   f64.const 0
+   set_local $22
+   get_local $27
+   i32.const 1048575
+   get_local $11
+   i32.shr_s
+   i32.const -1
+   i32.xor
+   i32.and
+   i64.extend_s/i32
+   i64.const 32
+   i64.shl
+   f64.reinterpret/i64
+   set_local $22
+   get_local $27
+   i32.const 1048575
+   i32.and
+   i32.const 1048576
+   i32.or
+   i32.const 20
+   get_local $11
+   i32.sub
+   i32.shr_s
+   set_local $27
+   get_local $26
+   i32.const 0
+   i32.lt_s
+   if
+    i32.const 0
+    get_local $27
+    i32.sub
+    set_local $27
+   end
+   get_local $19
+   get_local $22
+   f64.sub
+   set_local $19
+  end
+  get_local $20
+  get_local $19
+  f64.add
+  set_local $22
+  get_local $22
+  i64.reinterpret/f64
+  i64.const -4294967296
+  i64.and
+  f64.reinterpret/i64
+  set_local $22
+  get_local $22
+  f64.const 0.6931471824645996
+  f64.mul
+  set_local $23
+  get_local $20
+  get_local $22
+  get_local $19
+  f64.sub
+  f64.sub
+  f64.const 0.6931471805599453
+  f64.mul
+  get_local $22
+  f64.const -1.904654299957768e-09
+  f64.mul
+  f64.add
+  set_local $24
+  get_local $23
+  get_local $24
+  f64.add
+  set_local $15
+  get_local $24
+  get_local $15
+  get_local $23
+  f64.sub
+  f64.sub
+  set_local $25
+  get_local $15
+  get_local $15
+  f64.mul
+  set_local $22
+  get_local $15
+  get_local $22
+  f64.const 0.16666666666666602
+  get_local $22
+  f64.const -2.7777777777015593e-03
+  get_local $22
+  f64.const 6.613756321437934e-05
+  get_local $22
+  f64.const -1.6533902205465252e-06
+  get_local $22
+  f64.const 4.1381367970572385e-08
+  f64.mul
+  f64.add
+  f64.mul
+  f64.add
+  f64.mul
+  f64.add
+  f64.mul
+  f64.add
+  f64.mul
+  f64.sub
+  set_local $17
+  get_local $15
+  get_local $17
+  f64.mul
+  get_local $17
+  f64.const 2
+  f64.sub
+  f64.div
+  get_local $25
+  get_local $15
+  get_local $25
+  f64.mul
+  f64.add
+  f64.sub
+  set_local $21
+  f64.const 1
+  get_local $21
+  get_local $15
+  f64.sub
+  f64.sub
+  set_local $15
+  get_local $15
+  i64.reinterpret/f64
+  i64.const 32
+  i64.shr_u
+  i32.wrap/i64
+  set_local $26
+  get_local $26
+  get_local $27
+  i32.const 20
+  i32.shl
+  i32.add
+  set_local $26
+  get_local $26
+  i32.const 20
+  i32.shr_s
+  i32.const 0
+  i32.le_s
+  if
+   get_local $15
+   get_local $27
+   call $~lib/math/NativeMath.scalbn
+   set_local $15
+  else   
+   get_local $15
+   i64.reinterpret/f64
+   i64.const 4294967295
+   i64.and
+   get_local $26
+   i64.extend_s/i32
+   i64.const 32
+   i64.shl
+   i64.or
+   f64.reinterpret/i64
+   set_local $15
+  end
+  get_local $16
+  get_local $15
+  f64.mul
+ )
+ (func $std/string/toAmountStr (; 63 ;) (type $Iii) (param $0 i64) (param $1 i32) (result i32)
+  (local $2 i64)
+  (local $3 i64)
+  (local $4 i32)
+  (local $5 i32)
+  (local $6 i32)
+  f64.const 10
+  get_local $1
+  i32.const 255
+  i32.and
+  f64.convert_s/i32
+  call $~lib/math/NativeMath.pow
+  i64.trunc_u/f64
+  set_local $2
+  get_local $0
+  get_local $2
+  i64.div_u
+  set_local $3
+  i32.const 5968
+  set_local $4
+  get_local $3
+  call $~lib/internal/number/itoa64
+  set_local $5
+  get_local $1
+  i32.const 255
+  i32.and
+  i32.const 0
+  i32.ne
+  if
+   get_local $0
+   get_local $2
+   i64.rem_u
+   call $~lib/internal/number/itoa64
+   set_local $6
+   get_local $6
+   i32.load
+   get_local $1
+   i32.const 255
+   i32.and
+   i32.ne
+   if
+    get_local $5
+    i32.const 1112
+    call $~lib/string/String#concat
+    get_local $4
+    get_local $1
+    i32.const 255
+    i32.and
+    get_local $6
+    i32.load
+    i32.sub
+    call $~lib/array/Array<String>#__get
+    call $~lib/string/String#concat
+    get_local $6
+    call $~lib/string/String#concat
+    return
+   else    
+    get_local $5
+    i32.const 1112
+    call $~lib/string/String#concat
+    get_local $6
+    call $~lib/string/String#concat
+    return
+   end
+   unreachable
+   unreachable
+  end
+  get_local $5
+ )
+ (func $std/string/formatAmount (; 64 ;) (type $Iii) (param $0 i64) (param $1 i32) (result i32)
+  (local $2 i64)
+  (local $3 i64)
+  (local $4 i32)
+  (local $5 i32)
+  f64.const 10
+  get_local $1
+  f64.convert_u/i32
+  call $~lib/math/NativeMath.pow
+  i64.trunc_u/f64
+  set_local $2
+  get_local $0
+  get_local $2
+  i64.div_u
+  set_local $3
+  get_local $3
+  call $~lib/internal/number/itoa64
+  set_local $4
+  get_local $1
+  i32.const 255
+  i32.and
+  i32.const 0
+  i32.ne
+  if
+   get_local $0
+   get_local $2
+   i64.rem_u
+   call $~lib/internal/number/itoa64
+   set_local $5
+   get_local $5
+   i32.load
+   get_local $1
+   i32.const 255
+   i32.and
+   i32.ne
+   if
+    get_local $4
+    i32.const 1112
+    call $~lib/string/String#concat
+    i32.const 480
+    get_local $1
+    i32.const 255
+    i32.and
+    get_local $5
+    i32.load
+    i32.sub
+    call $~lib/string/String#repeat
+    call $~lib/string/String#concat
+    get_local $5
+    call $~lib/string/String#concat
+    return
+   else    
+    get_local $4
+    i32.const 1112
+    call $~lib/string/String#concat
+    get_local $5
+    call $~lib/string/String#concat
+    return
+   end
+   unreachable
+   unreachable
+  end
+  get_local $4
+ )
+ (func $std/string/toString (; 65 ;) (type $IIi) (param $0 i64) (param $1 i64) (result i32)
+  (local $2 i64)
+  (local $3 i32)
+  (local $4 i32)
+  (local $5 i32)
+  (local $6 i32)
+  (local $7 i32)
+  get_local $1
+  set_local $2
+  get_local $2
+  i64.const 255
+  i64.and
+  i32.wrap/i64
+  set_local $3
+  i32.const 256
+  set_local $4
+  i32.const 0
+  set_local $5
+  block $break|0
+   i32.const 0
+   set_local $6
+   loop $repeat|0
+    get_local $6
+    i32.const 7
+    i32.lt_s
+    i32.eqz
+    br_if $break|0
+    block
+     get_local $2
+     i64.const 8
+     i64.shr_u
+     set_local $2
+     get_local $2
+     i64.const 255
+     i64.and
+     i32.wrap/i64
+     set_local $5
+     get_local $5
+     i32.const 255
+     i32.and
+     get_global $std/string/CHAR_A
+     i32.ge_u
+     tee_local $7
+     if (result i32)
+      get_local $5
+      i32.const 255
+      i32.and
+      get_global $std/string/CHAR_Z
+      i32.le_u
+     else      
+      get_local $7
+     end
+     if
+      get_local $4
+      get_local $5
+      i32.const 255
+      i32.and
+      call $~lib/string/String.fromCharCode
+      call $~lib/string/String#concat
+      set_local $4
+     end
+    end
+    get_local $6
+    i32.const 1
+    i32.add
+    set_local $6
+    br $repeat|0
+    unreachable
+   end
+   unreachable
+  end
+  get_local $0
+  get_local $3
+  call $std/string/formatAmount
+  i32.const 248
+  call $~lib/string/String#concat
+  get_local $4
+  call $~lib/string/String#concat
+ )
+ (func $start (; 66 ;) (type $v)
   (local $0 i32)
   (local $1 i32)
   (local $2 i32)
@@ -8951,6 +10364,15 @@
    call $~lib/env/abort
    unreachable
   end
+  f64.const 1
+  call $~lib/internal/number/dtoa
+  i32.const 5032
+  call $~lib/string/String.__eq
+  i32.eqz
+  if
+   call $~lib/env/abort
+   unreachable
+  end
   f64.const 0.1
   call $~lib/internal/number/dtoa
   i32.const 592
@@ -9250,7 +10672,87 @@
    call $~lib/env/abort
    unreachable
   end
+  i64.const 10000
+  i32.const 0
+  call $std/string/toAmountStr
+  i32.const 5976
+  call $~lib/string/String.__eq
+  i32.eqz
+  if
+   call $~lib/env/abort
+   unreachable
+  end
+  i64.const 10000
+  i32.const 1
+  call $std/string/toAmountStr
+  i32.const 5992
+  call $~lib/string/String.__eq
+  i32.eqz
+  if
+   call $~lib/env/abort
+   unreachable
+  end
+  i64.const 10000
+  i32.const 2
+  call $std/string/toAmountStr
+  i32.const 6008
+  call $~lib/string/String.__eq
+  i32.eqz
+  if
+   call $~lib/env/abort
+   unreachable
+  end
+  i64.const 0
+  i32.const 4
+  call $std/string/toAmountStr
+  i32.const 6024
+  call $~lib/string/String.__eq
+  i32.eqz
+  if
+   call $~lib/env/abort
+   unreachable
+  end
+  i64.const 1
+  i32.const 4
+  call $std/string/toAmountStr
+  i32.const 6040
+  call $~lib/string/String.__eq
+  i32.eqz
+  if
+   call $~lib/env/abort
+   unreachable
+  end
+  i64.const 111111
+  i32.const 4
+  call $std/string/toAmountStr
+  i32.const 6056
+  call $~lib/string/String.__eq
+  i32.eqz
+  if
+   call $~lib/env/abort
+   unreachable
+  end
+  i64.const 10000
+  i64.const 357577479428
+  call $std/string/toString
+  i32.const 6080
+  call $~lib/string/String.__eq
+  i32.eqz
+  if
+   call $~lib/env/abort
+   unreachable
+  end
+  i64.const 100000000
+  i64.const 1128415496
+  call $std/string/toString
+  i32.const 6112
+  call $~lib/string/String.__eq
+  i32.eqz
+  if
+   call $~lib/env/abort
+   unreachable
+  end
  )
- (func $null (; 62 ;) (type $v)
+ (func $null (; 67 ;) (type $v)
  )
 )

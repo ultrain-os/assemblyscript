@@ -60,7 +60,7 @@
     "alias": "t" 
   },
   "applyText": {
-    "description": "Generate and print the dispatch method.",
+    "description": "Generate the dispatch method.",
     "type": "b",
     "alias": "l" 
   },
@@ -137,6 +137,11 @@
       "uses exports of all top-level files at this path as globals."
     ],
     "type": "s"
+  },
+  "log": {
+    "description": "Print the generated code.",
+    "type": "b",
+    "default": "false"
   },
   "use": {
     "description": [

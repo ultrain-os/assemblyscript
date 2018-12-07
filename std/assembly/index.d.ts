@@ -648,7 +648,7 @@ interface Number {}
 interface Object {}
 interface RegExp {}
 
-declare class Map<K,V> implements Serializable{
+declare class Map<K,V> implements Serializable {
   readonly size: i32;
   has(key: K): bool;
   set(key: K, value: V): void;
@@ -873,6 +873,11 @@ declare function primaryid(target: Function, propertyKey?: any, descriptor?: any
 
 /** Object serializable interface */
 interface Serializable { }
+
+/** Object can return value, having toString() method */
+interface Returnable {
+  toString(): string;
+}
 
 declare class DataStream {
   buffer: u32;

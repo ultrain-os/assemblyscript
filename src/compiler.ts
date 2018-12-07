@@ -164,6 +164,7 @@ import {
   writeF32,
   writeF64
 } from "./util";
+import { AstUtil } from "./util/astutil";
 
 /** Compilation target. */
 export enum Target {
@@ -2471,8 +2472,7 @@ export class Compiler extends DiagnosticEmitter {
       }
     }
     } catch (exception) {
-      let normalizePath = expression.range.source.normalizedPath;
-      console.log(`Compile expression failure. The normalizePath: ${normalizePath} at line: ${expression.range.line} column: ${expression.range.column}.`);
+      console.log(`Compile expression failed, the location in ${AstUtil.location(expression.range)}.`);
       throw exception;
     }
 

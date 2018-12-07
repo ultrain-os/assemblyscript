@@ -4,7 +4,6 @@ import {
   itoa32,
   utoa64,
   itoa64,
-  itoa,
   dtoa
 } from "internal/number";
 
@@ -247,6 +246,7 @@ assert(dtoa(5e-324) == "5e-324");
 // Actual:  1.2344999999999999e+21
 // assert(dtoa(1.2345e+21) == "1.2345e+21");
 
+assert(dtoa(1)  == "1.0");
 assert(dtoa(1.0)  == "1.0");
 assert(dtoa(0.1)  == "0.1");
 assert(dtoa(-1.0) == "-1.0");
@@ -289,3 +289,70 @@ assert(dtoa(0.000035689) == "0.000035689");
 
 // assert(dtoa(f32.MAX_VALUE) == "3.4028234663852886e+38"); // FIXME
 // assert(dtoa(f32.EPSILON) == "1.1920928955078125e-7"); // FIXME
+
+function toAmountStr(amount: u64, precision: u8): string {
+  var digit:u64 =  <u64>Math.pow(10, <i32>precision);
+  var integer:u64 = amount / digit;
+  var zeros: string[] = ["", "0", "00", "000", "0000", "00000", "000000", "0000000", "00000000"];
+  var amountstr = itoa64(integer);
+
+  if (precision != 0) {
+    var decimal:string = itoa64(amount % digit);
+    if (decimal.length != <i32>precision) {
+      return amountstr.concat(".").concat(zeros[precision - decimal.length]).concat(decimal);
+    } else {
+      return amountstr.concat(".").concat(decimal);
+    }
+  }
+  return amountstr;
+}
+
+assert(toAmountStr(10000, 0) == "10000");
+assert(toAmountStr(10000, 1) == "1000.0");
+assert(toAmountStr(10000, 2) == "100.00");
+assert(toAmountStr(0, 4) == "0.0000");
+assert(toAmountStr(1, 4) == "0.0001");
+assert(toAmountStr(111111, 4) == "11.1111");
+
+
+const CHAR_A: u8 = 0x41;
+/**
+ * ASCII code of character Z.
+ */
+const CHAR_Z: u8 = 0x5A;
+
+function toString(amount: u64, __symbol: u64): string {
+  var _symbol = __symbol;
+  var precision: u8 = <u8>(_symbol & 0xFF);
+  var symbol: string = "";
+  var charCode: u8 = 0;
+  for (let i = 0; i < 7; i++) {
+      _symbol =  _symbol >> 8;
+      charCode = <u8>(_symbol & 0xFF);
+      if (charCode >= CHAR_A && charCode <= CHAR_Z) {
+          symbol = symbol.concat(String.fromCharCode(<i32>charCode));
+      } 
+  }
+  // return symbol;
+  return formatAmount(amount, precision).concat(" ").concat(symbol);
+}
+
+function formatAmount(amount: u64, precision: u8): string {
+  var digit:u64 =  <u64>Math.pow(10, precision);
+  var integer:u64 = amount / digit;
+  var amountstr = itoa64(integer);
+
+  if (precision != 0) {
+    var decimal:string = itoa64(amount % digit);
+    if (decimal.length != <i32>precision) {
+      let zero  = "0";
+      return amountstr.concat(".").concat(zero.repeat(precision - decimal.length)).concat(decimal);
+    } else {
+      return amountstr.concat(".").concat(decimal);
+    }
+  }
+  return amountstr;
+}
+
+assert(toString(10000, 0x5341475504) == "1.0000 UGAS");
+assert(toString(100000000, 0x43424108) == "1.00000000 ABC");
