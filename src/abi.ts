@@ -320,9 +320,9 @@ export class Abi {
       let contractName = clzPrototype.simpleName; //
       let contractVarName = "_" + contractName; // TODO To enhancement the code
 
-      body.push(`  if (receiver == code) {`);
-      body.push(`    let ${contractVarName} = new ${contractName}(receiver);`);
-      body.push(`    ${contractVarName}.setActionName(actH, actL);`);
+      body.push(`  let ${contractVarName} = new ${contractName}(receiver);`);
+      body.push(`  ${contractVarName}.setActionName(actH, actL);`);
+      body.push(`  if (${contractVarName}.filterAction(code)) {`);
       body.push(`    ${contractVarName}.onInit();`);
       body.push(`    let ds = ${contractVarName}.getDataStream();`);
 

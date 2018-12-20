@@ -211,30 +211,22 @@ export class DataStream {
         var len = this.readVarint32();
         if (len == 0) return "";
 
-        var buffer = memory.allocate(HEADER_SIZE + (<usize>len << 1));
-        store<i32>(buffer, len);
-        let s = changetype<string>(buffer);
-        var i: u32 = 0;
-        while (i < len) {
-            var b: u16 = this.read<u8>();
-            store<u16>(changetype<usize>(s) + 2 * i, b, HEADER_SIZE);
-            i++;
-        }
-
-        return s;
+        var data = new Uint8Array(len);
+        memory.copy(changetype<usize>(data.buffer), this.buffer + this.pos, len);
+        this.pos += len;
+        return String.fromUTF8(changetype<usize>(data.buffer), len );
     }
 
     writeString(str: string): void {
-        let len: u32 = str.length;
+        var len: u32 = <u32>str.lengthUTF8 - 1;
         this.writeVarint32(len);
         if (len == 0) return;
 
-        let cstr = toUTF8Array(str);
         if (!this.isMeasureMode()) {
-            var ptr: u32 = load<u32>(changetype<usize>(cstr)) + sizeof<u64>();
-            memory.copy(this.buffer + this.pos, <usize>ptr, cstr.length - 1);
+            let ptr = str.toUTF8();
+            memory.copy(this.buffer + this.pos, <usize>ptr, len);
         }
-        this.pos += cstr.length - 1;
+        this.pos += len;
     }
 
     writeDouble(d: f64): void {}
