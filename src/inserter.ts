@@ -196,8 +196,8 @@ class SerializeGenerator {
                     }
                     hasPrimaryidDecorator = true;
                     let typeNodeAnalyzer: TypeNodeAnalyzer = new TypeNodeAnalyzer(this.classPrototype.program, <TypeNode>commonType);
-                    if (typeNodeAnalyzer.isPrimaryType()) {
-                        throw new Error(`Class ${this.classPrototype.simpleName} field ${fieldName}'s type should be id_type.`);
+                    if (!typeNodeAnalyzer.isPrimaryType()) {
+                        throw new Error(`Class ${this.classPrototype.simpleName} member ${fieldName}'s type should be id_type or refer to id_type.`);
                     }
                     serializePoint.addPrimaryKeyExpr(`      return this.${fieldName};`);
                 }
