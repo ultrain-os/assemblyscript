@@ -14,12 +14,18 @@ import {
     Element,
     ElementKind
 } from "../program";
+
 import {
-    Type,
-    TypeKind
+    Type
 } from "../types";
-import { Collections } from "./collectionutil";
-import { AbiHelper } from "../abi";
+
+import {
+    Collections
+} from "./collectionutil";
+
+import {
+    AbiHelper
+} from "../abi";
 
 export class AstUtil {
 
@@ -90,7 +96,7 @@ export class AstUtil {
      * @param declareType The declare type
      */
     static isArrayType(declareType: string): bool {
-        return declareType == '[]' || declareType == "Array";
+        return declareType == "[]" || declareType == "Array";
     }
 
     /**
@@ -108,11 +114,14 @@ export class AstUtil {
     /**
      * Test the class whether to implement the Serializable interface or not.
      */
-    static impledSerializable(classDeclaration: ClassDeclaration): bool {
+    static impledSerializable(classPrototype: ClassPrototype | null): bool {
+        if (!classPrototype) {
+            return false;
+        }
         const interfaceName = "Serializable";
-        return AstUtil.impledInterface(classDeclaration, interfaceName);      
+        var havingInterface = AstUtil.impledInterface(classPrototype.declaration, interfaceName);
+        return havingInterface || AstUtil.impledSerializable(classPrototype.basePrototype);
     }
-
 
     /**
      * Test the class whetherto implement the Returnable interface or not.
@@ -397,10 +406,6 @@ export class TypeNodeAnalyzer {
      *     findSourceAsTypeName("account_name_alias") return "account_name";
      */
     findSourceAsTypeName(typeName: string): string {
-        // var abiType: string | null = AbiHelper.abiTypeLookup.get(typeName);
-        // if (abiType) {
-        //     return typeName;
-        // }
         var typeAlias = this.program.typeAliases.get(typeName);
         if (typeAlias) {
             let aliasTypeName = typeAlias.type.range.toString();

@@ -585,13 +585,13 @@ exports.main = function main(argv, options, callback, exttype) {
   }
 
   if (exttype == 1) {
-    exports.abiObj = program.toAbi();
-    let lookup = exports.abiObj.insertPointsLookup;
+    exports.abiInfo = program.getAbiInfo();
+    let lookup = exports.abiInfo.insertPointsLookup;
     for (let [file, obj] of lookup) {
       let filepath = path.resolve(baseDir, file);
       lookup.set(filepath, obj);
     }
-    exports.applyText = exports.abiObj.dispatch;
+    exports.applyText = exports.abiInfo.dispatch;
   }
 
   if (args.applyText && exttype == 3 && args.log == true) {
@@ -624,14 +624,14 @@ exports.main = function main(argv, options, callback, exttype) {
       if (args.abiFile && args.abiFile.length) {
         stats.emitCount++;
         stats.emitTime += measure(() => {
-          abi = JSON.stringify(exports.abiObj.abiInfo, undefined, 2);
+          abi = JSON.stringify(exports.abiInfo.abiInfo, undefined, 2);
         });
 
         writeFile(path.join(baseDir, args.abiFile), abi);
       } else if (!hasStdout) {
         stats.emitCount++;
         stats.emitTime += measure(() => {
-          abi = JSON.stringify(exports.abiObj.abiInfo, undefined, 2);
+          abi = JSON.stringify(exports.abiInfo.abiInfo, undefined, 2);
         });
         writeStdout(abi);
       }
@@ -1009,19 +1009,20 @@ exports.insertDispatchText = insertDispathText;
 
 function insertCodes(sourcePath, sourceText) {
 
-  if (!exports.abiObj) {
+  if (!exports.abiInfo) {
     throw new Error(colorsUtil.stderr.yellow("WARN: ") + "unknown abi information" + EOL);
   }
 
-  let insertPointsLookup = exports.abiObj.insertPointsLookup;
-
+  let insertPointsLookup = exports.abiInfo.insertPointsLookup;
   var concretePath = path.resolve(exports.baseDir, sourcePath);
   if (insertPointsLookup.has(concretePath)) {
     let serializeArray = insertPointsLookup.get(concretePath);
     let data = sourceText.split(EOL);
     for (let serialize of serializeArray) {
-      data.splice(serialize.line , 0, serialize.getInsertCode());
-      // console.log(`insert code: ${serialize.getInsertCode()}. Serialize line: ${serialize.line}. Path: ${sourcePath}`);
+      data.splice(serialize.line , 0, serialize.getCodes());
+      if (false) {
+        console.log(`Path: ${sourcePath} line: ${serialize.line}. Insert code:${EOL}${serialize.getCodes()}`);
+      }
     }
     return data.join(EOL);
   } else {

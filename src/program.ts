@@ -110,7 +110,7 @@ import {
 } from "./util";
 
 import {
-  Abi
+  AbiInfo
 } from "./abi";
 import {
   Resolver
@@ -370,10 +370,9 @@ export class Program extends DiagnosticEmitter {
     this.sources = [];
   }
 
-  toAbi(): Abi {
-    var abi = new Abi(this);
-    abi.resolve();
-    return abi;
+  getAbiInfo(): AbiInfo {
+    var abiInfo = new AbiInfo(this);
+    return abiInfo;
   }
 
   /** Gets a source by its exact path. */
