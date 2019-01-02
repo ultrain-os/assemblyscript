@@ -50,3 +50,67 @@ export class AbiUtils {
         }
     }
 }
+
+export class Indenter {
+
+    private body: Array<string> = new Array<string>();
+    private indentX1: string = "  ";
+    private indentX2: string = "    ";
+    private indentX4: string = "        ";
+    private padding: string = this.indentX1;
+
+    indent(level: i32): Indenter {
+        var padding = "";
+        while (level >= 4) {
+            padding += this.indentX4;
+            level -= 4;
+        }
+        if (level >= 2) {
+            padding += this.indentX2;
+            level -= 2;
+        }
+        if (level >= 1) {
+            padding += this.indentX1;
+        }
+        this.padding = padding;
+        return this;
+    }
+
+    increase(): Indenter {
+        this.padding += this.indentX1;
+        return this;
+    }
+
+    add(row: string): Indenter {
+        this.body.push(this.padding + row);
+        return this;
+    }
+
+    decrease(): Indenter {
+        this.padding = this.padding.replace(this.indentX1, "");
+        return this;
+    }
+
+    toString(): string {
+        return this.body.join("\n");
+    }
+
+    addAll(body: string[]): void {
+        for (let row of body) {
+            this.body.push(row);
+        }
+    }
+
+    getContent(): string[] {
+        return this.body;
+    }
+}
+
+export class Verify {
+
+    static verify(expression: bool, message: string): void {
+        if (!expression) {
+            throw new Error(message);
+        }
+    }
+}

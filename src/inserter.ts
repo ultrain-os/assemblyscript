@@ -36,9 +36,14 @@ import {
     TypeNodeAnalyzer,
     AbiTypeEnum
 } from "./util/astutil";
+
 import {
     Collections
 } from "./util/collectionutil";
+
+import {
+    Indenter, Verify
+} from "./util/primitiveutil";
 
 export class InsertPoint {
 
@@ -95,7 +100,7 @@ export class InsertPoint {
         this.code.push(code);
     }
 
-    getInsertCode(): string {
+    getCodes(): string {
         return this.insertCode;
     }
 }
@@ -106,76 +111,76 @@ export class InsertPoint {
 class SerializeGenerator {
 
     SERIALIZE_METHOD_NAME: string = "serialize";
-
     DESERIALIZE_METHOD_NAME: string = "deserialize";
-
     PRIMARY_METHOD_NAME: string = "primaryKey";
 
     classPrototype: ClassPrototype;
     /**Need to implement the Serialize method of the serialize interface */
-    private needImplSerialize: boolean = true;
+    private needSerialize: boolean = true;
     /**Need to implement the Deserialize method of the serialize interface */
-    private needImplDeSerialize: boolean = true;
+    private needDeserialize: boolean = true;
     /**Need to implement the primaryKey method */
-    private needImplPrimary: boolean = true;
+    private needPrimaryid: boolean = true;
 
     constructor(classPrototype: ClassPrototype) {
         this.classPrototype = classPrototype;
+        this.initialize();
     }
 
-    toGenerateFlag(): bool {
+    private existing(): bool {
+        return this.needDeserialize || this.needSerialize || this.needPrimaryid;
+    }
 
-        if (!this.classPrototype.instanceMembers) {
-            return false;
-        }
-
-        for (let [_, element] of this.classPrototype.instanceMembers) {
-            if (element.kind == ElementKind.FUNCTION_PROTOTYPE) {
-                let functionPrototype = <FunctionPrototype>element;
-                if (functionPrototype.declaration.name.range.toString() == this.SERIALIZE_METHOD_NAME) {
-                    this.needImplSerialize = false;
-                }
-                if (functionPrototype.declaration.name.range.toString() == this.DESERIALIZE_METHOD_NAME) {
-                    this.needImplDeSerialize = false;
-                }
-                if (functionPrototype.declaration.name.range.toString() == this.PRIMARY_METHOD_NAME) {
-                    this.needImplPrimary = false;
+    private initialize(): void {
+        if (this.classPrototype.instanceMembers) {
+            for (let [_, element] of this.classPrototype.instanceMembers) {
+                if (element.kind == ElementKind.FUNCTION_PROTOTYPE) {
+                    let fnPrototype = <FunctionPrototype>element;
+                    let fnName = fnPrototype.declaration.name.range.toString();
+                    if (fnName == this.SERIALIZE_METHOD_NAME) {
+                        this.needSerialize = false;
+                    }
+                    if (fnName == this.DESERIALIZE_METHOD_NAME) {
+                        this.needDeserialize = false;
+                    }
+                    if (fnName == this.PRIMARY_METHOD_NAME) {
+                        this.needPrimaryid = false;
+                    }
                 }
             }
         }
-        return this.needImplDeSerialize || this.needImplPrimary || this.needImplSerialize;
     }
 
-    checkFieldImplSerialize(typeNode: CommonTypeNode): bool {
+    checkSerializable(typeNode: CommonTypeNode): void {
         var internalName = AstUtil.getInternalName(typeNode);
         var element: Element | null = this.classPrototype.program.elementsLookup.get(internalName);
-
         if (element && element.kind == ElementKind.CLASS_PROTOTYPE) {
-            let hasImpl = AstUtil.impledSerializable((<ClassPrototype>element).declaration);
-            if (!hasImpl) {
-                throw new Error(`Class ${internalName} has not implement the interface serializable`);
-            }
+            let hasImpl = AstUtil.impledSerializable((<ClassPrototype>element));
+            Verify.verify(hasImpl, `Class ${internalName} has not implement the interface serializable`);
         }
-        return true;
     }
 
     /**Parse the class prototype and get serialize points */
-    getSerializePoints(): SerializePoint {
-
+    getSerializePoint(): SerializePoint | null {
+        if (!this.existing()) {
+            return null;
+        }
         var serializePoint: SerializePoint = new SerializePoint(this.classPrototype.declaration.range);
         serializePoint.classDeclaration = this.classPrototype.declaration;
-        serializePoint.needDeserialize = this.needImplDeSerialize;
-        serializePoint.needSerialize = this.needImplSerialize;
-        serializePoint.needPrimaryKey = this.needImplPrimary;
+        serializePoint.needDeserialize = this.needDeserialize;
+        serializePoint.needSerialize = this.needSerialize;
+        serializePoint.needPrimaryid = this.needPrimaryid;
 
         if (!this.classPrototype.instanceMembers) {
-            return serializePoint;
+            return null;
         }
-
-        var hasPrimaryidDecorator = false;
+        var countOfPkDecorator: u8 = 0;
+        if (AstUtil.impledSerializable(this.classPrototype.basePrototype)) {
+            serializePoint.serialize.increase().add(`super.serialize(ds);`);
+            serializePoint.deserialize.increase().add(`super.deserialize(ds);`);
+        }
         for (let [fieldName, element] of this.classPrototype.instanceMembers) {
             if (element.kind == ElementKind.FIELD_PROTOTYPE) {
-
                 let fieldPrototype: FieldPrototype = <FieldPrototype>element;
                 let fieldDeclaration: FieldDeclaration = fieldPrototype.declaration;
                 let commonType: CommonTypeNode | null = fieldDeclaration.type;
@@ -183,164 +188,142 @@ class SerializeGenerator {
                 if (commonType && commonType.kind == NodeKind.TYPE &&
                     !AstUtil.haveSpecifyDecorator(fieldDeclaration, DecoratorKind.IGNORE)) {
                     let typeNode = <TypeNode>commonType;
-                    if (this.needImplDeSerialize && this.checkFieldImplSerialize(commonType)) {
-                        serializePoint.addSerializeExpr(this.serializeField(fieldName, typeNode));
+                    if (this.needSerialize) {
+                        this.checkSerializable(commonType);
+                        serializePoint.serialize.addAll(this.serializeField(fieldName, typeNode));
                     }
-                    if (this.needImplSerialize && this.checkFieldImplSerialize(commonType)) {
-                        serializePoint.addDeserializeExpr(this.deserializeField(fieldName, typeNode));
+                    if (this.needDeserialize) {
+                        this.checkSerializable(commonType);
+                        serializePoint.deserialize.addAll(this.deserializeField(fieldName, typeNode));
                     }
                 }
+
                 if (commonType && commonType.kind == NodeKind.TYPE && AstUtil.haveSpecifyDecorator(fieldDeclaration, DecoratorKind.PRIMARYID)) {
-                    if (hasPrimaryidDecorator) {
-                        throw new Error(`Class ${this.classPrototype.simpleName} should have only one primaryid decorator.`);
-                    }
-                    hasPrimaryidDecorator = true;
+                    countOfPkDecorator++;
+                    Verify.verify(countOfPkDecorator <= 1, `Class ${this.classPrototype.simpleName} should have only one primaryid decorator field.`);
                     let typeNodeAnalyzer: TypeNodeAnalyzer = new TypeNodeAnalyzer(this.classPrototype.program, <TypeNode>commonType);
-                    if (typeNodeAnalyzer.isPrimaryType()) {
-                        throw new Error(`Class ${this.classPrototype.simpleName} field ${fieldName}'s type should be id_type.`);
+                    if (!typeNodeAnalyzer.isPrimaryType()) {
+                        throw new Error(`Class ${this.classPrototype.simpleName} member ${fieldName}'s type should be id_type or refer to id_type.`);
                     }
-                    serializePoint.addPrimaryKeyExpr(`      return this.${fieldName};`);
+                    serializePoint.primaryKey.indent(4).add(`return this.${fieldName};`);
                 }
             }
         }
 
-        if (!hasPrimaryidDecorator) {
-            serializePoint.addPrimaryKeyExpr(`      return 0;`);
+        if (!countOfPkDecorator) {
+            serializePoint.primaryKey.indent(4).add(`return 0;`);
         }
-        serializePoint.addPrimaryKeyExpr(`   }`);
-        serializePoint.addDeserializeExpr(`   }`);
-        serializePoint.addSerializeExpr(`   }`);
-
+        serializePoint.primaryKey.indent(2).add(`}`);
+        serializePoint.deserialize.indent(2).add(`}`);
+        serializePoint.serialize.indent(2).add(`}`);
         return serializePoint;
     }
 
     /** Implement the serrialize field */
-    serializeField(fieldName: string, typeNode: TypeNode): string {
-
+    serializeField(fieldName: string, typeNode: TypeNode): string[] {
         var typeNodeAnalyzer: TypeNodeAnalyzer = new TypeNodeAnalyzer(this.classPrototype.program, typeNode);
-        var body: Array<string> = new Array<string>();
-
+        var indent: Indenter = new Indenter();
+        indent.indent(4);
         if (typeNodeAnalyzer.isArray()) {
             let argAbiTypeEnum = typeNodeAnalyzer.getArrayArgAbiTypeEnum();
             let argTypeName = typeNodeAnalyzer.getArrayArg();
             if (argAbiTypeEnum == AbiTypeEnum.NUMBER) {
-                body.push(`      ds.writeVector<${argTypeName}>(this.${fieldName});`);
+                indent.add(`ds.writeVector<${argTypeName}>(this.${fieldName});`);
             } else if (argAbiTypeEnum == AbiTypeEnum.STRING) {
-                body.push(`      ds.writeStringVector(this.${fieldName});`);
+                indent.add(`ds.writeStringVector(this.${fieldName});`);
             } else {
-                body.push(`      ds.writeComplexVector<${argTypeName}>(this.${fieldName});`);
+                indent.add(`ds.writeComplexVector<${argTypeName}>(this.${fieldName});`);
             }
         } else {
             let abiTypeEnum = typeNodeAnalyzer.abiTypeEnum;
-
             if (abiTypeEnum == AbiTypeEnum.STRING) {
-                body.push(`      ds.writeString(this.${fieldName});`);
+                indent.add(`ds.writeString(this.${fieldName});`);
             } else if (abiTypeEnum == AbiTypeEnum.NUMBER) {
-                body.push(`      ds.write<${typeNodeAnalyzer.getDeclareType()}>(this.${fieldName});`);
+                indent.add(`ds.write<${typeNodeAnalyzer.getDeclareType()}>(this.${fieldName});`);
             } else {
-                body.push(`      if (!this.${fieldName}) {`);
-                body.push(`          this.${fieldName} = { } as ${typeNodeAnalyzer.getDeclareType()};`);
-                body.push(`      }`);
-                body.push(`      this.${fieldName}.serialize(ds);`);
+                indent.add(`if (!this.${fieldName}) {`);
+                indent.increase().add(`this.${fieldName} = { } as ${typeNodeAnalyzer.getDeclareType()};`);
+                indent.decrease().add(`}`);
+                indent.add(`this.${fieldName}.serialize(ds);`);
             }
         }
-        return body.join("\n");
+        return indent.getContent();
     }
 
-    deserializeField(fieldName: string, type: TypeNode): string {
+    deserializeField(fieldName: string, type: TypeNode): string[] {
         var typeNodeAnalyzer: TypeNodeAnalyzer = new TypeNodeAnalyzer(this.classPrototype.program, type);
-        var body: Array<string> = new Array<string>();
-
+        var indent = new Indenter();
+        indent.indent(4);
         if (typeNodeAnalyzer.isArray()) {
             let argAbiTypeEnum = typeNodeAnalyzer.getArrayArgAbiTypeEnum();
             let argTypeName = typeNodeAnalyzer.getArrayArg();
 
             if (argAbiTypeEnum == AbiTypeEnum.NUMBER) {
-                body.push(`      this.${fieldName} = ds.readVector<${argTypeName}>();`);
+                indent.add(`this.${fieldName} = ds.readVector<${argTypeName}>();`);
             } else if (argAbiTypeEnum == AbiTypeEnum.STRING) {
-                body.push(`      this.${fieldName} = ds.readStringVector();`);
+                indent.add(`this.${fieldName} = ds.readStringVector();`);
             } else {
-                body.push(`      this.${fieldName} = ds.readComplexVector<${argTypeName}>();`);
+                indent.add(`this.${fieldName} = ds.readComplexVector<${argTypeName}>();`);
             }
         } else {
             let abiTypeEnum = typeNodeAnalyzer.abiTypeEnum;
             if (abiTypeEnum == AbiTypeEnum.STRING) {
-                body.push(`      this.${fieldName} = ds.readString();`);
+                indent.add(`this.${fieldName} = ds.readString();`);
             } else if (abiTypeEnum == AbiTypeEnum.NUMBER) {
-                body.push(`      this.${fieldName} = ds.read<${typeNodeAnalyzer.typeName}>();`);
+                indent.add(`this.${fieldName} = ds.read<${typeNodeAnalyzer.typeName}>();`);
             } else {
-                body.push(`      if (!this.${fieldName}) {`);
-                body.push(`          this.${fieldName} = { } as ${typeNodeAnalyzer.getDeclareType()};`);
-                body.push(`      }`);
-                body.push(`      this.${fieldName}.deserialize(ds);`);
+                indent.add(`if (!this.${fieldName}) {`);
+                indent.increase().add(`this.${fieldName} = { } as ${typeNodeAnalyzer.getDeclareType()};`);
+                indent.decrease().add(`}`);
+                indent.add(`this.${fieldName}.deserialize(ds);`);
             }
         }
-        return body.join("\n");
+        return indent.getContent();
     }
 }
 
 export class SerializePoint extends InsertPoint {
 
-    private serialize: Array<string> = new Array<string>();
+    serialize: Indenter = new Indenter();
+    deserialize: Indenter = new Indenter();
+    primaryKey: Indenter = new Indenter();
 
-    private deserialize: Array<string> = new Array<string>();
-
-    private primaryKey: Array<string> = new Array<string>();
-
-    needSerialize: bool;
-
-    needDeserialize: bool;
-
-    needPrimaryKey: bool;
+    needSerialize: bool = false;
+    needDeserialize: bool = false;
+    needPrimaryid: bool = false;
 
     classDeclaration: ClassDeclaration;
 
     constructor(range: Range) {
         super(range.atEnd);
-        this.serialize.push(`    serialize(ds: DataStream): void {`);
-        this.deserialize.push(`    deserialize(ds: DataStream): void {`);
-
-        this.primaryKey.push(`     primaryKey(): id_type {`);
-    }
-
-    addSerializeExpr(expr: string): void {
-        this.serialize.push(expr);
-    }
-
-    addDeserializeExpr(expr: string): void {
-        this.deserialize.push(expr);
-    }
-
-    addPrimaryKeyExpr(expr: string): void {
-        this.primaryKey.push(expr);
+        this.serialize.indent(2).add(`serialize(ds: DataStream): void {`);
+        this.deserialize.indent(2).add(`deserialize(ds: DataStream): void {`);
+        this.primaryKey.indent(2).add(`primaryKey(): id_type {`);
     }
 
     get indentity(): string {
         return this.range.source.normalizedPath + this.range.toString() + this.classDeclaration.name.range.toString();
     }
 
-    getInsertCode(): string {
-        var insertData = [];
-
+    getCodes(): string {
+        var result = [];
         if (this.needDeserialize) {
-            insertData.push(this.deserialize.join("\n"));
+            result.push(this.deserialize.toString());
         }
         if (this.needSerialize) {
-            insertData.push(this.serialize.join("\n"));
+            result.push(this.serialize.toString());
         }
-        if (this.needPrimaryKey) {
-            insertData.push(this.primaryKey.join("\n"));
+        if (this.needPrimaryid) {
+            result.push(this.primaryKey.toString());
         }
-        return insertData.join("\n");
+        return result.join("\n");
     }
 }
 
 export class SerializeInserter {
 
     program: Program;
-
     private serializeClassname: Set<string> = new Set<string>();
-
     private insertPoints: Array<InsertPoint> = [];
 
     constructor(program: Program) {
@@ -348,19 +331,14 @@ export class SerializeInserter {
         this.resolve();
     }
 
-    resolve(): void {
+    private resolve(): void {
         for (let [_, element] of this.program.elementsLookup) {
             if (element && element.kind == ElementKind.CLASS_PROTOTYPE) {
-                let classDeclaration: ClassDeclaration = (<ClassPrototype>element).declaration;
-                if (AstUtil.impledSerializable(classDeclaration)) {
+                if (AstUtil.impledSerializable(<ClassPrototype>element)) {
                     let generator: SerializeGenerator = new SerializeGenerator(<ClassPrototype>element);
-                    if (!generator.toGenerateFlag()) {
-                        continue;
-                    }
 
-                    let serializePoint: SerializePoint = generator.getSerializePoints();
-
-                    if (!this.serializeClassname.has(serializePoint.indentity)) {
+                    let serializePoint = generator.getSerializePoint();
+                    if (serializePoint && !this.serializeClassname.has(serializePoint.indentity)) {
                         this.insertPoints.push(serializePoint);
                         this.serializeClassname.add(serializePoint.indentity);
                     }
@@ -372,24 +350,21 @@ export class SerializeInserter {
     getInsertPoints(): InsertPoint[] {
         return this.insertPoints;
     }
-
 }
 
 export class SuperInserter {
 
     program: Program;
-
     private insertPoints: Array<InsertPoint> = [];
-
     private classNames: Set<string> = new Set<string>();
-
     private baseClassNames: Set<string> = new Set<string>();
 
     constructor(program: Program) {
         this.program = program;
         this.resolve();
     }
-    resolve(): void {
+
+    private resolve(): void {
         for (let [_, element] of this.program.elementsLookup) {
             if (element && element.kind == ElementKind.CLASS_PROTOTYPE) {
                 let classPrototype = <ClassPrototype>element;
