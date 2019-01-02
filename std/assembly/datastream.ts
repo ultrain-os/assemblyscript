@@ -53,6 +53,7 @@ export class DataStream {
         for (let i: u32 = 0; i < len; i++) {
             ds.write<T>(from[i]);
         }
+        ds.pos = 0;
         return ds;
     }
 
@@ -92,7 +93,7 @@ export class DataStream {
     }
 
     size(): u32 {
-        return this.pos;
+        return this.len;
     }
 
     readVarint32(): u32 {
@@ -128,9 +129,9 @@ export class DataStream {
     }
 
     toArray<T>(): T[] {
-        if (this.pos == 0) return new Array<T>();
+        if (this.len == 0) return new Array<T>();
 
-        let len = this.pos / sizeof<T>();
+        let len = this.len / sizeof<T>();
         let arr = new Array<T>(len);
         let idx = 0;
         for (let i: u32 = 0; i < len; i++) {

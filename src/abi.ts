@@ -376,7 +376,6 @@ export class Abi {
             body.push(`      ${contractVarName}.${funcName}(${fields.join(",")});`);
           } else {
             body.push(`      let result = ${contractVarName}.${funcName}(${fields.join(",")});`);
-            
             let typeName = rtnNodeAnly.isArray() ? rtnNodeAnly.getArrayArg() : rtnNodeAnly.typeName;
             let element = rtnNodeAnly.findElement(typeName);
             if (element && AstUtil.isClassPrototype(element)) {
@@ -385,7 +384,7 @@ export class Abi {
                 throw new Error(`Class ${typeName} should implement the Returnable interface. Location in ${AstUtil.location(declaration.range)}`);
               }
             }
-            
+
             if (rtnNodeAnly.isArray()) {
               body.push(`      ${contractVarName}.returnArray<${rtnNodeAnly.getArrayArg()}>(result);`);
             } else {
@@ -395,6 +394,11 @@ export class Abi {
           body.push("    }");
         }
       }
+      // to support onError
+      body.push(`    if (${contractVarName}.isAction("onerror")) {`);
+      body.push(`        ${contractVarName}.onError();`);
+      body.push(`    }`);
+
       body.push(`    ${contractVarName}.onStop();`);
       body.push("  }");
       this.resolveDatabaseDecorator(clzPrototype.declaration);
