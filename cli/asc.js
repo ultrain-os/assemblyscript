@@ -1017,7 +1017,7 @@ function insertCodes(sourcePath, sourceText) {
   var concretePath = path.resolve(exports.baseDir, sourcePath);
   if (insertPointsLookup.has(concretePath)) {
     let serializeArray = insertPointsLookup.get(concretePath);
-    let data = sourceText.split(EOL);
+    let data = sourceText.split("\n");
     for (let serialize of serializeArray) {
       data.splice(serialize.line , 0, serialize.getCodes());
       if (false) {

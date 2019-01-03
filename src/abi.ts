@@ -75,13 +75,13 @@ export class AbiAliasDef {
 class ActionDef {
   name: string;
   type: string;
-  // ability: string;
+  ability: string;
   ricardian_contract: string = "";
 
   constructor(name: string, type: string, ability: string = "normal") {
     this.name = name;
     this.type = type;
-    // this.ability = ability;
+    this.ability = ability;
   }
 
   static isValidAbility(ability: string): bool {
