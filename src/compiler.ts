@@ -162,7 +162,8 @@ import {
   writeI32,
   writeI64,
   writeF32,
-  writeF64
+  writeF64,
+  makeMap
 } from "./util";
 import { AstUtil } from "./util/astutil";
 
@@ -393,12 +394,11 @@ export class Compiler extends DiagnosticEmitter {
       );
     }
 
-    // determine initial page size
-    var numPages = this.memorySegments.length
-      ? i64_low(i64_shr_u(i64_align(memoryOffset, 0x10000), i64_new(16, 0)))
-      : 0;
+    // set up memory
     module.setMemory(
-      numPages,
+      this.options.memoryBase /* is specified */ || this.memorySegments.length
+        ? i64_low(i64_shr_u(i64_align(memoryOffset, 0x10000), i64_new(16, 0)))
+        : 0,
       Module.UNLIMITED_MEMORY,
       this.memorySegments,
       options.target,
@@ -553,13 +553,15 @@ export class Compiler extends DiagnosticEmitter {
 
       // skip prototype and export instances
       case ElementKind.FUNCTION_PROTOTYPE: {
-        for (let instance of (<FunctionPrototype>element).instances.values()) {
-          let instanceName = name;
-          if (instance.is(CommonFlags.GENERIC)) {
-            let fullName = instance.internalName;
-            instanceName += fullName.substring(fullName.lastIndexOf("<"));
+        for (let instances of (<FunctionPrototype>element).instances.values()) {
+          for (let instance of instances.values()) {
+            let instanceName = name;
+            if (instance.is(CommonFlags.GENERIC)) {
+              let fullName = instance.internalName;
+              instanceName += fullName.substring(fullName.lastIndexOf("<"));
+            }
+            this.makeModuleExport(instanceName, instance, prefix);
           }
-          this.makeModuleExport(instanceName, instance, prefix);
         }
         break;
       }
@@ -619,7 +621,7 @@ export class Compiler extends DiagnosticEmitter {
             (noTreeShaking || (isEntry && statement.is(CommonFlags.EXPORT))) &&
             !(<ClassDeclaration>statement).isGeneric
           ) {
-            this.compileClassDeclaration(<ClassDeclaration>statement, [], null);
+            this.compileClassDeclaration(<ClassDeclaration>statement, []);
           }
           break;
         }
@@ -698,7 +700,7 @@ export class Compiler extends DiagnosticEmitter {
     var declaration = global.declaration;
     var initExpr: ExpressionRef = 0;
 
-    if (global.type == Type.void) { // type is void if not yet resolved or not annotated
+    if (!global.is(CommonFlags.RESOLVED)) {
       if (declaration) {
 
         // resolve now if annotated
@@ -713,6 +715,7 @@ export class Compiler extends DiagnosticEmitter {
             return false;
           }
           global.type = resolvedType;
+          global.set(CommonFlags.RESOLVED);
 
         // infer from initializer if not annotated
         } else if (declaration.initializer) { // infer type using void/NONE for literal inference
@@ -729,6 +732,7 @@ export class Compiler extends DiagnosticEmitter {
             return false;
           }
           global.type = this.currentType;
+          global.set(CommonFlags.RESOLVED);
 
         // must either be annotated or have an initializer
         } else {
@@ -739,7 +743,7 @@ export class Compiler extends DiagnosticEmitter {
           return false;
         }
       } else {
-        assert(false); // must have a declaration if 'void' (and thus resolved later on)
+        assert(false); // must have a declaration if resolved lazily
       }
     }
 
@@ -956,16 +960,15 @@ export class Compiler extends DiagnosticEmitter {
   /** Compiles a top-level function given its declaration. */
   compileFunctionDeclaration(
     declaration: FunctionDeclaration,
-    typeArguments: TypeNode[],
-    contextualTypeArguments: Map<string,Type> | null = null
+    typeArguments: TypeNode[]
   ): Function | null {
     var element = assert(this.program.elementsLookup.get(declaration.fileLevelInternalName));
     assert(element.kind == ElementKind.FUNCTION_PROTOTYPE);
     return this.compileFunctionUsingTypeArguments( // reports
       <FunctionPrototype>element,
       typeArguments,
-      contextualTypeArguments,
-      null, // no outer scope (is top level)
+      makeMap<string,Type>(),
+      null,
       (<FunctionPrototype>element).declaration.name
     );
   }
@@ -974,7 +977,7 @@ export class Compiler extends DiagnosticEmitter {
   compileFunctionUsingTypeArguments(
     prototype: FunctionPrototype,
     typeArguments: TypeNode[],
-    contextualTypeArguments: Map<string,Type> | null,
+    contextualTypeArguments: Map<string,Type>,
     outerScope: Flow | null,
     reportNode: Node
   ): Function | null {
@@ -1232,7 +1235,11 @@ export class Compiler extends DiagnosticEmitter {
               (<ClassPrototype>element).is(CommonFlags.EXPORT)
             ) && !(<ClassPrototype>element).is(CommonFlags.GENERIC)
           ) {
-            this.compileClassUsingTypeArguments(<ClassPrototype>element, []);
+            this.compileClassUsingTypeArguments(
+              <ClassPrototype>element,
+              [],
+              makeMap<string,Type>()
+            );
           }
           break;
         }
@@ -1250,8 +1257,8 @@ export class Compiler extends DiagnosticEmitter {
             this.compileFunctionUsingTypeArguments(
               <FunctionPrototype>element,
               [],
-              null, // no contextual type arguments
-              null, // no outer scope
+              makeMap<string,Type>(),
+              null,
               (<FunctionPrototype>element).declaration.name
             );
           }
@@ -1284,7 +1291,11 @@ export class Compiler extends DiagnosticEmitter {
       switch (element.kind) {
         case ElementKind.CLASS_PROTOTYPE: {
           if (!(<ClassPrototype>element).is(CommonFlags.GENERIC)) {
-            this.compileClassUsingTypeArguments(<ClassPrototype>element, []);
+            this.compileClassUsingTypeArguments(
+              <ClassPrototype>element,
+              [],
+              makeMap<string,Type>()
+            );
           }
           break;
         }
@@ -1300,8 +1311,8 @@ export class Compiler extends DiagnosticEmitter {
             this.compileFunctionUsingTypeArguments(
               <FunctionPrototype>element,
               [],
-              null, // no contextual type arguments
-              null, // no outer scope
+              makeMap<string,Type>(),
+              null,
               (<FunctionPrototype>element).declaration.name
             );
           }
@@ -1323,15 +1334,14 @@ export class Compiler extends DiagnosticEmitter {
 
   compileClassDeclaration(
     declaration: ClassDeclaration,
-    typeArguments: TypeNode[],
-    contextualTypeArguments: Map<string,Type> | null = null
+    typeArguments: TypeNode[]
   ): void {
     var element = assert(this.program.elementsLookup.get(declaration.fileLevelInternalName));
     assert(element.kind == ElementKind.CLASS_PROTOTYPE);
     this.compileClassUsingTypeArguments(
       <ClassPrototype>element,
       typeArguments,
-      contextualTypeArguments,
+      makeMap<string,Type>(),
       declaration
     );
   }
@@ -1339,7 +1349,7 @@ export class Compiler extends DiagnosticEmitter {
   compileClassUsingTypeArguments(
     prototype: ClassPrototype,
     typeArguments: TypeNode[],
-    contextualTypeArguments: Map<string,Type> | null = null,
+    contextualTypeArguments: Map<string,Type>,
     alternativeReportNode: Node | null = null
   ): void {
     var instance = this.resolver.resolveClassInclTypeArguments(
@@ -1370,7 +1380,9 @@ export class Compiler extends DiagnosticEmitter {
             ) {
               this.compileFunctionUsingTypeArguments(
                 <FunctionPrototype>element,
-                [], null, null,
+                [],
+                makeMap<string,Type>(),
+                null,
                 (<FunctionPrototype>element).declaration.name
               );
             }
@@ -1381,7 +1393,9 @@ export class Compiler extends DiagnosticEmitter {
             if (getter) {
               this.compileFunctionUsingTypeArguments(
                 getter,
-                [], null, null,
+                [],
+                makeMap<string,Type>(),
+                null,
                 getter.declaration.name
               );
             }
@@ -1389,7 +1403,9 @@ export class Compiler extends DiagnosticEmitter {
             if (setter) {
               this.compileFunctionUsingTypeArguments(
                 setter,
-                [], null, null,
+                [],
+                makeMap<string,Type>(),
+                null,
                 setter.declaration.name
               );
             }
@@ -1411,8 +1427,8 @@ export class Compiler extends DiagnosticEmitter {
               this.compileFunctionUsingTypeArguments(
                 <FunctionPrototype>element,
                 [],
-                instance.contextualTypeArguments,
-                null, // no outer scope
+                makeMap<string,Type>(instance.contextualTypeArguments),
+                null,
                 (<FunctionPrototype>element).declaration.name
               );
             }
@@ -1427,7 +1443,9 @@ export class Compiler extends DiagnosticEmitter {
             if (getter) {
               this.compileFunctionUsingTypeArguments(
                 getter,
-                [], instance.contextualTypeArguments, null,
+                [],
+                makeMap<string,Type>(instance.contextualTypeArguments),
+                null,
                 getter.declaration.name
               );
             }
@@ -1435,7 +1453,9 @@ export class Compiler extends DiagnosticEmitter {
             if (setter) {
               this.compileFunctionUsingTypeArguments(
                 setter,
-                [], instance.contextualTypeArguments, null,
+                [],
+                makeMap<string,Type>(instance.contextualTypeArguments),
+                null,
                 setter.declaration.name
               );
             }
@@ -5022,7 +5042,7 @@ export class Compiler extends DiagnosticEmitter {
           instance = this.resolver.resolveFunctionInclTypeArguments(
             prototype,
             typeArguments,
-            this.currentFunction.flow.contextualTypeArguments,
+            makeMap<string,Type>(this.currentFunction.flow.contextualTypeArguments),
             expression
           );
 
@@ -5096,7 +5116,7 @@ export class Compiler extends DiagnosticEmitter {
           instance = this.resolver.resolveFunction(
             prototype,
             resolvedTypeArguments,
-            this.currentFunction.flow.contextualTypeArguments
+            makeMap<string,Type>(this.currentFunction.flow.contextualTypeArguments)
           );
           if (!instance) return this.module.createUnreachable();
           return this.makeCallDirect(instance, argumentExprs);
@@ -5106,11 +5126,7 @@ export class Compiler extends DiagnosticEmitter {
 
         // otherwise resolve the non-generic call as usual
         } else {
-          instance = this.resolver.resolveFunction(
-            prototype,
-            null,
-            this.currentFunction.flow.contextualTypeArguments
-          );
+          instance = this.resolver.resolveFunction(prototype, null);
         }
         if (!instance) return this.module.createUnreachable();
 
@@ -5249,7 +5265,7 @@ export class Compiler extends DiagnosticEmitter {
       typeArguments = this.resolver.resolveTypeArguments(
         assert(prototype.declaration.typeParameters),
         typeArgumentNodes,
-        this.currentFunction.flow.contextualTypeArguments,
+        makeMap<string,Type>(this.currentFunction.flow.contextualTypeArguments),
         expression
       );
     }
@@ -5416,17 +5432,22 @@ export class Compiler extends DiagnosticEmitter {
     if (thisArg) {
       let parent = assert(instance.parent);
       assert(parent.kind == ElementKind.CLASS);
-      if (getExpressionId(thisArg) == ExpressionId.GetLocal) {
-        flow.addScopedLocalAlias(
-          getGetLocalIndex(thisArg),
-          (<Class>parent).type,
-          "this"
-        );
-      } else {
-        let thisLocal = flow.addScopedLocal((<Class>parent).type, "this", false);
+      let thisType = assert(instance.signature.thisType);
+      let classType = thisType.classReference;
+      let superType = classType
+        ? classType.base
+          ? classType.base.type
+          : null
+        : null;
+      if (getExpressionId(thisArg) == ExpressionId.GetLocal) { // reuse this var
+        flow.addScopedLocalAlias(getGetLocalIndex(thisArg), thisType, "this");
+        if (superType) flow.addScopedLocalAlias(getGetLocalIndex(thisArg), superType, "super");
+      } else { // use a temp var
+        let thisLocal = flow.addScopedLocal(thisType, "this", false);
         body.push(
           module.createSetLocal(thisLocal.index, thisArg)
         );
+        if (superType) flow.addScopedLocalAlias(thisLocal.index, superType, "super");
       }
     }
     var parameterTypes = signature.parameterTypes;
@@ -5874,7 +5895,7 @@ export class Compiler extends DiagnosticEmitter {
   }
 
   compileElementAccessExpression(expression: ElementAccessExpression, contextualType: Type): ExpressionRef {
-    var target = this.resolver.resolveElementAccess(expression, this.currentFunction); // reports
+    var target = this.resolver.resolveElementAccess(expression, this.currentFunction, contextualType); // reports
     if (!target) return this.module.createUnreachable();
     switch (target.kind) {
       case ElementKind.CLASS: {
@@ -5924,7 +5945,7 @@ export class Compiler extends DiagnosticEmitter {
     var instance = this.compileFunctionUsingTypeArguments(
       prototype,
       [],
-      flow.contextualTypeArguments,
+      makeMap<string,Type>(flow.contextualTypeArguments),
       flow,
       declaration
     );
@@ -5987,7 +6008,7 @@ export class Compiler extends DiagnosticEmitter {
         if (currentFunction.is(CommonFlags.INSTANCE)) {
           let parent = assert(currentFunction.parent);
           assert(parent.kind == ElementKind.CLASS);
-          let thisType = (<Class>parent).type;
+          let thisType = assert(currentFunction.signature.thisType);
           if (currentFunction.is(CommonFlags.CONSTRUCTOR)) {
             if (!flow.is(FlowFlags.ALLOCATES)) {
               flow.set(FlowFlags.ALLOCATES);
@@ -6090,7 +6111,7 @@ export class Compiler extends DiagnosticEmitter {
         let instance = this.resolver.resolveFunction(
           <FunctionPrototype>target,
           null,
-          currentFunction.flow.contextualTypeArguments
+          makeMap<string,Type>(currentFunction.flow.contextualTypeArguments)
         );
         if (!(instance && this.compileFunction(instance))) return module.createUnreachable();
         let index = this.ensureFunctionTableEntry(instance);
@@ -6178,84 +6199,16 @@ export class Compiler extends DiagnosticEmitter {
             intValue
           );
         }
-        switch (contextualType.kind) {
-
-          // compile to contextualType if matching
-
-          case TypeKind.I8: {
-            if (i64_is_i8(intValue)) return module.createI32(i64_low(intValue));
-            break;
-          }
-          case TypeKind.U8: {
-            if (i64_is_u8(intValue)) return module.createI32(i64_low(intValue));
-            break;
-          }
-          case TypeKind.I16: {
-            if (i64_is_i16(intValue)) return module.createI32(i64_low(intValue));
-            break;
-          }
-          case TypeKind.U16: {
-            if (i64_is_u16(intValue)) return module.createI32(i64_low(intValue));
-            break;
-          }
-          case TypeKind.I32: {
-            if (i64_is_i32(intValue)) return module.createI32(i64_low(intValue));
-            break;
-          }
-          case TypeKind.U32: {
-            if (i64_is_u32(intValue)) return module.createI32(i64_low(intValue));
-            break;
-          }
-          case TypeKind.BOOL: {
-            if (i64_is_bool(intValue)) return module.createI32(i64_low(intValue));
-            break;
-          }
-          case TypeKind.ISIZE: {
-            if (!this.options.isWasm64) {
-              if (i64_is_i32(intValue)) return module.createI32(i64_low(intValue));
-              break;
-            }
-            return module.createI64(i64_low(intValue), i64_high(intValue));
-          }
-          case TypeKind.USIZE: {
-            if (!this.options.isWasm64) {
-              if (i64_is_u32(intValue)) return module.createI32(i64_low(intValue));
-              break;
-            }
-            return module.createI64(i64_low(intValue), i64_high(intValue));
-          }
-          case TypeKind.I64:
-          case TypeKind.U64: {
-            return module.createI64(i64_low(intValue), i64_high(intValue));
-          }
-          case TypeKind.F32: {
-            if (i64_is_f32(intValue)) return module.createF32(i64_to_f32(intValue));
-            break;
-          }
-          case TypeKind.F64: {
-            if (i64_is_f64(intValue)) return module.createF64(i64_to_f64(intValue));
-            break;
-          }
-          case TypeKind.VOID: {
-            break; // compiles to best fitting type below, being dropped
-          }
-          default: {
-            assert(false);
-            return module.createUnreachable();
-          }
-        }
-
-        // otherwise compile to best fitting native type
-
-        if (i64_is_i32(intValue)) {
-          this.currentType = Type.i32;
-          return module.createI32(i64_low(intValue));
-        } else if (i64_is_u32(intValue)) {
-          this.currentType = Type.u32;
-          return module.createI32(i64_low(intValue));
-        } else {
-          this.currentType = Type.i64;
-          return module.createI64(i64_low(intValue), i64_high(intValue));
+        let type = this.resolver.determineIntegerLiteralType(intValue, contextualType);
+        this.currentType = type;
+        switch (type.kind) {
+          case TypeKind.ISIZE: if (!this.options.isWasm64) return module.createI32(i64_low(intValue));
+          case TypeKind.I64: return module.createI64(i64_low(intValue), i64_high(intValue));
+          case TypeKind.USIZE: if (!this.options.isWasm64) return module.createI32(i64_low(intValue));
+          case TypeKind.U64: return module.createI64(i64_low(intValue), i64_high(intValue));
+          case TypeKind.F32: return module.createF32(i64_to_f32(intValue));
+          case TypeKind.F64: return module.createF64(i64_to_f64(intValue));
+          default: return module.createI32(i64_low(intValue));
         }
       }
       case LiteralKind.STRING: {
@@ -6435,7 +6388,11 @@ export class Compiler extends DiagnosticEmitter {
 
     // create the Array segment and return a pointer to it
     var arrayPrototype = assert(program.arrayPrototype);
-    var arrayInstance = assert(this.resolver.resolveClass(arrayPrototype, [ elementType ]));
+    var arrayInstance = assert(this.resolver.resolveClass(
+      arrayPrototype,
+      [ elementType ],
+      makeMap<string,Type>()
+    ));
     var arrayHeaderSize = (arrayInstance.currentMemoryOffset + 7) & ~7;
     if (hasGC) {
       buf = new Uint8Array(gcHeaderSize + arrayHeaderSize);
@@ -6503,9 +6460,11 @@ export class Compiler extends DiagnosticEmitter {
 
     // otherwise obtain the array type
     var arrayPrototype = assert(this.program.arrayPrototype);
-    if (!arrayPrototype || arrayPrototype.kind != ElementKind.CLASS_PROTOTYPE) return module.createUnreachable();
-    var arrayInstance = this.resolver.resolveClass(<ClassPrototype>arrayPrototype, [ elementType ]);
-    if (!arrayInstance) return module.createUnreachable();
+    var arrayInstance = assert(this.resolver.resolveClass(
+      <ClassPrototype>arrayPrototype,
+      [ elementType ],
+      makeMap<string,Type>()
+    ));
     var arrayType = arrayInstance.type;
 
     // and compile an explicit instantiation
@@ -6657,20 +6616,21 @@ export class Compiler extends DiagnosticEmitter {
       classInstance = this.resolver.resolveClass(
         classPrototype,
         classReference.typeArguments,
-        currentFunction.flow.contextualTypeArguments
+        makeMap<string,Type>(currentFunction.flow.contextualTypeArguments)
       );
     } else {
       classInstance = this.resolver.resolveClassInclTypeArguments(
         classPrototype,
         typeArguments,
-        currentFunction.flow.contextualTypeArguments,
+        makeMap<string,Type>(currentFunction.flow.contextualTypeArguments),
         expression
       );
     }
     if (!classInstance) return module.createUnreachable();
+    return this.compileInstantiate(classInstance, expression.arguments, expression);
+  }
 
-    var expr: ExpressionRef;
-
+  compileInstantiate(classInstance: Class, argumentExpressions: Expression[], reportNode: Node): ExpressionRef {
     // traverse to the top-most visible constructor
     var currentClassInstance: Class | null = classInstance;
     var constructorInstance: Function | null = null;
@@ -6680,14 +6640,21 @@ export class Compiler extends DiagnosticEmitter {
     } while (currentClassInstance = currentClassInstance.base);
 
     // if a constructor is present, call it with a zero `this`
+    var expr: ExpressionRef;
     if (constructorInstance) {
-      expr = this.compileCallDirect(constructorInstance, expression.arguments, expression,
-        options.usizeType.toNativeZero(module)
+      expr = this.compileCallDirect(constructorInstance, argumentExpressions, reportNode,
+        this.options.usizeType.toNativeZero(this.module)
       );
 
     // otherwise simply allocate a new instance and initialize its fields
     } else {
-      expr = this.makeAllocate(classInstance, expression);
+      if (argumentExpressions.length) {
+        this.error(
+          DiagnosticCode.Expected_0_arguments_but_got_1,
+          reportNode.range, "0", argumentExpressions.length.toString(10)
+        );
+      }
+      expr = this.makeAllocate(classInstance, reportNode);
     }
 
     this.currentType = classInstance.type;
@@ -6719,7 +6686,7 @@ export class Compiler extends DiagnosticEmitter {
   ): ExpressionRef {
     var module = this.module;
 
-    var target = this.resolver.resolvePropertyAccess(propertyAccess, this.currentFunction); // reports
+    var target = this.resolver.resolvePropertyAccess(propertyAccess, this.currentFunction, contextualType); // reports
     if (!target) return module.createUnreachable();
 
     switch (target.kind) {

@@ -3,8 +3,8 @@ import {
   HEADER_SIZE,
   allocateUnsafe,
   reallocateUnsafe,
-  loadUnsafe,
-  storeUnsafe
+  LOAD,
+  STORE
 } from "./internal/arraybuffer";
 
 import {
@@ -14,10 +14,9 @@ import {
 } from "./internal/string";
 
 import {
-  defaultComparator,
-  insertionSort,
-  weakHeapSort
-} from "./internal/array";
+  COMPARATOR,
+  SORT
+} from "./internal/sort";
 
 import {
   itoa,
@@ -32,6 +31,7 @@ import {
 } from "./builtins";
 
 export class Array<T> {
+  [key: number]: T; // compatibility only
 
   /* @internal */ buffer_: ArrayBuffer;
   /* @internal */ length_: i32;
@@ -72,17 +72,15 @@ export class Array<T> {
   }
 
   every(callbackfn: (element: T, index: i32, array: Array<T>) => bool): bool {
-    var buffer = this.buffer_;
-    for (let index = 0, toIndex = this.length_; index < toIndex && index < this.length_; ++index) {
-      if (!callbackfn(loadUnsafe<T,T>(buffer, index), index, this)) return false;
+    for (let index = 0, length = this.length_; index < min(length, this.length_); ++index) {
+      if (!callbackfn(LOAD<T>(this.buffer_, index), index, this)) return false;
     }
     return true;
   }
 
   findIndex(predicate: (element: T, index: i32, array: Array<T>) => bool): i32 {
-    var buffer = this.buffer_;
-    for (let index = 0, toIndex = this.length_; index < toIndex && index < this.length_; ++index) {
-      if (predicate(loadUnsafe<T,T>(buffer, index), index, this)) return index;
+    for (let index = 0, length = this.length_; index < min(length, this.length_); ++index) {
+      if (predicate(LOAD<T>(this.buffer_, index), index, this)) return index;
     }
     return -1;
   }
@@ -91,13 +89,13 @@ export class Array<T> {
   private __get(index: i32): T {
     var buffer = this.buffer_;
     return <u32>index < <u32>(buffer.byteLength >>> alignof<T>())
-      ? loadUnsafe<T,T>(buffer, index)
+      ? LOAD<T>(buffer, index)
       : <T>unreachable();
   }
 
   @operator("{}")
   private __unchecked_get(index: i32): T {
-    return loadUnsafe<T,T>(this.buffer_, index);
+    return LOAD<T>(this.buffer_, index);
   }
 
   @operator("[]=")
@@ -111,13 +109,13 @@ export class Array<T> {
       this.buffer_ = buffer;
       this.length_ = index + 1;
     }
-    storeUnsafe<T,T>(buffer, index, value);
+    STORE<T>(buffer, index, value);
     if (isManaged<T>()) __gc_link(changetype<usize>(this), changetype<usize>(value)); // tslint:disable-line
   }
 
   @operator("{}=")
   private __unchecked_set(index: i32, value: T): void {
-    storeUnsafe<T,T>(this.buffer_, index, value);
+    STORE<T>(this.buffer_, index, value);
     if (isManaged<T>()) __gc_link(changetype<usize>(this), changetype<usize>(value)); // tslint:disable-line
   }
 
@@ -138,7 +136,7 @@ export class Array<T> {
       }
     } else {
       for (; start < end; ++start) {
-        storeUnsafe<T,T>(buffer, start, value);
+        STORE<T>(buffer, start, value);
       }
     }
     return this;
@@ -155,7 +153,7 @@ export class Array<T> {
     if (fromIndex < 0) fromIndex = max(length + fromIndex, 0);
     var buffer = this.buffer_;
     while (fromIndex < length) {
-      if (loadUnsafe<T,T>(buffer, fromIndex) == searchElement) return fromIndex;
+      if (LOAD<T>(buffer, fromIndex) == searchElement) return fromIndex;
       ++fromIndex;
     }
     return -1;
@@ -168,7 +166,7 @@ export class Array<T> {
     else if (fromIndex >= length) fromIndex = length - 1;
     var buffer = this.buffer_;
     while (fromIndex >= 0) {                           // ^
-      if (loadUnsafe<T,T>(buffer, fromIndex) == searchElement) return fromIndex;
+      if (LOAD<T>(buffer, fromIndex) == searchElement) return fromIndex;
       --fromIndex;
     }
     return -1;
@@ -186,14 +184,14 @@ export class Array<T> {
       this.buffer_ = buffer;
     }
     this.length_ = newLength;
-    storeUnsafe<T,T>(buffer, length, element);
+    STORE<T>(buffer, length, element);
     if (isManaged<T>()) __gc_link(changetype<usize>(this), changetype<usize>(element)); // tslint:disable-line
     return newLength;
   }
 
   concat(items: Array<T>): Array<T> {
     var thisLen = this.length_;
-    var otherLen = items === null ? 0 : items.length_;
+    var otherLen = select(0, items.length_, items === null);
     var outLen = thisLen + otherLen;
     var out = new Array<T>(outLen);
 
@@ -228,7 +226,7 @@ export class Array<T> {
       from += count - 1;
       to   += count - 1;
       while (count) {
-        storeUnsafe<T,T>(buffer, to, loadUnsafe<T,T>(buffer, from));
+        STORE<T>(buffer, to, LOAD<T>(buffer, from));
         --from, --to, --count;
       }
     } else {
@@ -244,35 +242,31 @@ export class Array<T> {
   pop(): T {
     var length = this.length_;
     if (length < 1) throw new RangeError("Array is empty");
-    var element = loadUnsafe<T,T>(this.buffer_, --length);
+    var element = LOAD<T>(this.buffer_, --length);
     this.length_ = length;
     return element;
   }
 
   forEach(callbackfn: (value: T, index: i32, array: Array<T>) => void): void {
-    var buffer = this.buffer_;
-    for (let index = 0, toIndex = this.length_; index < toIndex && index < this.length_; ++index) {
-      callbackfn(loadUnsafe<T,T>(buffer, index), index, this);
+    for (let index = 0, length = this.length_; index < min(length, this.length_); ++index) {
+      callbackfn(LOAD<T>(this.buffer_, index), index, this);
     }
   }
 
   map<U>(callbackfn: (value: T, index: i32, array: Array<T>) => U): Array<U> {
-    var buffer = this.buffer_;
     var length = this.length_;
     var result = new Array<U>(length);
-    var resultBuffer = result.buffer_;
-    for (let index = 0; index < length && index < this.length_; ++index) {
-      storeUnsafe<U,U>(resultBuffer, index, callbackfn(loadUnsafe<T,T>(buffer, index), index, this));
+    var buffer = result.buffer_;
+    for (let index = 0; index < min(length, this.length_); ++index) {
+      STORE<U>(buffer, index, callbackfn(LOAD<T>(this.buffer_, index), index, this));
     }
     return result;
   }
 
   filter(callbackfn: (value: T, index: i32, array: Array<T>) => bool): Array<T> {
-    var buffer = this.buffer_;
-    var length = this.length_;
     var result = new Array<T>();
-    for (let index = 0; index < length && index < this.length_; ++index) {
-      let value = loadUnsafe<T,T>(buffer, index);
+    for (let index = 0, length = this.length_; index < min(length, this.length_); ++index) {
+      let value = LOAD<T>(this.buffer_, index);
       if (callbackfn(value, index, this)) result.push(value);
     }
     return result;
@@ -283,9 +277,8 @@ export class Array<T> {
     initialValue: U
   ): U {
     var accum = initialValue;
-    var buffer = this.buffer_;
-    for (let index = 0, toIndex = this.length_; index < toIndex && index < this.length_; ++index) {
-      accum = callbackfn(accum, loadUnsafe<T,T>(buffer, index), index, this);
+    for (let index = 0, length = this.length_; index < min(length, this.length_); ++index) {
+      accum = callbackfn(accum, LOAD<T>(this.buffer_, index), index, this);
     }
     return accum;
   }
@@ -295,9 +288,8 @@ export class Array<T> {
     initialValue: U
   ): U {
     var accum = initialValue;
-    var buffer = this.buffer_;
-    for (let index: i32 = this.length_ - 1; index >= 0; --index) {
-      accum = callbackfn(accum, loadUnsafe<T,T>(buffer, index), index, this);
+    for (let index = this.length_ - 1; index >= 0; --index) {
+      accum = callbackfn(accum, LOAD<T>(this.buffer_, index), index, this);
     }
     return accum;
   }
@@ -306,22 +298,21 @@ export class Array<T> {
     var length = this.length_;
     if (length < 1) throw new RangeError("Array is empty");
     var buffer = this.buffer_;
-    var element = loadUnsafe<T,T>(buffer, 0);
+    var element = LOAD<T>(buffer, 0);
     var lastIndex = length - 1;
     memory.copy(
       changetype<usize>(buffer) + HEADER_SIZE,
       changetype<usize>(buffer) + HEADER_SIZE + sizeof<T>(),
       <usize>lastIndex << alignof<T>()
     );
-    storeUnsafe<T,T>(buffer, lastIndex, <T>null);
+    STORE<T>(buffer, lastIndex, <T>null);
     this.length_ = lastIndex;
     return element;
   }
 
   some(callbackfn: (element: T, index: i32, array: Array<T>) => bool): bool {
-    var buffer = this.buffer_;
-    for (let index = 0, toIndex = this.length_; index < toIndex && index < this.length_; ++index) {
-      if (callbackfn(loadUnsafe<T,T>(buffer, index), index, this)) return true;
+    for (let index = 0, length = this.length_; index < min(length, this.length_); ++index) {
+      if (callbackfn(LOAD<T>(this.buffer_, index), index, this)) return true;
     }
     return false;
   }
@@ -343,58 +334,63 @@ export class Array<T> {
       changetype<usize>(buffer) + HEADER_SIZE,
       <usize>(capacity - 1) << alignof<T>()
     );
-    storeUnsafe<T,T>(buffer, 0, element);
+    STORE<T>(buffer, 0, element);
     this.length_ = newLength;
     if (isManaged<T>()) __gc_link(changetype<usize>(this), changetype<usize>(element)); // tslint:disable-line
     return newLength;
   }
 
   slice(begin: i32 = 0, end: i32 = i32.MAX_VALUE): Array<T> {
-    var length = this.length_;
-    if (begin < 0) begin = max(length + begin, 0);
-    else if (begin > length) begin = length;
-    if (end < 0) end = length + end; // no need to clamp
-    else if (end > length) end = length;
-    if (end < begin) end = begin;    // ^
-    var newLength = end - begin;
-    assert(newLength >= 0);
-    var sliced = new Array<T>(newLength);
-    if (newLength) {
+    var len = this.length_;
+    begin = begin < 0 ? max(begin + len, 0) : min(begin, len);
+    end = end < 0 ? max(end + len, 0) : min(end, len);
+    len = end - begin;
+    var sliced = new Array<T>(len);
+    if (len) {
       memory.copy(
         changetype<usize>(sliced.buffer_) + HEADER_SIZE,
         changetype<usize>(this.buffer_) + HEADER_SIZE + (<usize>begin << alignof<T>()),
-        <usize>newLength << alignof<T>()
+        <usize>len << alignof<T>()
       );
     }
     return sliced;
   }
 
-  splice(start: i32, deleteCount: i32 = i32.MAX_VALUE): void {
-    if (deleteCount < 1) return;
-    var length = this.length_;
-    if (start < 0) start = max(length + start, 0);
-    if (start >= length) return;
-    deleteCount = min(deleteCount, length - start);
-    var buffer = this.buffer_;
+  splice(start: i32, deleteCount: i32 = i32.MAX_VALUE): Array<T> {
+    var length  = this.length_;
+    start       = start < 0 ? max<i32>(length + start, 0) : min<i32>(start, length);
+    deleteCount = max<i32>(min<i32>(deleteCount, length - start), 0);
+    var buffer  = this.buffer_;
+    var spliced = new Array<T>(deleteCount);
+    var source  = changetype<usize>(buffer) + HEADER_SIZE + (<usize>start << alignof<T>());
     memory.copy(
-      changetype<usize>(buffer) + HEADER_SIZE + (<usize>start << alignof<T>()),
-      changetype<usize>(buffer) + HEADER_SIZE + (<usize>(start + deleteCount) << alignof<T>()),
+      changetype<usize>(spliced.buffer_) + HEADER_SIZE,
+      source,
       <usize>deleteCount << alignof<T>()
     );
+    var offset = start + deleteCount;
+    if (length != offset) {
+      memory.copy(
+        source,
+        changetype<usize>(buffer) + HEADER_SIZE + (<usize>offset << alignof<T>()),
+        <usize>(length - offset) << alignof<T>()
+      );
+    }
     this.length_ = length - deleteCount;
+    return spliced;
   }
 
   reverse(): Array<T> {
     var buffer = this.buffer_;
     for (let front = 0, back = this.length_ - 1; front < back; ++front, --back) {
-      let temp = loadUnsafe<T,T>(buffer, front);
-      storeUnsafe<T,T>(buffer, front, loadUnsafe<T,T>(buffer, back));
-      storeUnsafe<T,T>(buffer, back, temp);
+      let temp = LOAD<T>(buffer, front);
+      STORE<T>(buffer, front, LOAD<T>(buffer, back));
+      STORE<T>(buffer, back, temp);
     }
     return this;
   }
 
-  sort(comparator: (a: T, b: T) => i32 = defaultComparator<T>()): this {
+  sort(comparator: (a: T, b: T) => i32 = COMPARATOR<T>()): this {
     // TODO remove this when flow will allow trackcing null
     assert(comparator); // The comparison function must be a function
 
@@ -402,27 +398,16 @@ export class Array<T> {
     if (length <= 1) return this;
     var buffer = this.buffer_;
     if (length == 2) {
-      let a = loadUnsafe<T,T>(buffer, 1); // a = arr[1]
-      let b = loadUnsafe<T,T>(buffer, 0); // b = arr[0]
+      let a = LOAD<T>(buffer, 1); // a = arr[1]
+      let b = LOAD<T>(buffer, 0); // b = arr[0]
       if (comparator(a, b) < 0) {
-        storeUnsafe<T,T>(buffer, 1, b);   // arr[1] = b;
-        storeUnsafe<T,T>(buffer, 0, a);   // arr[0] = a;
+        STORE<T>(buffer, 1, b);   // arr[1] = b;
+        STORE<T>(buffer, 0, a);   // arr[0] = a;
       }
       return this;
     }
-
-    if (isReference<T>()) {
-      // TODO replace this to faster stable sort (TimSort) when it implemented
-      insertionSort<T>(buffer, 0, length, comparator);
-      return this;
-    } else {
-      if (length < 256) {
-        insertionSort<T>(buffer, 0, length, comparator);
-      } else {
-        weakHeapSort<T>(buffer, 0, length, comparator);
-      }
-      return this;
-    }
+    SORT<T>(buffer, 0, length, comparator);
+    return this;
   }
 
   join(separator: string = ","): string {
@@ -434,15 +419,14 @@ export class Array<T> {
     var sepLen = separator.length;
     var hasSeparator = sepLen != 0;
     if (value instanceof bool) {
-      if (!lastIndex) {
-        return select<string>("true", "false", loadUnsafe<T,bool>(buffer, 0));
-      }
+      if (!lastIndex) return select<string>("true", "false", LOAD<T,bool>(buffer, 0));
+
       let valueLen = 5; // max possible length of element len("false")
       let estLen = (valueLen + sepLen) * lastIndex + valueLen;
       let result = allocateUnsafeString(estLen);
       let offset = 0;
       for (let i = 0; i < lastIndex; ++i) {
-        value = loadUnsafe<T,bool>(buffer, i);
+        value = LOAD<T,bool>(buffer, i);
         valueLen = 4 + <i32>(!value);
         copyUnsafeString(result, offset, select<string>("true", "false", value), 0, valueLen);
         offset += valueLen;
@@ -451,7 +435,7 @@ export class Array<T> {
           offset += sepLen;
         }
       }
-      value = loadUnsafe<T,bool>(buffer, lastIndex);
+      value = LOAD<T,bool>(buffer, lastIndex);
       valueLen = 4 + <i32>(!value);
       copyUnsafeString(result, offset, select<string>("true", "false", value), 0, valueLen);
       offset += valueLen;
@@ -463,22 +447,21 @@ export class Array<T> {
       }
       return out;
     } else if (isInteger<T>()) {
-      if (!lastIndex) {
-        return changetype<string>(itoa<T>(loadUnsafe<T,T>(buffer, 0)));
-      }
+      if (!lastIndex) return changetype<string>(itoa<T>(LOAD<T>(buffer, 0)));
+
       const valueLen = (sizeof<T>() <= 4 ? 10 : 20) + <i32>isSigned<T>();
       let estLen = (valueLen + sepLen) * lastIndex + valueLen;
       let result = allocateUnsafeString(estLen);
       let offset = 0;
       for (let i = 0; i < lastIndex; ++i) {
-        value = loadUnsafe<T,T>(buffer, i);
+        value = LOAD<T>(buffer, i);
         offset += itoa_stream<T>(changetype<usize>(result), offset, value);
         if (hasSeparator) {
           copyUnsafeString(result, offset, separator, 0, sepLen);
           offset += sepLen;
         }
       }
-      value = loadUnsafe<T,T>(buffer, lastIndex);
+      value = LOAD<T>(buffer, lastIndex);
       offset += itoa_stream<T>(changetype<usize>(result), offset, value);
       let out = result;
       if (estLen > offset) {
@@ -487,22 +470,21 @@ export class Array<T> {
       }
       return out;
     } else if (isFloat<T>()) {
-      if (!lastIndex) {
-        return changetype<string>(dtoa(loadUnsafe<T,f64>(buffer, 0)));
-      }
+      if (!lastIndex) return changetype<string>(dtoa(LOAD<T,f64>(buffer, 0)));
+
       const valueLen = MAX_DOUBLE_LENGTH;
       let estLen = (valueLen + sepLen) * lastIndex + valueLen;
       let result = allocateUnsafeString(estLen);
       let offset = 0;
       for (let i = 0; i < lastIndex; ++i) {
-        value = loadUnsafe<T,f64>(buffer, i);
+        value = LOAD<T,f64>(buffer, i);
         offset += dtoa_stream(changetype<usize>(result), offset, value);
         if (hasSeparator) {
           copyUnsafeString(result, offset, separator, 0, sepLen);
           offset += sepLen;
         }
       }
-      value = loadUnsafe<T,f64>(buffer, lastIndex);
+      value = LOAD<T,f64>(buffer, lastIndex);
       offset += dtoa_stream(changetype<usize>(result), offset, value);
       let out = result;
       if (estLen > offset) {
@@ -511,17 +493,16 @@ export class Array<T> {
       }
       return out;
     } else if (isString<T>()) {
-      if (!lastIndex) {
-        return loadUnsafe<T,string>(buffer, 0);
-      }
+      if (!lastIndex) return LOAD<string>(buffer, 0);
+
       let estLen = 0;
       for (let i = 0, len = lastIndex + 1; i < len; ++i) {
-        estLen += loadUnsafe<T,string>(buffer, i).length;
+        estLen += LOAD<string>(buffer, i).length;
       }
       let offset = 0;
       let result = allocateUnsafeString(estLen + sepLen * lastIndex);
       for (let i = 0; i < lastIndex; ++i) {
-        value = loadUnsafe<T,String>(buffer, i);
+        value = LOAD<string>(buffer, i);
         if (value) {
           let valueLen = value.length;                          // tslint:disable-line:no-unsafe-any
           copyUnsafeString(result, offset, value, 0, valueLen); // tslint:disable-line:no-unsafe-any
@@ -532,7 +513,7 @@ export class Array<T> {
           offset += sepLen;
         }
       }
-      value = loadUnsafe<T,String>(buffer, lastIndex);
+      value = LOAD<string>(buffer, lastIndex);
       if (value) {
         let valueLen = value.length;                          // tslint:disable-line:no-unsafe-any
         copyUnsafeString(result, offset, value, 0, valueLen); // tslint:disable-line:no-unsafe-any
@@ -540,15 +521,15 @@ export class Array<T> {
       return result;
     } else if (isArray<T>()) {
       if (!lastIndex) {
-        value = loadUnsafe<T,T>(buffer, 0);
+        value = LOAD<T>(buffer, 0);
         return value ? value.join(separator) : ""; // tslint:disable-line:no-unsafe-any
       }
       for (let i = 0; i < lastIndex; ++i) {
-        value = loadUnsafe<T,T>(buffer, i);
+        value = LOAD<T>(buffer, i);
         if (value) result += value.join(separator); // tslint:disable-line:no-unsafe-any
         if (hasSeparator) result += separator;
       }
-      value = loadUnsafe<T,T>(buffer, lastIndex);
+      value = LOAD<T>(buffer, lastIndex);
       if (value) result += value.join(separator); // tslint:disable-line:no-unsafe-any
       return result;
     } else if (isReference<T>()) { // References
@@ -558,7 +539,7 @@ export class Array<T> {
       let result = allocateUnsafeString(estLen);
       let offset = 0;
       for (let i = 0; i < lastIndex; ++i) {
-        value = loadUnsafe<T,T>(buffer, i);
+        value = LOAD<T>(buffer, i);
         if (value) {
           copyUnsafeString(result, offset, changetype<String>("[object Object]"), 0, valueLen);
           offset += valueLen;
@@ -568,7 +549,7 @@ export class Array<T> {
           offset += sepLen;
         }
       }
-      if (loadUnsafe<T,T>(buffer, lastIndex)) {
+      if (LOAD<T>(buffer, lastIndex)) {
         copyUnsafeString(result, offset, changetype<String>("[object Object]"), 0, valueLen);
         offset += valueLen;
       }

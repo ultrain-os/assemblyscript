@@ -1,3 +1,4 @@
+import "allocator/arena";
 class A {
   a: i32 = 0;
   getName(): string {
@@ -29,7 +30,6 @@ function getObject(a: A): A {
 assert(getObject(new A()).getName() == 'a');
 assert(getObject(new B()).getName() == 'a');
 
-
 function compare<T>(a: T, b: T): T{
   if ( a == b){
     return a;
@@ -38,8 +38,8 @@ function compare<T>(a: T, b: T): T{
   }
 }
 
-assert( compare(12, 14) ==14);
-assert( compare(12.1, 14.4) ==14.4);
+assert( compare(12, 14) == 14);
+assert( compare(12.1, 14.4) == 14.4);
 
 var ele1 = 12;
 var ele2 = 23;

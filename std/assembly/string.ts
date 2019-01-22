@@ -11,7 +11,7 @@ import {
 } from "./internal/string";
 
 import {
-  storeUnsafe as storeUnsafeArray
+  STORE
 } from "./internal/arraybuffer";
 
 @sealed
@@ -413,6 +413,17 @@ export class String {
     return result;
   }
 
+  slice(beginIndex: i32, endIndex: i32 = i32.MAX_VALUE): String {
+    var length = this.length;
+    var begin = (beginIndex < 0) ? max(beginIndex + length, 0) : min(beginIndex, length);
+    var end = (endIndex < 0) ? max(endIndex + length, 0) : min(endIndex, length);
+    var len = end - begin;
+    if (len <= 0) return changetype<String>("");
+    var out = allocateUnsafe(len);
+    copyUnsafe(out, 0, this, begin, len);
+    return out;
+  }
+
   split(separator: String = null, limit: i32 = i32.MAX_VALUE): String[] {
     assert(this !== null);
     if (!limit) return new Array<String>();
@@ -436,11 +447,13 @@ export class String {
           ),
           HEADER_SIZE
         );
-        storeUnsafeArray<String,String>(buffer, i, char);
+        STORE<String>(buffer, i, char);
       }
       return result;
     } else if (!length) {
-      return <String[]>[changetype<String>("")];
+      let result = new Array<String>(1);
+      unchecked(result[0] = changetype<String>(""));
+      return result;
     }
     var result = new Array<String>();
     var end = 0, start = 0, i = 0;
@@ -456,7 +469,11 @@ export class String {
       if (++i == limit) return result;
       start = end + sepLen;
     }
-    if (!start) return <String[]>[this];
+    if (!start) {
+      let result = new Array<String>(1);
+      unchecked(result[0] = this);
+      return result;
+    }
     var len = length - start;
     if (len > 0) {
       let out = allocateUnsafe(len);

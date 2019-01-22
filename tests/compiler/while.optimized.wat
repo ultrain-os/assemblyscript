@@ -13,21 +13,21 @@
  (start $start)
  (func $start (; 1 ;) (type $v)
   (local $0 i32)
-  block $folding-inner0
-   loop $continue|0
+  loop $continue|0
+   get_global $while/n
+   if
     get_global $while/n
-    if
-     get_global $while/n
-     i32.const 1
-     i32.sub
-     set_global $while/n
-     get_global $while/m
-     i32.const 1
-     i32.add
-     set_global $while/m
-     br $continue|0
-    end
+    i32.const 1
+    i32.sub
+    set_global $while/n
+    get_global $while/m
+    i32.const 1
+    i32.add
+    set_global $while/m
+    br $continue|0
    end
+  end
+  block $folding-inner0
    get_global $while/n
    if
     br $folding-inner0

@@ -13,9 +13,9 @@
  (export "table" (table $0))
  (start $start)
  (func $start (; 1 ;) (type $v)
+  i32.const 2
+  set_global $logical/i
   block $folding-inner0
-   i32.const 2
-   set_global $logical/i
    get_global $logical/i
    i32.const 2
    i32.ne

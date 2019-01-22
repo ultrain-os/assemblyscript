@@ -83,7 +83,8 @@ import {
 
   mangleInternalPath,
   nodeIsCallable,
-  nodeIsGenericCallable
+  nodeIsGenericCallable,
+  IndexSignatureDeclaration
 } from "./ast";
 
 /** Parser interface. */
@@ -457,6 +458,23 @@ export class Parser extends DiagnosticEmitter {
       let identifier = Node.createIdentifierExpression(tn.readIdentifier(), tn.range());
       let parameters = new Array<TypeNode>();
       let nullable = false;
+
+      // Identifier ('.' Identifier)+
+      while (tn.skip(Token.DOT)) {
+        if (tn.skip(Token.IDENTIFIER)) {
+          // TODO: this works for now, but the representation isn't great
+          identifier = Node.createIdentifierExpression(
+            identifier.text + "." + tn.readIdentifier(),
+            tn.range(identifier.range.start, tn.pos)
+          );
+        } else {
+          this.error(
+            DiagnosticCode.Identifier_expected,
+            tn.range(tn.pos)
+          );
+          return null;
+        }
+      }
 
       // Name<T>
       if (tn.skip(Token.LESSTHAN)) {
@@ -926,9 +944,19 @@ export class Parser extends DiagnosticEmitter {
     // at '<': TypeParameter (',' TypeParameter)* '>'
 
     var typeParameters = new Array<TypeParameterNode>();
+    var seenOptional = false;
     while (!tn.skip(Token.GREATERTHAN)) {
       let typeParameter = this.parseTypeParameter(tn);
       if (!typeParameter) return null;
+      if (typeParameter.defaultType !== null) {
+        seenOptional = true;
+      } else if (seenOptional) {
+        this.error(
+          DiagnosticCode.Required_type_parameters_may_not_follow_optional_type_parameters,
+          typeParameter.range
+        );
+        typeParameter.defaultType = null;
+      }
       typeParameters.push(<TypeParameterNode>typeParameter);
       if (!tn.skip(Token.COMMA)) {
         if (tn.skip(Token.GREATERTHAN)) {
@@ -955,7 +983,7 @@ export class Parser extends DiagnosticEmitter {
     tn: Tokenizer
   ): TypeParameterNode | null {
 
-    // before: Identifier ('extends' Type)?
+    // before: Identifier ('extends' Type)? ('=' Type)?
 
     if (tn.next() == Token.IDENTIFIER) {
       let identifier = Node.createIdentifierExpression(
@@ -975,9 +1003,23 @@ export class Parser extends DiagnosticEmitter {
         }
         extendsType = <TypeNode>t;
       }
+      let defaultType: TypeNode | null = null;
+      if (tn.skip(Token.EQUALS)) {
+        let t = this.parseType(tn);
+        if (!t) return null;
+        if (t.kind != NodeKind.TYPE) {
+          this.error(
+            DiagnosticCode.Operation_not_supported,
+            t.range
+          );
+          return null;
+        }
+        defaultType = <TypeNode>t;
+      }
       return Node.createTypeParameter(
         identifier,
         extendsType,
+        defaultType,
         Range.join(identifier.range, tn.range())
       );
     } else {
@@ -1606,16 +1648,18 @@ export class Parser extends DiagnosticEmitter {
     var isInterface = parent.kind == NodeKind.INTERFACEDECLARATION;
 
     var decorators = new Array<DecoratorNode>();
-    while (tn.skip(Token.AT)) {
-      let decorator = this.parseDecorator(tn);
-      if (!decorator) break;
+    if (tn.skip(Token.AT)) {
+      do {
+        let decorator = this.parseDecorator(tn);
+        if (!decorator) break;
+        decorators.push(<DecoratorNode>decorator);
+      } while (tn.skip(Token.AT));
       if (isInterface) {
         this.error(
           DiagnosticCode.Decorators_are_not_valid_here,
-          decorator.range
+          Range.join(decorators[0].range, decorators[decorators.length - 1].range)
         );
       }
-      decorators.push(<DecoratorNode>decorator);
     }
 
     // inherit ambient status
@@ -1624,6 +1668,8 @@ export class Parser extends DiagnosticEmitter {
     // implemented methods are virtual
     if (isInterface) flags |= CommonFlags.VIRTUAL;
 
+    var accessStart = 0;
+    var accessEnd = 0;
     if (tn.skip(Token.PUBLIC)) {
       if (isInterface) {
         this.error(
@@ -1632,6 +1678,8 @@ export class Parser extends DiagnosticEmitter {
         );
       }
       flags |= CommonFlags.PUBLIC;
+      accessStart = tn.tokenPos;
+      accessEnd = tn.pos;
     } else if (tn.skip(Token.PRIVATE)) {
       if (isInterface) {
         this.error(
@@ -1640,6 +1688,8 @@ export class Parser extends DiagnosticEmitter {
         );
       }
       flags |= CommonFlags.PRIVATE;
+      accessStart = tn.tokenPos;
+      accessEnd = tn.pos;
     } else if (tn.skip(Token.PROTECTED)) {
       if (isInterface) {
         this.error(
@@ -1648,12 +1698,14 @@ export class Parser extends DiagnosticEmitter {
         );
       }
       flags |= CommonFlags.PROTECTED;
+      accessStart = tn.tokenPos;
+      accessEnd = tn.pos;
     }
 
-    var staticStart: i32 = 0;
-    var staticEnd: i32 = 0;
-    var abstractStart: i32 = 0;
-    var abstractEnd: i32 = 0;
+    var staticStart = 0;
+    var staticEnd = 0;
+    var abstractStart = 0;
+    var abstractEnd = 0;
     if (tn.skip(Token.STATIC)) {
       if (isInterface) {
         this.error(
@@ -1677,9 +1729,7 @@ export class Parser extends DiagnosticEmitter {
         abstractStart = tn.tokenPos;
         abstractEnd = tn.pos;
       }
-      if (parent.flags & CommonFlags.GENERIC) {
-        flags |= CommonFlags.GENERIC_CONTEXT;
-      }
+      if (parent.flags & CommonFlags.GENERIC) flags |= CommonFlags.GENERIC_CONTEXT;
     }
 
     var readonlyStart: i32 = 0;
@@ -1717,7 +1767,7 @@ export class Parser extends DiagnosticEmitter {
         }
       } else if (tn.skip(Token.SET)) {
         if (tn.peek(true, IdentifierHandling.PREFER) == Token.IDENTIFIER && !tn.nextTokenOnNewLine) {
-          flags |= CommonFlags.SET | CommonFlags.SET;
+          flags |= CommonFlags.SET;
           isSetter = true;
           setStart = tn.tokenPos;
           setEnd = tn.pos;
@@ -1754,17 +1804,60 @@ export class Parser extends DiagnosticEmitter {
       }
     }
 
-    if (!isConstructor && !tn.skipIdentifier()) {
-      this.error(
-        DiagnosticCode.Identifier_expected,
-        tn.range()
-      );
-      return null;
+    var name: IdentifierExpression;
+    if (isConstructor) {
+      name = Node.createConstructorExpression(tn.range());
+    } else {
+      if (!(isGetter || isSetter) && tn.skip(Token.OPENBRACKET)) {
+        // TODO: also handle symbols, which might have some of these modifiers
+        if (flags & CommonFlags.PUBLIC) {
+          this.error(
+            DiagnosticCode._0_modifier_cannot_be_used_here,
+            tn.range(accessStart, accessEnd), "public"
+          ); // recoverable
+        } else if (flags & CommonFlags.PROTECTED) {
+          this.error(
+            DiagnosticCode._0_modifier_cannot_be_used_here,
+            tn.range(accessStart, accessEnd), "protected"
+          ); // recoverable
+        } else if (flags & CommonFlags.PRIVATE) {
+          this.error(
+            DiagnosticCode._0_modifier_cannot_be_used_here,
+            tn.range(accessStart, accessEnd), "protected"
+          ); // recoverable
+        }
+        if (flags & CommonFlags.STATIC) {
+          this.error(
+            DiagnosticCode._0_modifier_cannot_be_used_here,
+            tn.range(staticStart, staticEnd), "static"
+          ); // recoverable
+        }
+        if (flags & CommonFlags.ABSTRACT) {
+          this.error(
+            DiagnosticCode._0_modifier_cannot_be_used_here,
+            tn.range(abstractStart, abstractEnd), "abstract"
+          ); // recoverable
+        }
+        if (flags & CommonFlags.READONLY) {
+          this.error(
+            DiagnosticCode._0_modifier_cannot_be_used_here,
+            tn.range(readonlyStart, readonlyEnd), "readonly"
+          ); // recoverable
+        }
+        let retIndex = this.parseIndexSignatureDeclaration(tn, decorators);
+        if (!retIndex) return null;
+        tn.skip(Token.SEMICOLON);
+        return retIndex;
+      }
+      if (!tn.skipIdentifier()) {
+        this.error(
+          DiagnosticCode.Identifier_expected,
+          tn.range()
+        );
+        return null;
+      }
+      name = Node.createIdentifierExpression(tn.readIdentifier(), tn.range());
     }
-
-    var name = isConstructor
-      ? Node.createConstructorExpression(tn.range())
-      : Node.createIdentifierExpression(tn.readIdentifier(), tn.range());
     var typeParameters: TypeParameterNode[] | null = null;
     if (tn.skip(Token.LESSTHAN)) {
       let typeParametersStart = tn.tokenPos;
@@ -1979,6 +2072,69 @@ export class Parser extends DiagnosticEmitter {
       );
       tn.skip(Token.SEMICOLON);
       return retField;
+    }
+    return null;
+  }
+
+  parseIndexSignatureDeclaration(tn: Tokenizer, decorators: DecoratorNode[]): IndexSignatureDeclaration | null {
+
+    // at: '[': 'key' ':' Type ']' ':' Type
+
+    if (decorators.length) {
+      this.error(
+        DiagnosticCode.Decorators_are_not_valid_here,
+        Range.join(decorators[0].range, decorators[decorators.length - 1].range)
+      ); // recoverable
+    }
+
+    var start = tn.tokenPos;
+    if (tn.skipIdentifier()) {
+      let id = tn.readIdentifier();
+      if (id == "key") {
+        if (tn.skip(Token.COLON)) {
+          let keyType = this.parseType(tn);
+          if (!keyType) return null;
+          if (keyType.kind != NodeKind.TYPE) {
+            this.error(
+              DiagnosticCode.Type_expected,
+              tn.range()
+            );
+            return null;
+          }
+          if (tn.skip(Token.CLOSEBRACKET)) {
+            if (tn.skip(Token.COLON)) {
+              let valueType = this.parseType(tn);
+              if (!valueType) return null;
+              return Node.createIndexSignatureDeclaration(<TypeNode>keyType, valueType, tn.range(start, tn.pos));
+            } else {
+              this.error(
+                DiagnosticCode._0_expected,
+                tn.range(), ":"
+              );
+            }
+          } else {
+            this.error(
+              DiagnosticCode._0_expected,
+              tn.range(), "]"
+            );
+          }
+        } else {
+          this.error(
+            DiagnosticCode._0_expected,
+            tn.range(), ":"
+          );
+        }
+      } else {
+        this.error(
+          DiagnosticCode._0_expected,
+          tn.range(), "key"
+        );
+      }
+    } else {
+      this.error(
+        DiagnosticCode.Identifier_expected,
+        tn.range()
+      );
     }
     return null;
   }

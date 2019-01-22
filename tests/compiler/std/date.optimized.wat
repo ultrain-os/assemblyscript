@@ -82,11 +82,11 @@
  (func $start (; 4 ;) (type $v)
   (local $0 i32)
   (local $1 i64)
+  i32.const 40
+  set_global $~lib/allocator/arena/startOffset
+  get_global $~lib/allocator/arena/startOffset
+  set_global $~lib/allocator/arena/offset
   block $folding-inner0
-   i32.const 40
-   set_global $~lib/allocator/arena/startOffset
-   get_global $~lib/allocator/arena/startOffset
-   set_global $~lib/allocator/arena/offset
    i32.const 1970
    i32.const 0
    i32.const 1
@@ -142,21 +142,21 @@
    i64.store
    get_local $0
    set_global $std/date/date
+   get_global $std/date/creationTime
    get_global $std/date/date
    i64.load
-   get_global $std/date/creationTime
    i64.ne
    br_if $folding-inner0
    get_global $std/date/date
+   tee_local $0
    get_global $std/date/creationTime
    i64.const 1
    i64.add
+   tee_local $1
    i64.store
-   get_global $std/date/date
+   get_local $0
    i64.load
-   get_global $std/date/creationTime
-   i64.const 1
-   i64.add
+   get_local $1
    i64.ne
    br_if $folding-inner0
    return

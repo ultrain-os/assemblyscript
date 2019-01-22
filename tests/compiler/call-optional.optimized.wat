@@ -38,26 +38,26 @@
  (func $start (; 2 ;) (type $v)
   (local $0 i32)
   (local $1 i32)
-  block $folding-inner0
-   i32.const 1
-   set_global $~argc
-   block $2of2
-    block $1of2
-     block $0of2
-      block $outOfRange
-       get_global $~argc
-       i32.const 1
-       i32.sub
-       br_table $0of2 $1of2 $2of2 $outOfRange
-      end
-      unreachable
+  i32.const 1
+  set_global $~argc
+  block $2of2
+   block $1of2
+    block $0of2
+     block $outOfRange
+      get_global $~argc
+      i32.const 1
+      i32.sub
+      br_table $0of2 $1of2 $2of2 $outOfRange
      end
-     i32.const -1
-     set_local $0
+     unreachable
     end
-    i32.const -2
-    set_local $1
+    i32.const -1
+    set_local $0
    end
+   i32.const -2
+   set_local $1
+  end
+  block $folding-inner0
    get_local $0
    i32.const 3
    i32.add

@@ -3,6 +3,7 @@
  (type $iii (func (param i32 i32) (result i32)))
  (type $v (func))
  (type $iiiv (func (param i32 i32 i32)))
+ (type $iv (func (param i32)))
  (import "env" "abort" (func $~lib/env/abort))
  (memory $0 1)
  (data (i32.const 8) "\00\00\00\00\00\00\00\00")
@@ -37,261 +38,7 @@
   i32.sub
   i32.shl
  )
- (func $~lib/internal/memory/memset (; 2 ;) (type $iiiv) (param $0 i32) (param $1 i32) (param $2 i32)
-  (local $3 i32)
-  (local $4 i32)
-  (local $5 i64)
-  get_local $2
-  i32.eqz
-  if
-   return
-  end
-  get_local $0
-  get_local $1
-  i32.store8
-  get_local $0
-  get_local $2
-  i32.add
-  i32.const 1
-  i32.sub
-  get_local $1
-  i32.store8
-  get_local $2
-  i32.const 2
-  i32.le_u
-  if
-   return
-  end
-  get_local $0
-  i32.const 1
-  i32.add
-  get_local $1
-  i32.store8
-  get_local $0
-  i32.const 2
-  i32.add
-  get_local $1
-  i32.store8
-  get_local $0
-  get_local $2
-  i32.add
-  i32.const 2
-  i32.sub
-  get_local $1
-  i32.store8
-  get_local $0
-  get_local $2
-  i32.add
-  i32.const 3
-  i32.sub
-  get_local $1
-  i32.store8
-  get_local $2
-  i32.const 6
-  i32.le_u
-  if
-   return
-  end
-  get_local $0
-  i32.const 3
-  i32.add
-  get_local $1
-  i32.store8
-  get_local $0
-  get_local $2
-  i32.add
-  i32.const 4
-  i32.sub
-  get_local $1
-  i32.store8
-  get_local $2
-  i32.const 8
-  i32.le_u
-  if
-   return
-  end
-  i32.const 0
-  get_local $0
-  i32.sub
-  i32.const 3
-  i32.and
-  set_local $3
-  get_local $0
-  get_local $3
-  i32.add
-  set_local $0
-  get_local $2
-  get_local $3
-  i32.sub
-  set_local $2
-  get_local $2
-  i32.const -4
-  i32.and
-  set_local $2
-  i32.const -1
-  i32.const 255
-  i32.div_u
-  get_local $1
-  i32.const 255
-  i32.and
-  i32.mul
-  set_local $4
-  get_local $0
-  get_local $4
-  i32.store
-  get_local $0
-  get_local $2
-  i32.add
-  i32.const 4
-  i32.sub
-  get_local $4
-  i32.store
-  get_local $2
-  i32.const 8
-  i32.le_u
-  if
-   return
-  end
-  get_local $0
-  i32.const 4
-  i32.add
-  get_local $4
-  i32.store
-  get_local $0
-  i32.const 8
-  i32.add
-  get_local $4
-  i32.store
-  get_local $0
-  get_local $2
-  i32.add
-  i32.const 12
-  i32.sub
-  get_local $4
-  i32.store
-  get_local $0
-  get_local $2
-  i32.add
-  i32.const 8
-  i32.sub
-  get_local $4
-  i32.store
-  get_local $2
-  i32.const 24
-  i32.le_u
-  if
-   return
-  end
-  get_local $0
-  i32.const 12
-  i32.add
-  get_local $4
-  i32.store
-  get_local $0
-  i32.const 16
-  i32.add
-  get_local $4
-  i32.store
-  get_local $0
-  i32.const 20
-  i32.add
-  get_local $4
-  i32.store
-  get_local $0
-  i32.const 24
-  i32.add
-  get_local $4
-  i32.store
-  get_local $0
-  get_local $2
-  i32.add
-  i32.const 28
-  i32.sub
-  get_local $4
-  i32.store
-  get_local $0
-  get_local $2
-  i32.add
-  i32.const 24
-  i32.sub
-  get_local $4
-  i32.store
-  get_local $0
-  get_local $2
-  i32.add
-  i32.const 20
-  i32.sub
-  get_local $4
-  i32.store
-  get_local $0
-  get_local $2
-  i32.add
-  i32.const 16
-  i32.sub
-  get_local $4
-  i32.store
-  i32.const 24
-  get_local $0
-  i32.const 4
-  i32.and
-  i32.add
-  set_local $3
-  get_local $0
-  get_local $3
-  i32.add
-  set_local $0
-  get_local $2
-  get_local $3
-  i32.sub
-  set_local $2
-  get_local $4
-  i64.extend_u/i32
-  get_local $4
-  i64.extend_u/i32
-  i64.const 32
-  i64.shl
-  i64.or
-  set_local $5
-  block $break|0
-   loop $continue|0
-    get_local $2
-    i32.const 32
-    i32.ge_u
-    if
-     block
-      get_local $0
-      get_local $5
-      i64.store
-      get_local $0
-      i32.const 8
-      i32.add
-      get_local $5
-      i64.store
-      get_local $0
-      i32.const 16
-      i32.add
-      get_local $5
-      i64.store
-      get_local $0
-      i32.const 24
-      i32.add
-      get_local $5
-      i64.store
-      get_local $2
-      i32.const 32
-      i32.sub
-      set_local $2
-      get_local $0
-      i32.const 32
-      i32.add
-      set_local $0
-     end
-     br $continue|0
-    end
-   end
-  end
- )
- (func $~lib/allocator/arena/__memory_allocate (; 3 ;) (type $ii) (param $0 i32) (result i32)
+ (func $~lib/allocator/arena/__memory_allocate (; 2 ;) (type $ii) (param $0 i32) (result i32)
   (local $1 i32)
   (local $2 i32)
   (local $3 i32)
@@ -370,7 +117,7 @@
   set_global $~lib/allocator/arena/offset
   get_local $1
  )
- (func $~lib/internal/arraybuffer/allocateUnsafe (; 4 ;) (type $ii) (param $0 i32) (result i32)
+ (func $~lib/internal/arraybuffer/allocateUnsafe (; 3 ;) (type $ii) (param $0 i32) (result i32)
   (local $1 i32)
   (local $2 i32)
   get_local $0
@@ -395,7 +142,7 @@
   i32.store
   get_local $1
  )
- (func $~lib/internal/memory/memcpy (; 5 ;) (type $iiiv) (param $0 i32) (param $1 i32) (param $2 i32)
+ (func $~lib/internal/memory/memcpy (; 4 ;) (type $iiiv) (param $0 i32) (param $1 i32) (param $2 i32)
   (local $3 i32)
   (local $4 i32)
   (local $5 i32)
@@ -1596,7 +1343,7 @@
    i32.store8
   end
  )
- (func $~lib/internal/memory/memmove (; 6 ;) (type $iiiv) (param $0 i32) (param $1 i32) (param $2 i32)
+ (func $~lib/internal/memory/memmove (; 5 ;) (type $iiiv) (param $0 i32) (param $1 i32) (param $2 i32)
   (local $3 i32)
   get_local $0
   get_local $1
@@ -1823,12 +1570,268 @@
    end
   end
  )
- (func $~lib/internal/arraybuffer/reallocateUnsafe (; 7 ;) (type $iii) (param $0 i32) (param $1 i32) (result i32)
+ (func $~lib/allocator/arena/__memory_free (; 6 ;) (type $iv) (param $0 i32)
+  nop
+ )
+ (func $~lib/internal/memory/memset (; 7 ;) (type $iiiv) (param $0 i32) (param $1 i32) (param $2 i32)
+  (local $3 i32)
+  (local $4 i32)
+  (local $5 i64)
+  get_local $2
+  i32.eqz
+  if
+   return
+  end
+  get_local $0
+  get_local $1
+  i32.store8
+  get_local $0
+  get_local $2
+  i32.add
+  i32.const 1
+  i32.sub
+  get_local $1
+  i32.store8
+  get_local $2
+  i32.const 2
+  i32.le_u
+  if
+   return
+  end
+  get_local $0
+  i32.const 1
+  i32.add
+  get_local $1
+  i32.store8
+  get_local $0
+  i32.const 2
+  i32.add
+  get_local $1
+  i32.store8
+  get_local $0
+  get_local $2
+  i32.add
+  i32.const 2
+  i32.sub
+  get_local $1
+  i32.store8
+  get_local $0
+  get_local $2
+  i32.add
+  i32.const 3
+  i32.sub
+  get_local $1
+  i32.store8
+  get_local $2
+  i32.const 6
+  i32.le_u
+  if
+   return
+  end
+  get_local $0
+  i32.const 3
+  i32.add
+  get_local $1
+  i32.store8
+  get_local $0
+  get_local $2
+  i32.add
+  i32.const 4
+  i32.sub
+  get_local $1
+  i32.store8
+  get_local $2
+  i32.const 8
+  i32.le_u
+  if
+   return
+  end
+  i32.const 0
+  get_local $0
+  i32.sub
+  i32.const 3
+  i32.and
+  set_local $3
+  get_local $0
+  get_local $3
+  i32.add
+  set_local $0
+  get_local $2
+  get_local $3
+  i32.sub
+  set_local $2
+  get_local $2
+  i32.const -4
+  i32.and
+  set_local $2
+  i32.const -1
+  i32.const 255
+  i32.div_u
+  get_local $1
+  i32.const 255
+  i32.and
+  i32.mul
+  set_local $4
+  get_local $0
+  get_local $4
+  i32.store
+  get_local $0
+  get_local $2
+  i32.add
+  i32.const 4
+  i32.sub
+  get_local $4
+  i32.store
+  get_local $2
+  i32.const 8
+  i32.le_u
+  if
+   return
+  end
+  get_local $0
+  i32.const 4
+  i32.add
+  get_local $4
+  i32.store
+  get_local $0
+  i32.const 8
+  i32.add
+  get_local $4
+  i32.store
+  get_local $0
+  get_local $2
+  i32.add
+  i32.const 12
+  i32.sub
+  get_local $4
+  i32.store
+  get_local $0
+  get_local $2
+  i32.add
+  i32.const 8
+  i32.sub
+  get_local $4
+  i32.store
+  get_local $2
+  i32.const 24
+  i32.le_u
+  if
+   return
+  end
+  get_local $0
+  i32.const 12
+  i32.add
+  get_local $4
+  i32.store
+  get_local $0
+  i32.const 16
+  i32.add
+  get_local $4
+  i32.store
+  get_local $0
+  i32.const 20
+  i32.add
+  get_local $4
+  i32.store
+  get_local $0
+  i32.const 24
+  i32.add
+  get_local $4
+  i32.store
+  get_local $0
+  get_local $2
+  i32.add
+  i32.const 28
+  i32.sub
+  get_local $4
+  i32.store
+  get_local $0
+  get_local $2
+  i32.add
+  i32.const 24
+  i32.sub
+  get_local $4
+  i32.store
+  get_local $0
+  get_local $2
+  i32.add
+  i32.const 20
+  i32.sub
+  get_local $4
+  i32.store
+  get_local $0
+  get_local $2
+  i32.add
+  i32.const 16
+  i32.sub
+  get_local $4
+  i32.store
+  i32.const 24
+  get_local $0
+  i32.const 4
+  i32.and
+  i32.add
+  set_local $3
+  get_local $0
+  get_local $3
+  i32.add
+  set_local $0
+  get_local $2
+  get_local $3
+  i32.sub
+  set_local $2
+  get_local $4
+  i64.extend_u/i32
+  get_local $4
+  i64.extend_u/i32
+  i64.const 32
+  i64.shl
+  i64.or
+  set_local $5
+  block $break|0
+   loop $continue|0
+    get_local $2
+    i32.const 32
+    i32.ge_u
+    if
+     block
+      get_local $0
+      get_local $5
+      i64.store
+      get_local $0
+      i32.const 8
+      i32.add
+      get_local $5
+      i64.store
+      get_local $0
+      i32.const 16
+      i32.add
+      get_local $5
+      i64.store
+      get_local $0
+      i32.const 24
+      i32.add
+      get_local $5
+      i64.store
+      get_local $2
+      i32.const 32
+      i32.sub
+      set_local $2
+      get_local $0
+      i32.const 32
+      i32.add
+      set_local $0
+     end
+     br $continue|0
+    end
+   end
+  end
+ )
+ (func $~lib/internal/arraybuffer/reallocateUnsafe (; 8 ;) (type $iii) (param $0 i32) (param $1 i32) (result i32)
   (local $2 i32)
   (local $3 i32)
   (local $4 i32)
   (local $5 i32)
-  (local $6 i32)
   get_local $0
   i32.load
   set_local $2
@@ -1854,57 +1857,50 @@
     get_local $0
     get_local $1
     i32.store
-    get_local $0
-    get_global $~lib/internal/arraybuffer/HEADER_SIZE
-    i32.add
-    get_local $2
-    i32.add
-    set_local $3
-    i32.const 0
-    set_local $4
-    get_local $1
-    get_local $2
-    i32.sub
-    set_local $5
-    get_local $3
-    get_local $4
-    get_local $5
-    call $~lib/internal/memory/memset
    else    
     get_local $1
     call $~lib/internal/arraybuffer/allocateUnsafe
-    set_local $5
-    get_local $5
+    set_local $3
+    get_local $3
     get_global $~lib/internal/arraybuffer/HEADER_SIZE
     i32.add
     set_local $4
     get_local $0
     get_global $~lib/internal/arraybuffer/HEADER_SIZE
     i32.add
-    set_local $3
+    set_local $5
     get_local $4
-    get_local $3
+    get_local $5
     get_local $2
     call $~lib/internal/memory/memmove
-    get_local $5
-    get_global $~lib/internal/arraybuffer/HEADER_SIZE
-    i32.add
-    get_local $2
-    i32.add
-    set_local $3
-    i32.const 0
-    set_local $4
-    get_local $1
-    get_local $2
-    i32.sub
-    set_local $6
+    block $~lib/memory/memory.free|inlined.0
+     block
+      get_local $0
+      call $~lib/allocator/arena/__memory_free
+      br $~lib/memory/memory.free|inlined.0
+      unreachable
+     end
+     unreachable
+    end
     get_local $3
-    get_local $4
-    get_local $6
-    call $~lib/internal/memory/memset
-    get_local $5
-    return
+    set_local $0
    end
+   get_local $0
+   get_global $~lib/internal/arraybuffer/HEADER_SIZE
+   i32.add
+   get_local $2
+   i32.add
+   set_local $3
+   i32.const 0
+   set_local $5
+   get_local $1
+   get_local $2
+   i32.sub
+   set_local $4
+   get_local $3
+   get_local $5
+   get_local $4
+   call $~lib/internal/memory/memset
   else   
    get_local $1
    get_local $2
@@ -1925,11 +1921,12 @@
   end
   get_local $0
  )
- (func $~lib/array/Array<u8>#push (; 8 ;) (type $iii) (param $0 i32) (param $1 i32) (result i32)
+ (func $~lib/array/Array<u8>#push (; 9 ;) (type $iii) (param $0 i32) (param $1 i32) (result i32)
   (local $2 i32)
   (local $3 i32)
   (local $4 i32)
   (local $5 i32)
+  (local $6 i32)
   get_local $0
   i32.load offset=4
   set_local $2
@@ -1969,16 +1966,20 @@
   get_local $0
   get_local $5
   i32.store offset=4
+  i32.const 0
+  set_local $6
   get_local $3
   get_local $2
   i32.const 0
   i32.shl
   i32.add
+  get_local $6
+  i32.add
   get_local $1
   i32.store8 offset=8
   get_local $5
  )
- (func $std/array-bracket/toArray (; 9 ;) (type $ii) (param $0 i32) (result i32)
+ (func $std/array-bracket/toArray (; 10 ;) (type $ii) (param $0 i32) (result i32)
   (local $1 i32)
   (local $2 i32)
   i32.const 16
@@ -2007,12 +2008,12 @@
   end
   get_local $1
  )
- (func $~lib/memory/memory.allocate (; 10 ;) (type $ii) (param $0 i32) (result i32)
+ (func $~lib/memory/memory.allocate (; 11 ;) (type $ii) (param $0 i32) (result i32)
   get_local $0
   call $~lib/allocator/arena/__memory_allocate
   return
  )
- (func $~lib/array/Array<u8>#constructor (; 11 ;) (type $iii) (param $0 i32) (param $1 i32) (result i32)
+ (func $~lib/array/Array<u8>#constructor (; 12 ;) (type $iii) (param $0 i32) (param $1 i32) (result i32)
   (local $2 i32)
   (local $3 i32)
   (local $4 i32)
@@ -2067,7 +2068,7 @@
   call $~lib/internal/memory/memset
   get_local $0
  )
- (func $std/array-bracket/newArray (; 12 ;) (type $ii) (param $0 i32) (result i32)
+ (func $std/array-bracket/newArray (; 13 ;) (type $ii) (param $0 i32) (result i32)
   (local $1 i32)
   (local $2 i32)
   i32.const 0
@@ -2098,7 +2099,7 @@
   end
   get_local $1
  )
- (func $start (; 13 ;) (type $v)
+ (func $start (; 14 ;) (type $v)
   (local $0 i32)
   get_global $HEAP_BASE
   get_global $~lib/internal/allocator/AL_MASK
@@ -2159,6 +2160,6 @@
    unreachable
   end
  )
- (func $null (; 14 ;) (type $v)
+ (func $null (; 15 ;) (type $v)
  )
 )

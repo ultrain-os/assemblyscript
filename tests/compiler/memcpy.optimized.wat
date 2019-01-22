@@ -19,15 +19,12 @@
   get_local $0
   set_local $6
   loop $continue|0
+   get_local $1
+   i32.const 3
+   i32.and
    get_local $2
-   if (result i32)
-    get_local $1
-    i32.const 3
-    i32.and
-   else    
-    get_local $2
-   end
-   tee_local $3
+   get_local $2
+   select
    if
     get_local $0
     tee_local $4
@@ -119,14 +116,14 @@
     i32.add
     i32.load
     i32.store
-    get_local $0
-    i32.const 8
-    i32.add
-    set_local $0
     get_local $1
     i32.const 8
     i32.add
     set_local $1
+    get_local $0
+    i32.const 8
+    i32.add
+    set_local $0
    end
    get_local $2
    i32.const 4
@@ -136,14 +133,14 @@
     get_local $1
     i32.load
     i32.store
-    get_local $0
-    i32.const 4
-    i32.add
-    set_local $0
     get_local $1
     i32.const 4
     i32.add
     set_local $1
+    get_local $0
+    i32.const 4
+    i32.add
+    set_local $0
    end
    get_local $2
    i32.const 2
@@ -153,21 +150,19 @@
     get_local $1
     i32.load16_u
     i32.store16
-    get_local $0
-    i32.const 2
-    i32.add
-    set_local $0
     get_local $1
     i32.const 2
     i32.add
     set_local $1
+    get_local $0
+    i32.const 2
+    i32.add
+    set_local $0
    end
    get_local $2
    i32.const 1
    i32.and
    if
-    get_local $1
-    set_local $3
     get_local $0
     get_local $1
     i32.load8_u
@@ -248,9 +243,6 @@
        i32.ge_u
        if
         get_local $0
-        get_local $5
-        i32.const 24
-        i32.shr_u
         get_local $1
         i32.const 1
         i32.add
@@ -258,14 +250,14 @@
         tee_local $3
         i32.const 8
         i32.shl
+        get_local $5
+        i32.const 24
+        i32.shr_u
         i32.or
         i32.store
         get_local $0
         i32.const 4
         i32.add
-        get_local $3
-        i32.const 24
-        i32.shr_u
         get_local $1
         i32.const 5
         i32.add
@@ -273,14 +265,14 @@
         tee_local $5
         i32.const 8
         i32.shl
+        get_local $3
+        i32.const 24
+        i32.shr_u
         i32.or
         i32.store
         get_local $0
         i32.const 8
         i32.add
-        get_local $5
-        i32.const 24
-        i32.shr_u
         get_local $1
         i32.const 9
         i32.add
@@ -288,14 +280,14 @@
         tee_local $3
         i32.const 8
         i32.shl
+        get_local $5
+        i32.const 24
+        i32.shr_u
         i32.or
         i32.store
         get_local $0
         i32.const 12
         i32.add
-        get_local $3
-        i32.const 24
-        i32.shr_u
         get_local $1
         i32.const 13
         i32.add
@@ -303,6 +295,9 @@
         tee_local $5
         i32.const 8
         i32.shl
+        get_local $3
+        i32.const 24
+        i32.shr_u
         i32.or
         i32.store
         get_local $1
@@ -357,9 +352,6 @@
       i32.ge_u
       if
        get_local $0
-       get_local $5
-       i32.const 16
-       i32.shr_u
        get_local $1
        i32.const 2
        i32.add
@@ -367,14 +359,14 @@
        tee_local $3
        i32.const 16
        i32.shl
+       get_local $5
+       i32.const 16
+       i32.shr_u
        i32.or
        i32.store
        get_local $0
        i32.const 4
        i32.add
-       get_local $3
-       i32.const 16
-       i32.shr_u
        get_local $1
        i32.const 6
        i32.add
@@ -382,14 +374,14 @@
        tee_local $5
        i32.const 16
        i32.shl
+       get_local $3
+       i32.const 16
+       i32.shr_u
        i32.or
        i32.store
        get_local $0
        i32.const 8
        i32.add
-       get_local $5
-       i32.const 16
-       i32.shr_u
        get_local $1
        i32.const 10
        i32.add
@@ -397,14 +389,14 @@
        tee_local $3
        i32.const 16
        i32.shl
+       get_local $5
+       i32.const 16
+       i32.shr_u
        i32.or
        i32.store
        get_local $0
        i32.const 12
        i32.add
-       get_local $3
-       i32.const 16
-       i32.shr_u
        get_local $1
        i32.const 14
        i32.add
@@ -412,6 +404,9 @@
        tee_local $5
        i32.const 16
        i32.shl
+       get_local $3
+       i32.const 16
+       i32.shr_u
        i32.or
        i32.store
        get_local $1
@@ -458,9 +453,6 @@
      i32.ge_u
      if
       get_local $0
-      get_local $5
-      i32.const 8
-      i32.shr_u
       get_local $1
       i32.const 3
       i32.add
@@ -468,14 +460,14 @@
       tee_local $3
       i32.const 24
       i32.shl
+      get_local $5
+      i32.const 8
+      i32.shr_u
       i32.or
       i32.store
       get_local $0
       i32.const 4
       i32.add
-      get_local $3
-      i32.const 8
-      i32.shr_u
       get_local $1
       i32.const 7
       i32.add
@@ -483,14 +475,14 @@
       tee_local $5
       i32.const 24
       i32.shl
+      get_local $3
+      i32.const 8
+      i32.shr_u
       i32.or
       i32.store
       get_local $0
       i32.const 8
       i32.add
-      get_local $5
-      i32.const 8
-      i32.shr_u
       get_local $1
       i32.const 11
       i32.add
@@ -498,14 +490,14 @@
       tee_local $3
       i32.const 24
       i32.shl
+      get_local $5
+      i32.const 8
+      i32.shr_u
       i32.or
       i32.store
       get_local $0
       i32.const 12
       i32.add
-      get_local $3
-      i32.const 8
-      i32.shr_u
       get_local $1
       i32.const 15
       i32.add
@@ -513,6 +505,9 @@
       tee_local $5
       i32.const 24
       i32.shl
+      get_local $3
+      i32.const 8
+      i32.shr_u
       i32.or
       i32.store
       get_local $1
@@ -911,8 +906,6 @@
   i32.const 1
   i32.and
   if
-   get_local $1
-   set_local $3
    get_local $0
    get_local $1
    i32.load8_u
@@ -921,24 +914,24 @@
   get_local $6
  )
  (func $start (; 2 ;) (type $v)
+  i32.const 8
+  i64.const 1229782938247303441
+  i64.store
+  i32.const 16
+  i64.const 2459565876494606882
+  i64.store
+  i32.const 24
+  i64.const 3689348814741910323
+  i64.store
+  i32.const 32
+  i64.const 4919131752989213764
+  i64.store
+  i32.const 9
+  i32.const 24
+  i32.const 4
+  call $memcpy/memcpy
+  set_global $memcpy/dest
   block $folding-inner0
-   i32.const 8
-   i64.const 1229782938247303441
-   i64.store
-   i32.const 16
-   i64.const 2459565876494606882
-   i64.store
-   i32.const 24
-   i64.const 3689348814741910323
-   i64.store
-   i32.const 32
-   i64.const 4919131752989213764
-   i64.store
-   i32.const 9
-   i32.const 24
-   i32.const 4
-   call $memcpy/memcpy
-   set_global $memcpy/dest
    get_global $memcpy/dest
    i32.const 9
    i32.ne

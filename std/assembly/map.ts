@@ -3,7 +3,7 @@ import {
 } from "./internal/arraybuffer";
 
 import {
-  hash
+  HASH
 } from "./internal/hash";
 
 import { DataStream } from "./datastream";
@@ -85,11 +85,11 @@ export class Map<K,V> implements Serializable{
   }
 
   has(key: K): bool {
-    return this.find(key, hash<K>(key)) !== null;
+    return this.find(key, HASH<K>(key)) !== null;
   }
 
   get(key: K): V {
-    var entry = this.find(key, hash<K>(key));
+    var entry = this.find(key, HASH<K>(key));
     return entry ? entry.value : <V>unreachable();
   }
   
@@ -122,7 +122,7 @@ export class Map<K,V> implements Serializable{
   }
 
   set(key: K, value: V): void {
-    var hashCode = hash<K>(key);
+    var hashCode = HASH<K>(key);
     var entry = this.find(key, hashCode);
     if (entry) {
       entry.value = value;
@@ -153,7 +153,7 @@ export class Map<K,V> implements Serializable{
   }
 
   delete(key: K): bool {
-    var entry = this.find(key, hash<K>(key));
+    var entry = this.find(key, HASH<K>(key));
     if (!entry) return false;
     entry.taggedNext |= EMPTY;
     --this.entriesCount;
@@ -236,7 +236,7 @@ export class Map<K,V> implements Serializable{
         let newEntry = changetype<MapEntry<K,V>>(newPtr);
         newEntry.key = oldEntry.key;
         newEntry.value = oldEntry.value;
-        let newBucketIndex = hash<K>(oldEntry.key) & newBucketsMask;
+        let newBucketIndex = HASH<K>(oldEntry.key) & newBucketsMask;
         let newBucketPtrBase = changetype<usize>(newBuckets) + <usize>newBucketIndex * BUCKET_SIZE;
         newEntry.taggedNext = load<usize>(newBucketPtrBase, HEADER_SIZE_AB);
         store<usize>(newBucketPtrBase, newPtr, HEADER_SIZE_AB);

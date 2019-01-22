@@ -192,24 +192,24 @@
   if
    return
   end
-  get_local $0
   i32.const 0
   get_local $0
   i32.sub
   i32.const 3
   i32.and
   tee_local $2
+  get_local $0
   i32.add
   tee_local $0
   i32.const 0
   i32.store
-  get_local $0
   get_local $1
   get_local $2
   i32.sub
   i32.const -4
   i32.and
   tee_local $1
+  get_local $0
   i32.add
   i32.const 4
   i32.sub
@@ -294,12 +294,12 @@
   i32.const 0
   i32.store
   get_local $0
-  get_local $0
   i32.const 4
   i32.and
   i32.const 24
   i32.add
   tee_local $2
+  get_local $0
   i32.add
   set_local $0
   get_local $1
@@ -417,9 +417,9 @@
  (func $~lib/map/Map<i8_i32>#find (; 7 ;) (type $iiii) (param $0 i32) (param $1 i32) (param $2 i32) (result i32)
   get_local $0
   i32.load
-  get_local $2
   get_local $0
   i32.load offset=4
+  get_local $2
   i32.and
   i32.const 2
   i32.shl
@@ -538,7 +538,6 @@
      i32.load offset=4
      i32.store offset=4
      get_local $3
-     get_local $4
      get_local $2
      i32.load8_s
      i32.const -2128831035
@@ -549,6 +548,7 @@
      i32.and
      i32.const 2
      i32.shl
+     get_local $4
      i32.add
      tee_local $8
      i32.load offset=8
@@ -637,7 +637,6 @@
      i32.const 1
      i32.or
     end
-    tee_local $3
     call $~lib/map/Map<i8_i32>#rehash
    end
    get_local $0
@@ -672,9 +671,9 @@
    get_local $3
    get_local $0
    i32.load
-   get_local $5
    get_local $0
    i32.load offset=4
+   get_local $5
    i32.and
    i32.const 2
    i32.shl
@@ -757,7 +756,7 @@
   select
   i32.ge_u
   tee_local $1
-  if
+  if (result i32)
    get_local $0
    i32.load offset=20
    get_local $0
@@ -767,9 +766,9 @@
    f64.mul
    i32.trunc_s/f64
    i32.lt_s
-   set_local $1
+  else   
+   get_local $1
   end
-  get_local $1
   if
    get_local $0
    get_local $2
@@ -780,9 +779,9 @@
  (func $std/map/test<i8_i32> (; 13 ;) (type $v)
   (local $0 i32)
   (local $1 i32)
+  call $~lib/map/Map<i8_i32>#constructor
+  set_local $1
   block $folding-inner0
-   call $~lib/map/Map<i8_i32>#constructor
-   set_local $1
    loop $repeat|0
     get_local $0
     i32.const 100
@@ -831,14 +830,13 @@
    i32.const 100
    i32.ne
    br_if $folding-inner0
-   block $break|1
-    i32.const 0
-    set_local $0
-    loop $repeat|1
-     get_local $0
-     i32.const 100
-     i32.ge_s
-     br_if $break|1
+   i32.const 0
+   set_local $0
+   loop $repeat|1
+    get_local $0
+    i32.const 100
+    i32.lt_s
+    if
      get_local $1
      get_local $0
      call $~lib/map/Map<i8_i32>#has
@@ -888,23 +886,20 @@
      i32.add
      set_local $0
      br $repeat|1
-     unreachable
     end
-    unreachable
    end
    get_local $1
    i32.load offset=20
    i32.const 100
    i32.ne
    br_if $folding-inner0
-   block $break|2
-    i32.const 0
-    set_local $0
-    loop $repeat|2
-     get_local $0
-     i32.const 50
-     i32.ge_s
-     br_if $break|2
+   i32.const 0
+   set_local $0
+   loop $repeat|2
+    get_local $0
+    i32.const 50
+    i32.lt_s
+    if
      get_local $1
      get_local $0
      call $~lib/map/Map<i8_i32>#has
@@ -935,23 +930,20 @@
      i32.add
      set_local $0
      br $repeat|2
-     unreachable
     end
-    unreachable
    end
    get_local $1
    i32.load offset=20
    i32.const 50
    i32.ne
    br_if $folding-inner0
-   block $break|3
-    i32.const 0
-    set_local $0
-    loop $repeat|3
-     get_local $0
-     i32.const 50
-     i32.ge_s
-     br_if $break|3
+   i32.const 0
+   set_local $0
+   loop $repeat|3
+    get_local $0
+    i32.const 50
+    i32.lt_s
+    if
      get_local $1
      get_local $0
      call $~lib/map/Map<i8_i32>#has
@@ -984,9 +976,7 @@
      i32.add
      set_local $0
      br $repeat|3
-     unreachable
     end
-    unreachable
    end
    get_local $1
    i32.load offset=20
@@ -1080,7 +1070,6 @@
      i32.load offset=4
      i32.store offset=4
      get_local $3
-     get_local $4
      get_local $2
      i32.load8_u
      i32.const -2128831035
@@ -1091,6 +1080,7 @@
      i32.and
      i32.const 2
      i32.shl
+     get_local $4
      i32.add
      tee_local $8
      i32.load offset=8
@@ -1177,7 +1167,6 @@
      i32.const 1
      i32.or
     end
-    tee_local $3
     call $~lib/map/Map<u8_i32>#rehash
    end
    get_local $0
@@ -1212,9 +1201,9 @@
    get_local $3
    get_local $0
    i32.load
-   get_local $5
    get_local $0
    i32.load offset=4
+   get_local $5
    i32.and
    i32.const 2
    i32.shl
@@ -1293,7 +1282,7 @@
   select
   i32.ge_u
   tee_local $1
-  if
+  if (result i32)
    get_local $0
    i32.load offset=20
    get_local $0
@@ -1303,9 +1292,9 @@
    f64.mul
    i32.trunc_s/f64
    i32.lt_s
-   set_local $1
+  else   
+   get_local $1
   end
-  get_local $1
   if
    get_local $0
    get_local $2
@@ -1316,9 +1305,9 @@
  (func $std/map/test<u8_i32> (; 19 ;) (type $v)
   (local $0 i32)
   (local $1 i32)
+  call $~lib/map/Map<i8_i32>#constructor
+  set_local $1
   block $folding-inner0
-   call $~lib/map/Map<i8_i32>#constructor
-   set_local $1
    loop $repeat|0
     get_local $0
     i32.const 100
@@ -1363,14 +1352,13 @@
    i32.const 100
    i32.ne
    br_if $folding-inner0
-   block $break|1
-    i32.const 0
-    set_local $0
-    loop $repeat|1
-     get_local $0
-     i32.const 100
-     i32.ge_u
-     br_if $break|1
+   i32.const 0
+   set_local $0
+   loop $repeat|1
+    get_local $0
+    i32.const 100
+    i32.lt_u
+    if
      get_local $1
      get_local $0
      call $~lib/map/Map<u8_i32>#has
@@ -1414,23 +1402,20 @@
      i32.add
      set_local $0
      br $repeat|1
-     unreachable
     end
-    unreachable
    end
    get_local $1
    i32.load offset=20
    i32.const 100
    i32.ne
    br_if $folding-inner0
-   block $break|2
-    i32.const 0
-    set_local $0
-    loop $repeat|2
-     get_local $0
-     i32.const 50
-     i32.ge_u
-     br_if $break|2
+   i32.const 0
+   set_local $0
+   loop $repeat|2
+    get_local $0
+    i32.const 50
+    i32.lt_u
+    if
      get_local $1
      get_local $0
      call $~lib/map/Map<u8_i32>#has
@@ -1459,23 +1444,20 @@
      i32.add
      set_local $0
      br $repeat|2
-     unreachable
     end
-    unreachable
    end
    get_local $1
    i32.load offset=20
    i32.const 50
    i32.ne
    br_if $folding-inner0
-   block $break|3
-    i32.const 0
-    set_local $0
-    loop $repeat|3
-     get_local $0
-     i32.const 50
-     i32.ge_u
-     br_if $break|3
+   i32.const 0
+   set_local $0
+   loop $repeat|3
+    get_local $0
+    i32.const 50
+    i32.lt_u
+    if
      get_local $1
      get_local $0
      call $~lib/map/Map<u8_i32>#has
@@ -1506,9 +1488,7 @@
      i32.add
      set_local $0
      br $repeat|3
-     unreachable
     end
-    unreachable
    end
    get_local $1
    i32.load offset=20
@@ -1528,9 +1508,9 @@
  (func $~lib/map/Map<i16_i32>#find (; 20 ;) (type $iiii) (param $0 i32) (param $1 i32) (param $2 i32) (result i32)
   get_local $0
   i32.load
-  get_local $2
   get_local $0
   i32.load offset=4
+  get_local $2
   i32.and
   i32.const 2
   i32.shl
@@ -1659,7 +1639,6 @@
      i32.load offset=4
      i32.store offset=4
      get_local $3
-     get_local $5
      get_local $2
      i32.load16_s
      tee_local $4
@@ -1679,6 +1658,7 @@
      i32.and
      i32.const 2
      i32.shl
+     get_local $5
      i32.add
      tee_local $4
      i32.load offset=8
@@ -1776,7 +1756,6 @@
      i32.const 1
      i32.or
     end
-    tee_local $3
     call $~lib/map/Map<i16_i32>#rehash
    end
    get_local $0
@@ -1811,9 +1790,9 @@
    get_local $3
    get_local $0
    i32.load
-   get_local $5
    get_local $0
    i32.load offset=4
+   get_local $5
    i32.and
    i32.const 2
    i32.shl
@@ -1855,7 +1834,6 @@
   else   
    unreachable
   end
-  tee_local $0
  )
  (func $~lib/map/Map<i16_i32>#delete (; 25 ;) (type $iii) (param $0 i32) (param $1 i32) (result i32)
   (local $2 i32)
@@ -1915,7 +1893,7 @@
   select
   i32.ge_u
   tee_local $1
-  if
+  if (result i32)
    get_local $0
    i32.load offset=20
    get_local $0
@@ -1925,9 +1903,9 @@
    f64.mul
    i32.trunc_s/f64
    i32.lt_s
-   set_local $1
+  else   
+   get_local $1
   end
-  get_local $1
   if
    get_local $0
    get_local $2
@@ -1938,9 +1916,9 @@
  (func $std/map/test<i16_i32> (; 26 ;) (type $v)
   (local $0 i32)
   (local $1 i32)
+  call $~lib/map/Map<i8_i32>#constructor
+  set_local $1
   block $folding-inner0
-   call $~lib/map/Map<i8_i32>#constructor
-   set_local $1
    loop $repeat|0
     get_local $0
     i32.const 100
@@ -1989,14 +1967,13 @@
    i32.const 100
    i32.ne
    br_if $folding-inner0
-   block $break|1
-    i32.const 0
-    set_local $0
-    loop $repeat|1
-     get_local $0
-     i32.const 100
-     i32.ge_s
-     br_if $break|1
+   i32.const 0
+   set_local $0
+   loop $repeat|1
+    get_local $0
+    i32.const 100
+    i32.lt_s
+    if
      get_local $1
      get_local $0
      call $~lib/map/Map<i16_i32>#has
@@ -2046,23 +2023,20 @@
      i32.add
      set_local $0
      br $repeat|1
-     unreachable
     end
-    unreachable
    end
    get_local $1
    i32.load offset=20
    i32.const 100
    i32.ne
    br_if $folding-inner0
-   block $break|2
-    i32.const 0
-    set_local $0
-    loop $repeat|2
-     get_local $0
-     i32.const 50
-     i32.ge_s
-     br_if $break|2
+   i32.const 0
+   set_local $0
+   loop $repeat|2
+    get_local $0
+    i32.const 50
+    i32.lt_s
+    if
      get_local $1
      get_local $0
      call $~lib/map/Map<i16_i32>#has
@@ -2093,23 +2067,20 @@
      i32.add
      set_local $0
      br $repeat|2
-     unreachable
     end
-    unreachable
    end
    get_local $1
    i32.load offset=20
    i32.const 50
    i32.ne
    br_if $folding-inner0
-   block $break|3
-    i32.const 0
-    set_local $0
-    loop $repeat|3
-     get_local $0
-     i32.const 50
-     i32.ge_s
-     br_if $break|3
+   i32.const 0
+   set_local $0
+   loop $repeat|3
+    get_local $0
+    i32.const 50
+    i32.lt_s
+    if
      get_local $1
      get_local $0
      call $~lib/map/Map<i16_i32>#has
@@ -2142,9 +2113,7 @@
      i32.add
      set_local $0
      br $repeat|3
-     unreachable
     end
-    unreachable
    end
    get_local $1
    i32.load offset=20
@@ -2248,7 +2217,6 @@
      i32.load offset=4
      i32.store offset=4
      get_local $3
-     get_local $5
      get_local $2
      i32.load16_u
      tee_local $4
@@ -2268,6 +2236,7 @@
      i32.and
      i32.const 2
      i32.shl
+     get_local $5
      i32.add
      tee_local $4
      i32.load offset=8
@@ -2363,7 +2332,6 @@
      i32.const 1
      i32.or
     end
-    tee_local $3
     call $~lib/map/Map<u16_i32>#rehash
    end
    get_local $0
@@ -2398,9 +2366,9 @@
    get_local $3
    get_local $0
    i32.load
-   get_local $5
    get_local $0
    i32.load offset=4
+   get_local $5
    i32.and
    i32.const 2
    i32.shl
@@ -2440,7 +2408,6 @@
   else   
    unreachable
   end
-  tee_local $0
  )
  (func $~lib/map/Map<u16_i32>#delete (; 31 ;) (type $iii) (param $0 i32) (param $1 i32) (result i32)
   (local $2 i32)
@@ -2498,7 +2465,7 @@
   select
   i32.ge_u
   tee_local $1
-  if
+  if (result i32)
    get_local $0
    i32.load offset=20
    get_local $0
@@ -2508,9 +2475,9 @@
    f64.mul
    i32.trunc_s/f64
    i32.lt_s
-   set_local $1
+  else   
+   get_local $1
   end
-  get_local $1
   if
    get_local $0
    get_local $2
@@ -2521,9 +2488,9 @@
  (func $std/map/test<u16_i32> (; 32 ;) (type $v)
   (local $0 i32)
   (local $1 i32)
+  call $~lib/map/Map<i8_i32>#constructor
+  set_local $1
   block $folding-inner0
-   call $~lib/map/Map<i8_i32>#constructor
-   set_local $1
    loop $repeat|0
     get_local $0
     i32.const 100
@@ -2568,14 +2535,13 @@
    i32.const 100
    i32.ne
    br_if $folding-inner0
-   block $break|1
-    i32.const 0
-    set_local $0
-    loop $repeat|1
-     get_local $0
-     i32.const 100
-     i32.ge_u
-     br_if $break|1
+   i32.const 0
+   set_local $0
+   loop $repeat|1
+    get_local $0
+    i32.const 100
+    i32.lt_u
+    if
      get_local $1
      get_local $0
      call $~lib/map/Map<u16_i32>#has
@@ -2619,23 +2585,20 @@
      i32.add
      set_local $0
      br $repeat|1
-     unreachable
     end
-    unreachable
    end
    get_local $1
    i32.load offset=20
    i32.const 100
    i32.ne
    br_if $folding-inner0
-   block $break|2
-    i32.const 0
-    set_local $0
-    loop $repeat|2
-     get_local $0
-     i32.const 50
-     i32.ge_u
-     br_if $break|2
+   i32.const 0
+   set_local $0
+   loop $repeat|2
+    get_local $0
+    i32.const 50
+    i32.lt_u
+    if
      get_local $1
      get_local $0
      call $~lib/map/Map<u16_i32>#has
@@ -2664,23 +2627,20 @@
      i32.add
      set_local $0
      br $repeat|2
-     unreachable
     end
-    unreachable
    end
    get_local $1
    i32.load offset=20
    i32.const 50
    i32.ne
    br_if $folding-inner0
-   block $break|3
-    i32.const 0
-    set_local $0
-    loop $repeat|3
-     get_local $0
-     i32.const 50
-     i32.ge_u
-     br_if $break|3
+   i32.const 0
+   set_local $0
+   loop $repeat|3
+    get_local $0
+    i32.const 50
+    i32.lt_u
+    if
      get_local $1
      get_local $0
      call $~lib/map/Map<u16_i32>#has
@@ -2711,9 +2671,7 @@
      i32.add
      set_local $0
      br $repeat|3
-     unreachable
     end
-    unreachable
    end
    get_local $1
    i32.load offset=20
@@ -2764,9 +2722,9 @@
  (func $~lib/map/Map<i32_i32>#find (; 34 ;) (type $iiii) (param $0 i32) (param $1 i32) (param $2 i32) (result i32)
   get_local $0
   i32.load
-  get_local $2
   get_local $0
   i32.load offset=4
+  get_local $2
   i32.and
   i32.const 2
   i32.shl
@@ -2876,7 +2834,6 @@
      i32.load offset=4
      i32.store offset=4
      get_local $3
-     get_local $4
      get_local $2
      i32.load
      call $~lib/internal/hash/hash32
@@ -2884,6 +2841,7 @@
      i32.and
      i32.const 2
      i32.shl
+     get_local $4
      i32.add
      tee_local $8
      i32.load offset=8
@@ -2963,7 +2921,6 @@
      i32.const 1
      i32.or
     end
-    tee_local $3
     call $~lib/map/Map<i32_i32>#rehash
    end
    get_local $0
@@ -2998,9 +2955,9 @@
    get_local $3
    get_local $0
    i32.load
-   get_local $5
    get_local $0
    i32.load offset=4
+   get_local $5
    i32.and
    i32.const 2
    i32.shl
@@ -3026,7 +2983,6 @@
   else   
    unreachable
   end
-  tee_local $0
  )
  (func $~lib/map/Map<i32_i32>#delete (; 39 ;) (type $iii) (param $0 i32) (param $1 i32) (result i32)
   (local $2 i32)
@@ -3093,9 +3049,9 @@
  (func $std/map/test<i32_i32> (; 40 ;) (type $v)
   (local $0 i32)
   (local $1 i32)
+  call $~lib/map/Map<i8_i32>#constructor
+  set_local $1
   block $folding-inner0
-   call $~lib/map/Map<i8_i32>#constructor
-   set_local $1
    loop $repeat|0
     get_local $0
     i32.const 100
@@ -3136,14 +3092,13 @@
    i32.const 100
    i32.ne
    br_if $folding-inner0
-   block $break|1
-    i32.const 0
-    set_local $0
-    loop $repeat|1
-     get_local $0
-     i32.const 100
-     i32.ge_s
-     br_if $break|1
+   i32.const 0
+   set_local $0
+   loop $repeat|1
+    get_local $0
+    i32.const 100
+    i32.lt_s
+    if
      get_local $1
      get_local $0
      call $~lib/map/Map<i32_i32>#has
@@ -3181,23 +3136,20 @@
      i32.add
      set_local $0
      br $repeat|1
-     unreachable
     end
-    unreachable
    end
    get_local $1
    i32.load offset=20
    i32.const 100
    i32.ne
    br_if $folding-inner0
-   block $break|2
-    i32.const 0
-    set_local $0
-    loop $repeat|2
-     get_local $0
-     i32.const 50
-     i32.ge_s
-     br_if $break|2
+   i32.const 0
+   set_local $0
+   loop $repeat|2
+    get_local $0
+    i32.const 50
+    i32.lt_s
+    if
      get_local $1
      get_local $0
      call $~lib/map/Map<i32_i32>#has
@@ -3224,23 +3176,20 @@
      i32.add
      set_local $0
      br $repeat|2
-     unreachable
     end
-    unreachable
    end
    get_local $1
    i32.load offset=20
    i32.const 50
    i32.ne
    br_if $folding-inner0
-   block $break|3
-    i32.const 0
-    set_local $0
-    loop $repeat|3
-     get_local $0
-     i32.const 50
-     i32.ge_s
-     br_if $break|3
+   i32.const 0
+   set_local $0
+   loop $repeat|3
+    get_local $0
+    i32.const 50
+    i32.lt_s
+    if
      get_local $1
      get_local $0
      call $~lib/map/Map<i32_i32>#has
@@ -3269,9 +3218,7 @@
      i32.add
      set_local $0
      br $repeat|3
-     unreachable
     end
-    unreachable
    end
    get_local $1
    i32.load offset=20
@@ -3291,9 +3238,9 @@
  (func $std/map/test<u32_i32> (; 41 ;) (type $v)
   (local $0 i32)
   (local $1 i32)
+  call $~lib/map/Map<i8_i32>#constructor
+  set_local $1
   block $folding-inner0
-   call $~lib/map/Map<i8_i32>#constructor
-   set_local $1
    loop $repeat|0
     get_local $0
     i32.const 100
@@ -3334,14 +3281,13 @@
    i32.const 100
    i32.ne
    br_if $folding-inner0
-   block $break|1
-    i32.const 0
-    set_local $0
-    loop $repeat|1
-     get_local $0
-     i32.const 100
-     i32.ge_u
-     br_if $break|1
+   i32.const 0
+   set_local $0
+   loop $repeat|1
+    get_local $0
+    i32.const 100
+    i32.lt_u
+    if
      get_local $1
      get_local $0
      call $~lib/map/Map<i32_i32>#has
@@ -3379,23 +3325,20 @@
      i32.add
      set_local $0
      br $repeat|1
-     unreachable
     end
-    unreachable
    end
    get_local $1
    i32.load offset=20
    i32.const 100
    i32.ne
    br_if $folding-inner0
-   block $break|2
-    i32.const 0
-    set_local $0
-    loop $repeat|2
-     get_local $0
-     i32.const 50
-     i32.ge_u
-     br_if $break|2
+   i32.const 0
+   set_local $0
+   loop $repeat|2
+    get_local $0
+    i32.const 50
+    i32.lt_u
+    if
      get_local $1
      get_local $0
      call $~lib/map/Map<i32_i32>#has
@@ -3422,23 +3365,20 @@
      i32.add
      set_local $0
      br $repeat|2
-     unreachable
     end
-    unreachable
    end
    get_local $1
    i32.load offset=20
    i32.const 50
    i32.ne
    br_if $folding-inner0
-   block $break|3
-    i32.const 0
-    set_local $0
-    loop $repeat|3
-     get_local $0
-     i32.const 50
-     i32.ge_u
-     br_if $break|3
+   i32.const 0
+   set_local $0
+   loop $repeat|3
+    get_local $0
+    i32.const 50
+    i32.lt_u
+    if
      get_local $1
      get_local $0
      call $~lib/map/Map<i32_i32>#has
@@ -3467,9 +3407,7 @@
      i32.add
      set_local $0
      br $repeat|3
-     unreachable
     end
-    unreachable
    end
    get_local $1
    i32.load offset=20
@@ -3605,9 +3543,9 @@
  (func $~lib/map/Map<i64_i32>#find (; 45 ;) (type $iIii) (param $0 i32) (param $1 i64) (param $2 i32) (result i32)
   get_local $0
   i32.load
-  get_local $2
   get_local $0
   i32.load offset=4
+  get_local $2
   i32.and
   i32.const 2
   i32.shl
@@ -3717,7 +3655,6 @@
      i32.load offset=8
      i32.store offset=8
      get_local $3
-     get_local $4
      get_local $2
      i64.load
      call $~lib/internal/hash/hash64
@@ -3725,6 +3662,7 @@
      i32.and
      i32.const 2
      i32.shl
+     get_local $4
      i32.add
      tee_local $8
      i32.load offset=8
@@ -3804,7 +3742,6 @@
      i32.const 1
      i32.or
     end
-    tee_local $3
     call $~lib/map/Map<i64_i32>#rehash
    end
    get_local $0
@@ -3839,9 +3776,9 @@
    get_local $3
    get_local $0
    i32.load
-   get_local $5
    get_local $0
    i32.load offset=4
+   get_local $5
    i32.and
    i32.const 2
    i32.shl
@@ -3867,7 +3804,6 @@
   else   
    unreachable
   end
-  tee_local $0
  )
  (func $~lib/map/Map<i64_i32>#delete (; 50 ;) (type $iIi) (param $0 i32) (param $1 i64) (result i32)
   (local $2 i32)
@@ -3935,9 +3871,9 @@
  (func $std/map/test<i64_i32> (; 51 ;) (type $v)
   (local $0 i64)
   (local $1 i32)
+  call $~lib/map/Map<i64_i32>#constructor
+  set_local $1
   block $folding-inner0
-   call $~lib/map/Map<i64_i32>#constructor
-   set_local $1
    loop $repeat|0
     get_local $0
     i64.const 100
@@ -3980,14 +3916,13 @@
    i32.const 100
    i32.ne
    br_if $folding-inner0
-   block $break|1
-    i64.const 0
-    set_local $0
-    loop $repeat|1
-     get_local $0
-     i64.const 100
-     i64.ge_s
-     br_if $break|1
+   i64.const 0
+   set_local $0
+   loop $repeat|1
+    get_local $0
+    i64.const 100
+    i64.lt_s
+    if
      get_local $1
      get_local $0
      call $~lib/map/Map<i64_i32>#has
@@ -4028,23 +3963,20 @@
      i64.add
      set_local $0
      br $repeat|1
-     unreachable
     end
-    unreachable
    end
    get_local $1
    i32.load offset=20
    i32.const 100
    i32.ne
    br_if $folding-inner0
-   block $break|2
-    i64.const 0
-    set_local $0
-    loop $repeat|2
-     get_local $0
-     i64.const 50
-     i64.ge_s
-     br_if $break|2
+   i64.const 0
+   set_local $0
+   loop $repeat|2
+    get_local $0
+    i64.const 50
+    i64.lt_s
+    if
      get_local $1
      get_local $0
      call $~lib/map/Map<i64_i32>#has
@@ -4072,23 +4004,20 @@
      i64.add
      set_local $0
      br $repeat|2
-     unreachable
     end
-    unreachable
    end
    get_local $1
    i32.load offset=20
    i32.const 50
    i32.ne
    br_if $folding-inner0
-   block $break|3
-    i64.const 0
-    set_local $0
-    loop $repeat|3
-     get_local $0
-     i64.const 50
-     i64.ge_s
-     br_if $break|3
+   i64.const 0
+   set_local $0
+   loop $repeat|3
+    get_local $0
+    i64.const 50
+    i64.lt_s
+    if
      get_local $1
      get_local $0
      call $~lib/map/Map<i64_i32>#has
@@ -4118,9 +4047,7 @@
      i64.add
      set_local $0
      br $repeat|3
-     unreachable
     end
-    unreachable
    end
    get_local $1
    i32.load offset=20
@@ -4140,9 +4067,9 @@
  (func $std/map/test<u64_i32> (; 52 ;) (type $v)
   (local $0 i64)
   (local $1 i32)
+  call $~lib/map/Map<i64_i32>#constructor
+  set_local $1
   block $folding-inner0
-   call $~lib/map/Map<i64_i32>#constructor
-   set_local $1
    loop $repeat|0
     get_local $0
     i64.const 100
@@ -4185,14 +4112,13 @@
    i32.const 100
    i32.ne
    br_if $folding-inner0
-   block $break|1
-    i64.const 0
-    set_local $0
-    loop $repeat|1
-     get_local $0
-     i64.const 100
-     i64.ge_u
-     br_if $break|1
+   i64.const 0
+   set_local $0
+   loop $repeat|1
+    get_local $0
+    i64.const 100
+    i64.lt_u
+    if
      get_local $1
      get_local $0
      call $~lib/map/Map<i64_i32>#has
@@ -4233,23 +4159,20 @@
      i64.add
      set_local $0
      br $repeat|1
-     unreachable
     end
-    unreachable
    end
    get_local $1
    i32.load offset=20
    i32.const 100
    i32.ne
    br_if $folding-inner0
-   block $break|2
-    i64.const 0
-    set_local $0
-    loop $repeat|2
-     get_local $0
-     i64.const 50
-     i64.ge_u
-     br_if $break|2
+   i64.const 0
+   set_local $0
+   loop $repeat|2
+    get_local $0
+    i64.const 50
+    i64.lt_u
+    if
      get_local $1
      get_local $0
      call $~lib/map/Map<i64_i32>#has
@@ -4277,23 +4200,20 @@
      i64.add
      set_local $0
      br $repeat|2
-     unreachable
     end
-    unreachable
    end
    get_local $1
    i32.load offset=20
    i32.const 50
    i32.ne
    br_if $folding-inner0
-   block $break|3
-    i64.const 0
-    set_local $0
-    loop $repeat|3
-     get_local $0
-     i64.const 50
-     i64.ge_u
-     br_if $break|3
+   i64.const 0
+   set_local $0
+   loop $repeat|3
+    get_local $0
+    i64.const 50
+    i64.lt_u
+    if
      get_local $1
      get_local $0
      call $~lib/map/Map<i64_i32>#has
@@ -4323,9 +4243,7 @@
      i64.add
      set_local $0
      br $repeat|3
-     unreachable
     end
-    unreachable
    end
    get_local $1
    i32.load offset=20
@@ -4345,9 +4263,9 @@
  (func $~lib/map/Map<f32_i32>#find (; 53 ;) (type $ifii) (param $0 i32) (param $1 f32) (param $2 i32) (result i32)
   get_local $0
   i32.load
-  get_local $2
   get_local $0
   i32.load offset=4
+  get_local $2
   i32.and
   i32.const 2
   i32.shl
@@ -4458,7 +4376,6 @@
      i32.load offset=4
      i32.store offset=4
      get_local $3
-     get_local $4
      get_local $2
      f32.load
      i32.reinterpret/f32
@@ -4467,6 +4384,7 @@
      i32.and
      i32.const 2
      i32.shl
+     get_local $4
      i32.add
      tee_local $8
      i32.load offset=8
@@ -4547,7 +4465,6 @@
      i32.const 1
      i32.or
     end
-    tee_local $3
     call $~lib/map/Map<f32_i32>#rehash
    end
    get_local $0
@@ -4582,9 +4499,9 @@
    get_local $3
    get_local $0
    i32.load
-   get_local $5
    get_local $0
    i32.load offset=4
+   get_local $5
    i32.and
    i32.const 2
    i32.shl
@@ -4611,7 +4528,6 @@
   else   
    unreachable
   end
-  tee_local $0
  )
  (func $~lib/map/Map<f32_i32>#delete (; 58 ;) (type $ifi) (param $0 i32) (param $1 f32) (result i32)
   (local $2 i32)
@@ -4680,9 +4596,9 @@
  (func $std/map/test<f32_i32> (; 59 ;) (type $v)
   (local $0 f32)
   (local $1 i32)
+  call $~lib/map/Map<i8_i32>#constructor
+  set_local $1
   block $folding-inner0
-   call $~lib/map/Map<i8_i32>#constructor
-   set_local $1
    loop $repeat|0
     get_local $0
     f32.const 100
@@ -4725,15 +4641,13 @@
    i32.const 100
    i32.ne
    br_if $folding-inner0
-   block $break|1
-    f32.const 0
-    set_local $0
-    loop $repeat|1
-     get_local $0
-     f32.const 100
-     f32.lt
-     i32.eqz
-     br_if $break|1
+   f32.const 0
+   set_local $0
+   loop $repeat|1
+    get_local $0
+    f32.const 100
+    f32.lt
+    if
      get_local $1
      get_local $0
      call $~lib/map/Map<f32_i32>#has
@@ -4774,24 +4688,20 @@
      f32.add
      set_local $0
      br $repeat|1
-     unreachable
     end
-    unreachable
    end
    get_local $1
    i32.load offset=20
    i32.const 100
    i32.ne
    br_if $folding-inner0
-   block $break|2
-    f32.const 0
-    set_local $0
-    loop $repeat|2
-     get_local $0
-     f32.const 50
-     f32.lt
-     i32.eqz
-     br_if $break|2
+   f32.const 0
+   set_local $0
+   loop $repeat|2
+    get_local $0
+    f32.const 50
+    f32.lt
+    if
      get_local $1
      get_local $0
      call $~lib/map/Map<f32_i32>#has
@@ -4819,24 +4729,20 @@
      f32.add
      set_local $0
      br $repeat|2
-     unreachable
     end
-    unreachable
    end
    get_local $1
    i32.load offset=20
    i32.const 50
    i32.ne
    br_if $folding-inner0
-   block $break|3
-    f32.const 0
-    set_local $0
-    loop $repeat|3
-     get_local $0
-     f32.const 50
-     f32.lt
-     i32.eqz
-     br_if $break|3
+   f32.const 0
+   set_local $0
+   loop $repeat|3
+    get_local $0
+    f32.const 50
+    f32.lt
+    if
      get_local $1
      get_local $0
      call $~lib/map/Map<f32_i32>#has
@@ -4866,9 +4772,7 @@
      f32.add
      set_local $0
      br $repeat|3
-     unreachable
     end
-    unreachable
    end
    get_local $1
    i32.load offset=20
@@ -4888,9 +4792,9 @@
  (func $~lib/map/Map<f64_i32>#find (; 60 ;) (type $iFii) (param $0 i32) (param $1 f64) (param $2 i32) (result i32)
   get_local $0
   i32.load
-  get_local $2
   get_local $0
   i32.load offset=4
+  get_local $2
   i32.and
   i32.const 2
   i32.shl
@@ -5001,7 +4905,6 @@
      i32.load offset=8
      i32.store offset=8
      get_local $3
-     get_local $4
      get_local $2
      f64.load
      i64.reinterpret/f64
@@ -5010,6 +4913,7 @@
      i32.and
      i32.const 2
      i32.shl
+     get_local $4
      i32.add
      tee_local $8
      i32.load offset=8
@@ -5090,7 +4994,6 @@
      i32.const 1
      i32.or
     end
-    tee_local $3
     call $~lib/map/Map<f64_i32>#rehash
    end
    get_local $0
@@ -5125,9 +5028,9 @@
    get_local $3
    get_local $0
    i32.load
-   get_local $5
    get_local $0
    i32.load offset=4
+   get_local $5
    i32.and
    i32.const 2
    i32.shl
@@ -5154,7 +5057,6 @@
   else   
    unreachable
   end
-  tee_local $0
  )
  (func $~lib/map/Map<f64_i32>#delete (; 65 ;) (type $iFi) (param $0 i32) (param $1 f64) (result i32)
   (local $2 i32)
@@ -5223,9 +5125,9 @@
  (func $std/map/test<f64_i32> (; 66 ;) (type $v)
   (local $0 f64)
   (local $1 i32)
+  call $~lib/map/Map<i64_i32>#constructor
+  set_local $1
   block $folding-inner0
-   call $~lib/map/Map<i64_i32>#constructor
-   set_local $1
    loop $repeat|0
     get_local $0
     f64.const 100
@@ -5268,15 +5170,13 @@
    i32.const 100
    i32.ne
    br_if $folding-inner0
-   block $break|1
-    f64.const 0
-    set_local $0
-    loop $repeat|1
-     get_local $0
-     f64.const 100
-     f64.lt
-     i32.eqz
-     br_if $break|1
+   f64.const 0
+   set_local $0
+   loop $repeat|1
+    get_local $0
+    f64.const 100
+    f64.lt
+    if
      get_local $1
      get_local $0
      call $~lib/map/Map<f64_i32>#has
@@ -5317,24 +5217,20 @@
      f64.add
      set_local $0
      br $repeat|1
-     unreachable
     end
-    unreachable
    end
    get_local $1
    i32.load offset=20
    i32.const 100
    i32.ne
    br_if $folding-inner0
-   block $break|2
-    f64.const 0
-    set_local $0
-    loop $repeat|2
-     get_local $0
-     f64.const 50
-     f64.lt
-     i32.eqz
-     br_if $break|2
+   f64.const 0
+   set_local $0
+   loop $repeat|2
+    get_local $0
+    f64.const 50
+    f64.lt
+    if
      get_local $1
      get_local $0
      call $~lib/map/Map<f64_i32>#has
@@ -5362,24 +5258,20 @@
      f64.add
      set_local $0
      br $repeat|2
-     unreachable
     end
-    unreachable
    end
    get_local $1
    i32.load offset=20
    i32.const 50
    i32.ne
    br_if $folding-inner0
-   block $break|3
-    f64.const 0
-    set_local $0
-    loop $repeat|3
-     get_local $0
-     f64.const 50
-     f64.lt
-     i32.eqz
-     br_if $break|3
+   f64.const 0
+   set_local $0
+   loop $repeat|3
+    get_local $0
+    f64.const 50
+    f64.lt
+    if
      get_local $1
      get_local $0
      call $~lib/map/Map<f64_i32>#has
@@ -5409,9 +5301,7 @@
      f64.add
      set_local $0
      br $repeat|3
-     unreachable
     end
-    unreachable
    end
    get_local $1
    i32.load offset=20
@@ -5481,9 +5371,9 @@
  (func $~lib/map/Map<u64_u64>#find (; 69 ;) (type $iIii) (param $0 i32) (param $1 i64) (param $2 i32) (result i32)
   get_local $0
   i32.load
-  get_local $2
   get_local $0
   i32.load offset=4
+  get_local $2
   i32.and
   i32.const 2
   i32.shl
@@ -5584,7 +5474,6 @@
      i64.load offset=8
      i64.store offset=8
      get_local $3
-     get_local $4
      get_local $2
      i64.load
      call $~lib/internal/hash/hash64
@@ -5592,6 +5481,7 @@
      i32.and
      i32.const 2
      i32.shl
+     get_local $4
      i32.add
      tee_local $8
      i32.load offset=8
@@ -5671,7 +5561,6 @@
      i32.const 1
      i32.or
     end
-    tee_local $3
     call $~lib/map/Map<u64_u64>#rehash
    end
    get_local $0
@@ -5706,9 +5595,9 @@
    get_local $3
    get_local $0
    i32.load
-   get_local $5
    get_local $0
    i32.load offset=4
+   get_local $5
    i32.and
    i32.const 2
    i32.shl
@@ -5753,15 +5642,12 @@
   (local $4 i32)
   (local $5 i32)
   loop $continue|0
+   get_local $1
+   i32.const 3
+   i32.and
    get_local $2
-   if (result i32)
-    get_local $1
-    i32.const 3
-    i32.and
-   else    
-    get_local $2
-   end
-   tee_local $3
+   get_local $2
+   select
    if
     get_local $0
     tee_local $4
@@ -5853,14 +5739,14 @@
     i32.add
     i32.load
     i32.store
-    get_local $0
-    i32.const 8
-    i32.add
-    set_local $0
     get_local $1
     i32.const 8
     i32.add
     set_local $1
+    get_local $0
+    i32.const 8
+    i32.add
+    set_local $0
    end
    get_local $2
    i32.const 4
@@ -5870,14 +5756,14 @@
     get_local $1
     i32.load
     i32.store
-    get_local $0
-    i32.const 4
-    i32.add
-    set_local $0
     get_local $1
     i32.const 4
     i32.add
     set_local $1
+    get_local $0
+    i32.const 4
+    i32.add
+    set_local $0
    end
    get_local $2
    i32.const 2
@@ -5887,21 +5773,19 @@
     get_local $1
     i32.load16_u
     i32.store16
-    get_local $0
-    i32.const 2
-    i32.add
-    set_local $0
     get_local $1
     i32.const 2
     i32.add
     set_local $1
+    get_local $0
+    i32.const 2
+    i32.add
+    set_local $0
    end
    get_local $2
    i32.const 1
    i32.and
    if
-    get_local $1
-    set_local $3
     get_local $0
     get_local $1
     i32.load8_u
@@ -5981,9 +5865,6 @@
        i32.ge_u
        if
         get_local $0
-        get_local $5
-        i32.const 24
-        i32.shr_u
         get_local $1
         i32.const 1
         i32.add
@@ -5991,14 +5872,14 @@
         tee_local $3
         i32.const 8
         i32.shl
+        get_local $5
+        i32.const 24
+        i32.shr_u
         i32.or
         i32.store
         get_local $0
         i32.const 4
         i32.add
-        get_local $3
-        i32.const 24
-        i32.shr_u
         get_local $1
         i32.const 5
         i32.add
@@ -6006,14 +5887,14 @@
         tee_local $5
         i32.const 8
         i32.shl
+        get_local $3
+        i32.const 24
+        i32.shr_u
         i32.or
         i32.store
         get_local $0
         i32.const 8
         i32.add
-        get_local $5
-        i32.const 24
-        i32.shr_u
         get_local $1
         i32.const 9
         i32.add
@@ -6021,14 +5902,14 @@
         tee_local $3
         i32.const 8
         i32.shl
+        get_local $5
+        i32.const 24
+        i32.shr_u
         i32.or
         i32.store
         get_local $0
         i32.const 12
         i32.add
-        get_local $3
-        i32.const 24
-        i32.shr_u
         get_local $1
         i32.const 13
         i32.add
@@ -6036,6 +5917,9 @@
         tee_local $5
         i32.const 8
         i32.shl
+        get_local $3
+        i32.const 24
+        i32.shr_u
         i32.or
         i32.store
         get_local $1
@@ -6090,9 +5974,6 @@
       i32.ge_u
       if
        get_local $0
-       get_local $5
-       i32.const 16
-       i32.shr_u
        get_local $1
        i32.const 2
        i32.add
@@ -6100,14 +5981,14 @@
        tee_local $3
        i32.const 16
        i32.shl
+       get_local $5
+       i32.const 16
+       i32.shr_u
        i32.or
        i32.store
        get_local $0
        i32.const 4
        i32.add
-       get_local $3
-       i32.const 16
-       i32.shr_u
        get_local $1
        i32.const 6
        i32.add
@@ -6115,14 +5996,14 @@
        tee_local $5
        i32.const 16
        i32.shl
+       get_local $3
+       i32.const 16
+       i32.shr_u
        i32.or
        i32.store
        get_local $0
        i32.const 8
        i32.add
-       get_local $5
-       i32.const 16
-       i32.shr_u
        get_local $1
        i32.const 10
        i32.add
@@ -6130,14 +6011,14 @@
        tee_local $3
        i32.const 16
        i32.shl
+       get_local $5
+       i32.const 16
+       i32.shr_u
        i32.or
        i32.store
        get_local $0
        i32.const 12
        i32.add
-       get_local $3
-       i32.const 16
-       i32.shr_u
        get_local $1
        i32.const 14
        i32.add
@@ -6145,6 +6026,9 @@
        tee_local $5
        i32.const 16
        i32.shl
+       get_local $3
+       i32.const 16
+       i32.shr_u
        i32.or
        i32.store
        get_local $1
@@ -6191,9 +6075,6 @@
      i32.ge_u
      if
       get_local $0
-      get_local $5
-      i32.const 8
-      i32.shr_u
       get_local $1
       i32.const 3
       i32.add
@@ -6201,14 +6082,14 @@
       tee_local $3
       i32.const 24
       i32.shl
+      get_local $5
+      i32.const 8
+      i32.shr_u
       i32.or
       i32.store
       get_local $0
       i32.const 4
       i32.add
-      get_local $3
-      i32.const 8
-      i32.shr_u
       get_local $1
       i32.const 7
       i32.add
@@ -6216,14 +6097,14 @@
       tee_local $5
       i32.const 24
       i32.shl
+      get_local $3
+      i32.const 8
+      i32.shr_u
       i32.or
       i32.store
       get_local $0
       i32.const 8
       i32.add
-      get_local $5
-      i32.const 8
-      i32.shr_u
       get_local $1
       i32.const 11
       i32.add
@@ -6231,14 +6112,14 @@
       tee_local $3
       i32.const 24
       i32.shl
+      get_local $5
+      i32.const 8
+      i32.shr_u
       i32.or
       i32.store
       get_local $0
       i32.const 12
       i32.add
-      get_local $3
-      i32.const 8
-      i32.shr_u
       get_local $1
       i32.const 15
       i32.add
@@ -6246,6 +6127,9 @@
       tee_local $5
       i32.const 24
       i32.shl
+      get_local $3
+      i32.const 8
+      i32.shr_u
       i32.or
       i32.store
       get_local $1
@@ -6644,8 +6528,6 @@
   i32.const 1
   i32.and
   if
-   get_local $1
-   set_local $3
    get_local $0
    get_local $1
    i32.load8_u
@@ -6712,7 +6594,6 @@
       set_local $2
       get_local $0
       tee_local $4
-      tee_local $3
       i32.const 1
       i32.add
       set_local $0
@@ -6758,7 +6639,6 @@
     if
      get_local $0
      tee_local $4
-     tee_local $3
      i32.const 1
      i32.add
      set_local $0
@@ -6799,11 +6679,11 @@
       if
        return
       end
-      get_local $0
       get_local $2
       i32.const 1
       i32.sub
       tee_local $2
+      get_local $0
       i32.add
       get_local $1
       get_local $2
@@ -6818,11 +6698,11 @@
      i32.const 8
      i32.ge_u
      if
-      get_local $0
       get_local $2
       i32.const 8
       i32.sub
       tee_local $2
+      get_local $0
       i32.add
       get_local $1
       get_local $2
@@ -6836,11 +6716,11 @@
    loop $continue|5
     get_local $2
     if
-     get_local $0
      get_local $2
      i32.const 1
      i32.sub
      tee_local $2
+     get_local $0
      i32.add
      get_local $1
      get_local $2
@@ -6855,7 +6735,6 @@
  (func $~lib/internal/arraybuffer/reallocateUnsafe (; 75 ;) (type $iii) (param $0 i32) (param $1 i32) (result i32)
   (local $2 i32)
   (local $3 i32)
-  (local $4 i32)
   get_local $1
   get_local $0
   i32.load
@@ -6885,37 +6764,29 @@
     get_local $0
     get_local $1
     i32.store
-    get_local $0
-    i32.const 8
-    i32.add
-    get_local $2
-    i32.add
-    get_local $1
-    get_local $2
-    i32.sub
-    call $~lib/internal/memory/memset
    else    
     get_local $1
     call $~lib/internal/arraybuffer/allocateUnsafe
     tee_local $3
     i32.const 8
     i32.add
-    tee_local $4
     get_local $0
     i32.const 8
     i32.add
     get_local $2
     call $~lib/internal/memory/memmove
-    get_local $4
-    get_local $2
-    i32.add
-    get_local $1
-    get_local $2
-    i32.sub
-    call $~lib/internal/memory/memset
     get_local $3
-    return
+    set_local $0
    end
+   get_local $0
+   i32.const 8
+   i32.add
+   get_local $2
+   i32.add
+   get_local $1
+   get_local $2
+   i32.sub
+   call $~lib/internal/memory/memset
   else   
    get_local $1
    get_local $2
@@ -6999,8 +6870,8 @@
   i32.add
   set_local $0
   loop $continue|0
-   get_local $1
    get_local $0
+   get_local $1
    i32.ne
    if
     get_local $1
@@ -7041,8 +6912,8 @@
   i32.add
   set_local $0
   loop $continue|0
-   get_local $1
    get_local $0
+   get_local $1
    i32.ne
    if
     get_local $1
@@ -7075,14 +6946,13 @@
   tee_local $3
   i32.eqz
   tee_local $4
-  i32.eqz
-  if
+  if (result i32)
+   get_local $4
+  else   
    i32.const 0
    get_local $3
    i32.ge_s
-   set_local $4
   end
-  get_local $4
   if
    i32.const -1
    return
@@ -7095,10 +6965,10 @@
    get_local $3
    i32.lt_s
    if
-    get_local $0
     get_local $2
     i32.const 3
     i32.shl
+    get_local $0
     i32.add
     i64.load offset=8
     get_local $1
@@ -7127,33 +6997,31 @@
  )
  (func $start (; 81 ;) (type $v)
   (local $0 i32)
-  (local $1 i64)
-  (local $2 i32)
-  (local $3 i32)
+  (local $1 i32)
+  i32.const 176
+  set_global $~lib/allocator/arena/startOffset
+  get_global $~lib/allocator/arena/startOffset
+  set_global $~lib/allocator/arena/offset
+  call $std/map/test<i8_i32>
+  call $std/map/test<u8_i32>
+  call $std/map/test<i16_i32>
+  call $std/map/test<u16_i32>
+  call $std/map/test<i32_i32>
+  call $std/map/test<u32_i32>
+  call $std/map/test<i64_i32>
+  call $std/map/test<u64_i32>
+  call $std/map/test<f32_i32>
+  call $std/map/test<f64_i32>
+  call $~lib/map/Map<u64_u64>#constructor
+  set_global $std/map/map
+  get_global $std/map/map
+  i64.const 1
+  i64.const 11
+  call $~lib/map/Map<u64_u64>#set
+  get_global $std/map/map
+  call $~lib/map/Map<u64_u64>#keys
+  set_global $std/map/keys
   block $folding-inner0
-   i32.const 176
-   set_global $~lib/allocator/arena/startOffset
-   get_global $~lib/allocator/arena/startOffset
-   set_global $~lib/allocator/arena/offset
-   call $std/map/test<i8_i32>
-   call $std/map/test<u8_i32>
-   call $std/map/test<i16_i32>
-   call $std/map/test<u16_i32>
-   call $std/map/test<i32_i32>
-   call $std/map/test<u32_i32>
-   call $std/map/test<i64_i32>
-   call $std/map/test<u64_i32>
-   call $std/map/test<f32_i32>
-   call $std/map/test<f64_i32>
-   call $~lib/map/Map<u64_u64>#constructor
-   set_global $std/map/map
-   get_global $std/map/map
-   i64.const 1
-   i64.const 11
-   call $~lib/map/Map<u64_u64>#set
-   get_global $std/map/map
-   call $~lib/map/Map<u64_u64>#keys
-   set_global $std/map/keys
    get_global $std/map/keys
    i32.load offset=4
    i32.const 1
@@ -7180,28 +7048,24 @@
     i32.lt_s
     if
      get_global $std/map/map
-     set_local $2
      get_local $0
      get_global $std/map/keys
      i32.load
-     tee_local $3
+     tee_local $1
      i32.load
      i32.const 3
      i32.shr_u
      i32.lt_u
      if (result i64)
-      get_local $3
       get_local $0
       i32.const 3
       i32.shl
+      get_local $1
       i32.add
       i64.load offset=8
      else      
       unreachable
      end
-     set_local $1
-     get_local $2
-     get_local $1
      call $~lib/map/Map<u64_u64>#has
      i32.eqz
      br_if $folding-inner0
@@ -7228,7 +7092,6 @@
    else    
     unreachable
    end
-   tee_local $1
    i64.const 1
    i64.ne
    br_if $folding-inner0
@@ -7276,38 +7139,33 @@
    i32.const 0
    i32.lt_s
    br_if $folding-inner0
-   block $break|1
-    i32.const 0
-    set_local $0
-    loop $repeat|1
-     get_local $0
-     get_global $std/map/keys
-     i32.load offset=4
-     i32.ge_s
-     br_if $break|1
+   i32.const 0
+   set_local $0
+   loop $repeat|1
+    get_local $0
+    get_global $std/map/keys
+    i32.load offset=4
+    i32.lt_s
+    if
      get_global $std/map/map
-     set_local $2
      get_local $0
      get_global $std/map/keys
      i32.load
-     tee_local $3
+     tee_local $1
      i32.load
      i32.const 3
      i32.shr_u
      i32.lt_u
      if (result i64)
-      get_local $3
       get_local $0
       i32.const 3
       i32.shl
+      get_local $1
       i32.add
       i64.load offset=8
      else      
       unreachable
      end
-     set_local $1
-     get_local $2
-     get_local $1
      call $~lib/map/Map<u64_u64>#has
      i32.eqz
      br_if $folding-inner0
@@ -7316,9 +7174,7 @@
      i32.add
      set_local $0
      br $repeat|1
-     unreachable
     end
-    unreachable
    end
    return
   end

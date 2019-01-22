@@ -183,24 +183,24 @@
   if
    return
   end
-  get_local $0
   i32.const 0
   get_local $0
   i32.sub
   i32.const 3
   i32.and
   tee_local $2
+  get_local $0
   i32.add
   tee_local $0
   i32.const 0
   i32.store
-  get_local $0
   get_local $1
   get_local $2
   i32.sub
   i32.const -4
   i32.and
   tee_local $1
+  get_local $0
   i32.add
   i32.const 4
   i32.sub
@@ -285,12 +285,12 @@
   i32.const 0
   i32.store
   get_local $0
-  get_local $0
   i32.const 4
   i32.and
   i32.const 24
   i32.add
   tee_local $2
+  get_local $0
   i32.add
   set_local $0
   get_local $1
@@ -389,11 +389,11 @@
  (func $start (; 6 ;) (type $v)
   (local $0 i32)
   (local $1 i32)
+  i32.const 232
+  set_global $~lib/allocator/arena/startOffset
+  get_global $~lib/allocator/arena/startOffset
+  set_global $~lib/allocator/arena/offset
   block $folding-inner0
-   i32.const 232
-   set_global $~lib/allocator/arena/startOffset
-   get_global $~lib/allocator/arena/startOffset
-   set_global $~lib/allocator/arena/offset
    i32.const 28
    i32.load
    i32.const 3
@@ -411,7 +411,6 @@
    else    
     unreachable
    end
-   tee_local $0
    i32.const 255
    i32.and
    br_if $folding-inner0
@@ -429,7 +428,6 @@
    else    
     unreachable
    end
-   tee_local $0
    i32.const 255
    i32.and
    i32.const 1
@@ -449,7 +447,6 @@
    else    
     unreachable
    end
-   tee_local $0
    i32.const 255
    i32.and
    i32.const 2
@@ -474,7 +471,6 @@
    else    
     unreachable
    end
-   tee_local $0
    br_if $folding-inner0
    i32.const 1
    i32.const 112
@@ -492,7 +488,6 @@
    else    
     unreachable
    end
-   tee_local $0
    i32.const 1
    i32.ne
    br_if $folding-inner0
@@ -512,7 +507,6 @@
    else    
     unreachable
    end
-   tee_local $0
    i32.const 2
    i32.ne
    br_if $folding-inner0
@@ -523,8 +517,9 @@
    tee_local $0
    i32.load
    get_global $std/array-literal/i
+   tee_local $1
    i32.store8 offset=8
-   get_global $std/array-literal/i
+   get_local $1
    i32.const 1
    i32.add
    set_global $std/array-literal/i
@@ -533,8 +528,9 @@
    i32.const 1
    i32.add
    get_global $std/array-literal/i
+   tee_local $1
    i32.store8 offset=8
-   get_global $std/array-literal/i
+   get_local $1
    i32.const 1
    i32.add
    set_global $std/array-literal/i
@@ -563,7 +559,6 @@
    else    
     unreachable
    end
-   tee_local $0
    i32.const 255
    i32.and
    br_if $folding-inner0
@@ -581,7 +576,6 @@
    else    
     unreachable
    end
-   tee_local $0
    i32.const 255
    i32.and
    i32.const 1
@@ -601,7 +595,6 @@
    else    
     unreachable
    end
-   tee_local $0
    i32.const 255
    i32.and
    i32.const 2
@@ -613,8 +606,9 @@
    tee_local $0
    i32.load
    get_global $std/array-literal/i
+   tee_local $1
    i32.store offset=8
-   get_global $std/array-literal/i
+   get_local $1
    i32.const 1
    i32.add
    set_global $std/array-literal/i
@@ -623,8 +617,9 @@
    i32.const 4
    i32.add
    get_global $std/array-literal/i
+   tee_local $1
    i32.store offset=8
-   get_global $std/array-literal/i
+   get_local $1
    i32.const 1
    i32.add
    set_global $std/array-literal/i
@@ -655,7 +650,6 @@
    else    
     unreachable
    end
-   tee_local $0
    br_if $folding-inner0
    i32.const 1
    get_global $std/array-literal/dynamicArrayI32
@@ -673,7 +667,6 @@
    else    
     unreachable
    end
-   tee_local $0
    i32.const 1
    i32.ne
    br_if $folding-inner0
@@ -693,7 +686,6 @@
    else    
     unreachable
    end
-   tee_local $0
    i32.const 2
    i32.ne
    br_if $folding-inner0

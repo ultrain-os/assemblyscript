@@ -13,19 +13,19 @@
  (start $start)
  (func $start (; 1 ;) (type $v)
   (local $0 i32)
+  loop $continue|0
+   get_global $do/n
+   i32.const 1
+   i32.sub
+   set_global $do/n
+   get_global $do/m
+   i32.const 1
+   i32.add
+   set_global $do/m
+   get_global $do/n
+   br_if $continue|0
+  end
   block $folding-inner0
-   loop $continue|0
-    get_global $do/n
-    i32.const 1
-    i32.sub
-    set_global $do/n
-    get_global $do/m
-    i32.const 1
-    i32.add
-    set_global $do/m
-    get_global $do/n
-    br_if $continue|0
-   end
    get_global $do/n
    if
     br $folding-inner0

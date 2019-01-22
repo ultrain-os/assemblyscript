@@ -94,6 +94,10 @@ declare function isReference(value: any): value is object | string;
 declare function isString(value: any): value is string | String;
 /** Tests if the specified value can be used as an array. */
 declare function isArray(value: any): value is Array<any>;
+/** Tests if the specified expression resolves to a defined element. */
+declare function isDefined(expression: any): bool;
+/** Tests if the specified expression evaluates to a constant value. */
+declare function isConstant(expression: any): bool;
 /** Traps if the specified value is not true-ish, otherwise returns the value. */
 declare function assert<T>(isTrueish: T | null, message?: string): T;
 /** Parses an integer string to a 64-bit float. */
@@ -285,6 +289,8 @@ declare namespace memory {
   function free(ptr: usize): void;
   /** Copies n bytes from the specified source to the specified destination in memory. These regions may overlap. */
   function copy(dst: usize, src: usize, n: usize): void;
+  /** Fills size bytes from from the specified destination by same value in memory. */
+  function fill(dst: usize, value: u8, size: usize): void;
   /** Resets the allocator to its initial state, if supported. */
   function reset(): void;
 }
@@ -373,8 +379,8 @@ declare class Array<T> {
   shift(): T;
   some(callbackfn: (element: T, index: i32, array?: Array<T>) => bool): bool;
   unshift(element: T): i32;
-  slice(from?: i32, to?: i32): T[];
-  splice(start: i32, deleteCount?: i32): void;
+  slice(from?: i32, to?: i32): Array<T>;
+  splice(start: i32, deleteCount?: i32): Array<T>;
   sort(comparator?: (a: T, b: T) => i32): this;
   join(separator?: string): string;
   reverse(): T[];
@@ -382,6 +388,7 @@ declare class Array<T> {
 }
 
 declare class Uint8Array extends Array<u8> {}
+declare class Uint8ClampedArray extends Array<u8> {}
 declare class Uint16Array extends Array<u16> {}
 declare class Uint32Array extends Array<u32> {}
 declare class Int8Array extends Array<i8> {}
@@ -420,6 +427,7 @@ declare class String {
   padEnd(targetLength: i32, padString?: string): string;
   replace(search: string, replacement: string): string;
   repeat(count?: i32): string;
+  slice(beginIndex: i32, endIndex?: i32): string;
   split(separator?: string, limit?: i32): string[];
   toString(): string;
 }

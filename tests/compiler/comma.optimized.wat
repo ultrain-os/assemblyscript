@@ -12,14 +12,14 @@
  (start $start)
  (func $start (; 1 ;) (type $v)
   (local $0 i32)
+  get_global $comma/a
+  tee_local $0
+  i32.const 1
+  i32.add
+  set_global $comma/a
+  get_local $0
+  set_global $comma/b
   block $folding-inner0
-   get_global $comma/a
-   tee_local $0
-   i32.const 1
-   i32.add
-   set_global $comma/a
-   get_local $0
-   set_global $comma/b
    get_global $comma/a
    i32.const 1
    i32.ne
@@ -35,8 +35,9 @@
    i32.add
    set_global $comma/a
    get_global $comma/a
+   tee_local $0
    set_global $comma/b
-   get_global $comma/a
+   get_local $0
    i32.const 2
    i32.ne
    if
@@ -57,8 +58,9 @@
    i32.add
    set_global $comma/a
    get_global $comma/a
+   tee_local $0
    set_global $comma/b
-   get_global $comma/a
+   get_local $0
    i32.const 1
    i32.ne
    if
@@ -90,10 +92,10 @@
    if
     br $folding-inner0
    end
-   block $break|0
-    i32.const 0
-    set_local $0
-    loop $repeat|0
+   i32.const 0
+   set_local $0
+   loop $repeat|0
+    block $break|0
      get_local $0
      get_global $comma/a
      i32.ge_s
@@ -107,9 +109,7 @@
      i32.add
      set_local $0
      br $repeat|0
-     unreachable
     end
-    unreachable
    end
    get_local $0
    i32.const 1

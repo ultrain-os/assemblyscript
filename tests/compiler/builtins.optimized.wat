@@ -27,19 +27,19 @@
   nop
  )
  (func $start (; 3 ;) (type $v)
+  i32.const 31
+  set_global $builtins/i
+  i32.const 0
+  set_global $builtins/i
+  i32.const 1
+  set_global $builtins/i
+  i32.const 2
+  set_global $builtins/i
+  i32.const -2147483648
+  set_global $builtins/i
+  i32.const 42
+  set_global $builtins/i
   block $folding-inner0
-   i32.const 31
-   set_global $builtins/i
-   i32.const 0
-   set_global $builtins/i
-   i32.const 1
-   set_global $builtins/i
-   i32.const 2
-   set_global $builtins/i
-   i32.const -2147483648
-   set_global $builtins/i
-   i32.const 42
-   set_global $builtins/i
    get_global $builtins/i
    i32.const 42
    i32.ne

@@ -31,11 +31,11 @@
  )
  (func $start (; 4 ;) (type $v)
   (local $0 i32)
+  i32.const 1
+  set_global $function-types/i32Adder
+  i32.const 2
+  set_global $~argc
   block $folding-inner0
-   i32.const 1
-   set_global $function-types/i32Adder
-   i32.const 2
-   set_global $~argc
    i32.const 1
    i32.const 2
    get_global $function-types/i32Adder
