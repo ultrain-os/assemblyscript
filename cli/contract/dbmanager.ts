@@ -34,9 +34,9 @@ export class DBManager<T extends Serializable> {
     public _owner: u64;
     public _scope: u64;
 
-    constructor(tblname: u64, owner: u64, scope: u64) {
+    constructor(tblname: u64, scope: u64) {
         this._tblname = tblname;
-        this._owner = owner;
+        this._owner = 0;
         this._scope = scope;
     }
 
@@ -47,14 +47,14 @@ export class DBManager<T extends Serializable> {
      * @param payer an account_name, who pays for the storing action. only payer can modify this object.
      * @param obj the data to be sotred.
      */
-    public emplace(payer: u64, obj: T): void {
+    public emplace(obj: T): void {
     }
     /**
      * update a row.
      * @param payer account name who pays for the updating action.
      * @param newobj the updated data to be stored.
      */
-    public modify(payer: u64, newobj: T): void {
+    public modify(newobj: T): void {
     }
 
     public exists(primary: u64): boolean {

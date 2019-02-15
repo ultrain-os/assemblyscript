@@ -1006,12 +1006,12 @@ declare class Cursor<T extends Serializable> {
 }
 
 declare class DBManager<T extends Serializable> {
-  constructor(tblname: u64, owner: u64, scope: u64);
+  constructor(tblname: u64, scope: u64);
   cursor(): Cursor<T>;
   getCode(): u64;
   getScope(): u64;
-  emplace(payer: u64, obj: T): void;
-  modify(payer: u64, newobj: T): void;
+  emplace(obj: T): void;
+  modify(newobj: T): void;
   exists(primary: u64): boolean;
   get(primary: u64, out: T): boolean;
   erase(primary: u64): void;

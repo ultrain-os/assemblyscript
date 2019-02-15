@@ -75,9 +75,9 @@ export class DBManager<T extends Serializable> {
      *        if you write a row with scope A, then you must read the row with scope A too,
      *        otherwise you get nothing.
      */
-    constructor(tblname: u64, owner: u64, scope: u64) {
+    constructor(tblname: u64, scope: u64) {
         this._tblname = tblname;
-        this._owner = owner;
+        this._owner = current_receiver();
         this._scope = scope;
     }
 
@@ -92,22 +92,22 @@ export class DBManager<T extends Serializable> {
      * @param payer an account_name, who pays for the storing . only payer can modify this object.
      * @param obj the data to be sotred.
      */
-    public emplace(payer: account_name, obj: T): void {
-        ultrain_assert(this._owner == current_receiver(), "can not create objects in table of another contract");
+    public emplace(obj: T): void {
+        // ultrain_assert(this._owner == current_receiver(), "can not create objects in table of another contract");
         let len = DataStream.measure<T>(obj);
         let arr = new Uint8Array(len);
         let ds = new DataStream(<usize>arr.buffer, len);
         obj.serialize(ds);
 
         let primary = obj.primaryKey();
-        db_store_i64(this._scope, this._tblname, payer, primary, ds.buffer, ds.pos);
+        db_store_i64(this._scope, this._tblname, this._owner, primary, ds.buffer, ds.pos);
     }
     /**
      * update a row.
      * @param newobj the updated data to be stored.
      * @param payer account name who pays for the updating .
      */
-    public modify(payer: u64, newobj: T): void {
+    public modify(newobj: T): void {
         let itr = this.find(newobj.primaryKey());
         ultrain_assert(itr >= 0, "object passed to modify is not found in this DBManager.");
         ultrain_assert(this._owner == current_receiver(), "can not modify objects in table of another contract.");
@@ -116,7 +116,7 @@ export class DBManager<T extends Serializable> {
         let arr = new Uint8Array(len);
         let ds = new DataStream(<usize>arr.buffer, len);
         newobj.serialize(ds);
-        db_update_i64(itr, payer, ds.buffer, ds.pos);
+        db_update_i64(itr, this._owner, ds.buffer, ds.pos);
     }
 
     private loadObjectByPrimaryIterator(itr: i32, out: T): void {
