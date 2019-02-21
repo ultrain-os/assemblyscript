@@ -93,7 +93,8 @@ export class DataStream {
     }
 
     size(): u32 {
-        return this.len;
+        if (this.isMeasureMode()) return this.pos;
+        else return this.len;
     }
 
     readVarint32(): u32 {
