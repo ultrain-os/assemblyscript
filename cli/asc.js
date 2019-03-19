@@ -31,7 +31,7 @@ var assemblyscript, isDev = false;
 (() => {
   try { // `asc` on the command line
     assemblyscript = require("../dist/assemblyscript");
-    // throw new Error();
+    throw new Error();
   } catch (e) {
     try { // `asc` on the command line without dist files
       require("ts-node").register({ project: path.join(__dirname, "..", "src", "tsconfig.json") });
@@ -461,9 +461,9 @@ exports.main = function main(argv, options, callback, exttype) {
   // Begin compilation
   const compilerOptions = assemblyscript.createOptions();
   assemblyscript.setTarget(compilerOptions, 0);
-  assemblyscript.setNoTreeShaking(compilerOptions, args.noTreeShaking);
   assemblyscript.setNoAssert(compilerOptions, args.noAssert);
   assemblyscript.setImportMemory(compilerOptions, args.importMemory);
+  assemblyscript.setSharedMemory(compilerOptions, args.sharedMemory);
   assemblyscript.setImportTable(compilerOptions, args.importTable);
   assemblyscript.setMemoryBase(compilerOptions, args.memoryBase >>> 0);
   assemblyscript.setSourceMap(compilerOptions, args.sourceMap != null);
@@ -836,24 +836,6 @@ exports.main = function main(argv, options, callback, exttype) {
   }
 }
 
-var argumentSubstitutions = {
-  "-O": ["--optimize"],
-  "-Os": ["--optimize", "--shrinkLevel", "1"],
-  "-Oz": ["--optimize", "--shrinkLevel", "2"],
-  "-O0": ["--optimizeLevel", "0", "--shrinkLevel", "0"],
-  "-O0s": ["--optimizeLevel", "0", "--shrinkLevel", "1"],
-  "-O0z": ["--optimizeLevel", "0", "--shrinkLevel", "2"],
-  "-O1": ["--optimizeLevel", "1", "--shrinkLevel", "0"],
-  "-O1s": ["--optimizeLevel", "1", "--shrinkLevel", "1"],
-  "-O1z": ["--optimizeLevel", "1", "--shrinkLevel", "2"],
-  "-O2": ["--optimizeLevel", "2", "--shrinkLevel", "0"],
-  "-O2s": ["--optimizeLevel", "2", "--shrinkLevel", "1"],
-  "-O2z": ["--optimizeLevel", "2", "--shrinkLevel", "2"],
-  "-O3": ["--optimizeLevel", "3", "--shrinkLevel", "0"],
-  "-O3s": ["--optimizeLevel", "3", "--shrinkLevel", "1"],
-  "-O3z": ["--optimizeLevel", "3", "--shrinkLevel", "2"],
-};
-
 /** Checks diagnostics emitted so far for errors. */
 function checkDiagnostics(emitter, stderr) {
   var diagnostic;
@@ -1009,7 +991,7 @@ function insertCodes(sourcePath, sourceText) {
     let data = sourceText.split("\n");
     for (let serialize of serializeArray) {
       data.splice(serialize.line , 0, serialize.getCodes());
-      if (false) {
+      if (true) {
         console.log(`Path: ${sourcePath} line: ${serialize.line}. Insert code:${EOL}${serialize.getCodes()}`);
       }
     }

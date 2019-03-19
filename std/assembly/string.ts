@@ -162,17 +162,7 @@ export class String {
 
   @operator(">=")
   private static __gte(left: String, right: String): bool {
-    if (left === right) return true;
-    if (left === null || right === null) return false;
-
-    var leftLength  = left.length;
-    var rightLength = right.length;
-
-    if (!leftLength)  return !rightLength;
-    if (!rightLength) return true;
-
-    var length = <usize>min<i32>(leftLength, rightLength);
-    return compareUnsafe(left, 0, right, 0, length) >= 0;
+    return !this.__lt(left, right);
   }
 
   @operator("<")
@@ -191,17 +181,7 @@ export class String {
 
   @operator("<=")
   private static __lte(left: String, right: String): bool {
-    if (left === right) return true;
-    if (left === null || right === null) return false;
-
-    var leftLength  = left.length;
-    var rightLength = right.length;
-
-    if (!rightLength) return !leftLength;
-    if (!leftLength)  return true;
-
-    var length = <usize>min<i32>(leftLength, rightLength);
-    return compareUnsafe(left, 0, right, 0, length) <= 0;
+    return !this.__gt(left, right);
   }
 
   @inline
@@ -414,10 +394,10 @@ export class String {
   }
 
   slice(beginIndex: i32, endIndex: i32 = i32.MAX_VALUE): String {
-    var length = this.length;
-    var begin = (beginIndex < 0) ? max(beginIndex + length, 0) : min(beginIndex, length);
-    var end = (endIndex < 0) ? max(endIndex + length, 0) : min(endIndex, length);
-    var len = end - begin;
+    var len = this.length;
+    var begin = beginIndex < 0 ? max(beginIndex + len, 0) : min(beginIndex, len);
+    var end = endIndex < 0 ? max(endIndex + len, 0) : min(endIndex, len);
+    len = end - begin;
     if (len <= 0) return changetype<String>("");
     var out = allocateUnsafe(len);
     copyUnsafe(out, 0, this, begin, len);
@@ -595,6 +575,8 @@ export class String {
     return buf;
   }
 }
+
+export type string = String;
 
 export function parseInt(str: String, radix: i32 = 0): f64 {
   return parse<f64>(str, radix);

@@ -5,14 +5,15 @@ import {
     ClassDeclaration,
     DecoratorNode,
     Range,
-    TypeNode
+    TypeNode,
+    TypeDeclaration
 } from "../ast";
 
 import {
     ClassPrototype,
-    Program,
     Element,
-    ElementKind
+    ElementKind,
+    TypeDefinition
 } from "../program";
 
 import {
@@ -26,6 +27,7 @@ import {
 import {
     AbiHelper
 } from "../abi";
+import { PATH_DELIMITER } from "../common";
 
 export class AstUtil {
 
@@ -119,7 +121,7 @@ export class AstUtil {
             return false;
         }
         const interfaceName = "Serializable";
-        var havingInterface = AstUtil.impledInterface(classPrototype.declaration, interfaceName);
+        var havingInterface = AstUtil.impledInterface(<ClassDeclaration>classPrototype.declaration, interfaceName);
         return havingInterface || AstUtil.impledSerializable(classPrototype.basePrototype);
     }
 
@@ -150,7 +152,7 @@ export class AstUtil {
     static extendedContract(classPrototype: ClassPrototype): bool {
         const contractName = "Contract";
         var basePrototype: ClassPrototype | null = classPrototype.basePrototype;
-        if (basePrototype && basePrototype.simpleName == contractName) {
+        if (basePrototype && basePrototype.name == contractName) {
             return true;
         }
         return false;
@@ -172,7 +174,7 @@ export class AstUtil {
         var tempClz: ClassPrototype | null = classPrototype;
         var interfaces: string[] = new Array<string>();
         while (tempClz != null) {
-            let implTypes = tempClz.declaration.implementsTypes;
+            let implTypes = (<ClassDeclaration>tempClz.declaration).implementsTypes;
             if (implTypes) {
                 for (let type of implTypes) {
                     interfaces.push(type.name.range.toString());
@@ -187,59 +189,6 @@ export class AstUtil {
         return range.source.normalizedPath +
             ":" + range.line.toString(10) +
             ":" + range.column.toString(10);
-    }
-
-    static printTypeAliasInfo(program: Program): void {
-
-        var typesLookupKeys = program.typesLookup.keys();
-        for (let key of typesLookupKeys) {
-            let value = program.typesLookup.get(key);
-            if (value) {
-                console.log(`type look up key: ${key}. value: ${value.kind}`);
-            }
-        }
-        var typesAliasKeys = program.typeAliases.keys();
-        for (let key of typesAliasKeys) {
-            let value = program.typeAliases.get(key);
-            if (value) {
-                console.log(`type alias key: ${key}. Value: ${value.type.range.toString()}`);
-            }
-        }
-    }
-
-    static printProgramInstances(program: Program): void {
-        var keys = program.instancesLookup.keys();
-        for (let key of keys) {
-            let value = program.instancesLookup.get(key);
-            if (value) {
-                console.log(`instance lookup key:${key}. Kind:${ElementKind[value.kind]}`);
-            }
-        }
-    }
-
-    static printProgramElements(program: Program): void {
-        var elements = program.elementsLookup;
-        for (let [key, element] of elements) {
-            console.log(`Element lookup key:${key}. Kind:${ElementKind[element.kind]}`);
-
-        }
-    }
-
-    static printClassPrototype(program: Program): void {
-        var elements = program.elementsLookup;
-        for (let [key, element] of elements) {
-            if (element && element.kind == ElementKind.CLASS_PROTOTYPE) {
-                let classPrototype: ClassPrototype = <ClassPrototype>element;
-                if (classPrototype.instances) {
-                    for (let instance of classPrototype.instances) {
-                        console.log(`class instance: ${instance.toString()}`);
-                    }
-                }
-                if (classPrototype.basePrototype) {
-                    console.log(`Element lookup key:${key}. Base prototype:${classPrototype.basePrototype.simpleName}`);
-                }
-            }
-        }
     }
 }
 
@@ -262,15 +211,15 @@ interface TypeInfo {
 }
 export class TypeNodeAnalyzer {
 
-    program: Program;
+    parent: Element;
     typeNode: TypeNode;
     typeName: string;
     abiType: AbiTypeEnum;
 
-    constructor(program: Program, typeNode: TypeNode) {
-        this.program = program;
+    constructor(parent: Element ,typeNode: TypeNode) {
+        this.parent = parent;
         this.typeNode = typeNode;
-        // Here various clz[]'s type name is clz[], not clz.
+        // Here various clz[]'s type name is [], not clz.
         this.typeName = this.typeNode.name.range.toString();
     }
 
@@ -293,9 +242,31 @@ export class TypeNodeAnalyzer {
         if (AstUtil.isMapType(typeName)) {
             return AbiTypeEnum.MAP;
         }
-        var type = this.findSourceAsType(typeName);
-        if (type == null) {
-            return AbiTypeEnum.CLASS;
+        var type = this.findElement(typeName);
+
+        if (type){
+
+            if (type.kind == ElementKind.TYPEDEFINITION) {
+
+                let typeDefine = <TypeDefinition>type;
+                let declaration = <TypeDeclaration>typeDefine.declaration;
+                let _typeNode = <TypeNode>declaration.type;
+                let name = _typeNode.name.range.toString();
+                if (AbiHelper.abiTypeLookup.get(name) && name != "Asset") {
+                    return AbiTypeEnum.NUMBER;
+                }
+                let path = _typeNode.range.source.internalPath;
+                let internalName = path + PATH_DELIMITER + name;
+                console.log(`simple path: ${_typeNode.range.source.simplePath}, ${internalName}`);
+                let aliasType = this.parent.lookup(internalName);
+                if (aliasType) {
+                    console.log(`Element kind: ${ElementKind[aliasType.kind]}`)
+                }
+                console.log(`abiTypeEnum/path: ${path}, name: ${name}`);
+            }
+            if (type.kind == ElementKind.CLASS_PROTOTYPE) {
+                return AbiTypeEnum.CLASS;
+            } 
         }
         return AbiTypeEnum.NUMBER;
     }
@@ -309,7 +280,7 @@ export class TypeNodeAnalyzer {
         if (AstUtil.isString(typeName)) {
             return AbiTypeEnum.STRING;
         }
-        var type = this.findSourceAsType(typeName);
+        var type = this.findSourceAsElement(typeName);
         if (type == null) {
             return AbiTypeEnum.CLASS;
         }
@@ -384,18 +355,16 @@ export class TypeNodeAnalyzer {
     * @param typeName typename without type arguments
     */
     findElement(typeName: string): Element | null {
-        var internalPath = `${this.typeNode.range.source.internalPath}/${typeName}`;
-        var element = this.program.elementsLookup.get(internalPath);
-        return element ? element : this.program.elementsLookup.get(typeName);
+        return this.parent.lookup(typeName);
     }
 
     /**
      * Get the type {@type Type} by the type name
      * @param asTypeName the AssemblyScript type name
      */
-    findSourceAsType(asTypeName: string): Type | null {
+    private findSourceAsElement(asTypeName: string): Element| null {
         var sourceTypeName = this.findSourceAsTypeName(asTypeName);
-        var sourceType: Type | null = this.program.typesLookup.get(sourceTypeName);
+        var sourceType: Element | null = this.parent.lookup(sourceTypeName);
         return sourceType;
     }
 
@@ -405,10 +374,11 @@ export class TypeNodeAnalyzer {
      *     declare type account_name_alias = account_name;
      *     findSourceAsTypeName("account_name_alias") return "account_name";
      */
-    findSourceAsTypeName(typeName: string): string {
-        var typeAlias = this.program.typeAliases.get(typeName);
-        if (typeAlias) {
-            let aliasTypeName = typeAlias.type.range.toString();
+    private findSourceAsTypeName(typeName: string): string {
+        var element = this.parent.lookup(typeName);
+        if (element && element.kind == ElementKind.TYPEDEFINITION) {
+            let typeDefine = <TypeDefinition>element;
+            let aliasTypeName = typeDefine.typeNode.range.toString();
             return this.findSourceAsTypeName(aliasTypeName);
         }
         return typeName;
@@ -419,9 +389,10 @@ export class TypeNodeAnalyzer {
         if (abiType) {
             return abiType;
         }
-        var typeAlias = this.program.typeAliases.get(typeName);
-        if (typeAlias) {
-            let aliasTypeName = typeAlias.type.range.toString();
+        var element = this.parent.lookup(typeName);
+        if (element && element.kind == ElementKind.TYPEDEFINITION) {
+            let typeDefine = <TypeDefinition> element;
+            let aliasTypeName = typeDefine.typeNode.range.toString();
             return this.findSourceAbiType(aliasTypeName);
         }
         return typeName;

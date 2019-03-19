@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+require("source-map-support").install();
 const usc = module.exports = require("../cli/asc.js");
 const optionsUtil = require("../cli/util/options");
 const options = exports.options = require("../cli/asc.json");

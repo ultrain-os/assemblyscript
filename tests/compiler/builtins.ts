@@ -3,6 +3,7 @@ assert(a instanceof bool);
 
 
 var b: bool;
+class C {}
 
 // type checks
 
@@ -16,6 +17,14 @@ assert(!isReference<usize>());
 assert(isArray<i32[]>());
 assert(isArray<string[]>());
 assert(!isArray<usize>());
+assert(isArrayLike<i32[]>());
+assert(isArrayLike<string>());
+assert(isArrayLike<Uint8Array>());
+assert(!isArrayLike<i32>());
+assert(isFunction<() => void>());
+assert(!isFunction<u32>());
+assert(isNullable<C | null>());
+assert(!isNullable<C>());
 
 
 assert(isInteger<bool>() && sizeof<bool>() == 1);
@@ -39,7 +48,14 @@ assert(!isReference(changetype<usize>(null)));
 assert(isString("1"));
 assert(!isString(1));
 assert(isArray(changetype<i32[]>(null)));
+assert(isArrayLike(changetype<i32[]>(null)));
+assert(isArrayLike(changetype<string>(null)));
+assert(isArrayLike(changetype<Uint8Array>(null)));
 assert(!isArray(changetype<usize>(null)));
+assert(isFunction(changetype<() => void>(null)));
+assert(!isFunction(changetype<u32>(null)));
+assert(isNullable(changetype<C | null>(null)));
+assert(!isNullable(changetype<C>(null)));
 
 function checkGeneric<T>(): void {
 
@@ -290,6 +306,12 @@ assert(sizeof<i64>() == 8);
 sizeof<isize>();
 assert(sizeof<f32>() == 4);
 assert(sizeof<f64>() == 8);
+
+assert(alignof<u8>() == 0);
+assert(alignof<u16>() == 1);
+assert(alignof<u32>() == 2);
+assert(alignof<u64>() == 3);
+assert(alignof<bool>() == 0);
 
 class Foo<T> { a: T; b: T; }
 assert(offsetof<Foo<i32>>("a") == 0);
