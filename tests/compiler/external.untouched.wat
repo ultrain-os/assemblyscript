@@ -1,9 +1,9 @@
 (module
  (type $FUNCSIG$v (func))
  (import "foo" "var" (global $external/var_ i32))
- (import "env" "foo" (func $external/foo))
- (import "env" "bar" (func $external/foo.bar))
- (import "env" "bar" (func $external/two))
+ (import "external" "foo" (func $external/foo))
+ (import "external" "foo.bar" (func $external/foo.bar))
+ (import "external" "bar" (func $external/two))
  (import "foo" "baz" (func $external/three))
  (memory $0 0)
  (table $0 1 funcref)

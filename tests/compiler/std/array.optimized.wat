@@ -23,7 +23,7 @@
  (type $FUNCSIG$viiii (func (param i32 i32 i32 i32)))
  (type $FUNCSIG$i (func (result i32)))
  (import "env" "abort" (func $~lib/env/abort))
- (import "env" "random" (func $~lib/bindings/Math/random (result f64)))
+ (import "Math" "random" (func $~lib/bindings/Math/random (result f64)))
  (memory $0 1)
  (data (i32.const 8) "\0d\00\00\00~\00l\00i\00b\00/\00a\00r\00r\00a\00y\00.\00t\00s")
  (data (i32.const 40) "\1c\00\00\00~\00l\00i\00b\00/\00i\00n\00t\00e\00r\00n\00a\00l\00/\00a\00r\00r\00a\00y\00b\00u\00f\00f\00e\00r\00.\00t\00s")

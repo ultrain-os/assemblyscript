@@ -2381,11 +2381,6 @@ export class Compiler extends DiagnosticEmitter {
         );
         break;
       }
-      // TODO To remove, to support the super();
-      // case NodeKind.SUPER: {
-      //   expr = this.compileNopExpression();
-      //   break;
-      // }
       case NodeKind.INSTANCEOF: {
         expr = this.compileInstanceOfExpression(<InstanceOfExpression>expression, contextualType);
         break;
@@ -7971,7 +7966,7 @@ function mangleImportName(
     mangleImportName_moduleName = "env";
     mangleImportName_elementName = element.name;
   }
-  
+
   if (!element.hasDecorator(DecoratorFlags.EXTERNAL)) return;
 
   var program = element.program;

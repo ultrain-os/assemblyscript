@@ -1,8 +1,8 @@
 (module
  (type $FUNCSIG$v (func))
- (import "env" "externalConstant" (global $declare/externalConstant i32))
+ (import "declare" "externalConstant" (global $declare/externalConstant i32))
  (import "env" "externalConstant" (global $declare/my.externalConstant i32))
- (import "env" "externalFunction" (func $declare/externalFunction))
+ (import "declare" "externalFunction" (func $declare/externalFunction))
  (import "env" "abort" (func $~lib/env/abort))
  (import "env" "externalFunction" (func $declare/my.externalFunction))
  (memory $0 1)

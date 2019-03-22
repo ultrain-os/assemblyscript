@@ -189,7 +189,7 @@ export class Map<K,V> implements Serializable{
       this.serializeItem<V>(value,ds);
     }
   }
-  
+ 
   private deserializeItem<T>(ds: DataStream): T {
     var arr = new Array<T>(1);
     var v0 = arr[0];

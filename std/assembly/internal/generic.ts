@@ -1,6 +1,6 @@
 export abstract class GenericUtil {
 
-    static isBool<T>(): bool{
+    static isBool<T>(): bool {
         return isInteger<T>() && sizeof<T>() == 1;
     }
     
@@ -12,4 +12,3 @@ export abstract class GenericUtil {
         return isInteger<T>() && sizeof<T>() == 4;
     }
 }
-

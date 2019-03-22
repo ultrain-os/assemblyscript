@@ -14,7 +14,10 @@ export class Cursor<T extends Serializable> {
         return this._count;
     }
 
-    get(): T { }
+    get(): T { 
+        var res = {} as T ;
+        return res;
+    }
 
     first(): void { }
 
@@ -40,6 +43,9 @@ export class DBManager<T extends Serializable> {
         this._scope = scope;
     }
 
+    public cursor(): Cursor<T> {
+        return new Cursor<T>(this._owner, this._tblname, this._scope);
+    }
     public getCode(): u64 { return this._owner; }
     public getScope(): u64 { return this._scope; }
     /**

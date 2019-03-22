@@ -166,7 +166,6 @@ export class AbiInfo {
     this.resolve();
   }
 
-
   private addAbiTypeAlias(typeNodeAnalyzer: TypeNodeAnalyzer): void {
     var asTypes = typeNodeAnalyzer.getAsTypes();
     for (let asType of asTypes) {
@@ -244,11 +243,10 @@ export class AbiInfo {
   *  Get struct from expression.
   */
   private getStructFromNode(ele: Element, node: Node): void {
-    var element = ele.lookup(node.range.toString())
+    var element = ele.lookup(node.range.toString());
     var classPrototype = <ClassPrototype>element;
     this.getStructFromClzPrototype(classPrototype);
   }
-
 
   /**
    * Add the field of the class to the structure
@@ -314,7 +312,6 @@ export class AbiInfo {
       for (let [key, instance] of clzPrototype.instanceMembers) {
         if (this.isActionFnPrototype(instance)) {
           let funcProto = <FunctionPrototype>instance;
-  
           hasActionDecorators = true;
           this.resolveFunctionPrototype(funcProto);
           let declaration = funcProto.declaration;
@@ -334,7 +331,6 @@ export class AbiInfo {
             let typeNodeAnalyzer: TypeNodeAnalyzer = new TypeNodeAnalyzer(funcProto, <TypeNode>type.type);
 
             if (typeNodeAnalyzer.isArray()) {
-          
               let argAbiTypeEnum = typeNodeAnalyzer.getArrayArgAbiTypeEnum();
               let argTypeName = typeNodeAnalyzer.getArrayArg();
               if (argAbiTypeEnum == AbiTypeEnum.NUMBER) {
@@ -443,67 +439,11 @@ export class AbiInfo {
       this.addAbiTypeAlias(typeInfo);
     }
 
-
     this.addToStruct(struct);
     this.abiInfo.actions.push(new ActionDef(funcName, funcName, this.getActionAbility(declaration)));
   }
 
-  private printProgramInfo(): void {
-    var elements = this.program.elementsByName;
-    for (let [key, element] of elements) {
-      // if (element.name != "---Token"){
-      //   console.log(`element key: ${key}, type name: ${element.name}, type internal name: ${element.internalName}`);
-      //   console.log(`Element : ${element.toString()}`);
-      //   console.log(`------------------------------`)
-      // }
-
-      if (element.kind == ElementKind.TYPEDEFINITION && false) {
-        let type = <TypeDefinition>element;
-
-        console.log(`element key: ${key}, type name: ${type.name}, type internal name: ${type.internalName}`);
-        let declaration = <TypeDeclaration> type.declaration;
-        // declaration
-        console.log(`type declaration is: ${NodeKind[declaration.kind]}`);
-        console.log(`type declaration name: ${declaration.range.toString()}`)
-        console.log(`type declaration name: ${declaration.name.range.toString()}`)
-
-        let typeNode = <TypeNode>declaration.type;
-        console.log(`type common type node: ${typeNode.name.identifier.text}`);
-        console.log(`type common type node: ${typeNode.name.range.toString()}`);
-        console.log(`type common type node path: ${typeNode.range.toString()}`);
-        console.log(`type common type node path: ${typeNode.range.source.simplePath}`);
-        console.log(`type common type node path: ${typeNode.range.source.internalPath}`);
-        console.log(`type common type node: ${declaration.type.range.toString()}`);
-        // console.log()
-        console.log(`========`);
-      }
-    }
-
-    console.log(`Type Class ========`);
-
-    if (false) {
-      for (let [typeKind, aclass] of this.program.typeClasses) {
-        console.log(`TypeKind: ${typeKind}, class: ${aclass.name}`);
-      }
-    }
-    if (false) {
-      for (let [key, element] of this.program.instancesByName) {
-        console.log(`The program instance key: ${key}, instance type: ${ElementKind[element.kind]}`);
-      }
-    }
-
-    if (false) {
-      for (let [statement, declare] of this.program.elementsByDeclaration) {
-        console.log(`The program declaration`);
-        console.log(`  The statement: ${NodeKind[statement.kind]}`);
-        console.log(`  The declare: ${ElementKind[declare.kind]}`);
-      }
-    }
-  }
-
   private resolve(): void {
-    // this.printProgramInfo();
-
     var serializeInserter: SerializeInserter = new SerializeInserter(this.program);
     var serializePoints = serializeInserter.getInsertPoints();
     this.insertPointsLookup = InsertPoint.toSortedMap(serializePoints);

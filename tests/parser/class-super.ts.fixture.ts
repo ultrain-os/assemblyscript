@@ -4,13 +4,12 @@ class A {
 }
 export class B extends A {
   constructor(age: u32, name: u64) {
-    super;
-    (age);
+    super(age);
   }
 }
 class Base {}
 class Concrete extends Base {
   constructor() {
-    super;
+    super();
   }
 }

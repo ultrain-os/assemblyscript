@@ -20,9 +20,9 @@ export const ASCIICHAR: string[/*95*/] = [
  * @returns string
  */
 export function intToString(_int: u64): string {
-    let remainder: i32 = <i32>(_int % 10);
-    let rest: u64 = _int / 10;
-    let val: string = ASCIICHAR[16 + remainder];
+    var remainder: i32 = <i32>(_int % 10);
+    var rest: u64 = _int / 10;
+    var val: string = ASCIICHAR[16 + remainder];
 
     while (rest != 0) {
         remainder = <i32>(rest % 10);
@@ -41,8 +41,8 @@ export function intToString(_int: u64): string {
  */
 export function toUTF8Array(str: string): u8[] {
     var utf8: u8[] = new Array<u8>();
-    for (var i = 0; i < str.length; i++) {
-        var charcode = str.charCodeAt(i);
+    for (let i = 0; i < str.length; i++) {
+        let charcode = str.charCodeAt(i);
         if (charcode < 0x80) utf8.push(<u8>charcode);
         else if (charcode < 0x800) {
             utf8.push(<u8>(0xc0 | (charcode >> 6)));
@@ -60,7 +60,7 @@ export function toUTF8Array(str: string): u8[] {
             // subtracting 0x10000 and splitting the
             // 20 bits of 0x0-0xFFFFF into two halves
             charcode = 0x10000 + (((charcode & 0x3ff) << 10)
-                | (str.charCodeAt(i) & 0x3ff))
+                | (str.charCodeAt(i) & 0x3ff));
             utf8.push(<u8>(0xf0 | (charcode >> 18)));
             utf8.push(<u8>(0x80 | ((charcode >> 12) & 0x3f)));
             utf8.push(<u8>(0x80 | ((charcode >> 6) & 0x3f)));
@@ -78,7 +78,7 @@ export function toUTF8Array(str: string): u8[] {
  * @returns usize
  */
 export function string2cstr(str: string): u32 {
-    let cstr = toUTF8Array(str);
+    var cstr = toUTF8Array(str);
     var ptr: u32 = load<u32>(changetype<usize>(cstr));
     return <usize>ptr + sizeof<u64>();
 }
@@ -100,8 +100,8 @@ function char_to_symbol(c: u8): u64 {
  * @param str string to convert
  */
 export function N(str: string): u64 {
-    let len: u32 = str.length;
-    let value: u64 = 0;
+    var len: u32 = str.length;
+    var value: u64 = 0;
 
     for (let i: u32 = 0; i <= 12; ++i) {
         let c: u64 = 0;

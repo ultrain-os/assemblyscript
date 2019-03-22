@@ -1095,10 +1095,10 @@ export class Program extends DiagnosticEmitter {
       } else if (numImplementsTypes) {
         // remember classes that implement interfaces
         for (let i = 0; i < numImplementsTypes; ++i) {
-          this.warning( // TODO: not yet supported
-            DiagnosticCode.Operation_not_supported,
-            implementsTypes[i].range
-          );
+          // this.warning( // TODO: not yet supported
+          //   DiagnosticCode.Operation_not_supported,
+          //   implementsTypes[i].range
+          // );
         }
         queuedImplements.push(element);
       }
@@ -2869,8 +2869,6 @@ export class ClassPrototype extends DeclaredElement {
 
   /** Adds an element as an instance member of this one. Returns the previous element if a duplicate. */
   addInstance(name: string, element: DeclaredElement): bool {
-    // console.log(`class proto add Instance name: ${name}, kind: ${ElementKind[element.kind]}`);
-    FieldDeclaration
     var originalDeclaration = element.declaration;
     var instanceMembers = this.instanceMembers;
     if (!instanceMembers) this.instanceMembers = instanceMembers = new Map();

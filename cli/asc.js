@@ -31,7 +31,7 @@ var assemblyscript, isDev = false;
 (() => {
   try { // `asc` on the command line
     assemblyscript = require("../dist/assemblyscript");
-    throw new Error();
+    // throw new Error();
   } catch (e) {
     try { // `asc` on the command line without dist files
       require("ts-node").register({ project: path.join(__dirname, "..", "src", "tsconfig.json") });
@@ -991,7 +991,7 @@ function insertCodes(sourcePath, sourceText) {
     let data = sourceText.split("\n");
     for (let serialize of serializeArray) {
       data.splice(serialize.line , 0, serialize.getCodes());
-      if (true) {
+      if (false) {
         console.log(`Path: ${sourcePath} line: ${serialize.line}. Insert code:${EOL}${serialize.getCodes()}`);
       }
     }

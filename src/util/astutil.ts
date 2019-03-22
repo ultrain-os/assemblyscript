@@ -244,10 +244,8 @@ export class TypeNodeAnalyzer {
         }
         var type = this.findElement(typeName);
 
-        if (type){
-
+        if (type) {
             if (type.kind == ElementKind.TYPEDEFINITION) {
-
                 let typeDefine = <TypeDefinition>type;
                 let declaration = <TypeDeclaration>typeDefine.declaration;
                 let _typeNode = <TypeNode>declaration.type;
@@ -255,18 +253,10 @@ export class TypeNodeAnalyzer {
                 if (AbiHelper.abiTypeLookup.get(name) && name != "Asset") {
                     return AbiTypeEnum.NUMBER;
                 }
-                let path = _typeNode.range.source.internalPath;
-                let internalName = path + PATH_DELIMITER + name;
-                console.log(`simple path: ${_typeNode.range.source.simplePath}, ${internalName}`);
-                let aliasType = this.parent.lookup(internalName);
-                if (aliasType) {
-                    console.log(`Element kind: ${ElementKind[aliasType.kind]}`)
-                }
-                console.log(`abiTypeEnum/path: ${path}, name: ${name}`);
             }
             if (type.kind == ElementKind.CLASS_PROTOTYPE) {
                 return AbiTypeEnum.CLASS;
-            } 
+            }
         }
         return AbiTypeEnum.NUMBER;
     }
@@ -362,7 +352,7 @@ export class TypeNodeAnalyzer {
      * Get the type {@type Type} by the type name
      * @param asTypeName the AssemblyScript type name
      */
-    private findSourceAsElement(asTypeName: string): Element| null {
+    private findSourceAsElement(asTypeName: string): Element | null {
         var sourceTypeName = this.findSourceAsTypeName(asTypeName);
         var sourceType: Element | null = this.parent.lookup(sourceTypeName);
         return sourceType;

@@ -9,7 +9,9 @@ export class Strings {
         if (str == undefined || str == null) {
             return false;
         }
-        return str.charCodeAt(0) == 0x22 && str.charCodeAt(str.length - 1) == 0x22;
+        var beginChar = str.charCodeAt(0);
+        var endChar = str.charCodeAt(str.length - 1);
+        return (beginChar == endChar) && (beginChar == 0x22 || beginChar == 0x27);
     }
 
     /**

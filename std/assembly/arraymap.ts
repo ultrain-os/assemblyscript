@@ -9,7 +9,7 @@ export class ArrayMap<K, V> implements Serializable {
     }
 
     set(key: K, val: V[]): void {
-        let idx: i32 = this.find(key);
+        var idx: i32 = this.find(key);
         if ( idx == -1) {
             this._keys.push(key);
             this._values.push(val);
@@ -19,12 +19,12 @@ export class ArrayMap<K, V> implements Serializable {
     }
 
     get(key: K): V[] {
-        let idx: i32 = this.find(key);
+        var idx: i32 = this.find(key);
         return this._values[idx];
     }
 
     remove(key: K): boolean {
-        let idx: i32 = this.find(key);
+        var idx: i32 = this.find(key);
         if (idx == -1) return false;
 
         this._keys.splice(idx, 1);
@@ -55,7 +55,7 @@ export class ArrayMap<K, V> implements Serializable {
 
     @operator("[]")
     private _valueAt(key: K): V[] {
-        let i = this.find(key);
+        var i = this.find(key);
         if (i != -1) {
             return this._values[i];
         }
@@ -102,7 +102,7 @@ export class ArrayMap<K, V> implements Serializable {
     }
 
     serialize(ds: DataStream): void {
-        let len = this._keys.length;
+        var len = this._keys.length;
         ds.write<u32>(len);
 
         for (let i: i32 = 0; i < len; i++) {
@@ -112,8 +112,8 @@ export class ArrayMap<K, V> implements Serializable {
     }
 
     private readKey(ds: DataStream): void {
-        let arr = new Array<K>(1);
-        let v0 = arr[0];
+        var arr = new Array<K>(1);
+        var v0 = arr[0];
         if (isInteger(v0)) {
             let rst = ds.read<K>();
             this._keys.push(rst);
@@ -130,8 +130,8 @@ export class ArrayMap<K, V> implements Serializable {
     }
 
     private readValue(ds: DataStream): void {
-        let tester = new Array<V>(1);
-        let t0 = tester[0];
+        var tester = new Array<V>(1);
+        var t0 = tester[0];
         if (isInteger(t0)) {
             let val = ds.readVector<V>();
             this._values.push(val);
@@ -147,7 +147,7 @@ export class ArrayMap<K, V> implements Serializable {
     }
 
     deserialize(ds: DataStream): void {
-        let len = ds.read<u32>();
+        var len = ds.read<u32>();
 
         for (let i: u32 = 0; i < len; i++) {
             this.readKey(ds);
