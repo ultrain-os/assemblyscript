@@ -69,8 +69,8 @@ export class DBManager<T extends Serializable> {
     private _scope: u64;
     /**
      * create a table to persistent data.
+     * the owner using the current contract receiver.
      * @param tblname the table name
-     * @param owner the owner of the table, must be same with contract account.
      * @param scope the scope of rows,
      *        if you write a row with scope A, then you must read the row with scope A too,
      *        otherwise you get nothing.
@@ -79,6 +79,18 @@ export class DBManager<T extends Serializable> {
         this._tblname = tblname;
         this._owner = current_receiver();
         this._scope = scope;
+    }
+
+    /**
+     * Create a table to persistent data manager
+     * @param tblname the table name
+     * @param owner the owner of table
+     * @param scope the scope of rows,
+     */
+    static newInstance<T extends Serializable>(tblname: u64, owner: u64, scope: u64): DBManager<T> {
+        var instance = new DBManager<T>(tblname, scope);
+        instance._owner = owner;
+        return instance;
     }
 
     public getCode(): u64 { return this._owner; }

@@ -1621,6 +1621,7 @@ declare class Cursor<T extends Serializable> {
 
 declare class DBManager<T extends Serializable> {
   constructor(tblname: u64, scope: u64);
+  static newInstance<T>(tblname: u64, owner: u64, scope: u64): DBManager<T>;
   cursor(): Cursor<T>;
   getCode(): u64;
   getScope(): u64;

@@ -43,6 +43,12 @@ export class DBManager<T extends Serializable> {
         this._scope = scope;
     }
 
+    static newInstance<T extends Serializable>(tblname: u64, owner: u64, scope: u64): DBManager<T> {
+        var instance = new DBManager<T>(tblname, scope);
+        instance._owner = owner;
+        return instance;
+    }
+
     public cursor(): Cursor<T> {
         return new Cursor<T>(this._owner, this._tblname, this._scope);
     }

@@ -210,7 +210,7 @@ export class AbiInfo {
           throw new Error("Database decorator must have two arguments");
         }
         let type = decorator.arguments[0].range.toString();
-        let name = this.getExprValue(decorator.arguments[1]);
+        let name = this.getExprValue(clsProto ,decorator.arguments[1]);
         AbiUtils.checkDatabaseName(name);
         this.abiInfo.tables.push(new TableDef(name, type));
         this.getStructFromNode(clsProto, decorator.arguments[0]);
@@ -219,20 +219,23 @@ export class AbiInfo {
   }
 
   /**
-   * Get the expression value
+   * Get the expression value.
    * @param expr
    */
-  getExprValue(expr: Expression): string {
+  getExprValue(protoEle: Element,expr: Expression): string {
     var arg: string = expr.range.toString();
     if (Strings.isAroundQuotation(arg)) {
       return arg.substring(1, arg.length - 1);
     }
+    var element = protoEle.lookup(arg);
     var internalName = AstUtil.getInternalName(expr);
-    var element: Element | null = this.program.elementsByName.get(internalName);
+    if (!element){
+      element = this.program.elementsByName.get(internalName);
+    }
     if (element) {
-      let declaration: VariableLikeDeclarationStatement | null = <VariableLikeDeclarationStatement> (<VariableLikeElement>element).declaration;
-      if (declaration && declaration.initializer) {
-        let literal: StringLiteralExpression = <StringLiteralExpression>declaration.initializer;
+      let declaration = <VariableLikeDeclarationStatement> (<VariableLikeElement>element).declaration;
+      if (declaration.initializer) {
+        let literal = <StringLiteralExpression>declaration.initializer;
         return literal.value;
       }
     }
@@ -401,14 +404,15 @@ export class AbiInfo {
     return new Array();
   }
 
-  private getActionAbility(statement: DeclarationStatement): string {
+  private getActionAbility(funcPrototype: FunctionPrototype): string {
+    var statement = funcPrototype.declaration;
     var decoratorNode: DecoratorNode | null = AstUtil.getSpecifyDecorator(statement, DecoratorKind.ACTION);
     if (!decoratorNode) {
-      throw new Error(`The function havn't action decoreator, location: ${AstUtil.location(statement.range)}.`);
+      throw new Error(`The function don't have action decorator, location: ${AstUtil.location(statement.range)}.`);
     }
     var args: Expression[] | null = decoratorNode.arguments;
     if (args && args.length > 0) {
-      let arg = this.getExprValue(args[0]);
+      let arg = this.getExprValue(funcPrototype, args[0]);
       if (!ActionDef.isValidAbility(arg)) {
         throw new Error(`Invalid action ability arguments: ${arg}, location: ${AstUtil.location(statement.range)}.`);
       }
@@ -420,12 +424,11 @@ export class AbiInfo {
   /**
    * Resolve funciton prototype to abi
    */
-  private resolveFunctionPrototype(funcPrototype: FunctionPrototype): void {
+  private resolveFunctionPrototype(funcProto: FunctionPrototype): void {
 
-    var declaration: FunctionDeclaration = <FunctionDeclaration> funcPrototype.declaration;
+    var declaration: FunctionDeclaration = <FunctionDeclaration> funcProto.declaration;
     var funcName = declaration.name.range.toString();
     var signature = declaration.signature;
-    // var struct = this.parseSignatureToAbiStruct(funcName, signature);
 
     var struct = new StructDef();
     struct.name = funcName;
@@ -433,14 +436,14 @@ export class AbiInfo {
     var parameters: ParameterNode[] = signature.parameters;
     for (let parameter of parameters) {
       let type: CommonTypeNode = parameter.type;
-      let typeInfo = new TypeNodeAnalyzer(funcPrototype,  <TypeNode>type);
+      let typeInfo = new TypeNodeAnalyzer(funcProto,  <TypeNode>type);
       let abiType = typeInfo.getAbiDeclareType();
       struct.addField(parameter.name.range.toString(), abiType);
       this.addAbiTypeAlias(typeInfo);
     }
 
     this.addToStruct(struct);
-    this.abiInfo.actions.push(new ActionDef(funcName, funcName, this.getActionAbility(declaration)));
+    this.abiInfo.actions.push(new ActionDef(funcName, funcName, this.getActionAbility(funcProto)));
   }
 
   private resolve(): void {
