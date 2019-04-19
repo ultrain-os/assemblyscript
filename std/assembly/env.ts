@@ -18,7 +18,7 @@ export declare function db_lowerbound_i64(code: u64, scope: u64, table: u64, id:
 export declare function db_next_i64(iterator: i32, primary: i32): i32;
 export declare function db_get_i64(iterator: i32, data: u32, len: u32): i32;
 export declare function db_update_i64(iterator: i32, payer: u64, data: u32, len: u32): void;
-export declare function db_iterator_i64(code: u64, scope: u64, table: u64): u64;
+export declare function db_iterator_i64(code: u64, scope: u64, table: u64, data: u32, len: u32): i32;
 export declare function db_drop_i64(code: u64, scope: u64, table: u64): i32;
 
 /**

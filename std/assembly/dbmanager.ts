@@ -8,40 +8,68 @@ import {
     db_drop_i64
 } from "./env";
 
+import { DSHelper } from "./datastream";
+
+function retrieve_db_iterators(code: u64, table: u64, scope: u64) : i32[] {
+    var iterators: i32[] = [];
+    var ds = DSHelper.getDataStreamWithLength(2048); // try with 2048
+    var ret = db_iterator_i64(code, table, scope, ds.pointer(), ds.size());
+    // table not exist or some other error that can not get table info.
+    if (ret == -1) return iterators;
+
+    if (ret != 0) {
+        ds = DSHelper.getDataStreamWithLength(ret);
+        ret = db_iterator_i64(code, table, scope, ds.pointer(), ds.size());
+        ultrain_assert(ret == 0, "read iterators of cursor failed.");
+    }
+
+    iterators = ds.readVector<i32>();
+    return iterators;
+}
+
 export class Cursor<T extends Serializable> {
-    private _start: i32;
+    private _iterators: i32[];
     private _pos: i32;
-    private _count: u32;
 
     constructor(code: u64, table: u64, scope: u64) {
-        var status = db_iterator_i64(code, scope, table);
-        this._start = <i32>(status & 0xffffffff);
-        this._count = <u32>(status >>> 32);
-        this._pos = this._start;
+        this._iterators = retrieve_db_iterators(code, scope, table);
+        if (this._iterators.length == 0) {
+            this._pos = -1;
+        } else {
+            this._pos = 0;
+        }
     }
 
     private upper_bound(): i32 {
-        return this._start + this._count - 1;
+        return this._iterators.length - 1;
+    }
+
+    private lower_bound(): i32 {
+        if (this._iterators.length == 0) return -1;
+        else return 0;
     }
 
     get count(): u32 {
-        return this._count;
+        return this._iterators.length;
     }
 
     get(): T {
-        ultrain_assert(this._pos >= this._start && this._pos <= this.upper_bound(), "cursor index out of range.");
+        ultrain_assert(this._pos >= 0 && this._pos <= this.upper_bound(), "cursor index out of range.");
 
-        var out = {} as T;
-        var len: i32 = db_get_i64(this._pos, 0, 0);
+        var iterator = this._iterators[this._pos];
+        var len: i32 = db_get_i64(iterator, 0, 0);
         var arr = new Uint8Array(len);
         var ds = new DataStream(<usize>arr.buffer, len);
-        db_get_i64(this._pos, <usize>arr.buffer, len);
+        db_get_i64(iterator, <usize>arr.buffer, len);
+
+        var out = {} as T;
         out.deserialize(ds);
+
         return out;
     }
 
     first(): void {
-        this._pos = this._start;
+        this._pos = this.lower_bound();
     }
 
     last(): void {
@@ -53,13 +81,11 @@ export class Cursor<T extends Serializable> {
     }
 
     previous(): void {
-        if (this._pos > this._start) {
-            this._pos -= 1;
-        }
+        this._pos -= 1;
     }
 
     hasNext(): boolean {
-        return this._start <= this._pos && this._pos <= this.upper_bound();
+        return 0 <= this._pos && this._pos <= this.upper_bound();
     }
 }
 
