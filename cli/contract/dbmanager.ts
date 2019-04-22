@@ -14,7 +14,7 @@ export class Cursor<T extends Serializable> {
         return this._count;
     }
 
-    get(): T { 
+    get(): T {
         var res = {} as T ;
         return res;
     }
@@ -91,6 +91,15 @@ export class DBManager<T extends Serializable> {
      * to remove all items of this db.
      */
     public dropAll(): i32 {
+        return -1;
+    }
+    /**
+     * get the count of records in this db.
+     *
+     * @returns {i32} counts
+     * @memberof DBManager
+     */
+    public recordsCount(): i32 {
         return -1;
     }
 }

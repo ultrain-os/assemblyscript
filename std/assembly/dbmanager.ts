@@ -5,7 +5,8 @@ import {
     db_update_i64,
     db_remove_i64,
     db_iterator_i64,
-    db_drop_i64
+    db_drop_i64,
+    db_counts_i64
 } from "./env";
 
 import { DSHelper } from "./datastream";
@@ -205,8 +206,21 @@ export class DBManager<T extends Serializable> {
             // what to do? assert or do nothing?
         }
     }
-
+    /**
+     * remove all records from this db.
+     * @returns i32 count of records deleted.
+     */
     public dropAll(): i32 {
         return db_drop_i64(this._owner, this._scope, this._tblname);
+    }
+
+    /**
+     * get the count of records in this db.
+     *
+     * @returns {i32} counts
+     * @memberof DBManager
+     */
+    public recordsCount(): i32 {
+        return db_counts_i64(this._owner, this._scope, this._tblname);
     }
 }

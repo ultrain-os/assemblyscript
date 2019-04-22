@@ -20,6 +20,7 @@ export declare function db_get_i64(iterator: i32, data: u32, len: u32): i32;
 export declare function db_update_i64(iterator: i32, payer: u64, data: u32, len: u32): void;
 export declare function db_iterator_i64(code: u64, scope: u64, table: u64, data: u32, len: u32): i32;
 export declare function db_drop_i64(code: u64, scope: u64, table: u64): i32;
+export declare function db_counts_i64(code: u64, scope: u64, table: u64): i32;
 
 /**
  * System manager declare interfaces

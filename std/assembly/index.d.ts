@@ -1631,6 +1631,7 @@ declare class DBManager<T extends Serializable> {
   get(primary: u64, out: T): boolean;
   erase(primary: u64): void;
   dropAll(): i32;
+  recordsCount(): i32;
 }
 
 declare function ultrain_assert(condition: boolean, msg: string): void;
