@@ -10,6 +10,10 @@ export class Cursor<T extends Serializable> {
         return this._start + this._count - 1;
     }
 
+    private lower_bound(): i32 {
+        return -1;
+    }
+
     get count(): u32 {
         return this._count;
     }

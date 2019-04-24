@@ -4,7 +4,7 @@ import {
     db_store_i64,
     db_update_i64,
     db_remove_i64,
-    db_iterator_i64,
+    db_iterator_i64_v2,
     db_drop_i64,
     db_counts_i64
 } from "./env";
@@ -14,13 +14,13 @@ import { DSHelper } from "./datastream";
 function retrieve_db_iterators(code: u64, table: u64, scope: u64) : i32[] {
     var iterators: i32[] = [];
     var ds = DSHelper.getDataStreamWithLength(2048); // try with 2048
-    var ret = db_iterator_i64(code, table, scope, ds.pointer(), ds.size());
+    var ret = db_iterator_i64_v2(code, table, scope, ds.pointer(), ds.size());
     // table not exist or some other error that can not get table info.
     if (ret == -1) return iterators;
 
     if (ret != 0) {
         ds = DSHelper.getDataStreamWithLength(ret);
-        ret = db_iterator_i64(code, table, scope, ds.pointer(), ds.size());
+        ret = db_iterator_i64_v2(code, table, scope, ds.pointer(), ds.size());
         ultrain_assert(ret == 0, "read iterators of cursor failed.");
     }
 

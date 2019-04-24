@@ -1610,6 +1610,7 @@ declare class ArrayMap<K, V> implements Serializable {
 
 declare class Cursor<T extends Serializable> {
   private upper_bound(): i32;
+  private lower_bound(): i32;
   get count(): u32;
   get(): T;
   first(): void;
