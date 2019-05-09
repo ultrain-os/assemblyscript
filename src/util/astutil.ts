@@ -271,7 +271,7 @@ export class TypeNodeAnalyzer {
             return AbiTypeEnum.STRING;
         }
         var type = this.findSourceAsElement(typeName);
-        if (type == null) {
+        if (type != null && type.kind == ElementKind.CLASS_PROTOTYPE) {
             return AbiTypeEnum.CLASS;
         }
         return AbiTypeEnum.NUMBER;
