@@ -280,7 +280,7 @@
   unreachable
   unreachable
  )
- (func $class-extends/compare<String> (; 12 ;) (type $FUNCSIG$iii) (param $0 i32) (param $1 i32) (result i32)
+ (func $class-extends/compare<~lib/string/String> (; 12 ;) (type $FUNCSIG$iii) (param $0 i32) (param $1 i32) (result i32)
   local.get $0
   local.get $1
   call $~lib/string/String.__eq
@@ -368,7 +368,7 @@
   drop
   i32.const 56
   i32.const 72
-  call $class-extends/compare<String>
+  call $class-extends/compare<~lib/string/String>
   drop
  )
  (func $class-extends/test (; 14 ;) (type $FUNCSIG$vi) (param $0 i32)

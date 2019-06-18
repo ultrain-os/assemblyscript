@@ -1701,7 +1701,7 @@
    end
   end
  )
- (func $std/pointer/Pointer<Entry>#set:value (; 4 ;) (type $FUNCSIG$vii) (param $0 i32) (param $1 i32)
+ (func $std/pointer/Pointer<std/pointer/Entry>#set:value (; 4 ;) (type $FUNCSIG$vii) (param $0 i32) (param $1 i32)
   (local $2 i32)
   (local $3 i32)
   (local $4 i32)
@@ -1750,7 +1750,7 @@
   (local $0 i32)
   (local $1 i32)
   (local $2 f32)
-  block $std/pointer/Pointer<Entry>#constructor|inlined.0 (result i32)
+  block $std/pointer/Pointer<std/pointer/Entry>#constructor|inlined.0 (result i32)
    i32.const 0
    local.set $0
    i32.const 8
@@ -1758,7 +1758,7 @@
    local.get $1
   end
   global.set $std/pointer/one
-  block $std/pointer/Pointer<Entry>#constructor|inlined.1 (result i32)
+  block $std/pointer/Pointer<std/pointer/Entry>#constructor|inlined.1 (result i32)
    i32.const 0
    local.set $1
    i32.const 24
@@ -1766,7 +1766,7 @@
    local.get $0
   end
   global.set $std/pointer/two
-  block $std/pointer/Pointer<Entry>#get:offset|inlined.0 (result i32)
+  block $std/pointer/Pointer<std/pointer/Entry>#get:offset|inlined.0 (result i32)
    global.get $std/pointer/one
    local.set $0
    local.get $0
@@ -1778,7 +1778,7 @@
    call $~lib/env/abort
    unreachable
   end
-  block $std/pointer/Pointer<Entry>#get:offset|inlined.1 (result i32)
+  block $std/pointer/Pointer<std/pointer/Entry>#get:offset|inlined.1 (result i32)
    global.get $std/pointer/two
    local.set $0
    local.get $0
@@ -1790,27 +1790,27 @@
    call $~lib/env/abort
    unreachable
   end
-  block $std/pointer/Pointer<Entry>#get:value|inlined.0 (result i32)
+  block $std/pointer/Pointer<std/pointer/Entry>#get:value|inlined.0 (result i32)
    global.get $std/pointer/one
    local.set $0
    local.get $0
-   br $std/pointer/Pointer<Entry>#get:value|inlined.0
+   br $std/pointer/Pointer<std/pointer/Entry>#get:value|inlined.0
   end
   i32.const 1
   i32.store
-  block $std/pointer/Pointer<Entry>#get:value|inlined.1 (result i32)
+  block $std/pointer/Pointer<std/pointer/Entry>#get:value|inlined.1 (result i32)
    global.get $std/pointer/one
    local.set $0
    local.get $0
-   br $std/pointer/Pointer<Entry>#get:value|inlined.1
+   br $std/pointer/Pointer<std/pointer/Entry>#get:value|inlined.1
   end
   i32.const 2
   i32.store offset=4
-  block $std/pointer/Pointer<Entry>#get:value|inlined.2 (result i32)
+  block $std/pointer/Pointer<std/pointer/Entry>#get:value|inlined.2 (result i32)
    global.get $std/pointer/one
    local.set $0
    local.get $0
-   br $std/pointer/Pointer<Entry>#get:value|inlined.2
+   br $std/pointer/Pointer<std/pointer/Entry>#get:value|inlined.2
   end
   i32.load
   i32.const 1
@@ -1820,11 +1820,11 @@
    call $~lib/env/abort
    unreachable
   end
-  block $std/pointer/Pointer<Entry>#get:value|inlined.3 (result i32)
+  block $std/pointer/Pointer<std/pointer/Entry>#get:value|inlined.3 (result i32)
    global.get $std/pointer/one
    local.set $0
    local.get $0
-   br $std/pointer/Pointer<Entry>#get:value|inlined.3
+   br $std/pointer/Pointer<std/pointer/Entry>#get:value|inlined.3
   end
   i32.load offset=4
   i32.const 2
@@ -1834,7 +1834,7 @@
    call $~lib/env/abort
    unreachable
   end
-  block $std/pointer/Pointer<Entry>#add|inlined.0 (result i32)
+  block $std/pointer/Pointer<std/pointer/Entry>#add|inlined.0 (result i32)
    global.get $std/pointer/one
    local.set $0
    global.get $std/pointer/two
@@ -1844,7 +1844,7 @@
    i32.add
   end
   global.set $std/pointer/add
-  block $std/pointer/Pointer<Entry>#get:offset|inlined.2 (result i32)
+  block $std/pointer/Pointer<std/pointer/Entry>#get:offset|inlined.2 (result i32)
    global.get $std/pointer/add
    local.set $1
    local.get $1
@@ -1856,7 +1856,7 @@
    call $~lib/env/abort
    unreachable
   end
-  block $std/pointer/Pointer<Entry>#sub|inlined.0 (result i32)
+  block $std/pointer/Pointer<std/pointer/Entry>#sub|inlined.0 (result i32)
    global.get $std/pointer/two
    local.set $1
    global.get $std/pointer/one
@@ -1866,7 +1866,7 @@
    i32.sub
   end
   global.set $std/pointer/sub
-  block $std/pointer/Pointer<Entry>#get:offset|inlined.3 (result i32)
+  block $std/pointer/Pointer<std/pointer/Entry>#get:offset|inlined.3 (result i32)
    global.get $std/pointer/sub
    local.set $0
    local.get $0
@@ -1878,7 +1878,7 @@
    call $~lib/env/abort
    unreachable
   end
-  block $std/pointer/Pointer<Entry>#get:offset|inlined.4 (result i32)
+  block $std/pointer/Pointer<std/pointer/Entry>#get:offset|inlined.4 (result i32)
    global.get $std/pointer/one
    local.set $0
    local.get $0
@@ -1891,7 +1891,7 @@
    unreachable
   end
   block (result i32)
-   block $std/pointer/Pointer<Entry>#inc|inlined.0 (result i32)
+   block $std/pointer/Pointer<std/pointer/Entry>#inc|inlined.0 (result i32)
     global.get $std/pointer/one
     local.set $0
     local.get $0
@@ -1910,7 +1910,7 @@
    call $~lib/env/abort
    unreachable
   end
-  block $std/pointer/Pointer<Entry>#get:offset|inlined.5 (result i32)
+  block $std/pointer/Pointer<std/pointer/Entry>#get:offset|inlined.5 (result i32)
    global.get $std/pointer/one
    local.set $0
    local.get $0
@@ -1922,7 +1922,7 @@
    call $~lib/env/abort
    unreachable
   end
-  block $std/pointer/Pointer<Entry>#get:offset|inlined.6 (result i32)
+  block $std/pointer/Pointer<std/pointer/Entry>#get:offset|inlined.6 (result i32)
    global.get $std/pointer/two
    local.set $0
    local.get $0
@@ -1934,7 +1934,7 @@
    call $~lib/env/abort
    unreachable
   end
-  block $std/pointer/Pointer<Entry>#dec|inlined.0 (result i32)
+  block $std/pointer/Pointer<std/pointer/Entry>#dec|inlined.0 (result i32)
    global.get $std/pointer/two
    local.set $0
    local.get $0
@@ -1942,7 +1942,7 @@
    i32.sub
   end
   global.set $std/pointer/two
-  block $std/pointer/Pointer<Entry>#dec|inlined.1 (result i32)
+  block $std/pointer/Pointer<std/pointer/Entry>#dec|inlined.1 (result i32)
    global.get $std/pointer/two
    local.set $0
    local.get $0
@@ -1950,7 +1950,7 @@
    i32.sub
   end
   global.set $std/pointer/two
-  block $std/pointer/Pointer<Entry>#get:offset|inlined.7 (result i32)
+  block $std/pointer/Pointer<std/pointer/Entry>#get:offset|inlined.7 (result i32)
    global.get $std/pointer/two
    local.set $0
    local.get $0
@@ -1962,11 +1962,11 @@
    call $~lib/env/abort
    unreachable
   end
-  block $std/pointer/Pointer<Entry>#get:value|inlined.4 (result i32)
+  block $std/pointer/Pointer<std/pointer/Entry>#get:value|inlined.4 (result i32)
    global.get $std/pointer/two
    local.set $0
    local.get $0
-   br $std/pointer/Pointer<Entry>#get:value|inlined.4
+   br $std/pointer/Pointer<std/pointer/Entry>#get:value|inlined.4
   end
   i32.load
   i32.const 1
@@ -1976,11 +1976,11 @@
    call $~lib/env/abort
    unreachable
   end
-  block $std/pointer/Pointer<Entry>#get:value|inlined.5 (result i32)
+  block $std/pointer/Pointer<std/pointer/Entry>#get:value|inlined.5 (result i32)
    global.get $std/pointer/two
    local.set $0
    local.get $0
-   br $std/pointer/Pointer<Entry>#get:value|inlined.5
+   br $std/pointer/Pointer<std/pointer/Entry>#get:value|inlined.5
   end
   i32.load offset=4
   i32.const 2
@@ -1991,19 +1991,19 @@
    unreachable
   end
   global.get $std/pointer/one
-  block $std/pointer/Pointer<Entry>#get:value|inlined.6 (result i32)
+  block $std/pointer/Pointer<std/pointer/Entry>#get:value|inlined.6 (result i32)
    global.get $std/pointer/two
    local.set $0
    local.get $0
-   br $std/pointer/Pointer<Entry>#get:value|inlined.6
+   br $std/pointer/Pointer<std/pointer/Entry>#get:value|inlined.6
   end
-  call $std/pointer/Pointer<Entry>#set:value
-  block $std/pointer/Pointer<Entry>#get:offset|inlined.8 (result i32)
+  call $std/pointer/Pointer<std/pointer/Entry>#set:value
+  block $std/pointer/Pointer<std/pointer/Entry>#get:offset|inlined.8 (result i32)
    global.get $std/pointer/one
    local.set $0
    local.get $0
   end
-  block $std/pointer/Pointer<Entry>#get:offset|inlined.9 (result i32)
+  block $std/pointer/Pointer<std/pointer/Entry>#get:offset|inlined.9 (result i32)
    global.get $std/pointer/two
    local.set $0
    local.get $0
@@ -2014,11 +2014,11 @@
    call $~lib/env/abort
    unreachable
   end
-  block $std/pointer/Pointer<Entry>#get:value|inlined.7 (result i32)
+  block $std/pointer/Pointer<std/pointer/Entry>#get:value|inlined.7 (result i32)
    global.get $std/pointer/one
    local.set $0
    local.get $0
-   br $std/pointer/Pointer<Entry>#get:value|inlined.7
+   br $std/pointer/Pointer<std/pointer/Entry>#get:value|inlined.7
   end
   i32.load
   i32.const 1
@@ -2028,11 +2028,11 @@
    call $~lib/env/abort
    unreachable
   end
-  block $std/pointer/Pointer<Entry>#get:value|inlined.8 (result i32)
+  block $std/pointer/Pointer<std/pointer/Entry>#get:value|inlined.8 (result i32)
    global.get $std/pointer/one
    local.set $0
    local.get $0
-   br $std/pointer/Pointer<Entry>#get:value|inlined.8
+   br $std/pointer/Pointer<std/pointer/Entry>#get:value|inlined.8
   end
   i32.load offset=4
   i32.const 2

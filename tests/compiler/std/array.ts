@@ -615,14 +615,37 @@ var filteredArr: i32[] = arr.filter((value: i32, index: i32, array: Array<i32>):
 assert(filteredArr.length == 2);
 
 // Test side effect push
+// i = 0;
+// arr.filter(<T>(value: i32, index: i32, array: Array<T>): bool => {
+//   array.push(100); //push side effect should not affect this method by spec
+//   i += value;
+//   return value >= 2;
+// });
+// assert(i == 6);
+// assert(arr.length == 8);
+
+
+
+
 i = 0;
-arr.filter((value: i32, index: i32, array: Array<i32>): bool => {
+// var func = (value: i32, index: i32, array: Array<T>): bool => {
+//   array.push(100); //push side effect should not affect this method by spec
+//   i += value;
+//   return value >= 2;
+// };
+
+function func<T>(value: i32, index: i32, array: Array<T>): bool {
   array.push(100); //push side effect should not affect this method by spec
   i += value;
   return value >= 2;
-});
+}
+
+arr.filter(func);
+
+
 assert(i == 6);
 assert(arr.length == 8);
+
 
 i = 0;
 arr.filter((value: i32, index: i32, array: Array<i32>): bool => {

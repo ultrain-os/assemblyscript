@@ -115,6 +115,9 @@
    call $~lib/env/abort
    unreachable
   end
+  i32.const 8
+  i32.load
+  local.tee $2
   i32.const 0
   local.get $0
   i32.load
@@ -123,9 +126,6 @@
   local.get $1
   i32.lt_s
   select
-  local.tee $2
-  i32.const 8
-  i32.load
   local.tee $3
   i32.add
   local.get $1
@@ -135,8 +135,8 @@
    return
   end
   local.get $0
-  local.get $2
   local.get $3
+  local.get $2
   call $~lib/internal/string/compareUnsafe
   i32.eqz
  )

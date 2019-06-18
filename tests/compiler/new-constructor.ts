@@ -13,6 +13,5 @@ class Car {
     }
 }
 
-
 var car = {} as Car;
 assert(car.age == 1 );

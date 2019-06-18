@@ -53,7 +53,7 @@
  (export "table" (table $0))
  (export "test" (func $builtins/test))
  (start $start)
- (func $builtins/checkGeneric<String> (; 1 ;) (type $FUNCSIG$v)
+ (func $builtins/checkGeneric<~lib/string/String> (; 1 ;) (type $FUNCSIG$v)
   i32.const 1
   i32.eqz
   if
@@ -61,7 +61,7 @@
    unreachable
   end
  )
- (func $builtins/checkGeneric<Array<i32>> (; 2 ;) (type $FUNCSIG$v)
+ (func $builtins/checkGeneric<~lib/array/Array<i32>> (; 2 ;) (type $FUNCSIG$v)
   i32.const 1
   i32.eqz
   if
@@ -367,8 +367,8 @@
    call $~lib/env/abort
    unreachable
   end
-  call $builtins/checkGeneric<String>
-  call $builtins/checkGeneric<Array<i32>>
+  call $builtins/checkGeneric<~lib/string/String>
+  call $builtins/checkGeneric<~lib/array/Array<i32>>
   i32.const 1
   i32.eqz
   if
