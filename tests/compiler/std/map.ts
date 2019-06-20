@@ -1,6 +1,4 @@
-import "allocator/arena";
-
-function test<K,V>(): void {
+function testNumeric<K extends number,V extends number>(): void {
   var map = new Map<K,V>();
 
   // insert new
@@ -46,48 +44,13 @@ function test<K,V>(): void {
   assert(map.size == 0);
 }
 
-test<i8,i32>();
-test<u8,i32>();
-test<i16,i32>();
-test<u16,i32>();
-test<i32,i32>();
-test<u32,i32>();
-test<i64,i32>();
-test<u64,i32>();
-test<f32,i32>();
-test<f64,i32>();
-
-// test keys and values
-var map = new Map<u64, u64>();
-map.set(1, 11);
-
-var keys: Array<u64> = map.keys();
-assert(keys.length == 1);
-
-var values: Array<u64> = map.values();
-assert(values.length == 1);
-assert(values.includes(11));
-
-for (let index = 0; index < keys.length; index ++) {
-  assert(map.has(keys[index]));
-}
-
-map.set(1, 1);
-assert(map.get(1) == 1);
-map.set(2,22);
-
-keys = map.keys();
-assert(keys.length == 2);
-assert(keys.includes(1));
-assert(keys.includes(2));
-
-values = map.values();
-assert(values.length == 2);
-assert(values.includes(1));
-assert(values.includes(22));
-
-for (let index = 0; index < keys.length; index ++) {
-  assert(map.has(keys[index]));
-}
-
-
+testNumeric<i8,i32>();
+testNumeric<u8,i32>();
+testNumeric<i16,i32>();
+testNumeric<u16,i32>();
+testNumeric<i32,i32>();
+testNumeric<u32,i32>();
+testNumeric<i64,i32>();
+testNumeric<u64,i32>();
+testNumeric<f32,i32>();
+testNumeric<f64,i32>();

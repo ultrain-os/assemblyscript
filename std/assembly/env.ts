@@ -1,4 +1,9 @@
-declare function abort(): void;
+declare function abort(
+  message?: string | null,
+  fileName?: string | null,
+  lineNumber?: u32,
+  columnNumber?: u32
+): void;
 
 declare function trace(
   message: string,
@@ -9,6 +14,7 @@ declare function trace(
   a3?: f64,
   a4?: f64
 ): void;
+
 
 // DB manager declare interfaces
 export declare function db_find_i64(code: u64, scope: u64, table: u64, id: u64): i32;

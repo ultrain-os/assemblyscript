@@ -1,71 +1,63 @@
 (module
  (type $FUNCSIG$v (func))
  (type $FUNCSIG$ii (func (param i32) (result i32)))
- (import "env" "abort" (func $~lib/env/abort))
+ (type $FUNCSIG$iii (func (param i32 i32) (result i32)))
+ (type $FUNCSIG$vi (func (param i32)))
+ (import "env" "abort" (func $~lib/builtins/abort))
  (memory $0 1)
- (data (i32.const 8) "\0d\00\00\00c\00a\00l\00l\00-\00s\00u\00p\00e\00r\00.\00t\00s\00")
+ (data (i32.const 8) "\1a\00\00\00\01\00\00\00\01\00\00\00\1a\00\00\00c\00a\00l\00l\00-\00s\00u\00p\00e\00r\00.\00t\00s\00")
  (table $0 1 funcref)
  (elem (i32.const 0) $null)
- (global $~lib/allocator/arena/startOffset (mut i32) (i32.const 0))
- (global $~lib/allocator/arena/offset (mut i32) (i32.const 0))
- (global $~lib/memory/HEAP_BASE i32 (i32.const 40))
+ (global $~lib/rt/stub/startOffset (mut i32) (i32.const 0))
+ (global $~lib/rt/stub/offset (mut i32) (i32.const 0))
+ (global $~lib/heap/__heap_base i32 (i32.const 52))
  (export "memory" (memory $0))
- (export "table" (table $0))
  (start $start)
- (func $start:~lib/allocator/arena (; 1 ;) (type $FUNCSIG$v)
-  global.get $~lib/memory/HEAP_BASE
-  i32.const 7
-  i32.add
-  i32.const 7
-  i32.const -1
-  i32.xor
-  i32.and
-  global.set $~lib/allocator/arena/startOffset
-  global.get $~lib/allocator/arena/startOffset
-  global.set $~lib/allocator/arena/offset
- )
- (func $~lib/allocator/arena/__memory_allocate (; 2 ;) (type $FUNCSIG$ii) (param $0 i32) (result i32)
-  (local $1 i32)
+ (func $~lib/rt/stub/__alloc (; 1 ;) (type $FUNCSIG$iii) (param $0 i32) (param $1 i32) (result i32)
   (local $2 i32)
   (local $3 i32)
   (local $4 i32)
   (local $5 i32)
   (local $6 i32)
+  (local $7 i32)
+  (local $8 i32)
   local.get $0
-  i32.const 1073741824
+  i32.const 1073741808
   i32.gt_u
   if
    unreachable
   end
-  global.get $~lib/allocator/arena/offset
-  local.set $1
-  local.get $1
-  local.get $0
-  local.tee $2
-  i32.const 1
-  local.tee $3
+  global.get $~lib/rt/stub/offset
+  i32.const 16
+  i32.add
+  local.set $2
   local.get $2
+  local.get $0
+  local.tee $3
+  i32.const 1
+  local.tee $4
   local.get $3
+  local.get $4
   i32.gt_u
   select
   i32.add
-  i32.const 7
+  i32.const 15
   i32.add
-  i32.const 7
+  i32.const 15
   i32.const -1
   i32.xor
   i32.and
-  local.set $4
-  current_memory
   local.set $5
-  local.get $4
+  memory.size
+  local.set $6
   local.get $5
+  local.get $6
   i32.const 16
   i32.shl
   i32.gt_u
   if
-   local.get $4
-   local.get $1
+   local.get $5
+   local.get $2
    i32.sub
    i32.const 65535
    i32.add
@@ -75,23 +67,23 @@
    i32.and
    i32.const 16
    i32.shr_u
-   local.set $2
-   local.get $5
-   local.tee $3
-   local.get $2
-   local.tee $6
-   local.get $3
+   local.set $3
    local.get $6
+   local.tee $4
+   local.get $3
+   local.tee $7
+   local.get $4
+   local.get $7
    i32.gt_s
    select
-   local.set $3
-   local.get $3
-   grow_memory
+   local.set $4
+   local.get $4
+   memory.grow
    i32.const 0
    i32.lt_s
    if
-    local.get $2
-    grow_memory
+    local.get $3
+    memory.grow
     i32.const 0
     i32.lt_s
     if
@@ -99,46 +91,56 @@
     end
    end
   end
-  local.get $4
-  global.set $~lib/allocator/arena/offset
+  local.get $5
+  global.set $~lib/rt/stub/offset
+  local.get $2
+  i32.const 16
+  i32.sub
+  local.set $8
+  local.get $8
   local.get $1
- )
- (func $~lib/memory/memory.allocate (; 3 ;) (type $FUNCSIG$ii) (param $0 i32) (result i32)
+  i32.store offset=8
+  local.get $8
   local.get $0
-  call $~lib/allocator/arena/__memory_allocate
-  return
+  i32.store offset=12
+  local.get $2
  )
- (func $call-super/A#constructor (; 4 ;) (type $FUNCSIG$ii) (param $0 i32) (result i32)
-  block (result i32)
-   local.get $0
-   i32.eqz
-   if
-    i32.const 4
-    call $~lib/memory/memory.allocate
-    local.set $0
-   end
-   local.get $0
-   i32.const 1
-   i32.store
-   local.get $0
+ (func $~lib/rt/stub/__retain (; 2 ;) (type $FUNCSIG$ii) (param $0 i32) (result i32)
+  local.get $0
+ )
+ (func $call-super/A#constructor (; 3 ;) (type $FUNCSIG$ii) (param $0 i32) (result i32)
+  local.get $0
+  i32.eqz
+  if
+   i32.const 4
+   i32.const 3
+   call $~lib/rt/stub/__alloc
+   call $~lib/rt/stub/__retain
+   local.set $0
   end
+  local.get $0
+  i32.const 1
+  i32.store
+  local.get $0
   i32.load
   i32.const 1
   i32.eq
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   local.get $0
  )
- (func $call-super/B#constructor (; 5 ;) (type $FUNCSIG$ii) (param $0 i32) (result i32)
+ (func $call-super/B#constructor (; 4 ;) (type $FUNCSIG$ii) (param $0 i32) (result i32)
   local.get $0
   if (result i32)
    local.get $0
   else   
    i32.const 8
-   call $~lib/memory/memory.allocate
+   i32.const 4
+   call $~lib/rt/stub/__alloc
+   call $~lib/rt/stub/__retain
   end
   call $call-super/A#constructor
   local.set $0
@@ -151,7 +153,7 @@
   i32.eq
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   local.get $0
@@ -160,10 +162,13 @@
   i32.eq
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   local.get $0
+ )
+ (func $~lib/rt/stub/__release (; 5 ;) (type $FUNCSIG$vi) (param $0 i32)
+  nop
  )
  (func $call-super/test1 (; 6 ;) (type $FUNCSIG$v)
   (local $0 i32)
@@ -176,7 +181,7 @@
   i32.eq
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   local.get $0
@@ -185,16 +190,20 @@
   i32.eq
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
+  local.get $0
+  call $~lib/rt/stub/__release
  )
  (func $call-super/C#constructor (; 7 ;) (type $FUNCSIG$ii) (param $0 i32) (result i32)
   local.get $0
   i32.eqz
   if
    i32.const 4
-   call $~lib/memory/memory.allocate
+   i32.const 5
+   call $~lib/rt/stub/__alloc
+   call $~lib/rt/stub/__retain
    local.set $0
   end
   local.get $0
@@ -208,7 +217,9 @@
    local.get $0
   else   
    i32.const 8
-   call $~lib/memory/memory.allocate
+   i32.const 6
+   call $~lib/rt/stub/__alloc
+   call $~lib/rt/stub/__retain
   end
   call $call-super/C#constructor
   local.set $0
@@ -221,7 +232,7 @@
   i32.eq
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   local.get $0
@@ -230,7 +241,7 @@
   i32.eq
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   local.get $0
@@ -246,7 +257,7 @@
   i32.eq
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   local.get $0
@@ -255,30 +266,32 @@
   i32.eq
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
+  local.get $0
+  call $~lib/rt/stub/__release
  )
  (func $call-super/E#constructor (; 10 ;) (type $FUNCSIG$ii) (param $0 i32) (result i32)
-  block (result i32)
-   local.get $0
-   i32.eqz
-   if
-    i32.const 4
-    call $~lib/memory/memory.allocate
-    local.set $0
-   end
-   local.get $0
-   i32.const 1
-   i32.store
-   local.get $0
+  local.get $0
+  i32.eqz
+  if
+   i32.const 4
+   i32.const 7
+   call $~lib/rt/stub/__alloc
+   call $~lib/rt/stub/__retain
+   local.set $0
   end
+  local.get $0
+  i32.const 1
+  i32.store
+  local.get $0
   i32.load
   i32.const 1
   i32.eq
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   local.get $0
@@ -288,7 +301,9 @@
   i32.eqz
   if
    i32.const 8
-   call $~lib/memory/memory.allocate
+   i32.const 8
+   call $~lib/rt/stub/__alloc
+   call $~lib/rt/stub/__retain
    local.set $0
   end
   local.get $0
@@ -310,7 +325,7 @@
   i32.eq
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   local.get $0
@@ -319,16 +334,20 @@
   i32.eq
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
+  local.get $0
+  call $~lib/rt/stub/__release
  )
  (func $call-super/G#constructor (; 13 ;) (type $FUNCSIG$ii) (param $0 i32) (result i32)
   local.get $0
   i32.eqz
   if
    i32.const 4
-   call $~lib/memory/memory.allocate
+   i32.const 9
+   call $~lib/rt/stub/__alloc
+   call $~lib/rt/stub/__retain
    local.set $0
   end
   local.get $0
@@ -341,7 +360,9 @@
   i32.eqz
   if
    i32.const 8
-   call $~lib/memory/memory.allocate
+   i32.const 10
+   call $~lib/rt/stub/__alloc
+   call $~lib/rt/stub/__retain
    local.set $0
   end
   local.get $0
@@ -363,7 +384,7 @@
   i32.eq
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   local.get $0
@@ -372,16 +393,20 @@
   i32.eq
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
+  local.get $0
+  call $~lib/rt/stub/__release
  )
  (func $call-super/I#constructor (; 16 ;) (type $FUNCSIG$ii) (param $0 i32) (result i32)
   local.get $0
   i32.eqz
   if
    i32.const 4
-   call $~lib/memory/memory.allocate
+   i32.const 11
+   call $~lib/rt/stub/__alloc
+   call $~lib/rt/stub/__retain
    local.set $0
   end
   local.get $0
@@ -394,7 +419,9 @@
   i32.eqz
   if
    i32.const 8
-   call $~lib/memory/memory.allocate
+   i32.const 12
+   call $~lib/rt/stub/__alloc
+   call $~lib/rt/stub/__retain
    local.set $0
   end
   local.get $0
@@ -416,7 +443,7 @@
   i32.eq
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   local.get $0
@@ -425,12 +452,23 @@
   i32.eq
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
+  local.get $0
+  call $~lib/rt/stub/__release
  )
  (func $start:call-super (; 19 ;) (type $FUNCSIG$v)
-  call $start:~lib/allocator/arena
+  global.get $~lib/heap/__heap_base
+  i32.const 15
+  i32.add
+  i32.const 15
+  i32.const -1
+  i32.xor
+  i32.and
+  global.set $~lib/rt/stub/startOffset
+  global.get $~lib/rt/stub/startOffset
+  global.set $~lib/rt/stub/offset
   call $call-super/test1
   call $call-super/test2
   call $call-super/test3

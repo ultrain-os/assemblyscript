@@ -1,4 +1,3 @@
-import "allocator/arena";
 class Base {
     a: i32 = 0;
     constructor(a:i32) {

@@ -1,10 +1,13 @@
 (module
  (type $FUNCSIG$v (func))
+ (type $FUNCSIG$if (func (param f32) (result i32)))
+ (type $FUNCSIG$id (func (param f64) (result i32)))
  (type $FUNCSIG$vii (func (param i32 i32)))
- (import "env" "abort" (func $~lib/env/abort))
+ (import "env" "abort" (func $~lib/builtins/abort))
  (memory $0 1)
- (data (i32.const 8) "\0b\00\00\00b\00u\00i\00l\00t\00i\00n\00s\00.\00t\00s\00")
- (data (i32.const 40) "\01\00\00\001\00")
+ (data (i32.const 8) "\16\00\00\00\01\00\00\00\01\00\00\00\16\00\00\00b\00u\00i\00l\00t\00i\00n\00s\00.\00t\00s\00")
+ (data (i32.const 48) "\00\00\00\00\01\00\00\00\01\00\00\00\00\00\00\00")
+ (data (i32.const 64) "\06\00\00\00\01\00\00\00\01\00\00\00\06\00\00\00a\00b\00c\00")
  (table $0 2 funcref)
  (elem (i32.const 0) $null $start:builtins~anonymous|0)
  (global $builtins/a (mut i32) (i32.const 0))
@@ -48,16 +51,14 @@
  (global $~lib/builtins/f64.MIN_SAFE_INTEGER f64 (f64.const -9007199254740991))
  (global $~lib/builtins/f64.MAX_SAFE_INTEGER f64 (f64.const 9007199254740991))
  (global $~lib/builtins/f64.EPSILON f64 (f64.const 2.220446049250313e-16))
- (global $~lib/memory/HEAP_BASE i32 (i32.const 48))
  (export "memory" (memory $0))
- (export "table" (table $0))
  (export "test" (func $builtins/test))
  (start $start)
  (func $builtins/checkGeneric<~lib/string/String> (; 1 ;) (type $FUNCSIG$v)
   i32.const 1
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
  )
@@ -65,139 +66,163 @@
   i32.const 1
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
  )
- (func $start:builtins~anonymous|0 (; 3 ;) (type $FUNCSIG$vii) (param $0 i32) (param $1 i32)
+ (func $~lib/number/isNaN<f32> (; 3 ;) (type $FUNCSIG$if) (param $0 f32) (result i32)
+  local.get $0
+  local.get $0
+  f32.ne
+ )
+ (func $~lib/number/isFinite<f32> (; 4 ;) (type $FUNCSIG$if) (param $0 f32) (result i32)
+  local.get $0
+  local.get $0
+  f32.sub
+  f32.const 0
+  f32.eq
+ )
+ (func $~lib/number/isNaN<f64> (; 5 ;) (type $FUNCSIG$id) (param $0 f64) (result i32)
+  local.get $0
+  local.get $0
+  f64.ne
+ )
+ (func $~lib/number/isFinite<f64> (; 6 ;) (type $FUNCSIG$id) (param $0 f64) (result i32)
+  local.get $0
+  local.get $0
+  f64.sub
+  f64.const 0
+  f64.eq
+ )
+ (func $start:builtins~anonymous|0 (; 7 ;) (type $FUNCSIG$vii) (param $0 i32) (param $1 i32)
   nop
  )
- (func $start:builtins (; 4 ;) (type $FUNCSIG$v)
+ (func $start:builtins (; 8 ;) (type $FUNCSIG$v)
   (local $0 i32)
   (local $1 i32)
   (local $2 i64)
   (local $3 i64)
-  (local $4 f32)
-  (local $5 f64)
+  global.get $builtins/a
+  drop
   i32.const 1
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   i32.const 1
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   i32.const 0
   i32.eqz
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   i32.const 1
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   i32.const 0
   i32.eqz
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   i32.const 1
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   i32.const 1
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   i32.const 0
   i32.eqz
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   i32.const 1
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   i32.const 1
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   i32.const 0
   i32.eqz
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   i32.const 1
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   i32.const 1
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   i32.const 1
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   i32.const 0
   i32.eqz
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   i32.const 1
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   i32.const 0
   i32.eqz
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   i32.const 1
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   i32.const 0
   i32.eqz
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   i32.const 1
@@ -206,165 +231,171 @@
    i32.const 1
    i32.eq
   else   
-   i32.const 1
+   i32.const 0
   end
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   i32.const 0
   i32.eqz
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   i32.const 1
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   i32.const 0
   i32.eqz
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   i32.const 1
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   i32.const 1
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   i32.const 0
   i32.eqz
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   i32.const 1
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   i32.const 1
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   i32.const 0
   i32.eqz
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   i32.const 1
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   i32.const 0
   i32.eqz
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   i32.const 1
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   i32.const 0
   i32.eqz
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   i32.const 1
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
+   unreachable
+  end
+  i32.const 1
+  i32.eqz
+  if
+   call $~lib/builtins/abort
    unreachable
   end
   i32.const 0
   i32.eqz
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   i32.const 1
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   i32.const 1
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   i32.const 1
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   i32.const 1
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   i32.const 0
   i32.eqz
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   i32.const 1
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   i32.const 0
   i32.eqz
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   i32.const 1
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   i32.const 0
   i32.eqz
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   call $builtins/checkGeneric<~lib/string/String>
@@ -372,27 +403,27 @@
   i32.const 1
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   i32.const 0
   i32.eqz
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   i32.const 1
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   i32.const 0
   i32.eqz
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   i32.const 1
@@ -472,7 +503,7 @@
   i32.eq
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   i32.const 1
@@ -489,7 +520,7 @@
   i32.eq
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   i32.const 1
@@ -506,7 +537,7 @@
   i32.eq
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   i64.const 1
@@ -568,7 +599,7 @@
   i64.eq
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   i64.const 1
@@ -585,7 +616,7 @@
   i64.eq
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   i64.const 1
@@ -602,7 +633,7 @@
   i32.eq
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   f32.const nan:0x400000
@@ -639,109 +670,59 @@
   f32.const 1.25
   f32.trunc
   drop
-  block $~lib/builtins/isNaN<f32>|inlined.0 (result i32)
-   f32.const 1.25
-   local.set $4
-   local.get $4
-   local.get $4
-   f32.ne
-  end
-  i32.const 0
-  i32.ne
+  f32.const 1.25
+  call $~lib/number/isNaN<f32>
   i32.const 0
   i32.eq
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
-  block $~lib/builtins/isNaN<f32>|inlined.1 (result i32)
-   f32.const nan:0x400000
-   local.set $4
-   local.get $4
-   local.get $4
-   f32.ne
-  end
-  i32.const 0
-  i32.ne
+  f32.const nan:0x400000
+  call $~lib/number/isNaN<f32>
   i32.const 1
   i32.eq
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
-  block $~lib/builtins/isFinite<f32>|inlined.0 (result i32)
-   f32.const 1.25
-   local.set $4
-   local.get $4
-   local.get $4
-   f32.sub
-   f32.const 0
-   f32.eq
-  end
-  i32.const 0
-  i32.ne
+  f32.const 1.25
+  call $~lib/number/isFinite<f32>
   i32.const 1
   i32.eq
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
-  block $~lib/builtins/isFinite<f32>|inlined.1 (result i32)
-   f32.const inf
-   local.set $4
-   local.get $4
-   local.get $4
-   f32.sub
-   f32.const 0
-   f32.eq
-  end
-  i32.const 0
-  i32.ne
+  f32.const inf
+  call $~lib/number/isFinite<f32>
   i32.const 0
   i32.eq
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
-  block $~lib/builtins/isFinite<f32>|inlined.2 (result i32)
-   f32.const inf
-   f32.neg
-   local.set $4
-   local.get $4
-   local.get $4
-   f32.sub
-   f32.const 0
-   f32.eq
-  end
-  i32.const 0
-  i32.ne
+  f32.const inf
+  f32.neg
+  call $~lib/number/isFinite<f32>
   i32.const 0
   i32.eq
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
-  block $~lib/builtins/isFinite<f32>|inlined.3 (result i32)
-   f32.const nan:0x400000
-   local.set $4
-   local.get $4
-   local.get $4
-   f32.sub
-   f32.const 0
-   f32.eq
-  end
-  i32.const 0
-  i32.ne
+  f32.const nan:0x400000
+  call $~lib/number/isFinite<f32>
   i32.const 0
   i32.eq
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   f32.const nan:0x400000
@@ -778,27 +759,11 @@
   f32.const 1.25
   f32.trunc
   global.set $builtins/f
-  block $~lib/builtins/isNaN<f32>|inlined.2 (result i32)
-   f32.const 1.25
-   local.set $4
-   local.get $4
-   local.get $4
-   f32.ne
-  end
-  i32.const 0
-  i32.ne
+  f32.const 1.25
+  call $~lib/number/isNaN<f32>
   global.set $builtins/b
-  block $~lib/builtins/isFinite<f32>|inlined.4 (result i32)
-   f32.const 1.25
-   local.set $4
-   local.get $4
-   local.get $4
-   f32.sub
-   f32.const 0
-   f32.eq
-  end
-  i32.const 0
-  i32.ne
+  f32.const 1.25
+  call $~lib/number/isFinite<f32>
   global.set $builtins/b
   f64.const nan:0x8000000000000
   drop
@@ -838,109 +803,59 @@
   f64.const 1.25
   f64.trunc
   drop
-  block $~lib/builtins/isNaN<f64>|inlined.0 (result i32)
-   f64.const 1.25
-   local.set $5
-   local.get $5
-   local.get $5
-   f64.ne
-  end
-  i32.const 0
-  i32.ne
+  f64.const 1.25
+  call $~lib/number/isNaN<f64>
   i32.const 0
   i32.eq
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
-  block $~lib/builtins/isNaN<f64>|inlined.1 (result i32)
-   f64.const nan:0x8000000000000
-   local.set $5
-   local.get $5
-   local.get $5
-   f64.ne
-  end
-  i32.const 0
-  i32.ne
+  f64.const nan:0x8000000000000
+  call $~lib/number/isNaN<f64>
   i32.const 1
   i32.eq
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
-  block $~lib/builtins/isFinite<f64>|inlined.0 (result i32)
-   f64.const 1.25
-   local.set $5
-   local.get $5
-   local.get $5
-   f64.sub
-   f64.const 0
-   f64.eq
-  end
-  i32.const 0
-  i32.ne
+  f64.const 1.25
+  call $~lib/number/isFinite<f64>
   i32.const 1
   i32.eq
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
-  block $~lib/builtins/isFinite<f64>|inlined.1 (result i32)
-   f64.const inf
-   local.set $5
-   local.get $5
-   local.get $5
-   f64.sub
-   f64.const 0
-   f64.eq
-  end
-  i32.const 0
-  i32.ne
+  f64.const inf
+  call $~lib/number/isFinite<f64>
   i32.const 0
   i32.eq
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
-  block $~lib/builtins/isFinite<f64>|inlined.2 (result i32)
-   f64.const inf
-   f64.neg
-   local.set $5
-   local.get $5
-   local.get $5
-   f64.sub
-   f64.const 0
-   f64.eq
-  end
-  i32.const 0
-  i32.ne
+  f64.const inf
+  f64.neg
+  call $~lib/number/isFinite<f64>
   i32.const 0
   i32.eq
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
-  block $~lib/builtins/isFinite<f64>|inlined.3 (result i32)
-   f64.const nan:0x8000000000000
-   local.set $5
-   local.get $5
-   local.get $5
-   f64.sub
-   f64.const 0
-   f64.eq
-  end
-  i32.const 0
-  i32.ne
+  f64.const nan:0x8000000000000
+  call $~lib/number/isFinite<f64>
   i32.const 0
   i32.eq
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   f64.const nan:0x8000000000000
@@ -977,27 +892,11 @@
   f64.const 1.25
   f64.trunc
   global.set $builtins/F
-  block $~lib/builtins/isNaN<f64>|inlined.2 (result i32)
-   f64.const 1.25
-   local.set $5
-   local.get $5
-   local.get $5
-   f64.ne
-  end
-  i32.const 0
-  i32.ne
+  f64.const 1.25
+  call $~lib/number/isNaN<f64>
   global.set $builtins/b
-  block $~lib/builtins/isFinite<f64>|inlined.4 (result i32)
-   f64.const 1.25
-   local.set $5
-   local.get $5
-   local.get $5
-   f64.sub
-   f64.const 0
-   f64.eq
-  end
-  i32.const 0
-  i32.ne
+  f64.const 1.25
+  call $~lib/number/isFinite<f64>
   global.set $builtins/b
   i32.const 8
   i32.load
@@ -1188,15 +1087,15 @@
   i64.const 25
   f64.reinterpret_i64
   global.set $builtins/F
-  current_memory
+  memory.size
   drop
   i32.const 1
-  grow_memory
+  memory.grow
   drop
-  current_memory
+  memory.size
   global.set $builtins/s
   i32.const 1
-  grow_memory
+  memory.grow
   global.set $builtins/s
   i32.const 10
   i32.const 20
@@ -1252,7 +1151,7 @@
   i32.eq
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   i32.const 2
@@ -1260,7 +1159,7 @@
   i32.eq
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   i32.const 4
@@ -1268,7 +1167,7 @@
   i32.eq
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   i32.const 8
@@ -1276,7 +1175,7 @@
   i32.eq
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   i32.const 4
@@ -1286,7 +1185,7 @@
   i32.eq
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   i32.const 1
@@ -1294,7 +1193,7 @@
   i32.eq
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   i32.const 2
@@ -1302,7 +1201,7 @@
   i32.eq
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   i32.const 4
@@ -1310,7 +1209,7 @@
   i32.eq
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   i32.const 8
@@ -1318,7 +1217,7 @@
   i32.eq
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   i32.const 4
@@ -1328,7 +1227,7 @@
   i32.eq
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   i32.const 8
@@ -1336,7 +1235,7 @@
   i32.eq
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   i32.const 0
@@ -1344,7 +1243,7 @@
   i32.eq
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   i32.const 1
@@ -1352,7 +1251,7 @@
   i32.eq
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   i32.const 2
@@ -1360,7 +1259,7 @@
   i32.eq
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   i32.const 3
@@ -1368,7 +1267,7 @@
   i32.eq
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   i32.const 0
@@ -1376,7 +1275,7 @@
   i32.eq
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   i32.const 0
@@ -1384,7 +1283,7 @@
   i32.eq
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   i32.const 4
@@ -1392,7 +1291,7 @@
   i32.eq
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   i32.const 0
@@ -1400,7 +1299,7 @@
   i32.eq
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   i32.const 2
@@ -1408,7 +1307,7 @@
   i32.eq
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   i32.const 0
@@ -1416,7 +1315,7 @@
   i32.eq
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   i32.const 8
@@ -1424,7 +1323,7 @@
   i32.eq
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   f64.const nan:0x8000000000000
@@ -1432,135 +1331,67 @@
   f64.ne
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
-  block $~lib/builtins/isNaN<f32>|inlined.3 (result i32)
-   f32.const nan:0x400000
-   local.set $4
-   local.get $4
-   local.get $4
-   f32.ne
-  end
-  i32.const 0
-  i32.ne
+  f32.const nan:0x400000
+  call $~lib/number/isNaN<f32>
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
-  block $~lib/builtins/isNaN<f64>|inlined.3 (result i32)
-   f64.const nan:0x8000000000000
-   local.set $5
-   local.get $5
-   local.get $5
-   f64.ne
-  end
-  i32.const 0
-  i32.ne
+  f64.const nan:0x8000000000000
+  call $~lib/number/isNaN<f64>
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
-  block $~lib/builtins/isFinite<f32>|inlined.5 (result i32)
-   f32.const nan:0x400000
-   local.set $4
-   local.get $4
-   local.get $4
-   f32.sub
-   f32.const 0
-   f32.eq
-  end
-  i32.const 0
-  i32.ne
+  f32.const nan:0x400000
+  call $~lib/number/isFinite<f32>
   i32.eqz
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
-  block $~lib/builtins/isFinite<f32>|inlined.6 (result i32)
-   f32.const inf
-   local.set $4
-   local.get $4
-   local.get $4
-   f32.sub
-   f32.const 0
-   f32.eq
-  end
-  i32.const 0
-  i32.ne
+  f32.const inf
+  call $~lib/number/isFinite<f32>
   i32.eqz
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
-  block $~lib/builtins/isFinite<f64>|inlined.5 (result i32)
-   f64.const nan:0x8000000000000
-   local.set $5
-   local.get $5
-   local.get $5
-   f64.sub
-   f64.const 0
-   f64.eq
-  end
-  i32.const 0
-  i32.ne
+  f64.const nan:0x8000000000000
+  call $~lib/number/isFinite<f64>
   i32.eqz
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
-  block $~lib/builtins/isFinite<f64>|inlined.6 (result i32)
-   f64.const inf
-   local.set $5
-   local.get $5
-   local.get $5
-   f64.sub
-   f64.const 0
-   f64.eq
-  end
-  i32.const 0
-  i32.ne
+  f64.const inf
+  call $~lib/number/isFinite<f64>
   i32.eqz
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
-  block $~lib/builtins/isFinite<f32>|inlined.7 (result i32)
-   f32.const 0
-   local.set $4
-   local.get $4
-   local.get $4
-   f32.sub
-   f32.const 0
-   f32.eq
-  end
-  i32.const 0
-  i32.ne
+  f32.const 0
+  call $~lib/number/isFinite<f32>
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
-  block $~lib/builtins/isFinite<f64>|inlined.7 (result i32)
-   f64.const 0
-   local.set $5
-   local.get $5
-   local.get $5
-   f64.sub
-   f64.const 0
-   f64.eq
-  end
-  i32.const 0
-  i32.ne
+  f64.const 0
+  call $~lib/number/isFinite<f64>
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   global.get $~lib/builtins/i8.MIN_VALUE
@@ -1572,7 +1403,7 @@
   i32.eq
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   global.get $~lib/builtins/i8.MAX_VALUE
@@ -1580,7 +1411,7 @@
   i32.eq
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   global.get $~lib/builtins/i16.MIN_VALUE
@@ -1592,7 +1423,7 @@
   i32.eq
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   global.get $~lib/builtins/i16.MAX_VALUE
@@ -1600,7 +1431,7 @@
   i32.eq
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   global.get $~lib/builtins/i32.MIN_VALUE
@@ -1608,7 +1439,7 @@
   i32.eq
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   global.get $~lib/builtins/i32.MAX_VALUE
@@ -1616,7 +1447,7 @@
   i32.eq
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   global.get $~lib/builtins/i64.MIN_VALUE
@@ -1624,7 +1455,7 @@
   i64.eq
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   global.get $~lib/builtins/i64.MAX_VALUE
@@ -1632,7 +1463,7 @@
   i64.eq
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   global.get $~lib/builtins/u8.MIN_VALUE
@@ -1640,7 +1471,7 @@
   i32.eq
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   global.get $~lib/builtins/u8.MAX_VALUE
@@ -1648,7 +1479,7 @@
   i32.eq
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   global.get $~lib/builtins/u16.MIN_VALUE
@@ -1656,7 +1487,7 @@
   i32.eq
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   global.get $~lib/builtins/u16.MAX_VALUE
@@ -1664,7 +1495,7 @@
   i32.eq
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   global.get $~lib/builtins/u32.MIN_VALUE
@@ -1672,7 +1503,7 @@
   i32.eq
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   global.get $~lib/builtins/u32.MAX_VALUE
@@ -1680,7 +1511,7 @@
   i32.eq
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   global.get $~lib/builtins/u64.MIN_VALUE
@@ -1688,7 +1519,7 @@
   i64.eq
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   global.get $~lib/builtins/u64.MAX_VALUE
@@ -1696,7 +1527,7 @@
   i64.eq
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   global.get $~lib/builtins/bool.MIN_VALUE
@@ -1704,7 +1535,7 @@
   i32.eq
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   global.get $~lib/builtins/bool.MIN_VALUE
@@ -1712,7 +1543,7 @@
   i32.eq
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   global.get $~lib/builtins/bool.MAX_VALUE
@@ -1720,7 +1551,7 @@
   i32.eq
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   global.get $~lib/builtins/bool.MAX_VALUE
@@ -1728,7 +1559,7 @@
   i32.eq
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   global.get $~lib/builtins/f32.MIN_NORMAL_VALUE
@@ -1736,7 +1567,7 @@
   f32.eq
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   global.get $~lib/builtins/f32.MIN_VALUE
@@ -1744,7 +1575,7 @@
   f32.eq
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   global.get $~lib/builtins/f32.MAX_VALUE
@@ -1752,7 +1583,7 @@
   f32.eq
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   global.get $~lib/builtins/f32.MIN_SAFE_INTEGER
@@ -1760,7 +1591,7 @@
   f32.eq
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   global.get $~lib/builtins/f32.MAX_SAFE_INTEGER
@@ -1768,7 +1599,7 @@
   f32.eq
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   global.get $~lib/builtins/f32.EPSILON
@@ -1776,7 +1607,7 @@
   f32.eq
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   global.get $~lib/builtins/f64.MIN_NORMAL_VALUE
@@ -1784,7 +1615,7 @@
   f64.eq
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   global.get $~lib/builtins/f64.MIN_VALUE
@@ -1792,7 +1623,7 @@
   f64.eq
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   global.get $~lib/builtins/f64.MAX_VALUE
@@ -1800,7 +1631,7 @@
   f64.eq
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   global.get $~lib/builtins/f64.MIN_SAFE_INTEGER
@@ -1808,7 +1639,7 @@
   f64.eq
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   global.get $~lib/builtins/f64.MAX_SAFE_INTEGER
@@ -1816,7 +1647,7 @@
   f64.eq
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   global.get $~lib/builtins/f64.EPSILON
@@ -1824,7 +1655,7 @@
   f64.eq
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   f32.const 1
@@ -2002,21 +1833,13 @@
   f64.const 1
   f64.trunc
   drop
-  block $~lib/builtins/isNaN<f64>|inlined.4 (result i32)
-   f64.const 1
-   local.set $5
-   local.get $5
-   local.get $5
-   f64.ne
-  end
-  drop
  )
- (func $builtins/test (; 5 ;) (type $FUNCSIG$v)
+ (func $builtins/test (; 9 ;) (type $FUNCSIG$v)
   nop
  )
- (func $start (; 6 ;) (type $FUNCSIG$v)
+ (func $start (; 10 ;) (type $FUNCSIG$v)
   call $start:builtins
  )
- (func $null (; 7 ;) (type $FUNCSIG$v)
+ (func $null (; 11 ;) (type $FUNCSIG$v)
  )
 )

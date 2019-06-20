@@ -1,14 +1,11 @@
 (module
  (type $FUNCSIG$iiii (func (param i32 i32 i32) (result i32)))
  (type $FUNCSIG$v (func))
- (import "env" "abort" (func $~lib/env/abort))
+ (import "env" "abort" (func $~lib/builtins/abort))
  (memory $0 1)
- (data (i32.const 8) "\n\00\00\00m\00e\00m\00m\00o\00v\00e\00.\00t\00s")
- (table $0 1 funcref)
- (elem (i32.const 0) $null)
+ (data (i32.const 8) "\14\00\00\00\01\00\00\00\01\00\00\00\14\00\00\00m\00e\00m\00m\00o\00v\00e\00.\00t\00s")
  (global $memmove/dest (mut i32) (i32.const 0))
  (export "memory" (memory $0))
- (export "table" (table $0))
  (start $start)
  (func $memmove/memmove (; 1 ;) (type $FUNCSIG$iiii) (param $0 i32) (param $1 i32) (param $2 i32) (result i32)
   (local $3 i32)
@@ -41,36 +38,38 @@
      i32.and
      if
       local.get $2
-      i32.eqz
       if
+       local.get $2
+       i32.const 1
+       i32.sub
+       local.set $2
+       local.get $0
+       local.tee $4
+       i32.const 1
+       i32.add
+       local.set $0
+       local.get $1
+       local.tee $5
+       i32.const 1
+       i32.add
+       local.set $1
+       local.get $4
+       local.get $5
+       i32.load8_u
+       i32.store8
+       br $continue|0
+      else       
        local.get $3
        return
       end
-      local.get $2
-      i32.const 1
-      i32.sub
-      local.set $2
-      local.get $0
-      local.tee $4
-      i32.const 1
-      i32.add
-      local.set $0
-      local.get $1
-      local.tee $5
-      i32.const 1
-      i32.add
-      local.set $1
-      local.get $4
-      local.get $5
-      i32.load8_u
-      i32.store8
-      br $continue|0
+      unreachable
      end
     end
     loop $continue|1
      local.get $2
      i32.const 8
-     i32.ge_u
+     i32.lt_u
+     i32.eqz
      if
       local.get $0
       local.get $1
@@ -133,29 +132,31 @@
      i32.and
      if
       local.get $2
-      i32.eqz
       if
+       local.get $2
+       i32.const 1
+       i32.sub
+       local.tee $2
+       local.get $0
+       i32.add
+       local.get $1
+       local.get $2
+       i32.add
+       i32.load8_u
+       i32.store8
+       br $continue|3
+      else       
        local.get $3
        return
       end
-      local.get $2
-      i32.const 1
-      i32.sub
-      local.tee $2
-      local.get $0
-      i32.add
-      local.get $1
-      local.get $2
-      i32.add
-      i32.load8_u
-      i32.store8
-      br $continue|3
+      unreachable
      end
     end
     loop $continue|4
      local.get $2
      i32.const 8
-     i32.ge_u
+     i32.lt_u
+     i32.eqz
      if
       local.get $2
       i32.const 8
@@ -310,7 +311,7 @@
    end
    return
   end
-  call $~lib/env/abort
+  call $~lib/builtins/abort
   unreachable
  )
  (func $start (; 3 ;) (type $FUNCSIG$v)

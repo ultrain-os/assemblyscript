@@ -1,4 +1,3 @@
-import "allocator/arena";
 class Gas {
     age: u64;
 }

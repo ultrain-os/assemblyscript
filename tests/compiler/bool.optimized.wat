@@ -1,19 +1,16 @@
 (module
  (type $FUNCSIG$v (func))
- (import "env" "abort" (func $~lib/env/abort))
+ (import "env" "abort" (func $~lib/builtins/abort))
  (memory $0 1)
- (data (i32.const 8) "\07\00\00\00b\00o\00o\00l\00.\00t\00s")
- (table $0 1 funcref)
- (elem (i32.const 0) $null)
- (global $bool/i (mut i32) (i32.const 2))
- (global $bool/I (mut i64) (i64.const 2))
- (global $bool/u (mut i32) (i32.const 2))
- (global $bool/U (mut i64) (i64.const 2))
- (global $bool/f (mut f32) (f32.const 2))
- (global $bool/F (mut f64) (f64.const 2))
- (global $bool/uu (mut i32) (i32.const 2))
+ (data (i32.const 8) "\0e\00\00\00\01\00\00\00\01\00\00\00\0e\00\00\00b\00o\00o\00l\00.\00t\00s")
+ (global $bool/i i32 (i32.const 2))
+ (global $bool/I i64 (i64.const 2))
+ (global $bool/u i32 (i32.const 2))
+ (global $bool/U i64 (i64.const 2))
+ (global $bool/f f32 (f32.const 2))
+ (global $bool/F f64 (f64.const 2))
+ (global $bool/uu i32 (i32.const 2))
  (export "memory" (memory $0))
- (export "table" (table $0))
  (start $start)
  (func $start:bool (; 1 ;) (type $FUNCSIG$v)
   block $folding-inner0
@@ -75,7 +72,7 @@
    end
    return
   end
-  call $~lib/env/abort
+  call $~lib/builtins/abort
   unreachable
  )
  (func $start (; 2 ;) (type $FUNCSIG$v)

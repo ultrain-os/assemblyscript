@@ -3,14 +3,12 @@
  (type $FUNCSIG$v (func))
  (type $FUNCSIG$dd (func (param f64) (result f64)))
  (type $FUNCSIG$ff (func (param f32) (result f32)))
- (import "env" "abort" (func $~lib/env/abort))
+ (import "env" "abort" (func $~lib/builtins/abort))
  (memory $0 1)
- (data (i32.const 8) "\10\00\00\00c\00a\00l\00l\00-\00i\00n\00f\00e\00r\00r\00e\00d\00.\00t\00s\00")
+ (data (i32.const 8) " \00\00\00\01\00\00\00\01\00\00\00 \00\00\00c\00a\00l\00l\00-\00i\00n\00f\00e\00r\00r\00e\00d\00.\00t\00s\00")
  (table $0 1 funcref)
  (elem (i32.const 0) $null)
- (global $~lib/memory/HEAP_BASE i32 (i32.const 44))
  (export "memory" (memory $0))
- (export "table" (table $0))
  (start $start)
  (func $call-inferred/foo<i32> (; 1 ;) (type $FUNCSIG$ii) (param $0 i32) (result i32)
   local.get $0
@@ -31,7 +29,7 @@
   i32.eq
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   f64.const 42
@@ -40,7 +38,7 @@
   f64.eq
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   f32.const 42
@@ -49,7 +47,7 @@
   f32.eq
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   f32.const 42
@@ -58,7 +56,7 @@
   f32.eq
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
  )

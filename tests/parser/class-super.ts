@@ -1,4 +1,3 @@
-import "allocator/arena";
 class A {
     constructor(age: u32){
     }

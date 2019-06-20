@@ -1,15 +1,12 @@
 (module
  (type $FUNCSIG$i (func (result i32)))
  (type $FUNCSIG$v (func))
- (import "env" "abort" (func $~lib/env/abort))
+ (import "env" "abort" (func $~lib/builtins/abort))
  (memory $0 1)
- (data (i32.const 8) "\06\00\00\00a\00b\00i\00.\00t\00s")
- (table $0 1 funcref)
- (elem (i32.const 0) $null)
+ (data (i32.const 8) "\0c\00\00\00\01\00\00\00\01\00\00\00\0c\00\00\00a\00b\00i\00.\00t\00s")
  (global $abi/condition (mut i32) (i32.const 0))
  (global $abi/y (mut i32) (i32.const 0))
  (export "memory" (memory $0))
- (export "table" (table $0))
  (export "exported" (func $abi/exported))
  (export "exportedExported" (func $abi/exported))
  (export "exportedInternal" (func $abi/exported))
@@ -24,7 +21,7 @@
   global.set $abi/y
   global.get $abi/y
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
  )

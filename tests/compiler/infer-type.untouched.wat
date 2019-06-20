@@ -4,9 +4,9 @@
  (type $FUNCSIG$j (func (result i64)))
  (type $FUNCSIG$f (func (result f32)))
  (type $FUNCSIG$d (func (result f64)))
- (import "env" "abort" (func $~lib/env/abort))
+ (import "env" "abort" (func $~lib/builtins/abort))
  (memory $0 1)
- (data (i32.const 8) "\0d\00\00\00i\00n\00f\00e\00r\00-\00t\00y\00p\00e\00.\00t\00s\00")
+ (data (i32.const 8) "\1a\00\00\00\01\00\00\00\01\00\00\00\1a\00\00\00i\00n\00f\00e\00r\00-\00t\00y\00p\00e\00.\00t\00s\00")
  (table $0 1 funcref)
  (elem (i32.const 0) $null)
  (global $infer-type/i i32 (i32.const 10))
@@ -18,9 +18,7 @@
  (global $infer-type/rF (mut f64) (f64.const 0))
  (global $infer-type/inferi (mut i32) (i32.const -2147483648))
  (global $infer-type/inferu (mut i32) (i32.const 2147483647))
- (global $~lib/memory/HEAP_BASE i32 (i32.const 40))
  (export "memory" (memory $0))
- (export "table" (table $0))
  (start $start)
  (func $infer-type/locals (; 1 ;) (type $FUNCSIG$v)
   (local $0 i32)
@@ -81,25 +79,21 @@
   global.get $infer-type/rF
   drop
   block $break|0
-   block
-    i32.const 0
-    local.set $0
-    i32.const 10
-    local.set $1
-   end
-   loop $repeat|0
+   i32.const 0
+   local.set $0
+   i32.const 10
+   local.set $1
+   loop $loop|0
     local.get $0
     local.get $1
     i32.lt_s
     i32.eqz
     br_if $break|0
-    nop
     local.get $0
     i32.const 1
     i32.add
     local.set $0
-    br $repeat|0
-    unreachable
+    br $loop|0
    end
    unreachable
   end
@@ -107,13 +101,13 @@
   i32.eqz
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   i32.const 1
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
  )

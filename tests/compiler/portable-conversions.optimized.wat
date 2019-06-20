@@ -1,16 +1,13 @@
 (module
  (type $FUNCSIG$v (func))
- (import "env" "abort" (func $~lib/env/abort))
+ (import "env" "abort" (func $~lib/builtins/abort))
  (memory $0 1)
- (data (i32.const 8) "\17\00\00\00p\00o\00r\00t\00a\00b\00l\00e\00-\00c\00o\00n\00v\00e\00r\00s\00i\00o\00n\00s\00.\00t\00s")
- (table $0 1 funcref)
- (elem (i32.const 0) $null)
- (global $portable-conversions/i (mut i32) (i32.const 1))
- (global $portable-conversions/I (mut i64) (i64.const 1))
- (global $portable-conversions/f (mut f32) (f32.const 1))
- (global $portable-conversions/F (mut f64) (f64.const 1))
+ (data (i32.const 8) ".\00\00\00\01\00\00\00\01\00\00\00.\00\00\00p\00o\00r\00t\00a\00b\00l\00e\00-\00c\00o\00n\00v\00e\00r\00s\00i\00o\00n\00s\00.\00t\00s")
+ (global $portable-conversions/i i32 (i32.const 1))
+ (global $portable-conversions/I i64 (i64.const 1))
+ (global $portable-conversions/f f32 (f32.const 1))
+ (global $portable-conversions/F f64 (f64.const 1))
  (export "memory" (memory $0))
- (export "table" (table $0))
  (start $start)
  (func $start:portable-conversions (; 1 ;) (type $FUNCSIG$v)
   block $folding-inner0
@@ -355,7 +352,7 @@
    end
    return
   end
-  call $~lib/env/abort
+  call $~lib/builtins/abort
   unreachable
  )
  (func $start (; 2 ;) (type $FUNCSIG$v)

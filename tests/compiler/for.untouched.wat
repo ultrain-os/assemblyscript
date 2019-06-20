@@ -1,14 +1,12 @@
 (module
  (type $FUNCSIG$v (func))
- (import "env" "abort" (func $~lib/env/abort))
+ (import "env" "abort" (func $~lib/builtins/abort))
  (memory $0 1)
- (data (i32.const 8) "\06\00\00\00f\00o\00r\00.\00t\00s\00")
+ (data (i32.const 8) "\0c\00\00\00\01\00\00\00\01\00\00\00\0c\00\00\00f\00o\00r\00.\00t\00s\00")
  (table $0 1 funcref)
  (elem (i32.const 0) $null)
  (global $for/i (mut i32) (i32.const 0))
- (global $~lib/memory/HEAP_BASE i32 (i32.const 24))
  (export "memory" (memory $0))
- (export "table" (table $0))
  (start $start)
  (func $start:for (; 1 ;) (type $FUNCSIG$v)
   (local $0 i32)
@@ -18,19 +16,17 @@
   block $break|0
    i32.const 0
    global.set $for/i
-   loop $repeat|0
+   loop $loop|0
     global.get $for/i
     i32.const 10
     i32.lt_s
     i32.eqz
     br_if $break|0
-    nop
     global.get $for/i
     i32.const 1
     i32.add
     global.set $for/i
-    br $repeat|0
-    unreachable
+    br $loop|0
    end
    unreachable
   end
@@ -39,30 +35,28 @@
   i32.eq
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   block $break|1
    i32.const 0
    local.set $0
-   loop $repeat|1
+   loop $loop|1
     local.get $0
     i32.const 10
     i32.lt_s
     i32.eqz
     br_if $break|1
-    nop
     local.get $0
     i32.const 1
     i32.add
     local.set $0
-    br $repeat|1
-    unreachable
+    br $loop|1
    end
    unreachable
   end
   block $break|2
-   loop $repeat|2
+   loop $loop|2
     global.get $for/i
     i32.const 0
     i32.gt_s
@@ -73,8 +67,7 @@
     i32.const 1
     i32.sub
     global.set $for/i
-    br $repeat|2
-    unreachable
+    br $loop|2
    end
    unreachable
   end
@@ -83,14 +76,11 @@
   i32.eq
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   block $break|3
-   loop $repeat|3
-    i32.const 1
-    i32.eqz
-    br_if $break|3
+   loop $loop|3
     global.get $for/i
     i32.const 10
     i32.eq
@@ -101,51 +91,43 @@
     i32.const 1
     i32.add
     global.set $for/i
-    br $repeat|3
-    unreachable
+    br $loop|3
    end
    unreachable
   end
   block $break|4
-   loop $repeat|4
+   loop $loop|4
+    global.get $for/i
     i32.const 1
-    i32.eqz
-    br_if $break|4
-    block (result i32)
-     global.get $for/i
-     i32.const 1
-     i32.sub
-     global.set $for/i
-     global.get $for/i
-    end
+    i32.sub
+    global.set $for/i
+    global.get $for/i
     i32.const 0
     i32.eq
     if
      br $break|4
     end
-    br $repeat|4
-    unreachable
+    br $loop|4
    end
    unreachable
   end
   block $break|5
    i32.const 0
    local.set $1
-   loop $repeat|5
+   loop $loop|5
+    local.get $1
+    i32.const 10
+    i32.lt_s
+    i32.eqz
+    br_if $break|5
     block $continue|5
-     local.get $1
-     i32.const 10
-     i32.lt_s
-     i32.eqz
-     br_if $break|5
      br $continue|5
     end
     local.get $1
     i32.const 1
     i32.add
     local.set $1
-    br $repeat|5
-    unreachable
+    br $loop|5
    end
    unreachable
   end
@@ -154,13 +136,13 @@
   i32.eq
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   block $break|6
    i32.const 0
    local.set $2
-   loop $repeat|6
+   loop $loop|6
     local.get $2
     i32.const 10
     i32.lt_s
@@ -169,13 +151,13 @@
     block $break|7
      i32.const 0
      local.set $3
-     loop $repeat|7
+     loop $loop|7
+      local.get $3
+      i32.const 10
+      i32.lt_s
+      i32.eqz
+      br_if $break|7
       block $continue|7
-       local.get $3
-       i32.const 10
-       i32.lt_s
-       i32.eqz
-       br_if $break|7
        local.get $2
        local.get $3
        i32.eq
@@ -187,8 +169,7 @@
       i32.const 1
       i32.add
       local.set $3
-      br $repeat|7
-      unreachable
+      br $loop|7
      end
      unreachable
     end
@@ -196,8 +177,7 @@
     i32.const 1
     i32.add
     local.set $2
-    br $repeat|6
-    unreachable
+    br $loop|6
    end
    unreachable
   end

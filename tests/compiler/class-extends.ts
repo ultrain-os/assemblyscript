@@ -1,4 +1,3 @@
-import "allocator/arena";
 class A {
   a: i32 = 0;
   getName(): string {

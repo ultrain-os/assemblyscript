@@ -22,6 +22,8 @@ const optionsUtil = require("./util/options");
 const mkdirp = require("./util/mkdirp");
 const EOL = process.platform === "win32" ? "\r\n" : "\n";
 
+// global.Binaryen = require("../lib/binaryen");
+
 // Emscripten adds an `uncaughtException` listener to Binaryen that results in an additional
 // useless code fragment on top of an actual error. suppress this:
 if (process.removeAllListeners) process.removeAllListeners("uncaughtException");
@@ -31,7 +33,7 @@ var assemblyscript, isDev = false;
 (() => {
   try { // `asc` on the command line
     assemblyscript = require("../dist/assemblyscript");
-    // throw new Error();
+    throw new Error();
   } catch (e) {
     try { // `asc` on the command line without dist files
       require("ts-node").register({ project: path.join(__dirname, "..", "src", "tsconfig.json") });
@@ -72,7 +74,7 @@ exports.libraryPrefix = assemblyscript.LIBRARY_PREFIX;
 exports.nodeModulesPrefix = "./node_modules/";
 
 /** Default Binaryen optimization level. */
-exports.defaultOptimizeLevel = 2;
+exports.defaultOptimizeLevel = 3;
 
 /** Default Binaryen shrink level. */
 exports.defaultShrinkLevel = 1;
@@ -270,8 +272,8 @@ exports.main = function main(argv, options, callback, exttype) {
     stats.parseCount++;
     stats.parseTime += measure(() => {
       parser = assemblyscript.parseFile(
-        exports.libraryFiles["builtins"],
-        exports.libraryPrefix + "builtins.ts",
+        exports.libraryFiles[libPath],
+        exports.libraryPrefix + libPath + ".ts",
         false,
         parser
       );
@@ -316,6 +318,10 @@ exports.main = function main(argv, options, callback, exttype) {
   function parseBacklog() {
     var sourcePath, sourceText;
     while ((sourcePath = parser.nextFile()) != null) {
+      sourceText = null;
+
+      console.log(`sourcePath: ${sourcePath}, sourceText: ${sourceText}`);
+
 
       // Load library file if explicitly requested
       if (sourcePath.startsWith(exports.libraryPrefix)) {
@@ -365,12 +371,12 @@ exports.main = function main(argv, options, callback, exttype) {
             } else {
               for (let i = 0, k = customLibDirs.length; i < k; ++i) {
                 const dir = customLibDirs[i];
-                sourceText = readFile(plainName + ".ts", customLibDirs[i]);
+                sourceText = readFile(plainName + ".ts", dir);
                 if (sourceText !== null) {
                   sourcePath = exports.libraryPrefix + plainName + ".ts";
                   break;
                 } else {
-                  sourceText = readFile(indexName + ".ts", customLibDirs[i]);
+                  sourceText = readFile(indexName + ".ts", dir);
                   if (sourceText !== null) {
                     sourcePath = exports.libraryPrefix + indexName + ".ts";
                     break;
@@ -401,6 +407,26 @@ exports.main = function main(argv, options, callback, exttype) {
     }
   }
 
+  // Include runtime template before entry files so its setup runs first
+  {
+    let runtimeName = String(args.runtime);
+    let runtimePath = "rt/index-" + runtimeName;
+    let runtimeText = exports.libraryFiles[runtimePath];
+    if (runtimeText == null) {
+      runtimePath = runtimeName;
+      runtimeText = readFile(runtimePath + ".ts", baseDir);
+      if (runtimeText == null) {
+        return callback(Error("Runtime '" + runtimeName + "' not found."));
+      }
+    } else {
+      runtimePath = "~lib/" + runtimePath;
+    }
+    stats.parseCount++;
+    stats.parseTime += measure(() => {
+      parser = assemblyscript.parseFile(runtimeText, runtimePath, true, parser);
+    });
+  }
+
   // Include entry files
   for (let i = 0, k = argv.length; i < k; ++i) {
     const filename = argv[i];
@@ -429,11 +455,18 @@ exports.main = function main(argv, options, callback, exttype) {
       }
       parser = assemblyscript.parseFile(sourceText, sourcePath, true, parser);
     });
+  }
+
+  // Parse entry files
+  {
     let code = parseBacklog();
     if (code) return code;
   }
 
+  // Call afterParse transform hook
   applyTransform("afterParse", parser);
+
+  // Parse additional files, if any
   {
     let code = parseBacklog();
     if (code) return code;
@@ -465,17 +498,16 @@ exports.main = function main(argv, options, callback, exttype) {
   assemblyscript.setImportMemory(compilerOptions, args.importMemory);
   assemblyscript.setSharedMemory(compilerOptions, args.sharedMemory);
   assemblyscript.setImportTable(compilerOptions, args.importTable);
+  assemblyscript.setExplicitStart(compilerOptions, args.explicitStart);
   assemblyscript.setMemoryBase(compilerOptions, args.memoryBase >>> 0);
   assemblyscript.setSourceMap(compilerOptions, args.sourceMap != null);
   assemblyscript.setOptimizeLevelHints(compilerOptions, optimizeLevel, shrinkLevel);
 
-  if (!args.noLib) {
-    // Initialize default aliases
-    assemblyscript.setGlobalAlias(compilerOptions, "Math", "NativeMath");
-    assemblyscript.setGlobalAlias(compilerOptions, "Mathf", "NativeMathf");
-    assemblyscript.setGlobalAlias(compilerOptions, "abort", "~lib/env/abort");
-    assemblyscript.setGlobalAlias(compilerOptions, "trace", "~lib/env/trace");
-  }
+  // Initialize default aliases
+  assemblyscript.setGlobalAlias(compilerOptions, "Math", "NativeMath");
+  assemblyscript.setGlobalAlias(compilerOptions, "Mathf", "NativeMathf");
+  assemblyscript.setGlobalAlias(compilerOptions, "abort", "~lib/builtins/abort");
+  assemblyscript.setGlobalAlias(compilerOptions, "trace", "~lib/builtins/trace");
 
   // Add or override aliases if specified
   if (args.use) {
@@ -505,16 +537,13 @@ exports.main = function main(argv, options, callback, exttype) {
 
   var module;
   stats.compileCount++;
-  (() => {
-    try {
-      stats.compileTime += measure(() => {
-        module = assemblyscript.compileProgram(program, compilerOptions);
-      });
-    } catch (e) {
-      return callback(e);
-    }
-  })();
-
+  try {
+    stats.compileTime += measure(() => {
+      module = assemblyscript.compileProgram(program, compilerOptions);
+    });
+  } catch (e) {
+    return callback(e);
+  }
   if (checkDiagnostics(parser, stderr)) {
     if (module) module.dispose();
     return callback(Error("Compile error"));
@@ -777,6 +806,9 @@ exports.main = function main(argv, options, callback, exttype) {
   if (args.measure) {
     printStats(stats, stderr);
   }
+  if (args.printrtti) {
+    printRTTI(program, stderr);
+  }
   return callback(null);
 
   function readFileNode(filename, baseDir) {
@@ -913,6 +945,15 @@ function printStats(stats, output) {
 
 exports.printStats = printStats;
 
+/** Prints runtime type information. */
+function printRTTI(program, output) {
+  if (!output) output = process.stderr;
+  output.write("# Runtime type information (RTTI)\n");
+  output.write(assemblyscript.buildRTTI(program));
+}
+
+exports.printRTTI = printRTTI;
+
 var allocBuffer = typeof global !== "undefined" && global.Buffer
   ? global.Buffer.allocUnsafe || function (len) { return new global.Buffer(len); }
   : function (len) { return new Uint8Array(len) };
@@ -991,10 +1032,12 @@ function insertCodes(sourcePath, sourceText) {
     let data = sourceText.split("\n");
     for (let serialize of serializeArray) {
       data.splice(serialize.line , 0, serialize.getCodes());
-      if (false) {
+      if (true) {
         console.log(`Path: ${sourcePath} line: ${serialize.line}. Insert code:${EOL}${serialize.getCodes()}`);
+        console.log(`Range: ${serialize.toString()}`);
       }
     }
+    // console.log(data.join(EOL));
     return data.join(EOL);
   } else {
     return sourceText;

@@ -5,17 +5,15 @@
  (type $FUNCSIG$jjj (func (param i64 i64) (result i64)))
  (type $FUNCSIG$ddd (func (param f64 f64) (result f64)))
  (type $FUNCSIG$iiii (func (param i32 i32 i32) (result i32)))
- (import "env" "abort" (func $~lib/env/abort))
+ (import "env" "abort" (func $~lib/builtins/abort))
  (memory $0 1)
- (data (i32.const 8) "\11\00\00\00f\00u\00n\00c\00t\00i\00o\00n\00-\00t\00y\00p\00e\00s\00.\00t\00s\00")
+ (data (i32.const 8) "\"\00\00\00\01\00\00\00\01\00\00\00\"\00\00\00f\00u\00n\00c\00t\00i\00o\00n\00-\00t\00y\00p\00e\00s\00.\00t\00s\00")
  (table $0 5 funcref)
  (elem (i32.const 0) $null $function-types/makeAdder<i32>~anonymous|0 $function-types/makeAdder<i64>~anonymous|0 $function-types/makeAdder<f64>~anonymous|0 $function-types/addI32)
  (global $function-types/i32Adder (mut i32) (i32.const 0))
  (global $~lib/argc (mut i32) (i32.const 0))
  (global $function-types/i64Adder (mut i32) (i32.const 0))
- (global $~lib/memory/HEAP_BASE i32 (i32.const 48))
  (export "memory" (memory $0))
- (export "table" (table $0))
  (start $start)
  (func $function-types/makeAdder<i32>~anonymous|0 (; 1 ;) (type $FUNCSIG$iii) (param $0 i32) (param $1 i32) (result i32)
   local.get $0
@@ -92,51 +90,45 @@
  (func $start:function-types (; 12 ;) (type $FUNCSIG$v)
   call $function-types/makeAdder<i32>
   global.set $function-types/i32Adder
-  block (result i32)
-   i32.const 2
-   global.set $~lib/argc
-   i32.const 1
-   i32.const 2
-   global.get $function-types/i32Adder
-   call_indirect (type $FUNCSIG$iii)
-  end
+  i32.const 2
+  global.set $~lib/argc
+  i32.const 1
+  i32.const 2
+  global.get $function-types/i32Adder
+  call_indirect (type $FUNCSIG$iii)
   i32.const 3
   i32.eq
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   call $function-types/makeAdder<i64>
   global.set $function-types/i64Adder
-  block (result i64)
-   i32.const 2
-   global.set $~lib/argc
-   i64.const 10
-   i64.const 20
-   global.get $function-types/i64Adder
-   call_indirect (type $FUNCSIG$jjj)
-  end
+  i32.const 2
+  global.set $~lib/argc
+  i64.const 10
+  i64.const 20
+  global.get $function-types/i64Adder
+  call_indirect (type $FUNCSIG$jjj)
   i64.const 30
   i64.eq
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
-  block (result f64)
-   i32.const 2
-   global.set $~lib/argc
-   f64.const 1.5
-   f64.const 2.5
-   call $function-types/makeAdder<f64>
-   call_indirect (type $FUNCSIG$ddd)
-  end
+  i32.const 2
+  global.set $~lib/argc
+  f64.const 1.5
+  f64.const 2.5
+  call $function-types/makeAdder<f64>
+  call_indirect (type $FUNCSIG$ddd)
   f64.const 4
   f64.eq
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   i32.const 2
@@ -147,7 +139,7 @@
   i32.eq
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   i32.const 3
@@ -157,7 +149,7 @@
   i32.eq
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   i32.const 4
@@ -168,22 +160,20 @@
   i32.eq
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
-  block (result i32)
-   i32.const 2
-   global.set $~lib/argc
-   i32.const 1
-   i32.const 2
-   i32.const 0
-   call $function-types/makeAndAdd<i32>|trampoline
-  end
+  i32.const 2
+  global.set $~lib/argc
+  i32.const 1
+  i32.const 2
+  i32.const 0
+  call $function-types/makeAndAdd<i32>|trampoline
   i32.const 3
   i32.eq
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
   i32.const 1
@@ -194,7 +184,7 @@
   i32.eq
   i32.eqz
   if
-   call $~lib/env/abort
+   call $~lib/builtins/abort
    unreachable
   end
  )

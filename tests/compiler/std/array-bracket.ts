@@ -1,4 +1,3 @@
-import "allocator/arena";
 function toArray(range: i32): u8[] {
     let uft8: u8[] = [];
     for (let index = 0 ; index < range; index ++) {
