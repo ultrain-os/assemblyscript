@@ -20,7 +20,6 @@ import {
 
 import {
   DecoratorKind,
-  SignatureNode,
   FunctionDeclaration,
   DeclarationStatement,
   FieldDeclaration,
@@ -29,12 +28,11 @@ import {
   Expression,
   VariableLikeDeclarationStatement,
   StringLiteralExpression,
-  CommonTypeNode,
   TypeNode,
   DecoratorNode,
   Node,
   ClassDeclaration,
-  TypeDeclaration
+  NamedTypeNode
 } from "./ast";
 
 import {
@@ -265,9 +263,9 @@ export class AbiInfo {
       if (member.kind == NodeKind.FIELDDECLARATION) {
         let fieldDeclare: FieldDeclaration = <FieldDeclaration>member;
         let memberName = member.name.range.toString();
-        let memberType: CommonTypeNode | null = fieldDeclare.type;
+        let memberType: TypeNode | null = fieldDeclare.type;
         if (memberType && !AstUtil.haveSpecifyDecorator(fieldDeclare, DecoratorKind.IGNORE)) {
-          let typeNodeAnalyzer: TypeNodeAnalyzer = new TypeNodeAnalyzer(classPrototype, <TypeNode>memberType);
+          let typeNodeAnalyzer: TypeNodeAnalyzer = new TypeNodeAnalyzer(classPrototype, <NamedTypeNode>memberType);
           let abiType = typeNodeAnalyzer.getAbiDeclareType();
           struct.addField(memberName, abiType);
           this.addAbiTypeAlias(typeNodeAnalyzer);
@@ -320,8 +318,8 @@ export class AbiInfo {
           let declaration = funcProto.declaration;
 
           let funcName = declaration.name.range.toString();
-          let params = funcProto.signatureNode.parameters; // FunctionDeclaration parameter types
-          let returnType = funcProto.signatureNode.returnType;
+          let params = funcProto.functionTypeNode.parameters; // FunctionDeclaration parameter types
+          let returnType = funcProto.functionTypeNode.returnType;
 
           AbiUtils.checkActionName(funcName);
           body.push(`    if (${contractVarName}.isAction("${funcName}")){`);
@@ -331,7 +329,7 @@ export class AbiInfo {
             let type: ParameterNode = params[index];
             let parameterType = type.type.range.toString();
             let parameterName = type.name.range.toString();
-            let typeNodeAnalyzer: TypeNodeAnalyzer = new TypeNodeAnalyzer(funcProto, <TypeNode>type.type);
+            let typeNodeAnalyzer: TypeNodeAnalyzer = new TypeNodeAnalyzer(funcProto, <NamedTypeNode>type.type);
 
             if (typeNodeAnalyzer.isArray()) {
               let argAbiTypeEnum = typeNodeAnalyzer.getArrayArgAbiTypeEnum();
@@ -358,7 +356,7 @@ export class AbiInfo {
             fields.push(parameterName);
           }
 
-          let rtnNodeAnly = new TypeNodeAnalyzer(funcProto, <TypeNode>returnType);
+          let rtnNodeAnly = new TypeNodeAnalyzer(funcProto, <NamedTypeNode>returnType);
           if (rtnNodeAnly.isVoid()) {
             body.push(`      ${contractVarName}.${funcName}(${fields.join(",")});`);
           } else {
@@ -435,8 +433,8 @@ export class AbiInfo {
 
     var parameters: ParameterNode[] = signature.parameters;
     for (let parameter of parameters) {
-      let type: CommonTypeNode = parameter.type;
-      let typeInfo = new TypeNodeAnalyzer(funcProto,  <TypeNode>type);
+      let type: TypeNode = parameter.type;
+      let typeInfo = new TypeNodeAnalyzer(funcProto,  <NamedTypeNode>type);
       let abiType = typeInfo.getAbiDeclareType();
       struct.addField(parameter.name.range.toString(), abiType);
       this.addAbiTypeAlias(typeInfo);

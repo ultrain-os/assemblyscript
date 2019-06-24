@@ -1,6 +1,7 @@
 /// <reference path="./rt/index.d.ts" />
 
 import { HASH } from "./util/hash";
+import { E_KEYNOTFOUND } from "util/error";
 
 import { DataStream } from "./datastream";
 import { Serializable} from "./serializable";
@@ -100,9 +101,11 @@ export class Map<K,V> implements Serializable{
     return this.find(key, HASH<K>(key)) !== null;
   }
 
+  @operator("[]")
   get(key: K): V {
     var entry = this.find(key, HASH<K>(key));
-    return entry ? entry.value : <V>unreachable();
+    if (!entry) throw new Error(E_KEYNOTFOUND); // cannot represent `undefined`
+    return entry.value;
   }
   
   // keys(): K[]{
@@ -133,6 +136,7 @@ export class Map<K,V> implements Serializable{
   //   return _values;
   // }
 
+  @operator("[]=")
   set(key: K, value: V): void {
     var hashCode = HASH<K>(key);
     var entry = this.find(key, hashCode); // unmanaged!

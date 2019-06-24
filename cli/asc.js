@@ -319,10 +319,6 @@ exports.main = function main(argv, options, callback, exttype) {
     var sourcePath, sourceText;
     while ((sourcePath = parser.nextFile()) != null) {
       sourceText = null;
-
-      console.log(`sourcePath: ${sourcePath}, sourceText: ${sourceText}`);
-
-
       // Load library file if explicitly requested
       if (sourcePath.startsWith(exports.libraryPrefix)) {
         const plainName = sourcePath.substring(exports.libraryPrefix.length);
@@ -516,10 +512,10 @@ exports.main = function main(argv, options, callback, exttype) {
       let part = aliases[i];
       let p = part.indexOf("=");
       if (p < 0) return callback(Error("Global alias '" + part + "' is invalid."));
-      let name = part.substring(0, p).trim();
-      let alias = part.substring(p + 1).trim();
-      if (!name.length) return callback(Error("Global alias '" + part + "' is invalid."));
-      assemblyscript.setGlobalAlias(compilerOptions, name, alias);
+      let alias = part.substring(0, p).trim();
+      let name = part.substring(p + 1).trim();
+      if (!alias.length) return callback(Error("Global alias '" + part + "' is invalid."));
+      assemblyscript.setGlobalAlias(compilerOptions, alias, name);
     }
   }
 

@@ -5,8 +5,8 @@ import {
     ClassDeclaration,
     DecoratorNode,
     Range,
-    TypeNode,
-    TypeDeclaration
+    TypeDeclaration,
+    NamedTypeNode
 } from "../ast";
 
 import {
@@ -212,11 +212,11 @@ interface TypeInfo {
 export class TypeNodeAnalyzer {
 
     parent: Element;
-    typeNode: TypeNode;
+    typeNode: NamedTypeNode;
     typeName: string;
     abiType: AbiTypeEnum;
 
-    constructor(parent: Element ,typeNode: TypeNode) {
+    constructor(parent: Element ,typeNode: NamedTypeNode) {
         this.parent = parent;
         this.typeNode = typeNode;
         // Here various clz[]'s type name is [], not clz.
@@ -248,7 +248,7 @@ export class TypeNodeAnalyzer {
             if (type.kind == ElementKind.TYPEDEFINITION) {
                 let typeDefine = <TypeDefinition>type;
                 let declaration = <TypeDeclaration>typeDefine.declaration;
-                let _typeNode = <TypeNode>declaration.type;
+                let _typeNode = <NamedTypeNode>declaration.type;
                 let name = _typeNode.name.range.toString();
                 if (AbiHelper.abiTypeLookup.get(name) && name != "Asset") {
                     return AbiTypeEnum.NUMBER;

@@ -4,11 +4,11 @@ import {
 
 import {
     ClassDeclaration,
-    CommonTypeNode,
     DecoratorKind,
     FieldDeclaration,
     NodeKind,
-    TypeNode
+    TypeNode,
+    NamedTypeNode
 } from "./ast";
 
 import {
@@ -152,7 +152,7 @@ class SerializeGenerator {
         }
     }
 
-    checkSerializable(typeNode: CommonTypeNode): void {
+    checkSerializable(typeNode: NamedTypeNode): void {
         var internalName = AstUtil.getInternalName(typeNode);
         var element: Element | null = this.classPrototype.program.elementsByName.get(internalName);
 
@@ -186,25 +186,25 @@ class SerializeGenerator {
             if (element.kind == ElementKind.FIELD_PROTOTYPE) {
                 let fieldPrototype: FieldPrototype = <FieldPrototype>element;
                 let fieldDeclaration: FieldDeclaration = <FieldDeclaration>fieldPrototype.declaration;
-                let commonType: CommonTypeNode | null = fieldDeclaration.type;
+                let commonType: TypeNode | null = fieldDeclaration.type;
 
-                if (commonType && commonType.kind == NodeKind.TYPE &&
+                if (commonType && commonType.kind == NodeKind.NAMEDTYPE &&
                     !AstUtil.haveSpecifyDecorator(fieldDeclaration, DecoratorKind.IGNORE)) {
-                    let typeNode = <TypeNode>commonType;
+                    let typeNode = <NamedTypeNode>commonType;
                     if (this.needSerialize) {
-                        this.checkSerializable(commonType);
+                        this.checkSerializable(<NamedTypeNode>commonType);
                         serializePoint.serialize.addAll(this.serializeField(fieldName, typeNode));
                     }
                     if (this.needDeserialize) {
-                        this.checkSerializable(commonType);
+                        this.checkSerializable(<NamedTypeNode>commonType);
                         serializePoint.deserialize.addAll(this.deserializeField(fieldName, typeNode));
                     }
                 }
 
-                if (commonType && commonType.kind == NodeKind.TYPE && AstUtil.haveSpecifyDecorator(fieldDeclaration, DecoratorKind.PRIMARYID)) {
+                if (commonType && commonType.kind == NodeKind.NAMEDTYPE && AstUtil.haveSpecifyDecorator(fieldDeclaration, DecoratorKind.PRIMARYID)) {
                     countOfPkDecorator++;
                     Verify.verify(countOfPkDecorator <= 1, `Class ${this.classPrototype.name} should have only one primaryid decorator field.`);
-                    let typeNodeAnalyzer: TypeNodeAnalyzer = new TypeNodeAnalyzer(this.classPrototype,  <TypeNode>commonType);
+                    let typeNodeAnalyzer: TypeNodeAnalyzer = new TypeNodeAnalyzer(this.classPrototype,  <NamedTypeNode>commonType);
                     if (!typeNodeAnalyzer.isPrimaryType()) {
                         throw new Error(`Class ${this.classPrototype.name} member ${fieldName}'s type should be id_type or refer to id_type.`);
                     }
@@ -223,7 +223,7 @@ class SerializeGenerator {
     }
 
     /** Implement the serrialize field */
-    serializeField(fieldName: string, typeNode: TypeNode): string[] {
+    serializeField(fieldName: string, typeNode: NamedTypeNode): string[] {
         var typeNodeAnalyzer: TypeNodeAnalyzer = new TypeNodeAnalyzer(this.classPrototype, typeNode);
         var indent: Indenter = new Indenter();
         indent.indent(4);
@@ -253,7 +253,7 @@ class SerializeGenerator {
         return indent.getContent();
     }
 
-    deserializeField(fieldName: string, type: TypeNode): string[] {
+    deserializeField(fieldName: string, type: NamedTypeNode): string[] {
         var typeNodeAnalyzer: TypeNodeAnalyzer = new TypeNodeAnalyzer(this.classPrototype, type);
         var indent = new Indenter();
         indent.indent(4);

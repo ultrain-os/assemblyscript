@@ -43,10 +43,10 @@ import {
   Range,
   DecoratorNode,
   DecoratorKind,
-  SignatureNode,
   TypeParameterNode,
-  CommonTypeNode,
   TypeNode,
+  NamedTypeNode,
+  FunctionTypeNode,
   ArrowKind,
 
   Expression,
@@ -378,8 +378,8 @@ export class Program extends DiagnosticEmitter {
   f64ArrayPrototype: ClassPrototype;
   /** String instance reference. */
   stringInstance: Class;
-  /** Abort function reference, if present. */
-  abortInstance: Function;
+  /** Abort function reference, if not explicitly disabled. */
+  abortInstance: Function | null;
 
   // runtime references
 
@@ -487,7 +487,7 @@ export class Program extends DiagnosticEmitter {
   }
 
   // a dummy signature for programmatically generated native functions
-  private nativeDummySignature: SignatureNode | null = null;
+  private nativeDummySignature: FunctionTypeNode | null = null;
 
   /** Creates a native function declaration. */
   makeNativeFunctionDeclaration(
@@ -500,8 +500,8 @@ export class Program extends DiagnosticEmitter {
     return Node.createFunctionDeclaration(
       Node.createIdentifierExpression(name, range),
       null,
-      this.nativeDummySignature || (this.nativeDummySignature = Node.createSignature([],
-        Node.createType( // ^ AST signature doesn't really matter, is overridden anyway
+      this.nativeDummySignature || (this.nativeDummySignature = Node.createFunctionType([],
+        Node.createNamedType( // ^ AST signature doesn't really matter, is overridden anyway
           Node.createSimpleTypeName(CommonSymbols.void_, range),
           null, false, range
         ),
@@ -582,6 +582,18 @@ export class Program extends DiagnosticEmitter {
       CommonSymbols.native,
       this.nativeFile,
       this.makeNativeTypeDeclaration(CommonSymbols.native, CommonFlags.EXPORT | CommonFlags.GENERIC),
+      DecoratorFlags.BUILTIN
+    ));
+    this.nativeFile.add(CommonSymbols.indexof, new TypeDefinition(
+      CommonSymbols.indexof,
+      this.nativeFile,
+      this.makeNativeTypeDeclaration(CommonSymbols.indexof, CommonFlags.EXPORT | CommonFlags.GENERIC),
+      DecoratorFlags.BUILTIN
+    ));
+    this.nativeFile.add(CommonSymbols.valueof, new TypeDefinition(
+      CommonSymbols.valueof,
+      this.nativeFile,
+      this.makeNativeTypeDeclaration(CommonSymbols.valueof, CommonFlags.EXPORT | CommonFlags.GENERIC),
       DecoratorFlags.BUILTIN
     ));
     if (options.hasFeature(Feature.SIMD)) this.registerNativeType(CommonSymbols.v128, Type.v128);
@@ -844,7 +856,6 @@ export class Program extends DiagnosticEmitter {
       let globalAliases = options.globalAliases;
       if (globalAliases) {
         for (let [alias, name] of globalAliases) {
-          console.log(`alias: ${alias}, name: ${name}`);
           if (!name.length) continue; // explicitly disabled
           let firstChar = name.charCodeAt(0);
           if (firstChar >= CharCode._0 && firstChar <= CharCode._9) {
@@ -867,7 +878,7 @@ export class Program extends DiagnosticEmitter {
     this.fixedArrayPrototype = <ClassPrototype>this.require(CommonSymbols.FixedArray, ElementKind.CLASS_PROTOTYPE);
     this.setPrototype = <ClassPrototype>this.require(CommonSymbols.Set, ElementKind.CLASS_PROTOTYPE);
     this.mapPrototype = <ClassPrototype>this.require(CommonSymbols.Map, ElementKind.CLASS_PROTOTYPE);
-    this.abortInstance = this.requireFunction(CommonSymbols.abort);
+    this.abortInstance = this.lookupFunction(CommonSymbols.abort); // can be disabled
     this.allocInstance = this.requireFunction(CommonSymbols.alloc);
     this.reallocInstance = this.requireFunction(CommonSymbols.realloc);
     this.freeInstance = this.requireFunction(CommonSymbols.free);
@@ -901,6 +912,13 @@ export class Program extends DiagnosticEmitter {
     var resolved = this.resolver.resolveClass(<ClassPrototype>prototype, null);
     if (!resolved) throw new Error("invalid " + name);
     return resolved;
+  }
+
+  /** Obtains a non-generic global function and returns it. Returns `null` if it does not exist. */
+  private lookupFunction(name: string): Function | null {
+    var prototype = this.lookupGlobal(name);
+    if (!prototype || prototype.kind != ElementKind.FUNCTION_PROTOTYPE) return null;
+    return this.resolver.resolveFunction(<FunctionPrototype>prototype, null);
   }
 
   /** Requires that a non-generic global function is present and returns it. */
@@ -2269,7 +2287,7 @@ export class TypeDefinition extends TypedElement {
   }
 
   /** Gets the associated type node. */
-  get typeNode(): CommonTypeNode {
+  get typeNode(): TypeNode {
     return (<TypeDeclaration>this.declaration).type;
   }
 
@@ -2387,7 +2405,7 @@ export abstract class VariableLikeElement extends TypedElement {
   }
 
   /** Gets the associated type node.s */
-  get typeNode(): CommonTypeNode | null {
+  get typeNode(): TypeNode | null {
     return (<VariableLikeDeclarationStatement>this.declaration).type;
   }
 
@@ -2561,8 +2579,8 @@ export class FunctionPrototype extends DeclaredElement {
     return (<FunctionDeclaration>this.declaration).typeParameters;
   }
 
-  /** Gets the associated signature node. */
-  get signatureNode(): SignatureNode {
+  /** Gets the associated function type node. */
+  get functionTypeNode(): FunctionTypeNode {
     return (<FunctionDeclaration>this.declaration).signature;
   }
 
@@ -2839,7 +2857,7 @@ export class FieldPrototype extends DeclaredElement {
   }
 
   /** Gets the associated type node. */
-  get typeNode(): CommonTypeNode | null {
+  get typeNode(): TypeNode | null {
     return (<FieldDeclaration>this.declaration).type;
   }
 
@@ -3003,11 +3021,11 @@ export class ClassPrototype extends DeclaredElement {
     return (<ClassDeclaration>this.declaration).typeParameters;
   }
   /** Gets the associated extends node. */
-  get extendsNode(): TypeNode | null {
+  get extendsNode(): NamedTypeNode | null {
     return (<ClassDeclaration>this.declaration).extendsType;
   }
   /** Gets the associated implements nodes. */
-  get implementsNodes(): TypeNode[] | null {
+  get implementsNodes(): NamedTypeNode[] | null {
     return (<ClassDeclaration>this.declaration).implementsTypes;
   }
 
