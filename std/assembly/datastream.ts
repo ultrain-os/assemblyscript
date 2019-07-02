@@ -1,4 +1,3 @@
-import { toUTF8Array } from "./utf8util";
 import { Serializable } from "./serializable";
 /**
  * internal memory HEADER SIZE. NEVER used by users.
@@ -216,17 +215,20 @@ export class DataStream {
         var data = new Uint8Array(len);
         memory.copy(changetype<usize>(data.buffer), this.buffer + this.pos, len);
         this.pos += len;
-        return String.fromUTF8(changetype<usize>(data.buffer), len );
+        // return String.fromUTF8(changetype<usize>(data.buffer), len );
+        return String.UTF8.decodeUnsafe(changetype<usize>(data.buffer), len);
     }
 
     writeString(str: string): void {
-        var len: u32 = <u32>str.lengthUTF8 - 1;
+        // var len: u32 = <u32>str.lengthUTF8 - 1;
+        var len: u32 = <u32>String.UTF8.byteLength(str) -1;
         this.writeVarint32(len);
         if (len == 0) return;
 
         if (!this.isMeasureMode()) {
-            let ptr = str.toUTF8();
-            memory.copy(this.buffer + this.pos, <usize>ptr, len);
+            // let ptr = str.toUTF8();
+            let ptr = changetype<usize>(String.UTF8.encode(str));
+            memory.copy(this.buffer + this.pos, ptr, len);
         }
         this.pos += len;
     }

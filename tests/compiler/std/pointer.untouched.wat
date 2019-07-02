@@ -1,12 +1,8 @@
 (module
  (type $FUNCSIG$ii (func (param i32) (result i32)))
  (type $FUNCSIG$v (func))
- (type $FUNCSIG$iii (func (param i32 i32) (result i32)))
  (type $FUNCSIG$vi (func (param i32)))
- (type $FUNCSIG$vii (func (param i32 i32)))
  (type $FUNCSIG$viii (func (param i32 i32 i32)))
- (type $FUNCSIG$viif (func (param i32 i32 f32)))
- (type $FUNCSIG$vif (func (param i32 f32)))
  (import "env" "abort" (func $~lib/builtins/abort))
  (memory $0 1)
  (data (i32.const 8) "\1c\00\00\00\01\00\00\00\01\00\00\00\1c\00\00\00s\00t\00d\00/\00p\00o\00i\00n\00t\00e\00r\00.\00t\00s\00")
@@ -27,47 +23,7 @@
  (func $~lib/rt/stub/__release (; 2 ;) (type $FUNCSIG$vi) (param $0 i32)
   nop
  )
- (func $std/pointer/Pointer<std/pointer/Entry>#add (; 3 ;) (type $FUNCSIG$iii) (param $0 i32) (param $1 i32) (result i32)
-  (local $2 i32)
-  local.get $1
-  call $~lib/rt/stub/__retain
-  drop
-  local.get $0
-  local.get $1
-  i32.add
-  call $~lib/rt/stub/__retain
-  local.set $2
-  local.get $1
-  call $~lib/rt/stub/__release
-  local.get $2
- )
- (func $std/pointer/Pointer<std/pointer/Entry>#sub (; 4 ;) (type $FUNCSIG$iii) (param $0 i32) (param $1 i32) (result i32)
-  (local $2 i32)
-  local.get $1
-  call $~lib/rt/stub/__retain
-  drop
-  local.get $0
-  local.get $1
-  i32.sub
-  call $~lib/rt/stub/__retain
-  local.set $2
-  local.get $1
-  call $~lib/rt/stub/__release
-  local.get $2
- )
- (func $std/pointer/Pointer<std/pointer/Entry>#inc (; 5 ;) (type $FUNCSIG$ii) (param $0 i32) (result i32)
-  local.get $0
-  i32.const 8
-  i32.add
-  call $~lib/rt/stub/__retain
- )
- (func $std/pointer/Pointer<std/pointer/Entry>#dec (; 6 ;) (type $FUNCSIG$ii) (param $0 i32) (result i32)
-  local.get $0
-  i32.const 8
-  i32.sub
-  call $~lib/rt/stub/__retain
- )
- (func $~lib/memory/memory.fill (; 7 ;) (type $FUNCSIG$viii) (param $0 i32) (param $1 i32) (param $2 i32)
+ (func $~lib/memory/memory.fill (; 3 ;) (type $FUNCSIG$viii) (param $0 i32) (param $1 i32) (param $2 i32)
   (local $3 i32)
   (local $4 i32)
   (local $5 i32)
@@ -331,7 +287,7 @@
    end
   end
  )
- (func $~lib/util/memory/memcpy (; 8 ;) (type $FUNCSIG$viii) (param $0 i32) (param $1 i32) (param $2 i32)
+ (func $~lib/util/memory/memcpy (; 4 ;) (type $FUNCSIG$viii) (param $0 i32) (param $1 i32) (param $2 i32)
   (local $3 i32)
   (local $4 i32)
   (local $5 i32)
@@ -1359,7 +1315,7 @@
    i32.store8
   end
  )
- (func $~lib/memory/memory.copy (; 9 ;) (type $FUNCSIG$viii) (param $0 i32) (param $1 i32) (param $2 i32)
+ (func $~lib/memory/memory.copy (; 5 ;) (type $FUNCSIG$viii) (param $0 i32) (param $1 i32) (param $2 i32)
   (local $3 i32)
   (local $4 i32)
   (local $5 i32)
@@ -1584,37 +1540,7 @@
    end
   end
  )
- (func $std/pointer/Pointer<std/pointer/Entry>#set:value (; 10 ;) (type $FUNCSIG$vii) (param $0 i32) (param $1 i32)
-  local.get $1
-  i32.const 0
-  i32.eq
-  if
-   local.get $0
-   i32.const 0
-   i32.const 8
-   call $~lib/memory/memory.fill
-  else   
-   local.get $0
-   local.get $1
-   i32.const 8
-   call $~lib/memory/memory.copy
-  end
- )
- (func $std/pointer/Pointer<f32>#set (; 11 ;) (type $FUNCSIG$viif) (param $0 i32) (param $1 i32) (param $2 f32)
-  local.get $0
-  local.get $1
-  i32.const 4
-  i32.mul
-  i32.add
-  local.get $2
-  f32.store
- )
- (func $std/pointer/Pointer<f32>#set:value (; 12 ;) (type $FUNCSIG$vif) (param $0 i32) (param $1 f32)
-  local.get $0
-  local.get $1
-  f32.store
- )
- (func $start:std/pointer (; 13 ;) (type $FUNCSIG$v)
+ (func $start:std/pointer (; 6 ;) (type $FUNCSIG$v)
   (local $0 i32)
   (local $1 i32)
   (local $2 i32)
@@ -1622,7 +1548,8 @@
   (local $4 i32)
   (local $5 i32)
   (local $6 i32)
-  (local $7 f32)
+  (local $7 i32)
+  (local $8 f32)
   i32.const 0
   local.set $1
   i32.const 8
@@ -1702,14 +1629,24 @@
    unreachable
   end
   global.get $std/pointer/one
+  local.set $1
   global.get $std/pointer/two
-  call $std/pointer/Pointer<std/pointer/Entry>#add
+  call $~lib/rt/stub/__retain
+  local.set $0
+  local.get $1
+  local.get $0
+  i32.add
+  call $~lib/rt/stub/__retain
+  local.set $2
+  local.get $0
+  call $~lib/rt/stub/__release
+  local.get $2
   local.tee $1
   call $~lib/rt/stub/__retain
   global.set $std/pointer/add
   global.get $std/pointer/add
-  local.set $0
-  local.get $0
+  local.set $2
+  local.get $2
   i32.const 32
   i32.eq
   i32.eqz
@@ -1718,14 +1655,24 @@
    unreachable
   end
   global.get $std/pointer/two
+  local.set $2
   global.get $std/pointer/one
-  call $std/pointer/Pointer<std/pointer/Entry>#sub
-  local.tee $0
+  call $~lib/rt/stub/__retain
+  local.set $0
+  local.get $2
+  local.get $0
+  i32.sub
+  call $~lib/rt/stub/__retain
+  local.set $3
+  local.get $0
+  call $~lib/rt/stub/__release
+  local.get $3
+  local.tee $2
   call $~lib/rt/stub/__retain
   global.set $std/pointer/sub
   global.get $std/pointer/sub
-  local.set $2
-  local.get $2
+  local.set $3
+  local.get $3
   i32.const 16
   i32.eq
   i32.eqz
@@ -1734,8 +1681,8 @@
    unreachable
   end
   global.get $std/pointer/one
-  local.set $2
-  local.get $2
+  local.set $0
+  local.get $0
   i32.const 8
   i32.eq
   i32.eqz
@@ -1744,20 +1691,24 @@
    unreachable
   end
   global.get $std/pointer/one
-  call $std/pointer/Pointer<std/pointer/Entry>#inc
-  local.tee $2
+  local.set $3
+  local.get $3
+  i32.const 8
+  i32.add
+  call $~lib/rt/stub/__retain
   local.tee $3
+  local.tee $0
   global.get $std/pointer/one
   local.tee $4
   i32.ne
   if
-   local.get $3
+   local.get $0
    call $~lib/rt/stub/__retain
    drop
    local.get $4
    call $~lib/rt/stub/__release
   end
-  local.get $3
+  local.get $0
   global.set $std/pointer/one
   global.get $std/pointer/one
   call $~lib/rt/stub/__retain
@@ -1781,8 +1732,8 @@
    unreachable
   end
   global.get $std/pointer/two
-  local.set $3
-  local.get $3
+  local.set $0
+  local.get $0
   i32.const 24
   i32.eq
   i32.eqz
@@ -1791,36 +1742,44 @@
    unreachable
   end
   global.get $std/pointer/two
-  call $std/pointer/Pointer<std/pointer/Entry>#dec
-  local.tee $3
+  local.set $4
+  local.get $4
+  i32.const 8
+  i32.sub
+  call $~lib/rt/stub/__retain
   local.tee $4
+  local.tee $0
   global.get $std/pointer/two
   local.tee $5
   i32.ne
   if
-   local.get $4
+   local.get $0
    call $~lib/rt/stub/__retain
    drop
    local.get $5
    call $~lib/rt/stub/__release
   end
-  local.get $4
+  local.get $0
   global.set $std/pointer/two
   global.get $std/pointer/two
-  call $std/pointer/Pointer<std/pointer/Entry>#dec
-  local.tee $4
+  local.set $5
+  local.get $5
+  i32.const 8
+  i32.sub
+  call $~lib/rt/stub/__retain
   local.tee $5
+  local.tee $0
   global.get $std/pointer/two
   local.tee $6
   i32.ne
   if
-   local.get $5
+   local.get $0
    call $~lib/rt/stub/__retain
    drop
    local.get $6
    call $~lib/rt/stub/__release
   end
-  local.get $5
+  local.get $0
   global.set $std/pointer/two
   global.get $std/pointer/two
   local.set $6
@@ -1834,8 +1793,8 @@
   end
   block $std/pointer/Pointer<std/pointer/Entry>#get:value|inlined.4 (result i32)
    global.get $std/pointer/two
-   local.set $5
-   local.get $5
+   local.set $0
+   local.get $0
    br $std/pointer/Pointer<std/pointer/Entry>#get:value|inlined.4
   end
   i32.load
@@ -1861,19 +1820,34 @@
    unreachable
   end
   global.get $std/pointer/one
+  local.set $7
   block $std/pointer/Pointer<std/pointer/Entry>#get:value|inlined.6 (result i32)
    global.get $std/pointer/two
-   local.set $5
-   local.get $5
+   local.set $0
+   local.get $0
    br $std/pointer/Pointer<std/pointer/Entry>#get:value|inlined.6
   end
-  call $std/pointer/Pointer<std/pointer/Entry>#set:value
-  global.get $std/pointer/one
   local.set $6
   local.get $6
+  i32.const 0
+  i32.eq
+  if
+   local.get $7
+   i32.const 0
+   i32.const 8
+   call $~lib/memory/memory.fill
+  else   
+   local.get $7
+   local.get $6
+   i32.const 8
+   call $~lib/memory/memory.copy
+  end
+  global.get $std/pointer/one
+  local.set $0
+  local.get $0
   global.get $std/pointer/two
-  local.set $5
-  local.get $5
+  local.set $6
+  local.get $6
   i32.ne
   i32.eqz
   if
@@ -1882,8 +1856,8 @@
   end
   block $std/pointer/Pointer<std/pointer/Entry>#get:value|inlined.7 (result i32)
    global.get $std/pointer/one
-   local.set $6
-   local.get $6
+   local.set $7
+   local.get $7
    br $std/pointer/Pointer<std/pointer/Entry>#get:value|inlined.7
   end
   i32.load
@@ -1896,8 +1870,8 @@
   end
   block $std/pointer/Pointer<std/pointer/Entry>#get:value|inlined.8 (result i32)
    global.get $std/pointer/one
-   local.set $5
-   local.get $5
+   local.set $0
+   local.get $0
    br $std/pointer/Pointer<std/pointer/Entry>#get:value|inlined.8
   end
   i32.load offset=4
@@ -1909,125 +1883,143 @@
    unreachable
   end
   i32.const 0
-  local.set $5
+  local.set $7
   i32.const 0
   local.set $6
   local.get $6
   call $~lib/rt/stub/__retain
   global.set $std/pointer/buf
   global.get $std/pointer/buf
+  local.set $6
   i32.const 0
+  local.set $0
   f32.const 1.100000023841858
-  call $std/pointer/Pointer<f32>#set
-  global.get $std/pointer/buf
-  i32.const 1
-  f32.const 1.2000000476837158
-  call $std/pointer/Pointer<f32>#set
-  global.get $std/pointer/buf
-  local.set $5
-  i32.const 0
-  local.set $6
-  local.get $5
+  local.set $8
   local.get $6
+  local.get $0
   i32.const 4
   i32.mul
   i32.add
-  f32.load
-  f32.const 1.100000023841858
-  f32.eq
-  i32.eqz
-  if
-   call $~lib/builtins/abort
-   unreachable
-  end
-  global.get $std/pointer/buf
-  local.set $5
-  i32.const 1
-  local.set $6
-  local.get $5
-  local.get $6
-  i32.const 4
-  i32.mul
-  i32.add
-  f32.load
-  f32.const 1.2000000476837158
-  f32.eq
-  i32.eqz
-  if
-   call $~lib/builtins/abort
-   unreachable
-  end
-  global.get $std/pointer/buf
-  local.set $5
-  i32.const 0
-  local.set $6
-  local.get $5
-  local.get $6
-  i32.const 4
-  i32.mul
-  i32.add
-  f32.load
-  f32.const 1.100000023841858
-  f32.eq
-  i32.eqz
-  if
-   call $~lib/builtins/abort
-   unreachable
-  end
-  global.get $std/pointer/buf
-  local.set $5
-  i32.const 1
-  local.set $6
-  local.get $5
-  local.get $6
-  i32.const 4
-  i32.mul
-  i32.add
-  f32.load
-  f32.const 1.2000000476837158
-  f32.eq
-  i32.eqz
-  if
-   call $~lib/builtins/abort
-   unreachable
-  end
-  i32.const 0
-  f32.load
-  f32.const 1.100000023841858
-  f32.eq
-  i32.eqz
-  if
-   call $~lib/builtins/abort
-   unreachable
-  end
-  i32.const 4
-  f32.load
-  f32.const 1.2000000476837158
-  f32.eq
-  i32.eqz
-  if
-   call $~lib/builtins/abort
-   unreachable
-  end
-  global.get $std/pointer/buf
-  local.set $5
-  i32.const 2
-  local.set $6
-  f32.const 1.2999999523162842
-  local.set $7
-  local.get $5
-  local.get $6
-  i32.const 4
-  i32.mul
-  i32.add
-  local.get $7
+  local.get $8
   f32.store
   global.get $std/pointer/buf
-  local.set $5
-  i32.const 2
+  local.set $0
+  i32.const 1
+  local.set $7
+  f32.const 1.2000000476837158
+  local.set $8
+  local.get $0
+  local.get $7
+  i32.const 4
+  i32.mul
+  i32.add
+  local.get $8
+  f32.store
+  global.get $std/pointer/buf
+  local.set $7
+  i32.const 0
   local.set $6
-  local.get $5
+  local.get $7
   local.get $6
+  i32.const 4
+  i32.mul
+  i32.add
+  f32.load
+  f32.const 1.100000023841858
+  f32.eq
+  i32.eqz
+  if
+   call $~lib/builtins/abort
+   unreachable
+  end
+  global.get $std/pointer/buf
+  local.set $6
+  i32.const 1
+  local.set $0
+  local.get $6
+  local.get $0
+  i32.const 4
+  i32.mul
+  i32.add
+  f32.load
+  f32.const 1.2000000476837158
+  f32.eq
+  i32.eqz
+  if
+   call $~lib/builtins/abort
+   unreachable
+  end
+  global.get $std/pointer/buf
+  local.set $0
+  i32.const 0
+  local.set $7
+  local.get $0
+  local.get $7
+  i32.const 4
+  i32.mul
+  i32.add
+  f32.load
+  f32.const 1.100000023841858
+  f32.eq
+  i32.eqz
+  if
+   call $~lib/builtins/abort
+   unreachable
+  end
+  global.get $std/pointer/buf
+  local.set $7
+  i32.const 1
+  local.set $6
+  local.get $7
+  local.get $6
+  i32.const 4
+  i32.mul
+  i32.add
+  f32.load
+  f32.const 1.2000000476837158
+  f32.eq
+  i32.eqz
+  if
+   call $~lib/builtins/abort
+   unreachable
+  end
+  i32.const 0
+  f32.load
+  f32.const 1.100000023841858
+  f32.eq
+  i32.eqz
+  if
+   call $~lib/builtins/abort
+   unreachable
+  end
+  i32.const 4
+  f32.load
+  f32.const 1.2000000476837158
+  f32.eq
+  i32.eqz
+  if
+   call $~lib/builtins/abort
+   unreachable
+  end
+  global.get $std/pointer/buf
+  local.set $6
+  i32.const 2
+  local.set $0
+  f32.const 1.2999999523162842
+  local.set $8
+  local.get $6
+  local.get $0
+  i32.const 4
+  i32.mul
+  i32.add
+  local.get $8
+  f32.store
+  global.get $std/pointer/buf
+  local.set $0
+  i32.const 2
+  local.set $7
+  local.get $0
+  local.get $7
   i32.const 4
   i32.mul
   i32.add
@@ -2040,10 +2032,10 @@
    unreachable
   end
   global.get $std/pointer/buf
-  local.set $5
+  local.set $7
   i32.const 2
   local.set $6
-  local.get $5
+  local.get $7
   local.get $6
   i32.const 4
   i32.mul
@@ -2066,8 +2058,12 @@
    unreachable
   end
   global.get $std/pointer/buf
+  local.set $0
   f32.const 1.399999976158142
-  call $std/pointer/Pointer<f32>#set:value
+  local.set $8
+  local.get $0
+  local.get $8
+  f32.store
   block $std/pointer/Pointer<f32>#get:value|inlined.0 (result f32)
    global.get $std/pointer/buf
    local.set $6
@@ -2091,8 +2087,6 @@
    call $~lib/builtins/abort
    unreachable
   end
-  local.get $0
-  call $~lib/rt/stub/__release
   local.get $1
   call $~lib/rt/stub/__release
   local.get $2
@@ -2101,10 +2095,12 @@
   call $~lib/rt/stub/__release
   local.get $4
   call $~lib/rt/stub/__release
+  local.get $5
+  call $~lib/rt/stub/__release
  )
- (func $start (; 14 ;) (type $FUNCSIG$v)
+ (func $start (; 7 ;) (type $FUNCSIG$v)
   call $start:std/pointer
  )
- (func $null (; 15 ;) (type $FUNCSIG$v)
+ (func $null (; 8 ;) (type $FUNCSIG$v)
  )
 )
