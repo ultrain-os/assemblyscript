@@ -281,9 +281,9 @@ export abstract class DiagnosticEmitter {
     if (relatedRange) message.relatedRange = relatedRange;
     this.diagnostics.push(message);
     if (category == DiagnosticCategory.ERROR) {
-      console.log(formatDiagnosticMessage(message, true, true) + "\n"); // temporary
-      console.log(<string>new Error("stack").stack);
-      throw <string>new Error("stack").stack;
+      // console.log(formatDiagnosticMessage(message, true, true) + "\n"); // temporary
+      // console.log(<string>new Error("stack").stack);
+      // throw <string>new Error("stack").stack;
     }
   }
 

@@ -1598,7 +1598,7 @@ declare class DataStream {
   pos: u32;
   static measure<T extends Serializable>(obj: T): u32;
 
-  constructor(buffer: u32, len: u32);
+  constructor(buffer: ArrayBuffer, len: u32);
   size(): u32;
   readVarint32(): u32;
   writeVarint32(value: u32): void;
@@ -1660,3 +1660,4 @@ declare class DBManager<T extends Serializable> {
 
 declare function ultrain_assert(condition: boolean, msg: string): void;
 declare function current_receiver(): u64;
+declare function prints(cstr: ArrayBuffer): void;

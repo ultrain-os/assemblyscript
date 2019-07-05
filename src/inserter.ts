@@ -81,8 +81,6 @@ export class InsertPoint {
     }
 
     get line(): i32 {
-        console.log(`line: ${this.range.line}`);
-        console.log(`range---: ${this.range.toString()}, column : ${this.range.column}`);
         return (this.range.column == 0) ? this.range.atEnd.line - 1 : this.range.atEnd.line - 2;
     }
     get normalizedPath(): string {
@@ -299,12 +297,6 @@ export class SerializePoint extends InsertPoint {
 
     constructor(range: Range) {
         super(range.atEnd);
-       
-        console.log(`SerializePoint range: ${range.toString()}`);
-        console.log(`SerializePoint range end: ${range.end}, 
-        SerializePoint start: ${range.start}, atEnd: ${this.range.atEnd.line}, 
-        line: ${this.range.line}`);
-
         this.serialize.indent(2).add(`serialize(ds: DataStream): void {`);
         this.deserialize.indent(2).add(`deserialize(ds: DataStream): void {`);
         this.primaryKey.indent(2).add(`primaryKey(): id_type {`);

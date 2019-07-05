@@ -320,7 +320,8 @@ function testInstantiate(basename, binaryBuffer, name) {
             console.log("  trace: " + getString(msg) + (n ? " " : "") + Array.prototype.slice.call(arguments, 2, 2 + n).join(", "));
           },
           externalFunction: function() { },
-          externalConstant: 1
+          externalConstant: 1,
+          bar: function () { }
         },
 
         // bindings

@@ -60,8 +60,8 @@ export class Cursor<T extends Serializable> {
         var iterator = this._iterators[this._pos];
         var len: i32 = db_get_i64(iterator, 0, 0);
         var arr = new Uint8Array(len);
-        var ds = new DataStream(<usize>arr.buffer, len);
-        db_get_i64(iterator, <usize>arr.buffer, len);
+        var ds = new DataStream(arr.buffer, len);
+        db_get_i64(iterator, changetype<usize>(arr.buffer), len);
 
         var out = {} as T;
         out.deserialize(ds);
@@ -135,11 +135,11 @@ export class DBManager<T extends Serializable> {
         // ultrain_assert(this._owner == current_receiver(), "can not create objects in table of another contract");
         let len = DataStream.measure<T>(obj);
         let arr = new Uint8Array(len);
-        let ds = new DataStream(<usize>arr.buffer, len);
+        let ds = new DataStream(arr.buffer, len);
         obj.serialize(ds);
 
         let primary = obj.primaryKey();
-        db_store_i64(this._scope, this._tblname, this._owner, primary, ds.buffer, ds.pos);
+        db_store_i64(this._scope, this._tblname, this._owner, primary, changetype<usize>(ds.buffer), ds.pos);
     }
     /**
      * update a row.
@@ -153,17 +153,17 @@ export class DBManager<T extends Serializable> {
 
         let len = DataStream.measure<T>(newobj);
         let arr = new Uint8Array(len);
-        let ds = new DataStream(<usize>arr.buffer, len);
+        let ds = new DataStream(arr.buffer, len);
         newobj.serialize(ds);
-        db_update_i64(itr, this._owner, ds.buffer, ds.pos);
+        db_update_i64(itr, this._owner, changetype<usize>(ds.buffer), ds.pos);
     }
 
     private loadObjectByPrimaryIterator(itr: i32, out: T): void {
         let len: i32 = db_get_i64(itr, 0, 0);
 
         let arr = new Uint8Array(len);
-        let ds = new DataStream(<usize>arr.buffer, len);
-        db_get_i64(itr, <usize>arr.buffer, len);
+        let ds = new DataStream(arr.buffer, len);
+        db_get_i64(itr, changetype<usize>(arr.buffer), len);
 
         out.deserialize(ds);
     }

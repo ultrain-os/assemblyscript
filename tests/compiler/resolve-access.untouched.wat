@@ -1,26 +1,15 @@
 (module
-<<<<<<< HEAD:tests/compiler/std/string-utf8.untouched.wat
- (type $FUNCSIG$ii (func (param i32) (result i32)))
- (type $FUNCSIG$v (func))
-=======
  (type $FUNCSIG$i (func (result i32)))
  (type $FUNCSIG$iiiii (func (param i32 i32 i32 i32) (result i32)))
->>>>>>> 5a8eee0befabf7bdef20960bc5d0d4c5246e7603:tests/compiler/resolve-access.untouched.wat
  (type $FUNCSIG$iii (func (param i32 i32) (result i32)))
  (type $FUNCSIG$ii (func (param i32) (result i32)))
  (type $FUNCSIG$viii (func (param i32 i32 i32)))
  (type $FUNCSIG$jii (func (param i32 i32) (result i64)))
- (type $FUNCSIG$viiii (func (param i32 i32 i32 i32)))
+ (type $FUNCSIG$v (func))
  (type $FUNCSIG$ij (func (param i64) (result i32)))
  (type $FUNCSIG$viji (func (param i32 i64 i32)))
  (type $FUNCSIG$vi (func (param i32)))
-<<<<<<< HEAD:tests/compiler/std/string-utf8.untouched.wat
- (type $FUNCSIG$iiiiii (func (param i32 i32 i32 i32 i32) (result i32)))
  (import "env" "abort" (func $~lib/builtins/abort))
-=======
- (type $FUNCSIG$v (func))
- (import "env" "abort" (func $~lib/builtins/abort (param i32 i32 i32 i32)))
->>>>>>> 5a8eee0befabf7bdef20960bc5d0d4c5246e7603:tests/compiler/resolve-access.untouched.wat
  (memory $0 1)
  (data (i32.const 8) "\08\00\00\00\01\00\00\00\00\00\00\00\08\00\00\00\01\00\00\00\00\00\00\00")
  (data (i32.const 32) "$\00\00\00\01\00\00\00\01\00\00\00$\00\00\00I\00n\00d\00e\00x\00 \00o\00u\00t\00 \00o\00f\00 \00r\00a\00n\00g\00e\00")
@@ -1443,10 +1432,6 @@
   i32.shr_u
   i32.ge_u
   if
-   i32.const 48
-   i32.const 104
-   i32.const 109
-   i32.const 61
    call $~lib/builtins/abort
    unreachable
   end
@@ -1579,229 +1564,12 @@
     i32.const 1
     i32.shl
     i32.add
-<<<<<<< HEAD:tests/compiler/std/string-utf8.untouched.wat
-    local.set $2
-    local.get $5
-    i32.add
-    i32.load8_u
-    local.set $5
-    local.get $5
-    i32.const 128
-    i32.lt_u
-    if
-     local.get $3
-     local.get $4
-     i32.add
-     local.get $5
-     i32.store16
-     local.get $4
-     i32.const 2
-     i32.add
-     local.set $4
-    else     
-     local.get $5
-     i32.const 191
-     i32.gt_u
-     if (result i32)
-      local.get $5
-      i32.const 224
-      i32.lt_u
-     else      
-      i32.const 0
-     end
-     if
-      local.get $2
-      i32.const 1
-      i32.add
-      local.get $1
-      i32.le_u
-      i32.eqz
-      if
-       call $~lib/builtins/abort
-       unreachable
-      end
-      local.get $3
-      local.get $4
-      i32.add
-      local.get $5
-      i32.const 31
-      i32.and
-      i32.const 6
-      i32.shl
-      local.get $0
-      local.get $2
-      local.tee $6
-      i32.const 1
-      i32.add
-      local.set $2
-      local.get $6
-      i32.add
-      i32.load8_u
-      i32.const 63
-      i32.and
-      i32.or
-      i32.store16
-      local.get $4
-      i32.const 2
-      i32.add
-      local.set $4
-     else      
-      local.get $5
-      i32.const 239
-      i32.gt_u
-      if (result i32)
-       local.get $5
-       i32.const 365
-       i32.lt_u
-      else       
-       i32.const 0
-      end
-      if
-       local.get $2
-       i32.const 3
-       i32.add
-       local.get $1
-       i32.le_u
-       i32.eqz
-       if
-        call $~lib/builtins/abort
-        unreachable
-       end
-       local.get $5
-       i32.const 7
-       i32.and
-       i32.const 18
-       i32.shl
-       local.get $0
-       local.get $2
-       local.tee $6
-       i32.const 1
-       i32.add
-       local.set $2
-       local.get $6
-       i32.add
-       i32.load8_u
-       i32.const 63
-       i32.and
-       i32.const 12
-       i32.shl
-       i32.or
-       local.get $0
-       local.get $2
-       local.tee $6
-       i32.const 1
-       i32.add
-       local.set $2
-       local.get $6
-       i32.add
-       i32.load8_u
-       i32.const 63
-       i32.and
-       i32.const 6
-       i32.shl
-       i32.or
-       local.get $0
-       local.get $2
-       local.tee $6
-       i32.const 1
-       i32.add
-       local.set $2
-       local.get $6
-       i32.add
-       i32.load8_u
-       i32.const 63
-       i32.and
-       i32.or
-       i32.const 65536
-       i32.sub
-       local.set $5
-       local.get $3
-       local.get $4
-       i32.add
-       i32.const 55296
-       local.get $5
-       i32.const 10
-       i32.shr_u
-       i32.add
-       i32.store16
-       local.get $4
-       i32.const 2
-       i32.add
-       local.set $4
-       local.get $3
-       local.get $4
-       i32.add
-       i32.const 56320
-       local.get $5
-       i32.const 1023
-       i32.and
-       i32.add
-       i32.store16
-       local.get $4
-       i32.const 2
-       i32.add
-       local.set $4
-      else       
-       local.get $2
-       i32.const 2
-       i32.add
-       local.get $1
-       i32.le_u
-       i32.eqz
-       if
-        call $~lib/builtins/abort
-        unreachable
-       end
-       local.get $3
-       local.get $4
-       i32.add
-       local.get $5
-       i32.const 15
-       i32.and
-       i32.const 12
-       i32.shl
-       local.get $0
-       local.get $2
-       local.tee $6
-       i32.const 1
-       i32.add
-       local.set $2
-       local.get $6
-       i32.add
-       i32.load8_u
-       i32.const 63
-       i32.and
-       i32.const 6
-       i32.shl
-       i32.or
-       local.get $0
-       local.get $2
-       local.tee $6
-       i32.const 1
-       i32.add
-       local.set $2
-       local.get $6
-       i32.add
-       i32.load8_u
-       i32.const 63
-       i32.and
-       i32.or
-       i32.store16
-       local.get $4
-       i32.const 2
-       i32.add
-       local.set $4
-      end
-     end
-    end
-=======
     local.get $8
     local.get $9
     i64.const 32
     i64.shl
     i64.or
     i64.store
->>>>>>> 5a8eee0befabf7bdef20960bc5d0d4c5246e7603:tests/compiler/resolve-access.untouched.wat
     br $continue|0
    end
    unreachable
@@ -1843,10 +1611,6 @@
   i32.const 10
   i32.ge_u
   if
-<<<<<<< HEAD:tests/compiler/std/string-utf8.untouched.wat
-   call $~lib/builtins/abort
-   unreachable
-=======
    local.get $2
    i32.const 2
    i32.sub
@@ -1881,7 +1645,6 @@
    i32.add
    local.get $5
    i32.store16
->>>>>>> 5a8eee0befabf7bdef20960bc5d0d4c5246e7603:tests/compiler/resolve-access.untouched.wat
   end
  )
  (func $~lib/util/number/decimalCount64 (; 10 ;) (type $FUNCSIG$ij) (param $0 i64) (result i32)
@@ -2278,23 +2041,6 @@
  (func $resolve-access/propertyAccess (; 23 ;) (type $FUNCSIG$i) (result i32)
   (local $0 i32)
   (local $1 i32)
-<<<<<<< HEAD:tests/compiler/std/string-utf8.untouched.wat
-  (local $2 i32)
-  (local $3 i32)
-  (local $4 i32)
-  (local $5 i32)
-  global.get $std/string-utf8/str
-  call $~lib/string/String#get:lengthUTF8
-  global.set $std/string-utf8/len
-  global.get $std/string-utf8/len
-  i32.const 11
-  i32.eq
-  i32.eqz
-  if
-   call $~lib/builtins/abort
-   unreachable
-  end
-=======
   i32.const 0
   call $resolve-access/Container#constructor
   local.set $0
@@ -2310,7 +2056,6 @@
   local.get $1
  )
  (func $start (; 24 ;) (type $FUNCSIG$v)
->>>>>>> 5a8eee0befabf7bdef20960bc5d0d4c5246e7603:tests/compiler/resolve-access.untouched.wat
   global.get $~lib/heap/__heap_base
   i32.const 15
   i32.add
@@ -2321,202 +2066,6 @@
   global.set $~lib/rt/stub/startOffset
   global.get $~lib/rt/stub/startOffset
   global.set $~lib/rt/stub/offset
-<<<<<<< HEAD:tests/compiler/std/string-utf8.untouched.wat
-  global.get $std/string-utf8/str
-  call $~lib/string/String#toUTF8
-  global.set $std/string-utf8/ptr
-  global.get $std/string-utf8/ptr
-  i32.load8_u
-  i32.const 240
-  i32.eq
-  i32.eqz
-  if
-   call $~lib/builtins/abort
-   unreachable
-  end
-  global.get $std/string-utf8/ptr
-  i32.load8_u offset=1
-  i32.const 144
-  i32.eq
-  i32.eqz
-  if
-   call $~lib/builtins/abort
-   unreachable
-  end
-  global.get $std/string-utf8/ptr
-  i32.load8_u offset=2
-  i32.const 144
-  i32.eq
-  i32.eqz
-  if
-   call $~lib/builtins/abort
-   unreachable
-  end
-  global.get $std/string-utf8/ptr
-  i32.load8_u offset=3
-  i32.const 183
-  i32.eq
-  i32.eqz
-  if
-   call $~lib/builtins/abort
-   unreachable
-  end
-  global.get $std/string-utf8/ptr
-  i32.load8_u offset=4
-  i32.const 104
-  i32.eq
-  i32.eqz
-  if
-   call $~lib/builtins/abort
-   unreachable
-  end
-  global.get $std/string-utf8/ptr
-  i32.load8_u offset=5
-  i32.const 105
-  i32.eq
-  i32.eqz
-  if
-   call $~lib/builtins/abort
-   unreachable
-  end
-  global.get $std/string-utf8/ptr
-  i32.load8_u offset=6
-  i32.const 240
-  i32.eq
-  i32.eqz
-  if
-   call $~lib/builtins/abort
-   unreachable
-  end
-  global.get $std/string-utf8/ptr
-  i32.load8_u offset=7
-  i32.const 164
-  i32.eq
-  i32.eqz
-  if
-   call $~lib/builtins/abort
-   unreachable
-  end
-  global.get $std/string-utf8/ptr
-  i32.load8_u offset=8
-  i32.const 173
-  i32.eq
-  i32.eqz
-  if
-   call $~lib/builtins/abort
-   unreachable
-  end
-  global.get $std/string-utf8/ptr
-  i32.load8_u offset=9
-  i32.const 162
-  i32.eq
-  i32.eqz
-  if
-   call $~lib/builtins/abort
-   unreachable
-  end
-  global.get $std/string-utf8/ptr
-  i32.load8_u offset=10
-  i32.const 0
-  i32.eq
-  i32.eqz
-  if
-   call $~lib/builtins/abort
-   unreachable
-  end
-  global.get $std/string-utf8/ptr
-  i32.const 0
-  call $~lib/string/String.fromUTF8
-  local.tee $0
-  i32.const 112
-  call $~lib/string/String.__eq
-  i32.eqz
-  if
-   call $~lib/builtins/abort
-   unreachable
-  end
-  global.get $std/string-utf8/ptr
-  global.get $std/string-utf8/len
-  i32.const 1
-  i32.sub
-  call $~lib/string/String.fromUTF8
-  local.tee $1
-  global.get $std/string-utf8/str
-  call $~lib/string/String.__eq
-  i32.eqz
-  if
-   call $~lib/builtins/abort
-   unreachable
-  end
-  global.get $std/string-utf8/ptr
-  i32.const 4
-  call $~lib/string/String.fromUTF8
-  local.tee $2
-  i32.const 176
-  call $~lib/string/String.__eq
-  i32.eqz
-  if
-   call $~lib/builtins/abort
-   unreachable
-  end
-  global.get $std/string-utf8/ptr
-  i32.const 4
-  i32.add
-  i32.const 2
-  call $~lib/string/String.fromUTF8
-  local.tee $3
-  i32.const 200
-  call $~lib/string/String.__eq
-  i32.eqz
-  if
-   call $~lib/builtins/abort
-   unreachable
-  end
-  global.get $std/string-utf8/ptr
-  i32.const 6
-  i32.add
-  i32.const 4
-  call $~lib/string/String.fromUTF8
-  local.tee $4
-  i32.const 224
-  call $~lib/string/String.__eq
-  i32.eqz
-  if
-   call $~lib/builtins/abort
-   unreachable
-  end
-  global.get $std/string-utf8/ptr
-  i32.const 10
-  i32.add
-  i32.const 1
-  call $~lib/string/String.fromUTF8
-  local.tee $5
-  i32.const 248
-  call $~lib/string/String.__eq
-  i32.eqz
-  if
-   call $~lib/builtins/abort
-   unreachable
-  end
-  global.get $std/string-utf8/ptr
-  call $~lib/rt/stub/__free
-  local.get $0
-  call $~lib/rt/stub/__release
-  local.get $1
-  call $~lib/rt/stub/__release
-  local.get $2
-  call $~lib/rt/stub/__release
-  local.get $3
-  call $~lib/rt/stub/__release
-  local.get $4
-  call $~lib/rt/stub/__release
-  local.get $5
-  call $~lib/rt/stub/__release
- )
- (func $start (; 14 ;) (type $FUNCSIG$v)
-  call $start:std/string-utf8
-=======
->>>>>>> 5a8eee0befabf7bdef20960bc5d0d4c5246e7603:tests/compiler/resolve-access.untouched.wat
  )
  (func $null (; 25 ;) (type $FUNCSIG$v)
  )

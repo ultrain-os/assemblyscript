@@ -20,7 +20,7 @@
   end
   call $declare/my.externalFunction
   global.get $declare/my.externalConstant
-  i32.const 2
+  i32.const 1
   i32.ne
   if
    call $~lib/builtins/abort

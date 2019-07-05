@@ -1,17 +1,12 @@
 import { Serializable } from "./serializable";
 /**
- * internal memory HEADER SIZE. NEVER used by users.
- */
-const HEADER_SIZE = (offsetof<String>() + 1) & ~1; // 2 byte aligned
-
-/**
  * internal class, not for external users.
  */
 export class DSHelper {
     static serializeComplexVector<T extends Serializable>(arr: T[]): DataStream {
         let len = DataStream.measureComplexVector<T>(arr);
         let data = new Uint8Array(len);
-        let ds = new DataStream( changetype<usize>(data.buffer), len);
+        let ds = new DataStream(data.buffer, len);
         ds.writeComplexVector<T>(arr);
         return ds;
     }
@@ -19,14 +14,14 @@ export class DSHelper {
     static serializeComplex<T extends Serializable>(t: T): DataStream {
         let len = DataStream.measure<T>(t);
         let data = new Uint8Array(len);
-        let ds = new DataStream(changetype<usize>(data.buffer), len);
+        let ds = new DataStream(data.buffer, len);
         t.serialize(ds);
         return ds;
     }
 
     static getDataStreamWithLength(len: u32): DataStream {
         let arr = new Uint8Array(len);
-        let ds = new DataStream(changetype<usize>(arr.buffer), len);
+        let ds = new DataStream(arr.buffer, len);
         return ds;
     }
 }
@@ -36,7 +31,7 @@ export class DSHelper {
  * @class DataStream
  */
 export class DataStream {
-    buffer: u32;
+    buffer: ArrayBuffer;
     len: u32;
     pos: u32;
 
@@ -48,7 +43,7 @@ export class DataStream {
         let len: u32 = <u32>from.length;
         let bytes = len * sizeof<T>();
         let arr = new Uint8Array(bytes);
-        let ds = new DataStream(changetype<usize>(arr.buffer), bytes);
+        let ds = new DataStream(arr.buffer, bytes);
         for (let i: u32 = 0; i < len; i++) {
             ds.write<T>(from[i]);
         }
@@ -61,14 +56,14 @@ export class DataStream {
      * @param obj an instance of class which implements Serializable.
      */
     static measure<T extends Serializable>(obj: T): u32 {
-        let ins = new DataStream(0, 0);
+        let ins = new DataStream(new ArrayBuffer(0), 0);
         obj.serialize(ins);
 
         return ins.pos;
     }
 
     static measureComplexVector<T extends Serializable>(arr: T[]): u32 {
-        let ins = new DataStream(0, 0);
+        let ins = new DataStream(new ArrayBuffer(0), 0);
         let len: u32 = <u32>arr.length;
         ins.writeVarint32(len);
         for (let i: u32 = 0; i < len; i++) {
@@ -77,18 +72,18 @@ export class DataStream {
         return ins.pos;
     }
 
-    constructor(buffer: u32, len: u32) {
+    constructor(buffer: ArrayBuffer, len: u32) {
         this.buffer = buffer;
         this.len = len;
         this.pos = 0;
     }
 
     private isMeasureMode(): boolean {
-        return this.buffer == 0;
+        return this.buffer.byteLength == 0;
     }
 
     pointer(): usize {
-        return <usize>this.buffer;
+        return changetype<usize>(this.buffer);
     }
 
     size(): u32 {
@@ -117,13 +112,13 @@ export class DataStream {
 
     write<T>(value: T): void {
         if (!this.isMeasureMode()) {
-            store<T>(this.buffer + this.pos, value);
+            store<T>(changetype<usize>(this.buffer) + this.pos, value);
         }
         this.pos += sizeof<T>();
     }
 
     read<T>(): T {
-        let value: T = load<T>(this.buffer + this.pos);
+        let value: T = load<T>(changetype<usize>(this.buffer) + this.pos);
         this.pos += sizeof<T>();
         return value;
     }
@@ -135,7 +130,7 @@ export class DataStream {
         let arr = new Array<T>(len);
         let idx = 0;
         for (let i: u32 = 0; i < len; i++) {
-            let value: T = load<T>(this.buffer + idx);
+            let value: T = load<T>(changetype<usize>(this.buffer) + idx);
             arr[i] = value;
             idx += sizeof<T>();
         }
@@ -146,9 +141,10 @@ export class DataStream {
         let len = this.readVarint32();
         if (len == 0) return new Array<string>();
 
-        let arr = new Array<string>(len);
+        let arr = new Array<string>();
         for(let i: u32 = 0; i < len; i++) {
-            arr[i] = this.readString();
+            let str = this.readString();
+            arr.push(str);
         }
         return arr;
     }
@@ -165,10 +161,10 @@ export class DataStream {
         let len = this.readVarint32();
         if (len == 0) return new Array<T>();
 
-        let arr = new Array<T>(len);
+        let arr = new Array<T>();
         for (let i: u32 = 0; i < len; i++) {
             // arr[i] = {} as T;
-            arr[i] = this.read<T>();
+            arr.push(this.read<T>());
         }
 
         return arr;
@@ -189,10 +185,11 @@ export class DataStream {
         let len = this.readVarint32();
         if (len == 0) return new Array<T>();
 
-        let arr = new Array<T>(len);
+        let arr = new Array<T>();
         for (let i: u32 = 0; i < len; i++) {
-            arr[i] = {} as T;
-            arr[i].deserialize(this);
+            let obj = {} as T;
+            obj.deserialize(this);
+            arr.push(obj);
         }
         return arr;
     }
@@ -213,22 +210,19 @@ export class DataStream {
         if (len == 0) return "";
 
         var data = new Uint8Array(len);
-        memory.copy(changetype<usize>(data.buffer), this.buffer + this.pos, len);
+        memory.copy(changetype<usize>(data.buffer), changetype<usize>(this.buffer) + this.pos, len);
         this.pos += len;
-        // return String.fromUTF8(changetype<usize>(data.buffer), len );
         return String.UTF8.decodeUnsafe(changetype<usize>(data.buffer), len);
     }
 
     writeString(str: string): void {
-        // var len: u32 = <u32>str.lengthUTF8 - 1;
-        var len: u32 = <u32>String.UTF8.byteLength(str) -1;
+        var len: u32 = <u32>String.UTF8.byteLength(str);
         this.writeVarint32(len);
         if (len == 0) return;
 
         if (!this.isMeasureMode()) {
-            // let ptr = str.toUTF8();
             let ptr = changetype<usize>(String.UTF8.encode(str));
-            memory.copy(this.buffer + this.pos, ptr, len);
+            memory.copy(changetype<usize>(this.buffer) + this.pos, ptr, len);
         }
         this.pos += len;
     }
