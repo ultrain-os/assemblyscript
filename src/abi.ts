@@ -227,7 +227,7 @@ export class AbiInfo {
     }
     var element = protoEle.lookup(arg);
     var internalName = AstUtil.getInternalName(expr);
-    if (!element){
+    if (!element) {
       element = this.program.elementsByName.get(internalName);
     }
     if (element) {

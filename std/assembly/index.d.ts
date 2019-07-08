@@ -1593,7 +1593,7 @@ interface Returnable {
 }
 
 declare class DataStream {
-  buffer: u32;
+  buffer: ArrayBuffer;
   len: u32;
   pos: u32;
   static measure<T extends Serializable>(obj: T): u32;
