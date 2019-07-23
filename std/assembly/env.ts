@@ -31,11 +31,11 @@ export declare function db_counts_i64(code: u64, scope: u64, table: u64): i32;
 /**
  * System manager declare interfaces
  */
-export declare function ultrainio_assert(condition: u32, cstr: u32): void;
+export declare function ultrainio_assert(condition: u32, cstr: ArrayBuffer): void;
 export declare function current_receiver(): u64;
 
 export function ultrain_assert(condition: boolean, msg: string): void {
   if (condition == false) {
-      ultrainio_assert(0, changetype<usize>(String.UTF8.encode(msg)));
+      ultrainio_assert(0, String.UTF8.encode(msg));
   }
 }
