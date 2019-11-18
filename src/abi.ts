@@ -168,7 +168,7 @@ export class AbiInfo {
     var asTypes = typeNodeAnalyzer.getAsTypes();
     for (let asType of asTypes) {
       if (this.typeAliasSet.has(asType)) {
-        return;
+        continue;
       }
       // if the as argument is basic type, get his alias type
       let abiType = typeNodeAnalyzer.findSourceAbiType(asType);
