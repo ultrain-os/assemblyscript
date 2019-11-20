@@ -218,13 +218,11 @@ export class Map<K,V> implements Serializable{
   }
  
   private deserializeItem<T>(ds: DataStream): T {
-    var arr = new Array<T>(1);
-    var v0 = arr[0];
-    if (isInteger(v0)) {
+    if (isInteger<T>()) {
         return ds.read<T>();
-    } else if (isString(v0)) {
+    } else if (isString<T>()) {
         return changetype<T>(ds.readString());
-    } else if (isReference(v0)) {
+    } else if (isReference<T>()) {
         let rst = {} as T;
         rst.deserialize(ds);
         return <T>rst;
