@@ -242,9 +242,6 @@ class SerializeGenerator {
             } else if (abiTypeEnum == AbiTypeEnum.NUMBER) {
                 indent.add(`ds.write<${typeNodeAnalyzer.getDeclareType()}>(this.${fieldName});`);
             } else {
-                indent.add(`if (!this.${fieldName}) {`);
-                indent.increase().add(`this.${fieldName} = { } as ${typeNodeAnalyzer.getDeclareType()};`);
-                indent.decrease().add(`}`);
                 indent.add(`this.${fieldName}.serialize(ds);`);
             }
         }
@@ -273,9 +270,6 @@ class SerializeGenerator {
             } else if (abiTypeEnum == AbiTypeEnum.NUMBER) {
                 indent.add(`this.${fieldName} = ds.read<${typeNodeAnalyzer.typeName}>();`);
             } else {
-                indent.add(`if (!this.${fieldName}) {`);
-                indent.increase().add(`this.${fieldName} = { } as ${typeNodeAnalyzer.getDeclareType()};`);
-                indent.decrease().add(`}`);
                 indent.add(`this.${fieldName}.deserialize(ds);`);
             }
         }
