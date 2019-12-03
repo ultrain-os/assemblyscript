@@ -1279,6 +1279,10 @@ export class Program extends DiagnosticEmitter {
       } else if (numImplementsTypes) {
         // remember classes that implement interfaces
         for (let i = 0; i < numImplementsTypes; ++i) {
+          let implType = implementsTypes[i].range.toString();
+          if ("Serializable" == implType || "Returnable" == implType) {
+            continue;
+          }
           this.warning(
             DiagnosticCode.Not_implemented,
             implementsTypes[i].range

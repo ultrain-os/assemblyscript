@@ -1198,7 +1198,7 @@ export namespace DecoratorKind {
           if (nameStr == "builtin") return DecoratorKind.BUILTIN;
           break;
         }
-        case CharCode.b: {
+        case CharCode.d: {
           if (nameStr == "database") return DecoratorKind.DATABASE
         }
         case CharCode.e: {

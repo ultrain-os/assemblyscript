@@ -166,6 +166,9 @@ exports.main = function main(argv, options, callback, exttype) {
   const opts = optionsUtil.parse(argv, exports.options);
   const args = opts.options;
   argv = opts.arguments;
+  if (exttype == exports.compileType.GENERATED_TARGET && args.applyText) {
+    exttype = 3;
+  }
   if (args.noColors) {
     colorsUtil.stdout.supported =
       colorsUtil.stderr.supported = false;
@@ -279,19 +282,12 @@ exports.main = function main(argv, options, callback, exttype) {
   // Include library files
   if (!args.noLib) {
     Object.keys(exports.libraryFiles).forEach(libPath => {
-      console.log(`Lib path: ${libPath}`)
       if (libPath.indexOf("/") >= 0) return; // in sub-directory: imported on demand
       if (libPath == "dbmanager" && (exttype == undefined || exttype == 1)) {
         exports.libraryFiles[libPath] = exports.getDbmanager();
       } else if (libPath == "dbmanager" && (exttype == 2 || exttype == 3) ) {
         exports.libraryFiles[libPath] = exports.getDbmanager();
       }
-
-      if (libPath == "dbmanager") {
-        console.log(exports.getDbmanager());
-        console.log(exports.libraryFiles[libPath]);
-      }
-
       stats.parseCount++;
       stats.parseTime += measure(() => {
         parser = assemblyscript.parseFile(
@@ -800,8 +796,6 @@ exports.main = function main(argv, options, callback, exttype) {
     exports.applyText = exports.abiInfo.dispatch;
   }
 
-
-  console.log(exports.applyText);
   if (args.applyText && exttype == 3 && args.log == true) {
     console.log("The generated apply text:");
     console.log(exports.applyText);

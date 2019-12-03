@@ -37,7 +37,6 @@ export class AstUtil {
     static haveSpecifyDecorator(statement: DeclarationStatement, kind: DecoratorKind): bool {
         if (statement.decorators) {
             for (let decorator of statement.decorators) {
-                console.log(`Decorator name ${decorator.name.range.toString()}, decoreator kind: ${decorator.decoratorKind}, expect kind: ${kind}`)
                 if (decorator.decoratorKind == kind) {
                     return true;
                 }

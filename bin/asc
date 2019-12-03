@@ -20,12 +20,7 @@ const usc = module.exports = require("../cli/asc.js");
 if (/\busc|asc$/.test(process.argv[1])) {
   
   // There are two steps to generate the wast file
-  if (process.argv.applyText){
-    process.exitCode = usc.main(process.argv.slice(2), null, null, 1);
-    process.exitCode = usc.main(process.argv.slice(2), null, null, 3);
-  } else {
-    process.exitCode = usc.main(process.argv.slice(2), null, null, 1);
-    process.exitCode = usc.main(process.argv.slice(2), null, null, 2);
-  }
+  process.exitCode = usc.main(process.argv.slice(2), null, null, 1);
+  process.exitCode = usc.main(process.argv.slice(2), null, null, 2);
   return process.exitCode;
 }
