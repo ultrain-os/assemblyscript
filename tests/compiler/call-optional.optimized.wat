@@ -7,7 +7,6 @@
  (table $0 2 funcref)
  (elem (i32.const 0) $null $call-optional/opt|trampoline)
  (global $~lib/argc (mut i32) (i32.const 0))
- (global $call-optional/optIndirect i32 (i32.const 1))
  (export "memory" (memory $0))
  (start $start)
  (func $call-optional/opt (; 1 ;) (type $FUNCSIG$iiii) (param $0 i32) (param $1 i32) (param $2 i32) (result i32)
@@ -48,9 +47,7 @@
    i32.const 0
    i32.const 0
    call $call-optional/opt|trampoline
-   if
-    br $folding-inner0
-   end
+   br_if $folding-inner0
    i32.const 2
    global.set $~lib/argc
    i32.const 3
@@ -59,52 +56,39 @@
    call $call-optional/opt|trampoline
    i32.const 5
    i32.ne
-   if
-    br $folding-inner0
-   end
+   br_if $folding-inner0
    i32.const 3
    i32.const 4
    i32.const 5
    call $call-optional/opt
    i32.const 12
    i32.ne
-   if
-    br $folding-inner0
-   end
+   br_if $folding-inner0
    i32.const 1
    global.set $~lib/argc
    i32.const 3
    i32.const 0
    i32.const 0
-   global.get $call-optional/optIndirect
-   call_indirect (type $FUNCSIG$iiii)
-   if
-    br $folding-inner0
-   end
+   call $call-optional/opt|trampoline
+   br_if $folding-inner0
    i32.const 2
    global.set $~lib/argc
    i32.const 3
    i32.const 4
    i32.const 0
-   global.get $call-optional/optIndirect
-   call_indirect (type $FUNCSIG$iiii)
+   call $call-optional/opt|trampoline
    i32.const 5
    i32.ne
-   if
-    br $folding-inner0
-   end
+   br_if $folding-inner0
    i32.const 3
    global.set $~lib/argc
    i32.const 3
    i32.const 4
    i32.const 5
-   global.get $call-optional/optIndirect
-   call_indirect (type $FUNCSIG$iiii)
+   call $call-optional/opt|trampoline
    i32.const 12
    i32.ne
-   if
-    br $folding-inner0
-   end
+   br_if $folding-inner0
    return
   end
   call $~lib/builtins/abort

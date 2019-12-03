@@ -8,14 +8,11 @@
  (start $start)
  (func $start (; 1 ;) (type $FUNCSIG$v)
   block $__inlined_func$start:instanceof
-   block $folding-inner0
-    global.get $instanceof/an
-    br_if $folding-inner0
+   global.get $instanceof/an
+   i32.eqz
+   if
     i32.const 1
     global.set $instanceof/an
-    global.get $instanceof/an
-    i32.eqz
-    br_if $folding-inner0
     br $__inlined_func$start:instanceof
    end
    call $~lib/builtins/abort

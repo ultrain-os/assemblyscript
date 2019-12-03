@@ -191,6 +191,7 @@ export class AbiInfo {
   isActionFnPrototype(element: Element): bool {
     if (element.kind == ElementKind.FUNCTION_PROTOTYPE) {
       let funcType = <FunctionPrototype>element;
+      console.log(`funcType is ${funcType.toString()} end.`);
       return AstUtil.haveSpecifyDecorator(funcType.declaration, DecoratorKind.ACTION);
     }
     return false;
@@ -225,7 +226,7 @@ export class AbiInfo {
     if (Strings.isAroundQuotation(arg)) {
       return arg.substring(1, arg.length - 1);
     }
-    var element = protoEle.lookup(arg);
+    var element: Element | null | undefined = protoEle.lookup(arg);
     var internalName = AstUtil.getInternalName(expr);
     if (!element) {
       element = this.program.elementsByName.get(internalName);
@@ -312,6 +313,7 @@ export class AbiInfo {
 
       for (let [key, instance] of clzPrototype.instanceMembers) {
         if (this.isActionFnPrototype(instance)) {
+          console.log(`this.isActionFnPrototype: ${instance.toString()}`);
           let funcProto = <FunctionPrototype>instance;
           hasActionDecorators = true;
           this.resolveFunctionPrototype(funcProto);

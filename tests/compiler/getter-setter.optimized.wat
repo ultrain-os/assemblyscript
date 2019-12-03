@@ -6,7 +6,7 @@
  (global $getter-setter/Foo._bar (mut i32) (i32.const 0))
  (export "memory" (memory $0))
  (start $start)
- (func $start:getter-setter (; 1 ;) (type $FUNCSIG$v)
+ (func $start (; 1 ;) (type $FUNCSIG$v)
   global.get $getter-setter/Foo._bar
   if
    call $~lib/builtins/abort
@@ -14,27 +14,10 @@
   end
   i32.const 1
   global.set $getter-setter/Foo._bar
-  global.get $getter-setter/Foo._bar
-  i32.const 1
-  i32.ne
-  if
-   call $~lib/builtins/abort
-   unreachable
-  end
   i32.const 2
   global.set $getter-setter/Foo._bar
-  global.get $getter-setter/Foo._bar
-  i32.const 2
-  i32.ne
-  if
-   call $~lib/builtins/abort
-   unreachable
-  end
  )
- (func $start (; 2 ;) (type $FUNCSIG$v)
-  call $start:getter-setter
- )
- (func $null (; 3 ;) (type $FUNCSIG$v)
+ (func $null (; 2 ;) (type $FUNCSIG$v)
   nop
  )
 )

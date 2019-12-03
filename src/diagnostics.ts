@@ -14,7 +14,7 @@ import {
 } from "./diagnosticMessages.generated";
 
 import {
-  isLineBreak, CharCode
+  isLineBreak
 } from "./util";
 
 export {
@@ -212,11 +212,11 @@ export function formatDiagnosticMessage(
       }
       sb.push("\n");
       sb.push(" in ");
-      sb.push(range.source.normalizedPath);
+      sb.push(relatedRange.source.normalizedPath);
       sb.push("(");
-      sb.push(range.line.toString(10));
+      sb.push(relatedRange.line.toString(10));
       sb.push(",");
-      sb.push(range.column.toString(10));
+      sb.push(relatedRange.column.toString(10));
       sb.push(")");
     }
   }
@@ -282,8 +282,8 @@ export abstract class DiagnosticEmitter {
     this.diagnostics.push(message);
     if (category == DiagnosticCategory.ERROR) {
       console.log(formatDiagnosticMessage(message, true, true) + "\n"); // temporary
-      console.log(<string>new Error("stack").stack);
-      throw <string>new Error("stack").stack;
+      //console.log(<string>new Error("stack").stack);
+      //throw <string>new Error("stack").stack;
     }
   }
 

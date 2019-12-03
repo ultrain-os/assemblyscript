@@ -59,7 +59,7 @@ export class InsertPoint {
         var map = new Map<string, Array<InsertPoint>>();
         for (let insertPoint of insertPoints) {
             let normalizedPath = insertPoint.normalizedPath;
-            let insertPointArr: Array<InsertPoint> | null = map.get(normalizedPath);
+            let insertPointArr: Array<InsertPoint> | undefined = map.get(normalizedPath);
 
             if (!insertPointArr) {
                 insertPointArr = new Array<InsertPoint>();
@@ -152,7 +152,7 @@ class SerializeGenerator {
 
     checkSerializable(typeNode: NamedTypeNode): void {
         var internalName = AstUtil.getInternalName(typeNode);
-        var element: Element | null = this.classPrototype.program.elementsByName.get(internalName);
+        var element: Element | undefined = this.classPrototype.program.elementsByName.get(internalName);
 
         // var element = this.classPrototype.lookup(typeNode.range.toString());
         if (element && element.kind == ElementKind.CLASS_PROTOTYPE) {

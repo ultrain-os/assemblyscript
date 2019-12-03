@@ -18,7 +18,7 @@
   if
    i32.const 1
    return
-  else   
+  else
    i32.const 0
    return
   end
@@ -37,7 +37,7 @@
   if
    i32.const 1
    return
-  else   
+  else
    i32.const 0
    return
   end
@@ -104,7 +104,7 @@
   if
    i32.const 1
    return
-  else   
+  else
    call $~lib/builtins/abort
    unreachable
   end

@@ -233,7 +233,7 @@
  (func $start:memset (; 2 ;) (type $FUNCSIG$v)
   i32.const 44
   global.set $memset/dest
-  global.get $memset/dest
+  i32.const 44
   i32.const 1
   i32.const 16
   call $memset/memset
@@ -242,18 +242,14 @@
    i32.load8_u
    i32.const 1
    i32.ne
-   if
-    br $folding-inner0
-   end
+   br_if $folding-inner0
    global.get $memset/dest
    i32.const 15
    i32.add
    i32.load8_u
    i32.const 1
    i32.ne
-   if
-    br $folding-inner0
-   end
+   br_if $folding-inner0
    global.get $memset/dest
    i32.const 1
    i32.add
@@ -264,36 +260,28 @@
    i32.load8_u
    i32.const 1
    i32.ne
-   if
-    br $folding-inner0
-   end
+   br_if $folding-inner0
    global.get $memset/dest
    i32.const 1
    i32.add
    i32.load8_u
    i32.const 2
    i32.ne
-   if
-    br $folding-inner0
-   end
+   br_if $folding-inner0
    global.get $memset/dest
    i32.const 14
    i32.add
    i32.load8_u
    i32.const 2
    i32.ne
-   if
-    br $folding-inner0
-   end
+   br_if $folding-inner0
    global.get $memset/dest
    i32.const 15
    i32.add
    i32.load8_u
    i32.const 1
    i32.ne
-   if
-    br $folding-inner0
-   end
+   br_if $folding-inner0
    return
   end
   call $~lib/builtins/abort

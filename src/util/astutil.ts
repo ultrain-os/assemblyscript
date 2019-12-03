@@ -27,8 +27,6 @@ import {
 import {
     AbiHelper
 } from "../abi";
-import { PATH_DELIMITER } from "../common";
-
 export class AstUtil {
 
     /**
@@ -39,6 +37,7 @@ export class AstUtil {
     static haveSpecifyDecorator(statement: DeclarationStatement, kind: DecoratorKind): bool {
         if (statement.decorators) {
             for (let decorator of statement.decorators) {
+                console.log(`Decorator name ${decorator.name.range.toString()}, decoreator kind: ${decorator.decoratorKind}, expect kind: ${kind}`)
                 if (decorator.decoratorKind == kind) {
                     return true;
                 }
@@ -375,7 +374,7 @@ export class TypeNodeAnalyzer {
     }
 
     findSourceAbiType(typeName: string): string {
-        var abiType: string | null = AbiHelper.abiTypeLookup.get(typeName);
+        var abiType: string | undefined = AbiHelper.abiTypeLookup.get(typeName);
         if (abiType) {
             return abiType;
         }

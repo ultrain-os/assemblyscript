@@ -119,6 +119,7 @@ export namespace CommonSymbols {
   export const f32 = "f32";
   export const f64 = "f64";
   export const v128 = "v128";
+  export const anyref = "anyref";
   export const i8x16 = "i8x16";
   export const u8x16 = "u8x16";
   export const i16x8 = "i16x8";
@@ -136,6 +137,7 @@ export namespace CommonSymbols {
   export const native = "native";
   export const indexof = "indexof";
   export const valueof = "valueof";
+  export const returnof = "returnof";
   // aliases
   export const null_ = "null";
   export const true_ = "true";
@@ -151,11 +153,15 @@ export namespace CommonSymbols {
   export const ASC_MEMORY_BASE = "ASC_MEMORY_BASE";
   export const ASC_OPTIMIZE_LEVEL = "ASC_OPTIMIZE_LEVEL";
   export const ASC_SHRINK_LEVEL = "ASC_SHRINK_LEVEL";
-  export const ASC_FEATURE_MUTABLE_GLOBAL = "ASC_FEATURE_MUTABLE_GLOBAL";
   export const ASC_FEATURE_SIGN_EXTENSION = "ASC_FEATURE_SIGN_EXTENSION";
+  export const ASC_FEATURE_MUTABLE_GLOBALS = "ASC_FEATURE_MUTABLE_GLOBALS";
+  export const ASC_FEATURE_NONTRAPPING_F2I = "ASC_FEATURE_NONTRAPPING_F2I";
   export const ASC_FEATURE_BULK_MEMORY = "ASC_FEATURE_BULK_MEMORY";
   export const ASC_FEATURE_SIMD = "ASC_FEATURE_SIMD";
   export const ASC_FEATURE_THREADS = "ASC_FEATURE_THREADS";
+  export const ASC_FEATURE_EXCEPTION_HANDLING = "ASC_FEATURE_EXCEPTION_HANDLING";
+  export const ASC_FEATURE_TAIL_CALLS = "ASC_FEATURE_TAIL_CALLS";
+  export const ASC_FEATURE_REFERENCE_TYPES = "ASC_FEATURE_REFERENCE_TYPES";
   // classes
   export const I8 = "I8";
   export const I16 = "I16";
@@ -171,6 +177,7 @@ export namespace CommonSymbols {
   export const F32 = "F32";
   export const F64 = "F64";
   export const V128 = "V128";
+  export const Anyref = "Anyref";
   export const String = "String";
   export const Array = "Array";
   export const FixedArray = "FixedArray";
@@ -191,6 +198,7 @@ export namespace CommonSymbols {
   export const Uint64Array = "Uint64Array";
   export const Float32Array = "Float32Array";
   export const Float64Array = "Float64Array";
+  export const Error = "Error";
   // runtime
   export const abort = "abort";
   export const pow = "pow";
@@ -208,6 +216,6 @@ export namespace CommonSymbols {
 }
 
 // shared
-export { Feature } from "../std/assembly/shared/feature";
+export { Feature, featureToString } from "../std/assembly/shared/feature";
 export { Target } from "../std/assembly/shared/target";
 export { Typeinfo, TypeinfoFlags } from "../std/assembly/shared/typeinfo";

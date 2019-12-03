@@ -7,7 +7,8 @@ import {
   CommonFlags,
   CommonSymbols,
   PATH_DELIMITER,
-  LIBRARY_PREFIX
+  LIBRARY_PREFIX,
+  LIBRARY_SUBST
 } from "./common";
 
 import {
@@ -109,29 +110,6 @@ export function nodeIsConstantValue(kind: NodeKind): bool {
     case NodeKind.NULL:
     case NodeKind.TRUE:
     case NodeKind.FALSE: return true;
-  }
-  return false;
-}
-
-/** Checks if a node might be callable. */
-export function nodeIsCallable(kind: NodeKind): bool {
-  switch (kind) {
-    case NodeKind.IDENTIFIER:
-    case NodeKind.ASSERTION: // if kind=NONNULL
-    case NodeKind.CALL:
-    case NodeKind.ELEMENTACCESS:
-    case NodeKind.PARENTHESIZED:
-    case NodeKind.PROPERTYACCESS:
-    case NodeKind.SUPER: return true;
-  }
-  return false;
-}
-
-/** Checks if a node might be callable with generic arguments. */
-export function nodeIsGenericCallable(kind: NodeKind): bool {
-  switch (kind) {
-    case NodeKind.IDENTIFIER:
-    case NodeKind.PROPERTYACCESS: return true;
   }
   return false;
 }
@@ -246,7 +224,7 @@ export abstract class Node {
     stmt.range = range;
     stmt.name = name;
     stmt.arguments = args;
-    stmt.decoratorKind = decoratorNameToKind(name);
+    stmt.decoratorKind = DecoratorKind.fromNode(name);
     return stmt;
   }
 
@@ -427,14 +405,14 @@ export abstract class Node {
   }
 
   static createNewExpression(
-    expression: Expression,
+    typeName: TypeName,
     typeArgs: TypeNode[] | null,
     args: Expression[],
     range: Range
   ): NewExpression {
     var expr = new NewExpression();
     expr.range = range;
-    expr.expression = expression;
+    expr.typeName = typeName;
     expr.typeArguments = typeArgs;
     expr.arguments = args;
     return expr;
@@ -683,19 +661,12 @@ export abstract class Node {
     if (path) {
       let normalizedPath = normalizePath(path.value);
       if (path.value.startsWith(".")) { // relative
-        stmt.normalizedPath = resolvePath(
-          normalizedPath,
-          range.source.normalizedPath
-        );
+        normalizedPath = resolvePath(normalizedPath, range.source.internalPath);
       } else { // absolute
-        if (!normalizedPath.startsWith(LIBRARY_PREFIX)) {
-          normalizedPath = LIBRARY_PREFIX + normalizedPath;
-        }
-        stmt.normalizedPath = normalizedPath;
+        if (!normalizedPath.startsWith(LIBRARY_PREFIX)) normalizedPath = LIBRARY_PREFIX + normalizedPath;
       }
-      stmt.internalPath = mangleInternalPath(stmt.normalizedPath);
+      stmt.internalPath = mangleInternalPath(normalizedPath);
     } else {
-      stmt.normalizedPath = null;
       stmt.internalPath = null;
     }
     stmt.isDeclare = isDeclare;
@@ -772,17 +743,11 @@ export abstract class Node {
     stmt.path = path;
     var normalizedPath = normalizePath(path.value);
     if (path.value.startsWith(".")) { // relative in project
-      stmt.normalizedPath = resolvePath(
-        normalizedPath,
-        range.source.normalizedPath
-      );
+      normalizedPath = resolvePath(normalizedPath, range.source.internalPath);
     } else { // absolute in library
-      if (!normalizedPath.startsWith(LIBRARY_PREFIX)) {
-        normalizedPath = LIBRARY_PREFIX + normalizedPath;
-      }
-      stmt.normalizedPath = normalizedPath;
+      if (!normalizedPath.startsWith(LIBRARY_PREFIX)) normalizedPath = LIBRARY_PREFIX + normalizedPath;
     }
-    stmt.internalPath = mangleInternalPath(stmt.normalizedPath);
+    stmt.internalPath = mangleInternalPath(normalizedPath);
     return stmt;
   }
 
@@ -798,17 +763,11 @@ export abstract class Node {
     stmt.path = path;
     var normalizedPath = normalizePath(path.value);
     if (path.value.startsWith(".")) {
-      stmt.normalizedPath = resolvePath(
-        normalizedPath,
-        range.source.normalizedPath
-      );
+      normalizedPath = resolvePath(normalizedPath, range.source.internalPath);
     } else {
-      if (!normalizedPath.startsWith(LIBRARY_PREFIX)) {
-        normalizedPath = LIBRARY_PREFIX + normalizedPath;
-      }
-      stmt.normalizedPath = normalizedPath;
+      if (!normalizedPath.startsWith(LIBRARY_PREFIX)) normalizedPath = LIBRARY_PREFIX + normalizedPath;
     }
-    stmt.internalPath = mangleInternalPath(stmt.normalizedPath);
+    stmt.internalPath = mangleInternalPath(normalizedPath);
     return stmt;
   }
 
@@ -1087,6 +1046,37 @@ export abstract class TypeNode extends Node {
 
   /** Whether nullable or not. */
   isNullable: bool;
+
+  /** Tests if this type has a generic component matching one of the given type parameters. */
+  hasGenericComponent(typeParameterNodes: TypeParameterNode[]): bool {
+    var self = <TypeNode>this; // TS otherwise complains
+    if (this.kind == NodeKind.NAMEDTYPE) {
+      if (!(<NamedTypeNode>self).name.next) {
+        let typeArgumentNodes = (<NamedTypeNode>self).typeArguments;
+        if (typeArgumentNodes !== null && typeArgumentNodes.length) {
+          for (let i = 0, k = typeArgumentNodes.length; i < k; ++i) {
+            if (typeArgumentNodes[i].hasGenericComponent(typeParameterNodes)) return true;
+          }
+        } else {
+          let name = (<NamedTypeNode>self).name.identifier.text;
+          for (let i = 0, k = typeParameterNodes.length; i < k; ++i) {
+            if (typeParameterNodes[i].name.text == name) return true;
+          }
+        }
+      }
+    } else if (this.kind == NodeKind.FUNCTIONTYPE) {
+      let parameterNodes = (<FunctionTypeNode>self).parameters;
+      for (let i = 0, k = parameterNodes.length; i < k; ++i) {
+        if (parameterNodes[i].type.hasGenericComponent(typeParameterNodes)) return true;
+      }
+      if ((<FunctionTypeNode>self).returnType.hasGenericComponent(typeParameterNodes)) return true;
+      let explicitThisType = (<FunctionTypeNode>self).explicitThisType;
+      if (explicitThisType !== null && explicitThisType.hasGenericComponent(typeParameterNodes)) return true;
+    } else {
+      assert(false);
+    }
+    return false;
+  }
 }
 
 /** Represents a type name. */
@@ -1191,85 +1181,88 @@ export enum DecoratorKind {
   UNSAFE
 }
 
-/** Returns the kind of the specified decorator. Defaults to {@link DecoratorKind.CUSTOM}. */
-export function decoratorNameToKind(name: Expression): DecoratorKind {
-  // @global, @inline, @operator, @sealed, @unmanaged
-  if (name.kind == NodeKind.IDENTIFIER) {
-    let nameStr = (<IdentifierExpression>name).text;
-    assert(nameStr.length);
-    switch (nameStr.charCodeAt(0)) {
-      case CharCode.a: {
-        if (nameStr == "action") return DecoratorKind.ACTION;
-        break;
-      }
-      case CharCode.b: {
-        if (nameStr == "builtin") return DecoratorKind.BUILTIN;
-        break;
-      }
-      case CharCode.d: {
-        if (nameStr == "database") return DecoratorKind.DATABASE;
-      }
-      case CharCode.e: {
-        if (nameStr == "external") return DecoratorKind.EXTERNAL;
-        break;
-      }
-      case CharCode.g: {
-        if (nameStr == "global") return DecoratorKind.GLOBAL;
-        break;
-      }
-      case CharCode.i: {
-        if (nameStr == "inline") return DecoratorKind.INLINE;
-        if (nameStr == "ignore") return DecoratorKind.IGNORE;
-        break;
-      }
-      case CharCode.l: {
-        if (nameStr == "lazy") return DecoratorKind.LAZY;
-        break;
-      }
-      case CharCode.o: {
-        if (nameStr == "operator") return DecoratorKind.OPERATOR;
-        break;
-      }
-      case CharCode.p: {
-        if (nameStr == "primaryid") return DecoratorKind.PRIMARYID;
-        break;
-      }
-      case CharCode.s: {
-        if (nameStr == "sealed") return DecoratorKind.SEALED;
-        break;
-      }
-      case CharCode.u: {
-        if (nameStr == "unmanaged") return DecoratorKind.UNMANAGED;
-        if (nameStr == "unsafe") return DecoratorKind.UNSAFE;
-        break;
-      }
-    }
-  } else if (
-    name.kind == NodeKind.PROPERTYACCESS &&
-    (<PropertyAccessExpression>name).expression.kind == NodeKind.IDENTIFIER
-  ) {
-    let nameStr = (<IdentifierExpression>(<PropertyAccessExpression>name).expression).text;
-    assert(nameStr.length);
-    let propStr = (<PropertyAccessExpression>name).property.text;
-    assert(propStr.length);
-    // @operator.binary, @operator.prefix, @operator.postfix
-    if (nameStr == "operator") {
-      switch (propStr.charCodeAt(0)) {
+export namespace DecoratorKind {
+
+  /** Returns the kind of the specified decorator name node. Defaults to {@link DecoratorKind.CUSTOM}. */
+  export function fromNode(nameNode: Expression): DecoratorKind {
+    // @global, @inline, @operator, @sealed, @unmanaged
+    if (nameNode.kind == NodeKind.IDENTIFIER) {
+      let nameStr = (<IdentifierExpression>nameNode).text;
+      assert(nameStr.length);
+      switch (nameStr.charCodeAt(0)) {
+        case CharCode.a: {
+          if (nameStr == "action") return DecoratorKind.ACTION;
+          break;
+        }
         case CharCode.b: {
-          if (propStr == "binary") return DecoratorKind.OPERATOR_BINARY;
+          if (nameStr == "builtin") return DecoratorKind.BUILTIN;
+          break;
+        }
+        case CharCode.b: {
+          if (nameStr == "database") return DecoratorKind.DATABASE
+        }
+        case CharCode.e: {
+          if (nameStr == "external") return DecoratorKind.EXTERNAL;
+          break;
+        }
+        case CharCode.g: {
+          if (nameStr == "global") return DecoratorKind.GLOBAL;
+          break;
+        }
+        case CharCode.i: {
+          if (nameStr == "inline") return DecoratorKind.INLINE;
+          if (nameStr == "ignore") return DecoratorKind.IGNORE;
+          break;
+        }
+        case CharCode.l: {
+          if (nameStr == "lazy") return DecoratorKind.LAZY;
+          break;
+        }
+        case CharCode.o: {
+          if (nameStr == "operator") return DecoratorKind.OPERATOR;
           break;
         }
         case CharCode.p: {
-          switch (propStr) {
-            case "prefix": return DecoratorKind.OPERATOR_PREFIX;
-            case "postfix": return DecoratorKind.OPERATOR_POSTFIX;
-          }
+          if (nameStr == "primaryId") return DecoratorKind.PRIMARYID;
+          break;
+        }
+        case CharCode.s: {
+          if (nameStr == "sealed") return DecoratorKind.SEALED;
+          break;
+        }
+        case CharCode.u: {
+          if (nameStr == "unmanaged") return DecoratorKind.UNMANAGED;
+          if (nameStr == "unsafe") return DecoratorKind.UNSAFE;
           break;
         }
       }
+    } else if (
+      nameNode.kind == NodeKind.PROPERTYACCESS &&
+      (<PropertyAccessExpression>nameNode).expression.kind == NodeKind.IDENTIFIER
+    ) {
+      let nameStr = (<IdentifierExpression>(<PropertyAccessExpression>nameNode).expression).text;
+      assert(nameStr.length);
+      let propStr = (<PropertyAccessExpression>nameNode).property.text;
+      assert(propStr.length);
+      // @operator.binary, @operator.prefix, @operator.postfix
+      if (nameStr == "operator") {
+        switch (propStr.charCodeAt(0)) {
+          case CharCode.b: {
+            if (propStr == "binary") return DecoratorKind.OPERATOR_BINARY;
+            break;
+          }
+          case CharCode.p: {
+            switch (propStr) {
+              case "prefix": return DecoratorKind.OPERATOR_PREFIX;
+              case "postfix": return DecoratorKind.OPERATOR_POSTFIX;
+            }
+            break;
+          }
+        }
+      }
     }
+    return DecoratorKind.CUSTOM;
   }
-  return DecoratorKind.CUSTOM;
 }
 
 /** Represents a decorator. */
@@ -1329,6 +1322,17 @@ export enum LiteralKind {
   REGEXP,
   ARRAY,
   OBJECT
+}
+
+/** Checks if the given node represents a numeric (float or integer) literal. */
+export function isNumericLiteral(node: Expression): bool {
+  if (node.kind == NodeKind.LITERAL) {
+    switch ((<LiteralExpression>node).literalKind) {
+      case LiteralKind.FLOAT:
+      case LiteralKind.INTEGER: return true;
+    }
+  }
+  return false;
 }
 
 /** Base class of all literal expressions. */
@@ -1478,8 +1482,35 @@ export class IntegerLiteralExpression extends LiteralExpression {
 }
 
 /** Represents a `new` expression. Like a call but with its own kind. */
-export class NewExpression extends CallExpression {
+export class NewExpression extends Expression {
   kind = NodeKind.NEW;
+
+  /** Type being constructed. */
+  typeName: TypeName;
+  /** Provided type arguments. */
+  typeArguments: TypeNode[] | null;
+  /** Provided arguments. */
+  arguments: Expression[];
+
+  /** Gets the type arguments range for reporting. */
+  get typeArgumentsRange(): Range {
+    var typeArguments = this.typeArguments;
+    var numTypeArguments: i32;
+    if (typeArguments && (numTypeArguments = typeArguments.length)) {
+      return Range.join(typeArguments[0].range, typeArguments[numTypeArguments - 1].range);
+    }
+    return this.typeName.range;
+  }
+
+  /** Gets the arguments range for reporting. */
+  get argumentsRange(): Range {
+    var args = this.arguments;
+    var numArguments = args.length;
+    if (numArguments) {
+      return Range.join(args[0].range, args[numArguments - 1].range);
+    }
+    return this.typeName.range;
+  }
 }
 
 /** Represents a `null` expression. */
@@ -1601,12 +1632,14 @@ export abstract class Statement extends Node { }
 
 /** Indicates the specific kind of a source. */
 export enum SourceKind {
-  /** Default source. Usually imported from an entry file. */
-  DEFAULT,
-  /** Entry file. */
-  ENTRY,
-  /** Library file. */
-  LIBRARY
+  /** User-provided file. */
+  USER = 0,
+  /** User-provided entry file. */
+  USER_ENTRY = 1,
+  /** Library-provided file. */
+  LIBRARY = 2,
+  /** Library-provided entry file. */
+  LIBRARY_ENTRY = 3
 }
 
 /** A top-level source node. */
@@ -1616,7 +1649,7 @@ export class Source extends Node {
 
   /** Source kind. */
   sourceKind: SourceKind;
-  /** Normalized path. */
+  /** Normalized path with file extension. */
   normalizedPath: string;
   /** Path used internally. */
   internalPath: string;
@@ -1626,12 +1659,10 @@ export class Source extends Node {
   statements: Statement[];
   /** Full source text. */
   text: string;
-  /** Tokenizer reference. */
-  tokenizer: Tokenizer | null = null;
   /** Source map index. */
   debugInfoIndex: i32 = -1;
   /** Re-exported sources. */
-  exportPaths: Set<string> | null = null;
+  exportPaths: string[] | null = null;
 
   /** Constructs a new source node. */
   constructor(normalizedPath: string, text: string, kind: SourceKind) {
@@ -1647,10 +1678,16 @@ export class Source extends Node {
     this.text = text;
   }
 
-  /** Tests if this source is an entry file. */
-  get isEntry(): bool { return this.sourceKind == SourceKind.ENTRY; }
-  /** Tests if this source is a stdlib file. */
-  get isLibrary(): bool { return this.sourceKind == SourceKind.LIBRARY; }
+  /** Checks if this source represents native code. */
+  get isNative(): bool {
+    return this.internalPath == LIBRARY_SUBST;
+  }
+
+  /** Checks if this source is part of the (standard) library. */
+  get isLibrary(): bool {
+    var kind = this.sourceKind;
+    return kind == SourceKind.LIBRARY || kind == SourceKind.LIBRARY_ENTRY;
+  }
 }
 
 /** Base class of all declaration statements. */
@@ -1792,9 +1829,7 @@ export class ExportStatement extends Statement {
   members: ExportMember[] | null;
   /** Path being exported from, if applicable. */
   path: StringLiteralExpression | null;
-  /** Normalized path, if `path` is set. */
-  normalizedPath: string | null;
-  /** Mangled internal path being referenced, if `path` is set. */
+  /** Internal path being referenced, if `path` is set. */
   internalPath: string | null;
   /** Whether this is a declared export. */
   isDeclare: bool;
@@ -1914,9 +1949,7 @@ export class ImportStatement extends Statement {
   namespaceName: IdentifierExpression | null;
   /** Path being imported from. */
   path: StringLiteralExpression;
-  /** Normalized path. */
-  normalizedPath: string;
-  /** Mangled internal path being referenced. */
+  /** Internal path being referenced. */
   internalPath: string;
 }
 

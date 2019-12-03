@@ -38,7 +38,6 @@
   call_indirect (type $FUNCSIG$iii)
  )
  (func $start:function-types (; 5 ;) (type $FUNCSIG$v)
-  (local $0 i32)
   i32.const 1
   global.set $function-types/i32Adder
   i32.const 2
@@ -46,8 +45,7 @@
   block $folding-inner0
    i32.const 1
    i32.const 2
-   global.get $function-types/i32Adder
-   call_indirect (type $FUNCSIG$iii)
+   call $function-types/makeAdder<i32>~anonymous|0
    i32.const 3
    i32.ne
    br_if $folding-inner0
@@ -57,8 +55,7 @@
    global.set $~lib/argc
    i64.const 10
    i64.const 20
-   global.get $function-types/i64Adder
-   call_indirect (type $FUNCSIG$jjj)
+   call $function-types/makeAdder<i64>~anonymous|0
    i64.const 30
    i64.ne
    br_if $folding-inner0
@@ -94,22 +91,9 @@
    br_if $folding-inner0
    i32.const 2
    global.set $~lib/argc
-   block $1of1
-    block $0of1
-     block $outOfRange
-      global.get $~lib/argc
-      i32.const 2
-      i32.sub
-      br_table $0of1 $1of1 $outOfRange
-     end
-     unreachable
-    end
-    i32.const 1
-    local.set $0
-   end
    i32.const 1
    i32.const 2
-   local.get $0
+   i32.const 1
    call $function-types/doAddWithFn<i32>
    i32.const 3
    i32.ne

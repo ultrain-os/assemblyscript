@@ -191,6 +191,11 @@ F = trunc<f64>(1.25);
 b = isNaN<f64>(1.25);
 b = isFinite<f64>(1.25);
 
+// prefer right type if left is a numeric literal
+
+F = min(0, 1.0);
+f = max(0, f);
+
 // load and store
 
 i = load<i32>(8); store<i32>(8, i);
@@ -451,3 +456,74 @@ f64.store(8, 1.0);
 
 f32.trunc(1.0);
 f64.trunc(1.0);
+
+assert(Atomics.isLockFree(0) == false);
+assert(Atomics.isLockFree(1) == true);
+assert(Atomics.isLockFree(2) == true);
+assert(Atomics.isLockFree(3) == false);
+assert(Atomics.isLockFree(4) == true);
+assert(Atomics.isLockFree(5) == false);
+assert(Atomics.isLockFree(8) == false);
+
+{
+  let a = idof<() => void>();
+  let b = idof<() => void>();
+  let c = idof<(a: u32) => void>();
+  let d = idof<(val: C) => C>();
+  let e = idof<(val2: C) => C>();
+  trace("signatures", 5, a, b, c, d, e);
+
+  assert(a == b, "testing");
+  assert(a != c);
+  assert(c == idof<(b: u32) => void>());
+  assert(d == e);
+}
+
+{
+  assert(nameof<() => void>() == "Function");
+  assert(nameof<(a: C) => i32>() == "Function");
+  assert(nameof<C>() == "C");
+  assert(nameof<string>() == "String");
+  assert(nameof<bool>() == "bool");
+  assert(nameof<i8>() == "i8");
+  assert(nameof<u8>() == "u8");
+  assert(nameof<i16>() == "i16");
+  assert(nameof<u16>() == "u16");
+  assert(nameof<i32>() == "i32");
+  assert(nameof<u32>() == "u32");
+  assert(nameof<f32>() == "f32");
+  assert(nameof<i64>() == "i64");
+  assert(nameof<u64>() == "u64");
+  assert(nameof<f64>() == "f64");
+  assert(nameof<isize>() == "isize");
+  assert(nameof<usize>() == "usize");
+  assert(nameof<void>() == "void");
+  assert(nameof("some value") == "String");
+  assert(nameof((): void => {}) == "Function");
+}
+
+assert(isVoid<void>());
+assert(!isVoid<i8>());
+assert(!isVoid<u8>());
+assert(!isVoid<i16>());
+assert(!isVoid<u16>());
+assert(!isVoid<i32>());
+assert(!isVoid<u32>());
+assert(!isVoid<f32>());
+assert(!isVoid<i64>());
+assert(!isVoid<u64>());
+assert(!isVoid<f64>());
+assert(!isVoid<C>());
+assert(!isVoid<string>());
+// assert(!isVoid<v128>());
+
+assert(lengthof<() => void>() == 0);
+assert(lengthof<(a: i32) => void>() == 1);
+assert(lengthof<(a: i32, b: C) => void>() == 2);
+assert(lengthof<(a: i32, b: C, c: string) => void>() == 3);
+assert(lengthof((a: i32, b: i32, c: i32, d: i32): void => {}) == 4);
+
+assert(isInteger<ReturnType<() => i32>>());
+assert(isInteger<returnof<() => i32>>());
+assert(isManaged<returnof<() => C>>());
+assert(isManaged<ReturnType<() => C>>());

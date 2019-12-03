@@ -298,7 +298,7 @@
      local.get $1
      i32.const 3
      i32.and
-    else     
+    else
      i32.const 0
     end
     i32.eqz
@@ -1340,7 +1340,7 @@
    i32.le_u
    if (result i32)
     i32.const 1
-   else    
+   else
     local.get $5
     local.get $3
     i32.add
@@ -1455,7 +1455,7 @@
      end
      unreachable
     end
-   else    
+   else
     local.get $4
     i32.const 7
     i32.and
@@ -1704,7 +1704,7 @@
   if
    local.get $0
    call $~lib/rt/stub/__retain
-   drop
+   local.set $0
    local.get $4
    call $~lib/rt/stub/__release
   end
@@ -1755,7 +1755,7 @@
   if
    local.get $0
    call $~lib/rt/stub/__retain
-   drop
+   local.set $0
    local.get $5
    call $~lib/rt/stub/__release
   end
@@ -1775,7 +1775,7 @@
   if
    local.get $0
    call $~lib/rt/stub/__retain
-   drop
+   local.set $0
    local.get $6
    call $~lib/rt/stub/__release
   end
@@ -1836,7 +1836,7 @@
    i32.const 0
    i32.const 8
    call $~lib/memory/memory.fill
-  else   
+  else
    local.get $7
    local.get $6
    i32.const 8

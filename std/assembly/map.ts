@@ -14,11 +14,19 @@ const INITIAL_CAPACITY = 4;
 
 // @ts-ignore: decorator
 @inline
-const FILL_FACTOR: f64 = 8 / 3;
+const FILL_FACTOR_N = 8;
 
 // @ts-ignore: decorator
 @inline
-const FREE_FACTOR: f64 = 3 / 4;
+const FILL_FACTOR_D = 3;
+
+// @ts-ignore: decorator
+@inline
+const FREE_FACTOR_N = 3;
+
+// @ts-ignore: decorator
+@inline
+const FREE_FACTOR_D = 4;
 
 /** Structure of a map entry. */
 @unmanaged class MapEntry<K,V> {
@@ -154,7 +162,7 @@ export class Map<K,V> implements Serializable{
       // check if rehashing is necessary
       if (this.entriesOffset == this.entriesCapacity) {
         this.rehash(
-          this.entriesCount < <i32>(this.entriesCapacity * FREE_FACTOR)
+          this.entriesCount < this.entriesCapacity * FREE_FACTOR_N / FREE_FACTOR_D
             ?  this.bucketsMask           // just rehash if 1/4+ entries are empty
             : (this.bucketsMask << 1) | 1 // grow capacity to next 2^N
         );
@@ -188,7 +196,7 @@ export class Map<K,V> implements Serializable{
     var halfBucketsMask = this.bucketsMask >> 1;
     if (
       halfBucketsMask + 1 >= max<u32>(INITIAL_CAPACITY, this.entriesCount) &&
-      this.entriesCount < <i32>(this.entriesCapacity * FREE_FACTOR)
+      this.entriesCount < this.entriesCapacity * FREE_FACTOR_N / FREE_FACTOR_D
     ) this.rehash(halfBucketsMask);
     return true;
   }
@@ -248,7 +256,7 @@ export class Map<K,V> implements Serializable{
   private rehash(newBucketsMask: u32): void {
     var newBucketsCapacity = <i32>(newBucketsMask + 1);
     var newBuckets = new ArrayBuffer(newBucketsCapacity * <i32>BUCKET_SIZE);
-    var newEntriesCapacity = <i32>(newBucketsCapacity * FILL_FACTOR);
+    var newEntriesCapacity = newBucketsCapacity * FILL_FACTOR_N / FILL_FACTOR_D;
     var newEntries = new ArrayBuffer(newEntriesCapacity * <i32>ENTRY_SIZE<K,V>());
 
     // copy old entries to new entries
@@ -281,13 +289,16 @@ export class Map<K,V> implements Serializable{
     // FIXME: this is preliminary, needs iterators/closures
     var start = changetype<usize>(this.entries);
     var size = this.entriesOffset;
-    var keys = Array.create<K>(size);
+    var keys = new Array<K>(size);
+    var length = 0;
     for (let i = 0; i < size; ++i) {
       let entry = changetype<MapEntry<K,V>>(start + <usize>i * ENTRY_SIZE<K,V>());
       if (!(entry.taggedNext & EMPTY)) {
         keys.push(entry.key);
+        ++length;
       }
     }
+    keys.length = length;
     return keys;
   }
 
@@ -295,13 +306,16 @@ export class Map<K,V> implements Serializable{
     // FIXME: this is preliminary, needs iterators/closures
     var start = changetype<usize>(this.entries);
     var size = this.entriesOffset;
-    var values = Array.create<V>(size);
+    var values = new Array<V>(size);
+    var length = 0;
     for (let i = 0; i < size; ++i) {
       let entry = changetype<MapEntry<K,V>>(start + <usize>i * ENTRY_SIZE<K,V>());
       if (!(entry.taggedNext & EMPTY)) {
         values.push(entry.value);
+        ++length;
       }
     }
+    values.length = length;
     return values;
   }
 

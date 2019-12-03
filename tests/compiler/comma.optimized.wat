@@ -20,13 +20,9 @@
    global.get $comma/a
    i32.const 1
    i32.ne
-   if
-    br $folding-inner0
-   end
+   br_if $folding-inner0
    global.get $comma/b
-   if
-    br $folding-inner0
-   end
+   br_if $folding-inner0
    global.get $comma/a
    i32.const 1
    i32.add
@@ -36,37 +32,27 @@
    global.get $comma/a
    i32.const 2
    i32.ne
-   if
-    br $folding-inner0
-   end
+   br_if $folding-inner0
    global.get $comma/b
    i32.const 2
    i32.ne
-   if
-    br $folding-inner0
-   end
+   br_if $folding-inner0
    i32.const 0
    global.set $comma/b
-   global.get $comma/b
+   i32.const 0
    global.set $comma/a
-   global.get $comma/a
    i32.const 1
-   i32.add
    global.set $comma/a
    global.get $comma/a
    global.set $comma/b
    global.get $comma/a
    i32.const 1
    i32.ne
-   if
-    br $folding-inner0
-   end
+   br_if $folding-inner0
    global.get $comma/b
    i32.const 1
    i32.ne
-   if
-    br $folding-inner0
-   end
+   br_if $folding-inner0
    global.get $comma/a
    i32.const 1
    i32.add
@@ -78,23 +64,18 @@
    global.get $comma/a
    i32.const 2
    i32.ne
-   if
-    br $folding-inner0
-   end
+   br_if $folding-inner0
    global.get $comma/b
    i32.const 2
    i32.ne
-   if
-    br $folding-inner0
-   end
+   br_if $folding-inner0
    i32.const 0
    local.set $0
    loop $loop|0
-    block $break|0
-     local.get $0
-     global.get $comma/a
-     i32.ge_s
-     br_if $break|0
+    local.get $0
+    global.get $comma/a
+    i32.lt_s
+    if
      global.get $comma/a
      i32.const 1
      i32.sub
@@ -109,9 +90,7 @@
    local.get $0
    i32.const 1
    i32.ne
-   if
-    br $folding-inner0
-   end
+   br_if $folding-inner0
    return
   end
   call $~lib/builtins/abort

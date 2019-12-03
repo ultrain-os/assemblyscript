@@ -72,7 +72,7 @@
   local.get $0
   if (result i32)
    i32.const 1
-  else   
+  else
    call $~lib/builtins/abort
    unreachable
   end

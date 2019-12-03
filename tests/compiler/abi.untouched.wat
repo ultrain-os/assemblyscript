@@ -49,7 +49,7 @@
    i32.const 2
    i32.div_s
    local.set $0
-  else   
+  else
    local.get $0
    i32.const 24
    i32.shl
@@ -82,7 +82,7 @@
    i32.const 24
    i32.shr_s
    local.set $0
-  else   
+  else
    local.get $0
    i32.const 127
    i32.and

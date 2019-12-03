@@ -12,70 +12,92 @@
  (export "memory" (memory $0))
  (start $start)
  (func $start:logical (; 1 ;) (type $FUNCSIG$v)
+  (local $0 f64)
+  (local $1 f32)
   i32.const 0
   if (result i32)
    unreachable
-  else   
+  else
    i32.const 0
   end
   drop
   f64.const 0
+  local.tee $0
   f64.const 0
   f64.ne
+  local.get $0
+  local.get $0
+  f64.eq
+  i32.and
   if (result i32)
    unreachable
-  else   
+  else
    i32.const 0
   end
   drop
   i32.const 1
   if (result i32)
    i32.const 1
-  else   
+  else
    unreachable
   end
   drop
   f64.const 1
+  local.tee $0
   f64.const 0
   f64.ne
+  local.get $0
+  local.get $0
+  f64.eq
+  i32.and
   if (result i32)
    i32.const 1
-  else   
+  else
    unreachable
   end
   drop
   i32.const 1
   if (result i32)
    i32.const 2
-  else   
+  else
    i32.const 1
   end
   if (result i32)
    i32.const 1
-  else   
+  else
    unreachable
   end
   drop
   f64.const 1
+  local.tee $0
   f64.const 0
   f64.ne
+  local.get $0
+  local.get $0
+  f64.eq
+  i32.and
   if (result f64)
    f64.const 2
-  else   
+  else
    f64.const 1
   end
+  local.tee $0
   f64.const 0
   f64.ne
+  local.get $0
+  local.get $0
+  f64.eq
+  i32.and
   if (result i32)
    i32.const 1
-  else   
+  else
    unreachable
   end
   drop
   i32.const 1
   if (result i32)
    i32.const 2
-  else   
+  else
    i32.const 1
   end
   global.set $logical/i
@@ -90,7 +112,7 @@
   i32.const 0
   if (result i32)
    i32.const 0
-  else   
+  else
    i32.const 1
   end
   global.set $logical/i
@@ -107,7 +129,7 @@
   i64.ne
   if (result i64)
    i64.const 2
-  else   
+  else
    i64.const 1
   end
   global.set $logical/I
@@ -124,7 +146,7 @@
   i64.ne
   if (result i64)
    i64.const 0
-  else   
+  else
    i64.const 1
   end
   global.set $logical/I
@@ -137,11 +159,16 @@
    unreachable
   end
   f32.const 1
+  local.tee $1
   f32.const 0
   f32.ne
+  local.get $1
+  local.get $1
+  f32.eq
+  i32.and
   if (result f32)
    f32.const 2
-  else   
+  else
    f32.const 1
   end
   global.set $logical/f
@@ -154,11 +181,16 @@
    unreachable
   end
   f32.const 0
+  local.tee $1
   f32.const 0
   f32.ne
+  local.get $1
+  local.get $1
+  f32.eq
+  i32.and
   if (result f32)
    f32.const 0
-  else   
+  else
    f32.const 1
   end
   global.set $logical/f
@@ -171,11 +203,16 @@
    unreachable
   end
   f64.const 1
+  local.tee $0
   f64.const 0
   f64.ne
+  local.get $0
+  local.get $0
+  f64.eq
+  i32.and
   if (result f64)
    f64.const 2
-  else   
+  else
    f64.const 1
   end
   global.set $logical/F
@@ -188,17 +225,202 @@
    unreachable
   end
   f64.const 0
+  local.tee $0
   f64.const 0
   f64.ne
+  local.get $0
+  local.get $0
+  f64.eq
+  i32.and
   if (result f64)
    f64.const 0
-  else   
+  else
    f64.const 1
   end
   global.set $logical/F
   global.get $logical/F
   f64.const 1
   f64.eq
+  i32.eqz
+  if
+   call $~lib/builtins/abort
+   unreachable
+  end
+  f32.const nan:0x400000
+  local.tee $1
+  f32.const 0
+  f32.ne
+  local.get $1
+  local.get $1
+  f32.eq
+  i32.and
+  if (result f32)
+   f32.const nan:0x400000
+  else
+   f32.const 1
+  end
+  global.set $logical/f
+  global.get $logical/f
+  f32.const 1
+  f32.eq
+  i32.eqz
+  if
+   call $~lib/builtins/abort
+   unreachable
+  end
+  f32.const 1
+  local.tee $1
+  f32.const 0
+  f32.ne
+  local.get $1
+  local.get $1
+  f32.eq
+  i32.and
+  if (result f32)
+   f32.const 1
+  else
+   f32.const nan:0x400000
+  end
+  global.set $logical/f
+  global.get $logical/f
+  f32.const 1
+  f32.eq
+  i32.eqz
+  if
+   call $~lib/builtins/abort
+   unreachable
+  end
+  f64.const nan:0x8000000000000
+  local.tee $0
+  f64.const 0
+  f64.ne
+  local.get $0
+  local.get $0
+  f64.eq
+  i32.and
+  if (result f64)
+   f64.const nan:0x8000000000000
+  else
+   f64.const 1
+  end
+  global.set $logical/F
+  global.get $logical/F
+  f64.const 1
+  f64.eq
+  i32.eqz
+  if
+   call $~lib/builtins/abort
+   unreachable
+  end
+  f64.const 1
+  local.tee $0
+  f64.const 0
+  f64.ne
+  local.get $0
+  local.get $0
+  f64.eq
+  i32.and
+  if (result f64)
+   f64.const 1
+  else
+   f64.const nan:0x8000000000000
+  end
+  global.set $logical/F
+  global.get $logical/F
+  f64.const 1
+  f64.eq
+  i32.eqz
+  if
+   call $~lib/builtins/abort
+   unreachable
+  end
+  f32.const 1
+  local.tee $1
+  f32.const 0
+  f32.ne
+  local.get $1
+  local.get $1
+  f32.eq
+  i32.and
+  if (result f32)
+   f32.const nan:0x400000
+  else
+   f32.const 1
+  end
+  global.set $logical/f
+  global.get $logical/f
+  local.tee $1
+  local.get $1
+  f32.ne
+  i32.eqz
+  if
+   call $~lib/builtins/abort
+   unreachable
+  end
+  f32.const nan:0x400000
+  local.tee $1
+  f32.const 0
+  f32.ne
+  local.get $1
+  local.get $1
+  f32.eq
+  i32.and
+  if (result f32)
+   f32.const 1
+  else
+   f32.const nan:0x400000
+  end
+  global.set $logical/f
+  global.get $logical/f
+  local.tee $1
+  local.get $1
+  f32.ne
+  i32.eqz
+  if
+   call $~lib/builtins/abort
+   unreachable
+  end
+  f64.const 1
+  local.tee $0
+  f64.const 0
+  f64.ne
+  local.get $0
+  local.get $0
+  f64.eq
+  i32.and
+  if (result f64)
+   f64.const nan:0x8000000000000
+  else
+   f64.const 1
+  end
+  global.set $logical/F
+  global.get $logical/F
+  local.tee $0
+  local.get $0
+  f64.ne
+  i32.eqz
+  if
+   call $~lib/builtins/abort
+   unreachable
+  end
+  f64.const nan:0x8000000000000
+  local.tee $0
+  f64.const 0
+  f64.ne
+  local.get $0
+  local.get $0
+  f64.eq
+  i32.and
+  if (result f64)
+   f64.const 1
+  else
+   f64.const nan:0x8000000000000
+  end
+  global.set $logical/F
+  global.get $logical/F
+  local.tee $0
+  local.get $0
+  f64.ne
   i32.eqz
   if
    call $~lib/builtins/abort

@@ -22,13 +22,6 @@
   global.set $inlining-blocklocals/theCall_b
   i32.const 3
   global.set $inlining-blocklocals/theCall_c
-  global.get $inlining-blocklocals/theCall_a
-  i32.const 1
-  i32.ne
-  if
-   call $~lib/builtins/abort
-   unreachable
-  end
   global.get $inlining-blocklocals/theCall_b
   i32.const 2
   i32.ne

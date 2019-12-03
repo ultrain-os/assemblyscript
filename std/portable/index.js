@@ -206,6 +206,24 @@ if (!String.prototype.replaceAll) {
   });
 }
 
+function defaultComparator(a, b) {
+  if (a === b) {
+    if (a !== 0) return 0;
+    a = 1 / a, b = 1 / b;
+  } else {
+    var nanA = a != a, nanB = b != b;
+    if (nanA | nanB) return nanA - nanB;
+    if (a == null) a = String(a);
+    if (b == null) b = String(b);
+  }
+  return a > b ? 1 : -1;
+}
+
+const arraySort = Array.prototype.sort;
+Array.prototype.sort = function sort(comparator) {
+  return arraySort.call(this, comparator || defaultComparator);
+};
+
 globalScope["isInteger"] = Number.isInteger;
 
 globalScope["isFloat"] = function isFloat(arg) {
@@ -235,12 +253,6 @@ globalScope["isArrayLike"] = function isArrayLike(expr) {
     && typeof expr.length === 'number'
     && expr.length >= 0
     && Math.trunc(expr.length) === expr.length;
-};
-
-Array.create = function(capacity) {
-  var arr = new Array(capacity);
-  arr.length = 0;
-  return arr;
 };
 
 globalScope["isDefined"] = function isDefined(expr) {

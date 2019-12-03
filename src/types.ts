@@ -11,9 +11,7 @@ import {
 } from "./program";
 
 import {
-  NativeType,
-  ExpressionRef,
-  Module
+  NativeType
 } from "./module";
 
 /** Indicates the kind of a type. */
@@ -59,6 +57,13 @@ export const enum TypeKind {
   /** A 128-bit vector. */
   V128,
 
+  // references
+
+  /** A host reference. */
+  ANYREF,
+  /** An internal exception reference. */
+  EXNREF,
+
   // other
 
   /** No return type. */
@@ -84,7 +89,7 @@ export const enum TypeFlags {
   LONG = 1 << 6,
   /** Is a value type. */
   VALUE = 1 << 7,
-  /** Is a reference type. */
+  /** Is a reference type (either a class or a function type). */
   REFERENCE = 1 << 8,
   /** Is a nullable type. */
   NULLABLE = 1 << 9,
@@ -230,6 +235,8 @@ export class Type {
             if (targetFunction = target.signatureReference) {
               return currentFunction.isAssignableTo(targetFunction);
             }
+          } else if (this.kind == TypeKind.ANYREF && target.kind == TypeKind.ANYREF) {
+            return true;
           }
         }
       }
@@ -273,6 +280,15 @@ export class Type {
     return this.kind == target.kind;
   }
 
+  /** Tests if a value of this type can be changed to the target type using `changetype`. */
+  isChangeableTo(target: Type): bool {
+    if (this.is(TypeFlags.INTEGER) && target.is(TypeFlags.INTEGER)) {
+      let size = this.size;
+      return size == target.size && (size >= 32 || this.is(TypeFlags.SIGNED) == target.is(TypeFlags.SIGNED));
+    }
+    return this.kind == target.kind;
+  }
+
   /** Determines the common denominator type of two types, if there is any. */
   static commonDenominator(left: Type, right: Type, signednessIsImportant: bool): Type | null {
     if (right.isAssignableTo(left, signednessIsImportant)) return left;
@@ -295,7 +311,9 @@ export class Type {
           ? "(" + signatureReference.toString() + ") | null"
           : signatureReference.toString();
       }
-      assert(false);
+      // TODO: Reflect.apply(value, "toString", []) ?
+      assert(this.kind == TypeKind.ANYREF);
+      return "anyref";
     }
     switch (this.kind) {
       case TypeKind.I8: return "i8";
@@ -312,6 +330,7 @@ export class Type {
       case TypeKind.F32: return "f32";
       case TypeKind.F64: return "f64";
       case TypeKind.V128: return "v128";
+      case TypeKind.ANYREF: return "anyref";
       default: assert(false);
       case TypeKind.VOID: return "void";
     }
@@ -322,66 +341,31 @@ export class Type {
   /** Converts this type to its respective native type. */
   toNativeType(): NativeType {
     switch (this.kind) {
-      default: return NativeType.I32;
+      default: assert(false);
+      case TypeKind.I8:
+      case TypeKind.I16:
+      case TypeKind.I32:
+      case TypeKind.U8:
+      case TypeKind.U16:
+      case TypeKind.U32:
+      case TypeKind.BOOL: return NativeType.I32;
+      case TypeKind.ISIZE:
+      case TypeKind.USIZE: if (this.size != 64) return NativeType.I32;
       case TypeKind.I64:
       case TypeKind.U64: return NativeType.I64;
-      case TypeKind.ISIZE:
-      case TypeKind.USIZE: return this.size == 64 ? NativeType.I64 : NativeType.I32;
       case TypeKind.F32: return NativeType.F32;
       case TypeKind.F64: return NativeType.F64;
       case TypeKind.V128: return NativeType.V128;
-      case TypeKind.VOID:  return NativeType.None;
-    }
-  }
-
-  /** Converts this type to its native `0` value. */
-  toNativeZero(module: Module): ExpressionRef {
-    switch (this.kind) {
-      case TypeKind.VOID: assert(false);
-      default: return module.i32(0);
-      case TypeKind.ISIZE:
-      case TypeKind.USIZE: if (this.size != 64) return module.i32(0);
-      case TypeKind.I64:
-      case TypeKind.U64: return module.i64(0);
-      case TypeKind.F32: return module.f32(0);
-      case TypeKind.F64: return module.f64(0);
-      case TypeKind.V128: return module.v128(v128_zero);
-    }
-  }
-
-  /** Converts this type to its native `1` value. */
-  toNativeOne(module: Module): ExpressionRef {
-    switch (this.kind) {
-      case TypeKind.V128:
-      case TypeKind.VOID: assert(false);
-      default: return module.i32(1);
-      case TypeKind.ISIZE:
-      case TypeKind.USIZE: if (this.size != 64) return module.i32(1);
-      case TypeKind.I64:
-      case TypeKind.U64: return module.i64(1);
-      case TypeKind.F32: return module.f32(1);
-      case TypeKind.F64: return module.f64(1);
-    }
-  }
-
-  /** Converts this type to its native `-1` value. */
-  toNativeNegOne(module: Module): ExpressionRef {
-    switch (this.kind) {
-      case TypeKind.V128:
-      case TypeKind.VOID: assert(false);
-      default: return module.i32(-1);
-      case TypeKind.ISIZE:
-      case TypeKind.USIZE: if (this.size != 64) return module.i32(-1);
-      case TypeKind.I64:
-      case TypeKind.U64: return module.i64(-1, -1);
-      case TypeKind.F32: return module.f32(-1);
-      case TypeKind.F64: return module.f64(-1);
+      case TypeKind.ANYREF: return NativeType.Anyref;
+      case TypeKind.EXNREF: return NativeType.Exnref;
+      case TypeKind.VOID: return NativeType.None;
     }
   }
 
   /** Converts this type to its signature string. */
   toSignatureString(): string {
     switch (this.kind) {
+      default: assert(false);
       // same naming scheme as Binaryen
       case TypeKind.I8:
       case TypeKind.U8:
@@ -390,17 +374,17 @@ export class Type {
       case TypeKind.I32:
       case TypeKind.U32:
       case TypeKind.BOOL: return "i";
+      case TypeKind.ISIZE:
+      case TypeKind.USIZE: if (this.size != 64) return "i";
       case TypeKind.I64:
       case TypeKind.U64: return "j";
-      case TypeKind.ISIZE:
-      case TypeKind.USIZE: return this.size == 64 ? "j" : "i";
       case TypeKind.F32: return "f";
       case TypeKind.F64: return "d";
       case TypeKind.V128: return "V";
+      case TypeKind.ANYREF: return "a";
+      case TypeKind.EXNREF: return "e";
       case TypeKind.VOID: return "v";
-      default: assert(false);
     }
-    return "i";
   }
 
   // Types
@@ -530,6 +514,16 @@ export class Type {
     TypeFlags.VALUE, 128
   );
 
+  /** A host reference. */
+  static readonly anyref: Type = new Type(TypeKind.ANYREF,
+    TypeFlags.REFERENCE, 0
+  );
+
+  /** An internal exception reference. */
+  static readonly exnref: Type = new Type(TypeKind.EXNREF,
+    TypeFlags.REFERENCE, 0
+  );
+
   /** No return type. */
   static readonly void: Type = new Type(TypeKind.VOID, TypeFlags.NONE, 0);
 
@@ -556,7 +550,8 @@ export function typesToString(types: Type[]): string {
 
 /** Represents a fully resolved function signature. */
 export class Signature {
-
+  /** The unique program id that represents this signature. */
+  id: u32 = 0;
   /** Parameter types, if any, excluding `this`. */
   parameterTypes: Type[];
   /** Parameter names, if known, excluding `this`. */
@@ -573,9 +568,12 @@ export class Signature {
   cachedFunctionTarget: FunctionTarget | null = null;
   /** Respective function type. */
   type: Type;
+  /** The program that created this signature. */
+  program: Program;
 
   /** Constructs a new signature. */
   constructor(
+    program: Program,
     parameterTypes: Type[] | null = null,
     returnType: Type | null = null,
     thisType: Type | null = null
@@ -585,8 +583,21 @@ export class Signature {
     this.requiredParameters = 0;
     this.returnType = returnType ? returnType : Type.void;
     this.thisType = thisType;
+    this.program = program;
     this.hasRest = false;
     this.type = Type.u32.asFunction(this);
+
+    var signatureTypes = program.uniqueSignatures;
+    var length = signatureTypes.length;
+    for (let i = 0; i < length; i++) {
+      let compare = signatureTypes[i];
+      if (this.equals(compare)) {
+        this.id = compare.id;
+        return this;
+      }
+    }
+    program.uniqueSignatures.push(this);
+    this.id = program.nextSignatureId++;
   }
 
   asFunctionTarget(program: Program): FunctionTarget {
@@ -606,11 +617,16 @@ export class Signature {
 
   /** Tests if a value of this function type is assignable to a target of the specified function type. */
   isAssignableTo(target: Signature): bool {
+    return this.equals(target);
+  }
+
+  /** Tests to see if a signature equals another signature. */
+  equals(value: Signature): bool {
     // TODO: maybe cache results?
 
     // check `this` type
     var thisThisType = this.thisType;
-    var targetThisType = target.thisType;
+    var targetThisType = value.thisType;
     if (thisThisType) {
       if (!(targetThisType && thisThisType.isAssignableTo(targetThisType))) return false;
     } else if (targetThisType) {
@@ -618,11 +634,11 @@ export class Signature {
     }
 
     // check rest parameter
-    if (this.hasRest != target.hasRest) return false; // TODO
+    if (this.hasRest != value.hasRest) return false; // TODO
 
     // check parameter types
     var thisParameterTypes = this.parameterTypes;
-    var targetParameterTypes = target.parameterTypes;
+    var targetParameterTypes = value.parameterTypes;
     var numParameters = thisParameterTypes.length;
     if (numParameters != targetParameterTypes.length) return false;
     for (let i = 0; i < numParameters; ++i) {
@@ -633,7 +649,7 @@ export class Signature {
 
     // check return type
     var thisReturnType = this.returnType;
-    var targetReturnType = target.returnType;
+    var targetReturnType = value.returnType;
     return thisReturnType == targetReturnType || thisReturnType.isAssignableTo(targetReturnType);
   }
 
