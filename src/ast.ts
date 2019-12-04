@@ -1223,7 +1223,7 @@ export namespace DecoratorKind {
           break;
         }
         case CharCode.p: {
-          if (nameStr == "primaryId") return DecoratorKind.PRIMARYID;
+          if (nameStr == "primaryid") return DecoratorKind.PRIMARYID;
           break;
         }
         case CharCode.s: {

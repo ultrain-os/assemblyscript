@@ -97,6 +97,7 @@ exports.libraryFiles = exports.isBundle ? BUNDLE_LIBRARY : (() => { // set up if
   const bundled = {};
   find.files(libDir, find.TS_EXCEPT_DTS)
       .forEach(file => bundled[file.replace(/\.ts$/, "")] = fs.readFileSync(path.join(libDir, file), "utf8" ));
+  exports.cachedDbmanager = bundled["dbmanager"];
   return bundled;
 })();
 
@@ -286,7 +287,7 @@ exports.main = function main(argv, options, callback, exttype) {
       if (libPath == "dbmanager" && (exttype == undefined || exttype == 1)) {
         exports.libraryFiles[libPath] = exports.getDbmanager();
       } else if (libPath == "dbmanager" && (exttype == 2 || exttype == 3) ) {
-        exports.libraryFiles[libPath] = exports.getDbmanager();
+        exports.libraryFiles[libPath] = exports.cachedDbmanager;
       }
       stats.parseCount++;
       stats.parseTime += measure(() => {
