@@ -36,7 +36,7 @@ var assemblyscript, isDev = false;
 (() => {
   try { // `asc` on the command line
     assemblyscript = require("../dist/assemblyscript");
-    throw new Error();
+    //throw new Error();
   } catch (e) {
     try { // `asc` on the command line without dist files
       require("ts-node").register({
@@ -441,6 +441,9 @@ exports.main = function main(argv, options, callback, exttype) {
       if (!file) return callback(Error("Import file '" + internalPath + ".ts' not found."))
       stats.parseCount++;
       stats.parseTime += measure(() => {
+        if (exttype == exports.compileType.GENERATED_TARGET || exttype == exports.compileType.GENERATED_APPLY_TARGET) {
+          file.sourceText = exports.insertCodes(file.sourcePath, file.sourceText);
+        }
         assemblyscript.parseFile(file.sourceText, file.sourcePath, false, parser);
       });
     }
@@ -1192,12 +1195,11 @@ function insertCodes(sourcePath, sourceText) {
     let data = sourceText.split("\n");
     for (let serialize of serializeArray) {
       data.splice(serialize.line , 0, serialize.getCodes());
-      if (true) {
+      if (false) {
         console.log(`Path: ${sourcePath} line: ${serialize.line}. Insert code:${EOL}${serialize.getCodes()}`);
         console.log(`Range: ${serialize.toString()}`);
       }
     }
-    // console.log(data.join(EOL));
     return data.join(EOL);
   } else {
     return sourceText;

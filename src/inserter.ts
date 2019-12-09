@@ -313,6 +313,10 @@ export class SerializePoint extends InsertPoint {
         }
         return result.join("\n");
     }
+
+    toString(): string {
+        return this.serialize.toString();
+    }
 }
 
 export class SerializeInserter {

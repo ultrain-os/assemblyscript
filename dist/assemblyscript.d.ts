@@ -4947,6 +4947,7 @@ declare module "assemblyscript/src/inserter" {
         constructor(range: Range);
         get indentity(): string;
         getCodes(): string;
+        toString(): string;
     }
     export class SerializeInserter {
         program: Program;
