@@ -3961,10 +3961,10 @@ export function compileAbort(
   return module.block(null, [
     module.call(
       abortInstance.internalName, [
-        // messageArg,
-        // filenameArg,
-        // module.i32(reportNode.range.line),
-        // module.i32(reportNode.range.column)
+        messageArg,
+        filenameArg,
+        module.i32(reportNode.range.line),
+        module.i32(reportNode.range.column)
       ],
       NativeType.None
     ),

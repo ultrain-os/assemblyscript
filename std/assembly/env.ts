@@ -1,4 +1,4 @@
-declare function abort(
+declare function uabort(
   message?: string | null,
   fileName?: string | null,
   lineNumber?: u32,

@@ -502,7 +502,7 @@ exports.main = function main(argv, options, callback, exttype) {
   // Initialize default aliases
   assemblyscript.setGlobalAlias(compilerOptions, "Math", "NativeMath");
   assemblyscript.setGlobalAlias(compilerOptions, "Mathf", "NativeMathf");
-  assemblyscript.setGlobalAlias(compilerOptions, "abort", "~lib/builtins/abort");
+  assemblyscript.setGlobalAlias(compilerOptions, "uabort", "~lib/builtins/uabort");
   assemblyscript.setGlobalAlias(compilerOptions, "trace", "~lib/builtins/trace");
 
   // Add or override aliases if specified

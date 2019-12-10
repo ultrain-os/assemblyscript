@@ -1711,12 +1711,12 @@ export namespace v8x16 {
 // export  type action_name = NameEx;
 @builtin export declare type weight_type = u16;
 // @ts-ignore: decorator
-@external("env", "abort")
-declare function abort(
-  // message ?: string | null,
-  // fileName ?: string | null,
-  // lineNumber ?: u32,
-  // columnNumber ?: u32
+@external("env", "uabort")
+declare function uabort(
+  message ?: string | null,
+  fileName ?: string | null,
+  lineNumber ?: u32,
+  columnNumber ?: u32
 ): void;
 
 // @ts-ignore: decorator

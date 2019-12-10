@@ -192,7 +192,7 @@ export namespace CommonSymbols {
   export const Float32Array = "Float32Array";
   export const Float64Array = "Float64Array";
   // runtime
-  export const abort = "abort";
+  export const abort = "uabort";
   export const pow = "pow";
   export const mod = "mod";
   export const alloc = "__alloc";
