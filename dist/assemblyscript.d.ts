@@ -185,7 +185,7 @@ declare module 'assemblyscript/src/common' {
 	    const Uint64Array = "Uint64Array";
 	    const Float32Array = "Float32Array";
 	    const Float64Array = "Float64Array";
-	    const abort = "abort";
+	    const abort = "uabort";
 	    const pow = "pow";
 	    const mod = "mod";
 	    const alloc = "__alloc";
