@@ -1197,7 +1197,6 @@ function insertCodes(sourcePath, sourceText) {
       data.splice(serialize.line , 0, serialize.getCodes());
       if (false) {
         console.log(`Path: ${sourcePath} line: ${serialize.line}. Insert code:${EOL}${serialize.getCodes()}`);
-        console.log(`Range: ${serialize.toString()}`);
       }
     }
     return data.join(EOL);

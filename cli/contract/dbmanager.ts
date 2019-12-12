@@ -19,7 +19,7 @@ export class Cursor<T extends Serializable> {
     }
 
     get(): T {
-        var res = {} as T ;
+        var res:T = instantiate<T>() ;
         return res;
     }
 

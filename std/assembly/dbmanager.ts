@@ -63,7 +63,7 @@ export class Cursor<T extends Serializable> {
         var ds = new DataStream(arr.buffer, len);
         db_get_i64(iterator, changetype<usize>(arr.buffer), len);
 
-        var out = {} as T;
+        var out = instantiate<T>();
         out.deserialize(ds);
 
         return out;

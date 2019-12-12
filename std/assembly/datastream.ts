@@ -128,11 +128,11 @@ export class DataStream {
         if (this.len == 0) return new Array<T>();
 
         let len = this.len / sizeof<T>();
-        let arr = new Array<T>(len);
+        let arr = new Array<T>();
         let idx = 0;
         for (let i: u32 = 0; i < len; i++) {
             let value: T = load<T>(changetype<usize>(this.buffer) + idx);
-            arr[i] = value;
+            arr.push(value);
             idx += sizeof<T>();
         }
         return arr;
@@ -188,7 +188,7 @@ export class DataStream {
 
         let arr = new Array<T>();
         for (let i: u32 = 0; i < len; i++) {
-            let obj = {} as T;
+            let obj: T = instantiate<T>();
             obj.deserialize(this);
             arr.push(obj);
         }

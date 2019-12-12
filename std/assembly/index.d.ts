@@ -1785,6 +1785,9 @@ interface Returnable {
   toString(): string;
 }
 
+/**
+ * DataStream interface
+ */
 declare class DataStream {
   buffer: ArrayBuffer;
   len: u32;
@@ -1853,4 +1856,3 @@ declare class DBManager<T extends Serializable> {
 
 declare function ultrain_assert(condition: boolean, msg: string): void;
 declare function current_receiver(): u64;
-declare function prints(cstr: ArrayBuffer): void;

@@ -206,11 +206,9 @@ export class Map<K,V> implements Serializable{
         ds.write<T>(val);
     } else if (isString<T>(val)) {
         ds.writeString(changetype<string>(val));
-    } else if (isReference<T>(val)) {
-        val.serialize(ds);
     } else {
-        assert(false, "unsupport value type for serializable map.");
-    }
+        val.serialize(ds);
+    } 
   }
 
   serialize(ds: DataStream): void {
@@ -230,13 +228,11 @@ export class Map<K,V> implements Serializable{
         return ds.read<T>();
     } else if (isString<T>()) {
         return changetype<T>(ds.readString());
-    } else if (isReference<T>()) {
-        let rst = {} as T;
+    } else {
+        let rst = instantiate<T>();
         rst.deserialize(ds);
         return <T>rst;
     } 
-    assert(false, "key type is not support.");
-    return {} as T;
   }
 
   deserialize(ds: DataStream): void {
@@ -289,16 +285,13 @@ export class Map<K,V> implements Serializable{
     // FIXME: this is preliminary, needs iterators/closures
     var start = changetype<usize>(this.entries);
     var size = this.entriesOffset;
-    var keys = new Array<K>(size);
-    var length = 0;
+    var keys = new Array<K>();
     for (let i = 0; i < size; ++i) {
       let entry = changetype<MapEntry<K,V>>(start + <usize>i * ENTRY_SIZE<K,V>());
       if (!(entry.taggedNext & EMPTY)) {
         keys.push(entry.key);
-        ++length;
       }
     }
-    keys.length = length;
     return keys;
   }
 
@@ -306,16 +299,13 @@ export class Map<K,V> implements Serializable{
     // FIXME: this is preliminary, needs iterators/closures
     var start = changetype<usize>(this.entries);
     var size = this.entriesOffset;
-    var values = new Array<V>(size);
-    var length = 0;
+    var values = new Array<V>();
     for (let i = 0; i < size; ++i) {
       let entry = changetype<MapEntry<K,V>>(start + <usize>i * ENTRY_SIZE<K,V>());
       if (!(entry.taggedNext & EMPTY)) {
         values.push(entry.value);
-        ++length;
       }
     }
-    values.length = length;
     return values;
   }
 
