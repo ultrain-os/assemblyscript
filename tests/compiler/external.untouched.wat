@@ -2,7 +2,7 @@
  (type $FUNCSIG$v (func))
  (import "foo" "var" (global $external/var_ i32))
  (import "external" "foo" (func $external/foo))
- (import "env" "bar" (func $external/foo.bar))
+ (import "external" "foo.bar" (func $external/foo.bar))
  (import "external" "bar" (func $external/two))
  (import "foo" "baz" (func $external/three))
  (memory $0 0)

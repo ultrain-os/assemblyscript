@@ -33,11 +33,15 @@ import {
 } from "./types";
 
 import {
+  SourceKind
+ } from "./ast";
+
+import {
   indent
 } from "./util";
 
 /** Walker base class. */
-abstract class ExportsWalker {
+export abstract class ExportsWalker {
 
   /** Program reference. */
   program: Program;
@@ -55,7 +59,7 @@ abstract class ExportsWalker {
   /** Walks all elements and calls the respective handlers. */
   walk(): void {
     for (let file of this.program.filesByName.values()) {
-      if (file.source.isEntry) this.visitFile(file);
+      if (file.source.sourceKind == SourceKind.USER_ENTRY) this.visitFile(file);
     }
   }
 
@@ -505,7 +509,7 @@ export class TSDBuilder extends ExportsWalker {
     indent(sb, this.indentLevel);
     sb.push("export const ");
     sb.push(name);
-    sb.push(" = typeof ");
+    sb.push(": typeof ");
     sb.push(originalName);
     sb.push(";\n");
   }

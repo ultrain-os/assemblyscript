@@ -10,4 +10,4 @@ declare namespace my {
 }
 
 my.externalFunction();
-assert(my.externalConstant == 1);
+assert(my.externalConstant == 2);

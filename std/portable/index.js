@@ -206,6 +206,24 @@ if (!String.prototype.replaceAll) {
   });
 }
 
+function defaultComparator(a, b) {
+  if (a === b) {
+    if (a !== 0) return 0;
+    a = 1 / a, b = 1 / b;
+  } else {
+    var nanA = a != a, nanB = b != b;
+    if (nanA | nanB) return nanA - nanB;
+    if (a == null) a = String(a);
+    if (b == null) b = String(b);
+  }
+  return a > b ? 1 : -1;
+}
+
+const arraySort = Array.prototype.sort;
+Array.prototype.sort = function sort(comparator) {
+  return arraySort.call(this, comparator || defaultComparator);
+};
+
 globalScope["isInteger"] = Number.isInteger;
 
 globalScope["isFloat"] = function isFloat(arg) {
@@ -237,12 +255,6 @@ globalScope["isArrayLike"] = function isArrayLike(expr) {
     && Math.trunc(expr.length) === expr.length;
 };
 
-Array.create = function(capacity) {
-  var arr = new Array(capacity);
-  arr.length = 0;
-  return arr;
-};
-
 globalScope["isDefined"] = function isDefined(expr) {
   return typeof expr !== "undefined";
 }
@@ -268,17 +280,17 @@ globalScope["JSMath"] = Math;
 Object.defineProperties(globalScope["JSMath"], {
   sincos_sin: { value: 0.0, writable: true },
   sincos_cos: { value: 0.0, writable: true },
-  // signbit: {
-  //   value: function signbit(x) {
-  //     F64[0] = x; return Boolean((U64[1] >>> 31) & (x == x));
-  //   }
-  // },
-  // sincos: {
-  //   value: function sincos(x) {
-  //     this.sincos_sin = Math.sin(x);
-  //     this.sincos_cos = Math.cos(x);
-  //   }
-  // }
+  signbit: {
+    value: function signbit(x) {
+      F64[0] = x; return Boolean((U64[1] >>> 31) & (x == x));
+    }
+  },
+  sincos: {
+    value: function sincos(x) {
+      this.sincos_sin = Math.sin(x);
+      this.sincos_cos = Math.cos(x);
+    }
+  }
 });
 
 globalScope["memory"] = (() => {

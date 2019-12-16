@@ -4,7 +4,7 @@ import { HASH } from "./util/hash";
 import { E_KEYNOTFOUND } from "util/error";
 
 import { DataStream } from "./datastream";
-import { Serializable} from "./serializable";
+import { Serializable } from "./serializable";
 
 // A deterministic hash map based on CloseTable from https://github.com/jorendorff/dht
 
@@ -107,7 +107,7 @@ export class Map<K,V> implements Serializable{
     if (!entry) throw new Error(E_KEYNOTFOUND); // cannot represent `undefined`
     return entry.value;
   }
-  
+
   // keys(): K[]{
   //   var _keys = new Array<K>();
   //   var startPtr = changetype<usize>(this.entries) + HEADER_SIZE_AB;
@@ -216,7 +216,7 @@ export class Map<K,V> implements Serializable{
       this.serializeItem<V>(value,ds);
     }
   }
- 
+
   private deserializeItem<T>(ds: DataStream): T {
     if (isInteger<T>()) {
         return ds.read<T>();
@@ -226,7 +226,7 @@ export class Map<K,V> implements Serializable{
         let rst = {} as T;
         rst.deserialize(ds);
         return <T>rst;
-    } 
+    }
     assert(false, "key type is not support.");
     return {} as T;
   }

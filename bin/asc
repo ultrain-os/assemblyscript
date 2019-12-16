@@ -14,23 +14,10 @@ if (~tailArgs) {
   return;
 }
 
-require("source-map-support").install();
+try { require("source-map-support").install(); } catch (e) {}
+const preprocessor = require("../cli/preprocessor"); // fanliangqin add
 const usc = module.exports = require("../cli/asc.js");
-const optionsUtil = require("../cli/util/options");
-const options = exports.options = require("../cli/asc.json");
-
 if (/\busc|asc$/.test(process.argv[1])) {
-  const argv = process.argv.slice(2);
-  const opts = optionsUtil.parse(argv, options);
-  const args = opts.options;
-
-  // There are two steps to generate the wast file
-  if(args.applyText){
-  	process.exitCode = usc.main(argv, null, null, 1);
-  	process.exitCode = usc.main(argv, null, null, 3);
-  } else {
-    process.exitCode = usc.main(argv, null, null, 1);
-    process.exitCode = usc.main(argv, null, null, 2);
-  }
-  return process.exitCode;
+  preprocessor.process(process.argv.slice(2)); // fanliangqin add
+  process.exitCode = usc.main(process.argv.slice(2));
 }

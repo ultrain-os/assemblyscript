@@ -1,6 +1,7 @@
 (module
+ (type $FUNCSIG$viiii (func (param i32 i32 i32 i32)))
  (type $FUNCSIG$v (func))
- (import "env" "abort" (func $~lib/builtins/abort))
+ (import "env" "abort" (func $~lib/builtins/abort (param i32 i32 i32 i32)))
  (memory $0 1)
  (data (i32.const 8) ".\00\00\00\01\00\00\00\01\00\00\00.\00\00\00p\00o\00r\00t\00a\00b\00l\00e\00-\00c\00o\00n\00v\00e\00r\00s\00i\00o\00n\00s\00.\00t\00s\00")
  (table $0 1 funcref)
@@ -19,6 +20,10 @@
   i32.shr_s
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 6
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -30,6 +35,10 @@
   i32.shr_s
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 7
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -41,6 +50,10 @@
   i32.shr_s
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 8
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -52,6 +65,10 @@
   i32.shr_s
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 9
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -62,6 +79,10 @@
   i32.shr_s
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 11
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -73,6 +94,10 @@
   i32.shr_s
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 12
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -84,6 +109,10 @@
   i32.shr_s
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 13
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -95,12 +124,20 @@
   i32.shr_s
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 14
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
   global.get $portable-conversions/i
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 16
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -108,6 +145,10 @@
   i32.wrap_i64
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 17
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -115,6 +156,10 @@
   i32.trunc_f32_s
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 18
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -122,6 +167,10 @@
   i32.trunc_f64_s
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 19
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -129,12 +178,20 @@
   i64.extend_i32_s
   i64.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 21
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
   global.get $portable-conversions/I
   i64.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 22
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -142,6 +199,10 @@
   i64.trunc_f32_s
   i64.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 23
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -149,12 +210,20 @@
   i64.trunc_f64_s
   i64.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 24
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
   global.get $portable-conversions/i
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 26
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -162,6 +231,10 @@
   i32.wrap_i64
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 27
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -169,6 +242,10 @@
   i32.trunc_f32_s
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 28
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -176,6 +253,10 @@
   i32.trunc_f64_s
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 29
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -184,6 +265,10 @@
   i32.and
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 31
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -193,6 +278,10 @@
   i32.and
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 32
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -202,6 +291,10 @@
   i32.and
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 33
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -211,6 +304,10 @@
   i32.and
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 34
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -219,6 +316,10 @@
   i32.and
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 36
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -228,6 +329,10 @@
   i32.and
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 37
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -237,6 +342,10 @@
   i32.and
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 38
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -246,12 +355,20 @@
   i32.and
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 39
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
   global.get $portable-conversions/i
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 41
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -259,6 +376,10 @@
   i32.wrap_i64
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 42
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -266,6 +387,10 @@
   i32.trunc_f32_u
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 43
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -273,6 +398,10 @@
   i32.trunc_f64_u
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 44
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -280,12 +409,20 @@
   i64.extend_i32_s
   i64.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 46
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
   global.get $portable-conversions/I
   i64.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 47
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -293,6 +430,10 @@
   i64.trunc_f32_u
   i64.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 48
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -300,12 +441,20 @@
   i64.trunc_f64_u
   i64.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 49
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
   global.get $portable-conversions/i
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 51
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -313,6 +462,10 @@
   i32.wrap_i64
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 52
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -320,6 +473,10 @@
   i32.trunc_f32_u
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 53
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -327,6 +484,10 @@
   i32.trunc_f64_u
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 54
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -335,6 +496,10 @@
   i32.ne
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 56
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -343,6 +508,10 @@
   i64.ne
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 57
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -351,6 +520,10 @@
   f32.ne
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 58
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -359,6 +532,10 @@
   f64.ne
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 59
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -367,6 +544,10 @@
   f32.const 0
   f32.eq
   if
+   i32.const 0
+   i32.const 24
+   i32.const 61
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -375,6 +556,10 @@
   f32.const 0
   f32.eq
   if
+   i32.const 0
+   i32.const 24
+   i32.const 62
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -382,6 +567,10 @@
   f32.const 0
   f32.eq
   if
+   i32.const 0
+   i32.const 24
+   i32.const 63
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -390,6 +579,10 @@
   f32.const 0
   f32.eq
   if
+   i32.const 0
+   i32.const 24
+   i32.const 64
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -398,6 +591,10 @@
   f64.const 0
   f64.eq
   if
+   i32.const 0
+   i32.const 24
+   i32.const 66
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -406,6 +603,10 @@
   f64.const 0
   f64.eq
   if
+   i32.const 0
+   i32.const 24
+   i32.const 67
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -414,6 +615,10 @@
   f64.const 0
   f64.eq
   if
+   i32.const 0
+   i32.const 24
+   i32.const 68
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -421,6 +626,10 @@
   f64.const 0
   f64.eq
   if
+   i32.const 0
+   i32.const 24
+   i32.const 69
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end

@@ -1,12 +1,13 @@
 (module
  (type $FUNCSIG$iiii (func (param i32 i32 i32) (result i32)))
  (type $FUNCSIG$iii (func (param i32 i32) (result i32)))
- (type $FUNCSIG$ii (func (param i32) (result i32)))
  (type $FUNCSIG$vi (func (param i32)))
- (type $FUNCSIG$v (func))
+ (type $FUNCSIG$ii (func (param i32) (result i32)))
+ (type $FUNCSIG$viiii (func (param i32 i32 i32 i32)))
  (type $FUNCSIG$ddd (func (param f64 f64) (result f64)))
  (type $FUNCSIG$ddi (func (param f64 i32) (result f64)))
- (import "env" "abort" (func $~lib/builtins/abort))
+ (type $FUNCSIG$v (func))
+ (import "env" "abort" (func $~lib/builtins/abort (param i32 i32 i32 i32)))
  (memory $0 1)
  (data (i32.const 8) "6\00\00\00\01\00\00\00\01\00\00\006\00\00\00s\00t\00d\00/\00o\00p\00e\00r\00a\00t\00o\00r\00-\00o\00v\00e\00r\00l\00o\00a\00d\00i\00n\00g\00.\00t\00s\00")
  (table $0 1 funcref)
@@ -83,50 +84,23 @@
  (global $~lib/heap/__heap_base i32 (i32.const 80))
  (export "memory" (memory $0))
  (start $start)
- (func $~lib/rt/stub/__alloc (; 1 ;) (type $FUNCSIG$iii) (param $0 i32) (param $1 i32) (result i32)
+ (func $~lib/rt/stub/maybeGrowMemory (; 1 ;) (type $FUNCSIG$vi) (param $0 i32)
+  (local $1 i32)
   (local $2 i32)
   (local $3 i32)
   (local $4 i32)
   (local $5 i32)
-  (local $6 i32)
-  (local $7 i32)
-  (local $8 i32)
-  local.get $0
-  i32.const 1073741808
-  i32.gt_u
-  if
-   unreachable
-  end
-  global.get $~lib/rt/stub/offset
-  i32.const 16
-  i32.add
-  local.set $2
-  local.get $2
-  local.get $0
-  local.tee $3
-  i32.const 1
-  local.tee $4
-  local.get $3
-  local.get $4
-  i32.gt_u
-  select
-  i32.add
-  i32.const 15
-  i32.add
-  i32.const 15
-  i32.const -1
-  i32.xor
-  i32.and
-  local.set $5
   memory.size
-  local.set $6
-  local.get $5
-  local.get $6
+  local.set $1
+  local.get $1
   i32.const 16
   i32.shl
+  local.set $2
+  local.get $0
+  local.get $2
   i32.gt_u
   if
-   local.get $5
+   local.get $0
    local.get $2
    i32.sub
    i32.const 65535
@@ -138,12 +112,12 @@
    i32.const 16
    i32.shr_u
    local.set $3
-   local.get $6
+   local.get $1
    local.tee $4
    local.get $3
-   local.tee $7
+   local.tee $5
    local.get $4
-   local.get $7
+   local.get $5
    i32.gt_s
    select
    local.set $4
@@ -161,24 +135,66 @@
     end
    end
   end
-  local.get $5
+  local.get $0
   global.set $~lib/rt/stub/offset
+ )
+ (func $~lib/rt/stub/__alloc (; 2 ;) (type $FUNCSIG$iii) (param $0 i32) (param $1 i32) (result i32)
+  (local $2 i32)
+  (local $3 i32)
+  (local $4 i32)
+  (local $5 i32)
+  (local $6 i32)
+  local.get $0
+  i32.const 1073741808
+  i32.gt_u
+  if
+   unreachable
+  end
+  global.get $~lib/rt/stub/offset
+  i32.const 16
+  i32.add
+  local.set $2
+  local.get $0
+  i32.const 15
+  i32.add
+  i32.const 15
+  i32.const -1
+  i32.xor
+  i32.and
+  local.tee $3
+  i32.const 16
+  local.tee $4
+  local.get $3
+  local.get $4
+  i32.gt_u
+  select
+  local.set $5
+  local.get $2
+  local.get $5
+  i32.add
+  call $~lib/rt/stub/maybeGrowMemory
   local.get $2
   i32.const 16
   i32.sub
-  local.set $8
-  local.get $8
+  local.set $6
+  local.get $6
+  local.get $5
+  i32.store
+  local.get $6
+  i32.const -1
+  i32.store offset=4
+  local.get $6
   local.get $1
   i32.store offset=8
-  local.get $8
+  local.get $6
   local.get $0
   i32.store offset=12
   local.get $2
  )
- (func $~lib/rt/stub/__retain (; 2 ;) (type $FUNCSIG$ii) (param $0 i32) (result i32)
+ (func $~lib/rt/stub/__retain (; 3 ;) (type $FUNCSIG$ii) (param $0 i32) (result i32)
   local.get $0
  )
- (func $std/operator-overloading/Tester#constructor (; 3 ;) (type $FUNCSIG$iiii) (param $0 i32) (param $1 i32) (param $2 i32) (result i32)
+ (func $std/operator-overloading/Tester#constructor (; 4 ;) (type $FUNCSIG$iiii) (param $0 i32) (param $1 i32) (param $2 i32) (result i32)
   local.get $0
   i32.eqz
   if
@@ -196,17 +212,17 @@
   i32.store offset=4
   local.get $0
  )
- (func $~lib/rt/stub/__release (; 4 ;) (type $FUNCSIG$vi) (param $0 i32)
+ (func $~lib/rt/stub/__release (; 5 ;) (type $FUNCSIG$vi) (param $0 i32)
   nop
  )
- (func $std/operator-overloading/Tester.add (; 5 ;) (type $FUNCSIG$iii) (param $0 i32) (param $1 i32) (result i32)
+ (func $std/operator-overloading/Tester.add (; 6 ;) (type $FUNCSIG$iii) (param $0 i32) (param $1 i32) (result i32)
   (local $2 i32)
   local.get $0
   call $~lib/rt/stub/__retain
-  drop
+  local.set $0
   local.get $1
   call $~lib/rt/stub/__retain
-  drop
+  local.set $1
   i32.const 0
   local.get $0
   i32.load
@@ -226,14 +242,14 @@
   call $~lib/rt/stub/__release
   local.get $2
  )
- (func $std/operator-overloading/Tester.sub (; 6 ;) (type $FUNCSIG$iii) (param $0 i32) (param $1 i32) (result i32)
+ (func $std/operator-overloading/Tester.sub (; 7 ;) (type $FUNCSIG$iii) (param $0 i32) (param $1 i32) (result i32)
   (local $2 i32)
   local.get $0
   call $~lib/rt/stub/__retain
-  drop
+  local.set $0
   local.get $1
   call $~lib/rt/stub/__retain
-  drop
+  local.set $1
   i32.const 0
   local.get $0
   i32.load
@@ -253,14 +269,14 @@
   call $~lib/rt/stub/__release
   local.get $2
  )
- (func $std/operator-overloading/Tester.mul (; 7 ;) (type $FUNCSIG$iii) (param $0 i32) (param $1 i32) (result i32)
+ (func $std/operator-overloading/Tester.mul (; 8 ;) (type $FUNCSIG$iii) (param $0 i32) (param $1 i32) (result i32)
   (local $2 i32)
   local.get $0
   call $~lib/rt/stub/__retain
-  drop
+  local.set $0
   local.get $1
   call $~lib/rt/stub/__retain
-  drop
+  local.set $1
   i32.const 0
   local.get $0
   i32.load
@@ -280,14 +296,14 @@
   call $~lib/rt/stub/__release
   local.get $2
  )
- (func $std/operator-overloading/Tester.div (; 8 ;) (type $FUNCSIG$iii) (param $0 i32) (param $1 i32) (result i32)
+ (func $std/operator-overloading/Tester.div (; 9 ;) (type $FUNCSIG$iii) (param $0 i32) (param $1 i32) (result i32)
   (local $2 i32)
   local.get $0
   call $~lib/rt/stub/__retain
-  drop
+  local.set $0
   local.get $1
   call $~lib/rt/stub/__retain
-  drop
+  local.set $1
   i32.const 0
   local.get $0
   i32.load
@@ -307,14 +323,14 @@
   call $~lib/rt/stub/__release
   local.get $2
  )
- (func $std/operator-overloading/Tester.mod (; 9 ;) (type $FUNCSIG$iii) (param $0 i32) (param $1 i32) (result i32)
+ (func $std/operator-overloading/Tester.mod (; 10 ;) (type $FUNCSIG$iii) (param $0 i32) (param $1 i32) (result i32)
   (local $2 i32)
   local.get $0
   call $~lib/rt/stub/__retain
-  drop
+  local.set $0
   local.get $1
   call $~lib/rt/stub/__retain
-  drop
+  local.set $1
   i32.const 0
   local.get $0
   i32.load
@@ -334,7 +350,7 @@
   call $~lib/rt/stub/__release
   local.get $2
  )
- (func $~lib/math/NativeMath.scalbn (; 10 ;) (type $FUNCSIG$ddi) (param $0 f64) (param $1 i32) (result f64)
+ (func $~lib/math/NativeMath.scalbn (; 11 ;) (type $FUNCSIG$ddi) (param $0 f64) (param $1 i32) (result f64)
   (local $2 f64)
   (local $3 i32)
   (local $4 i32)
@@ -372,7 +388,7 @@
     select
     local.set $1
    end
-  else   
+  else
    local.get $1
    i32.const -1022
    i32.lt_s
@@ -425,7 +441,7 @@
   f64.reinterpret_i64
   f64.mul
  )
- (func $~lib/math/NativeMath.pow (; 11 ;) (type $FUNCSIG$ddd) (param $0 f64) (param $1 f64) (result f64)
+ (func $~lib/math/NativeMath.pow (; 12 ;) (type $FUNCSIG$ddd) (param $0 f64) (param $1 f64) (result f64)
   (local $2 i64)
   (local $3 i32)
   (local $4 i32)
@@ -438,7 +454,7 @@
   (local $11 i32)
   (local $12 i32)
   (local $13 i32)
-  (local $14 i32)
+  (local $14 f64)
   (local $15 f64)
   (local $16 f64)
   (local $17 f64)
@@ -451,9 +467,9 @@
   (local $24 f64)
   (local $25 f64)
   (local $26 f64)
-  (local $27 f64)
+  (local $27 i32)
   (local $28 i32)
-  (local $29 i32)
+  (local $29 f64)
   (local $30 f64)
   (local $31 f64)
   (local $32 f64)
@@ -464,8 +480,7 @@
   (local $37 f64)
   (local $38 f64)
   (local $39 f64)
-  (local $40 f64)
-  (local $41 i32)
+  (local $40 i32)
   local.get $0
   i64.reinterpret_f64
   local.set $2
@@ -510,7 +525,7 @@
   i32.gt_s
   if (result i32)
    i32.const 1
-  else   
+  else
    local.get $7
    i32.const 2146435072
    i32.eq
@@ -518,20 +533,20 @@
     local.get $4
     i32.const 0
     i32.ne
-   else    
+   else
     i32.const 0
    end
   end
   if (result i32)
    i32.const 1
-  else   
+  else
    local.get $8
    i32.const 2146435072
    i32.gt_s
   end
   if (result i32)
    i32.const 1
-  else   
+  else
    local.get $8
    i32.const 2146435072
    i32.eq
@@ -539,7 +554,7 @@
     local.get $6
     i32.const 0
     i32.ne
-   else    
+   else
     i32.const 0
    end
   end
@@ -561,7 +576,7 @@
    if
     i32.const 2
     local.set $9
-   else    
+   else
     local.get $8
     i32.const 1072693248
     i32.ge_s
@@ -572,34 +587,34 @@
      i32.const 1023
      i32.sub
      local.set $10
+     i32.const 52
+     i32.const 20
      local.get $10
      i32.const 20
      i32.gt_s
-     local.set $11
-     i32.const 52
-     i32.const 20
-     local.get $11
      select
      local.get $10
      i32.sub
-     local.set $12
+     local.set $11
      local.get $6
      local.get $8
-     local.get $11
+     local.get $10
+     i32.const 20
+     i32.gt_s
      select
+     local.set $12
+     local.get $12
+     local.get $11
+     i32.shr_u
      local.set $13
      local.get $13
-     local.get $12
-     i32.shr_s
-     local.set $14
-     local.get $14
-     local.get $12
+     local.get $11
      i32.shl
-     local.get $13
+     local.get $12
      i32.eq
      if
       i32.const 2
-      local.get $14
+      local.get $13
       i32.const 1
       i32.and
       i32.sub
@@ -626,7 +641,7 @@
     if
      f64.const nan:0x8000000000000
      return
-    else     
+    else
      local.get $7
      i32.const 1072693248
      i32.ge_s
@@ -636,17 +651,17 @@
       i32.ge_s
       if (result f64)
        local.get $1
-      else       
+      else
        f64.const 0
       end
       return
-     else      
+     else
       local.get $5
       i32.const 0
       i32.ge_s
       if (result f64)
        f64.const 0
-      else       
+      else
        local.get $1
        f64.neg
       end
@@ -697,7 +712,7 @@
   end
   local.get $0
   f64.abs
-  local.set $15
+  local.set $14
   local.get $4
   i32.const 0
   i32.eq
@@ -707,29 +722,29 @@
    i32.eq
    if (result i32)
     i32.const 1
-   else    
+   else
     local.get $7
     i32.const 2146435072
     i32.eq
    end
    if (result i32)
     i32.const 1
-   else    
+   else
     local.get $7
     i32.const 1072693248
     i32.eq
    end
    if
-    local.get $15
-    local.set $16
+    local.get $14
+    local.set $15
     local.get $5
     i32.const 0
     i32.lt_s
     if
      f64.const 1
-     local.get $16
+     local.get $15
      f64.div
-     local.set $16
+     local.set $15
     end
     local.get $3
     i32.const 0
@@ -743,31 +758,31 @@
      i32.const 0
      i32.eq
      if
-      local.get $16
-      local.get $16
+      local.get $15
+      local.get $15
       f64.sub
-      local.set $17
-      local.get $17
-      local.get $17
-      f64.div
       local.set $16
-     else      
+      local.get $16
+      local.get $16
+      f64.div
+      local.set $15
+     else
       local.get $9
       i32.const 1
       i32.eq
       if
-       local.get $16
+       local.get $15
        f64.neg
-       local.set $16
+       local.set $15
       end
      end
     end
-    local.get $16
+    local.get $15
     return
    end
   end
   f64.const 1
-  local.set $18
+  local.set $17
   local.get $3
   i32.const 0
   i32.lt_s
@@ -779,9 +794,9 @@
     local.get $0
     local.get $0
     f64.sub
-    local.set $17
-    local.get $17
-    local.get $17
+    local.set $16
+    local.get $16
+    local.get $16
     f64.div
     return
    end
@@ -790,7 +805,7 @@
    i32.eq
    if
     f64.const -1
-    local.set $18
+    local.set $17
    end
   end
   local.get $8
@@ -812,7 +827,7 @@
       f64.const 1.e+300
       f64.const 1.e+300
       f64.mul
-     else      
+     else
       f64.const 1e-300
       f64.const 1e-300
       f64.mul
@@ -830,7 +845,7 @@
       f64.const 1.e+300
       f64.const 1.e+300
       f64.mul
-     else      
+     else
       f64.const 1e-300
       f64.const 1e-300
       f64.mul
@@ -846,13 +861,13 @@
     i32.const 0
     i32.lt_s
     if (result f64)
-     local.get $18
+     local.get $17
      f64.const 1.e+300
      f64.mul
      f64.const 1.e+300
      f64.mul
-    else     
-     local.get $18
+    else
+     local.get $17
      f64.const 1e-300
      f64.mul
      f64.const 1e-300
@@ -868,13 +883,13 @@
     i32.const 0
     i32.gt_s
     if (result f64)
-     local.get $18
+     local.get $17
      f64.const 1.e+300
      f64.mul
      f64.const 1.e+300
      f64.mul
-    else     
-     local.get $18
+    else
+     local.get $17
      f64.const 1e-300
      f64.mul
      f64.const 1e-300
@@ -882,117 +897,117 @@
     end
     return
    end
-   local.get $15
+   local.get $14
    f64.const 1
    f64.sub
-   local.set $24
-   local.get $24
-   local.get $24
+   local.set $23
+   local.get $23
+   local.get $23
    f64.mul
    f64.const 0.5
-   local.get $24
+   local.get $23
    f64.const 0.3333333333333333
-   local.get $24
+   local.get $23
    f64.const 0.25
    f64.mul
    f64.sub
    f64.mul
    f64.sub
    f64.mul
-   local.set $27
+   local.set $26
    f64.const 1.4426950216293335
-   local.get $24
+   local.get $23
    f64.mul
-   local.set $25
-   local.get $24
+   local.set $24
+   local.get $23
    f64.const 1.9259629911266175e-08
    f64.mul
-   local.get $27
+   local.get $26
    f64.const 1.4426950408889634
    f64.mul
    f64.sub
-   local.set $26
+   local.set $25
+   local.get $24
    local.get $25
-   local.get $26
    f64.add
-   local.set $19
-   local.get $19
+   local.set $18
+   local.get $18
    i64.reinterpret_f64
    i64.const -4294967296
    i64.and
    f64.reinterpret_i64
-   local.set $19
-   local.get $26
-   local.get $19
+   local.set $18
    local.get $25
+   local.get $18
+   local.get $24
    f64.sub
    f64.sub
-   local.set $20
-  else   
+   local.set $19
+  else
    i32.const 0
-   local.set $29
+   local.set $28
    local.get $7
    i32.const 1048576
    i32.lt_s
    if
-    local.get $15
+    local.get $14
     f64.const 9007199254740992
     f64.mul
-    local.set $15
-    local.get $29
+    local.set $14
+    local.get $28
     i32.const 53
     i32.sub
-    local.set $29
-    local.get $15
+    local.set $28
+    local.get $14
     i64.reinterpret_f64
     i64.const 32
     i64.shr_u
     i32.wrap_i64
     local.set $7
    end
-   local.get $29
+   local.get $28
    local.get $7
    i32.const 20
    i32.shr_s
    i32.const 1023
    i32.sub
    i32.add
-   local.set $29
+   local.set $28
    local.get $7
    i32.const 1048575
    i32.and
-   local.set $28
-   local.get $28
+   local.set $27
+   local.get $27
    i32.const 1072693248
    i32.or
    local.set $7
-   local.get $28
+   local.get $27
    i32.const 235662
    i32.le_s
    if
     i32.const 0
     local.set $10
-   else    
-    local.get $28
+   else
+    local.get $27
     i32.const 767610
     i32.lt_s
     if
      i32.const 1
      local.set $10
-    else     
+    else
      i32.const 0
      local.set $10
-     local.get $29
+     local.get $28
      i32.const 1
      i32.add
-     local.set $29
+     local.set $28
      local.get $7
      i32.const 1048576
      i32.sub
      local.set $7
     end
    end
-   local.get $15
+   local.get $14
    i64.reinterpret_f64
    i64.const 4294967295
    i64.and
@@ -1002,34 +1017,34 @@
    i64.shl
    i64.or
    f64.reinterpret_i64
-   local.set $15
+   local.set $14
    f64.const 1.5
    f64.const 1
    local.get $10
    select
-   local.set $35
-   local.get $15
-   local.get $35
+   local.set $34
+   local.get $14
+   local.get $34
    f64.sub
-   local.set $25
+   local.set $24
    f64.const 1
-   local.get $15
-   local.get $35
+   local.get $14
+   local.get $34
    f64.add
    f64.div
-   local.set $26
+   local.set $25
+   local.get $24
    local.get $25
-   local.get $26
    f64.mul
-   local.set $17
-   local.get $17
-   local.set $31
-   local.get $31
+   local.set $16
+   local.get $16
+   local.set $30
+   local.get $30
    i64.reinterpret_f64
    i64.const -4294967296
    i64.and
    f64.reinterpret_i64
-   local.set $31
+   local.set $30
    local.get $7
    i32.const 1
    i32.shr_s
@@ -1045,42 +1060,42 @@
    i64.const 32
    i64.shl
    f64.reinterpret_i64
-   local.set $33
-   local.get $15
-   local.get $33
-   local.get $35
-   f64.sub
-   f64.sub
-   local.set $34
-   local.get $26
-   local.get $25
-   local.get $31
-   local.get $33
-   f64.mul
-   f64.sub
-   local.get $31
-   local.get $34
-   f64.mul
-   f64.sub
-   f64.mul
    local.set $32
-   local.get $17
-   local.get $17
+   local.get $14
+   local.get $32
+   local.get $34
+   f64.sub
+   f64.sub
+   local.set $33
+   local.get $25
+   local.get $24
+   local.get $30
+   local.get $32
    f64.mul
-   local.set $30
+   f64.sub
    local.get $30
-   local.get $30
+   local.get $33
+   f64.mul
+   f64.sub
+   f64.mul
+   local.set $31
+   local.get $16
+   local.get $16
+   f64.mul
+   local.set $29
+   local.get $29
+   local.get $29
    f64.mul
    f64.const 0.5999999999999946
-   local.get $30
+   local.get $29
    f64.const 0.4285714285785502
-   local.get $30
+   local.get $29
    f64.const 0.33333332981837743
-   local.get $30
+   local.get $29
    f64.const 0.272728123808534
-   local.get $30
+   local.get $29
    f64.const 0.23066074577556175
-   local.get $30
+   local.get $29
    f64.const 0.20697501780033842
    f64.mul
    f64.add
@@ -1093,219 +1108,219 @@
    f64.mul
    f64.add
    f64.mul
-   local.set $23
-   local.get $23
-   local.get $32
-   local.get $31
-   local.get $17
-   f64.add
-   f64.mul
-   f64.add
-   local.set $23
-   local.get $31
-   local.get $31
-   f64.mul
-   local.set $30
-   f64.const 3
-   local.get $30
-   f64.add
-   local.get $23
-   f64.add
-   local.set $33
-   local.get $33
-   i64.reinterpret_f64
-   i64.const -4294967296
-   i64.and
-   f64.reinterpret_i64
-   local.set $33
-   local.get $23
-   local.get $33
-   f64.const 3
-   f64.sub
-   local.get $30
-   f64.sub
-   f64.sub
-   local.set $34
-   local.get $31
-   local.get $33
-   f64.mul
-   local.set $25
-   local.get $32
-   local.get $33
-   f64.mul
-   local.get $34
-   local.get $17
-   f64.mul
-   f64.add
-   local.set $26
-   local.get $25
-   local.get $26
-   f64.add
-   local.set $21
-   local.get $21
-   i64.reinterpret_f64
-   i64.const -4294967296
-   i64.and
-   f64.reinterpret_i64
-   local.set $21
-   local.get $26
-   local.get $21
-   local.get $25
-   f64.sub
-   f64.sub
    local.set $22
-   f64.const 0.9617967009544373
-   local.get $21
+   local.get $22
+   local.get $31
+   local.get $30
+   local.get $16
+   f64.add
    f64.mul
-   local.set $36
+   f64.add
+   local.set $22
+   local.get $30
+   local.get $30
+   f64.mul
+   local.set $29
+   f64.const 3
+   local.get $29
+   f64.add
+   local.get $22
+   f64.add
+   local.set $32
+   local.get $32
+   i64.reinterpret_f64
+   i64.const -4294967296
+   i64.and
+   f64.reinterpret_i64
+   local.set $32
+   local.get $22
+   local.get $32
+   f64.const 3
+   f64.sub
+   local.get $29
+   f64.sub
+   f64.sub
+   local.set $33
+   local.get $30
+   local.get $32
+   f64.mul
+   local.set $24
+   local.get $31
+   local.get $32
+   f64.mul
+   local.get $33
+   local.get $16
+   f64.mul
+   f64.add
+   local.set $25
+   local.get $24
+   local.get $25
+   f64.add
+   local.set $20
+   local.get $20
+   i64.reinterpret_f64
+   i64.const -4294967296
+   i64.and
+   f64.reinterpret_i64
+   local.set $20
+   local.get $25
+   local.get $20
+   local.get $24
+   f64.sub
+   f64.sub
+   local.set $21
+   f64.const 0.9617967009544373
+   local.get $20
+   f64.mul
+   local.set $35
    f64.const 1.350039202129749e-08
    f64.const 0
    local.get $10
    select
-   local.set $37
+   local.set $36
    f64.const -7.028461650952758e-09
-   local.get $21
+   local.get $20
    f64.mul
-   local.get $22
+   local.get $21
    f64.const 0.9617966939259756
    f64.mul
    f64.add
-   local.get $37
+   local.get $36
    f64.add
-   local.set $38
-   local.get $29
+   local.set $37
+   local.get $28
    f64.convert_i32_s
-   local.set $24
+   local.set $23
    f64.const 0.5849624872207642
    f64.const 0
    local.get $10
    select
-   local.set $39
-   local.get $36
+   local.set $38
+   local.get $35
+   local.get $37
+   f64.add
    local.get $38
    f64.add
-   local.get $39
+   local.get $23
    f64.add
-   local.get $24
-   f64.add
-   local.set $19
-   local.get $19
+   local.set $18
+   local.get $18
    i64.reinterpret_f64
    i64.const -4294967296
    i64.and
    f64.reinterpret_i64
-   local.set $19
+   local.set $18
+   local.get $37
+   local.get $18
+   local.get $23
+   f64.sub
    local.get $38
-   local.get $19
-   local.get $24
    f64.sub
-   local.get $39
-   f64.sub
-   local.get $36
+   local.get $35
    f64.sub
    f64.sub
-   local.set $20
+   local.set $19
   end
   local.get $1
-  local.set $40
-  local.get $40
+  local.set $39
+  local.get $39
   i64.reinterpret_f64
   i64.const -4294967296
   i64.and
   f64.reinterpret_i64
-  local.set $40
+  local.set $39
   local.get $1
-  local.get $40
+  local.get $39
   f64.sub
-  local.get $19
+  local.get $18
   f64.mul
   local.get $1
-  local.get $20
-  f64.mul
-  f64.add
-  local.set $22
-  local.get $40
   local.get $19
   f64.mul
-  local.set $21
-  local.get $22
-  local.get $21
   f64.add
-  local.set $16
-  local.get $16
+  local.set $21
+  local.get $39
+  local.get $18
+  f64.mul
+  local.set $20
+  local.get $21
+  local.get $20
+  f64.add
+  local.set $15
+  local.get $15
   i64.reinterpret_f64
   local.set $2
   local.get $2
   i64.const 32
   i64.shr_u
   i32.wrap_i64
-  local.set $28
+  local.set $27
   local.get $2
   i32.wrap_i64
-  local.set $41
-  local.get $28
+  local.set $40
+  local.get $27
   i32.const 1083179008
   i32.ge_s
   if
-   local.get $28
+   local.get $27
    i32.const 1083179008
    i32.sub
-   local.get $41
+   local.get $40
    i32.or
    i32.const 0
    i32.ne
    if
-    local.get $18
+    local.get $17
     f64.const 1.e+300
     f64.mul
     f64.const 1.e+300
     f64.mul
     return
    end
-   local.get $22
+   local.get $21
    f64.const 8.008566259537294e-17
    f64.add
-   local.get $16
-   local.get $21
+   local.get $15
+   local.get $20
    f64.sub
    f64.gt
    if
-    local.get $18
+    local.get $17
     f64.const 1.e+300
     f64.mul
     f64.const 1.e+300
     f64.mul
     return
    end
-  else   
-   local.get $28
+  else
+   local.get $27
    i32.const 2147483647
    i32.and
    i32.const 1083231232
    i32.ge_s
    if
-    local.get $28
+    local.get $27
     i32.const -1064252416
     i32.sub
-    local.get $41
+    local.get $40
     i32.or
     i32.const 0
     i32.ne
     if
-     local.get $18
+     local.get $17
      f64.const 1e-300
      f64.mul
      f64.const 1e-300
      f64.mul
      return
     end
-    local.get $22
-    local.get $16
     local.get $21
+    local.get $15
+    local.get $20
     f64.sub
     f64.le
     if
-     local.get $18
+     local.get $17
      f64.const 1e-300
      f64.mul
      f64.const 1e-300
@@ -1314,31 +1329,31 @@
     end
    end
   end
-  local.get $28
+  local.get $27
   i32.const 2147483647
   i32.and
-  local.set $41
-  local.get $41
+  local.set $40
+  local.get $40
   i32.const 20
   i32.shr_s
   i32.const 1023
   i32.sub
   local.set $10
   i32.const 0
-  local.set $29
-  local.get $41
+  local.set $28
+  local.get $40
   i32.const 1071644672
   i32.gt_s
   if
-   local.get $28
+   local.get $27
    i32.const 1048576
    local.get $10
    i32.const 1
    i32.add
    i32.shr_s
    i32.add
-   local.set $29
-   local.get $29
+   local.set $28
+   local.get $28
    i32.const 2147483647
    i32.and
    i32.const 20
@@ -1347,8 +1362,8 @@
    i32.sub
    local.set $10
    f64.const 0
-   local.set $24
-   local.get $29
+   local.set $23
+   local.get $28
    i32.const 1048575
    local.get $10
    i32.shr_s
@@ -1359,8 +1374,8 @@
    i64.const 32
    i64.shl
    f64.reinterpret_i64
-   local.set $24
-   local.get $29
+   local.set $23
+   local.get $28
    i32.const 1048575
    i32.and
    i32.const 1048576
@@ -1369,71 +1384,71 @@
    local.get $10
    i32.sub
    i32.shr_s
-   local.set $29
-   local.get $28
+   local.set $28
+   local.get $27
    i32.const 0
    i32.lt_s
    if
     i32.const 0
-    local.get $29
+    local.get $28
     i32.sub
-    local.set $29
+    local.set $28
    end
-   local.get $21
-   local.get $24
+   local.get $20
+   local.get $23
    f64.sub
-   local.set $21
+   local.set $20
   end
-  local.get $22
   local.get $21
+  local.get $20
   f64.add
-  local.set $24
-  local.get $24
+  local.set $23
+  local.get $23
   i64.reinterpret_f64
   i64.const -4294967296
   i64.and
   f64.reinterpret_i64
-  local.set $24
-  local.get $24
+  local.set $23
+  local.get $23
   f64.const 0.6931471824645996
   f64.mul
-  local.set $25
-  local.get $22
-  local.get $24
+  local.set $24
   local.get $21
+  local.get $23
+  local.get $20
   f64.sub
   f64.sub
   f64.const 0.6931471805599453
   f64.mul
-  local.get $24
+  local.get $23
   f64.const -1.904654299957768e-09
   f64.mul
   f64.add
-  local.set $26
+  local.set $25
+  local.get $24
   local.get $25
-  local.get $26
   f64.add
-  local.set $16
-  local.get $26
-  local.get $16
+  local.set $15
   local.get $25
+  local.get $15
+  local.get $24
   f64.sub
   f64.sub
-  local.set $27
-  local.get $16
-  local.get $16
+  local.set $26
+  local.get $15
+  local.get $15
   f64.mul
-  local.set $24
-  local.get $16
-  local.get $24
+  local.set $23
+  local.get $15
+  local.get $23
   f64.const 0.16666666666666602
-  local.get $24
+  local.get $23
   f64.const -2.7777777777015593e-03
-  local.get $24
+  local.get $23
   f64.const 6.613756321437934e-05
-  local.get $24
+  local.get $23
   f64.const -1.6533902205465252e-06
-  local.get $24
+  local.get $23
   f64.const 4.1381367970572385e-08
   f64.mul
   f64.add
@@ -1445,74 +1460,74 @@
   f64.add
   f64.mul
   f64.sub
-  local.set $19
-  local.get $16
-  local.get $19
+  local.set $18
+  local.get $15
+  local.get $18
   f64.mul
-  local.get $19
+  local.get $18
   f64.const 2
   f64.sub
   f64.div
-  local.get $27
-  local.get $16
-  local.get $27
+  local.get $26
+  local.get $15
+  local.get $26
   f64.mul
   f64.add
   f64.sub
-  local.set $23
+  local.set $22
   f64.const 1
-  local.get $23
-  local.get $16
+  local.get $22
+  local.get $15
   f64.sub
   f64.sub
-  local.set $16
-  local.get $16
+  local.set $15
+  local.get $15
   i64.reinterpret_f64
   i64.const 32
   i64.shr_u
   i32.wrap_i64
-  local.set $28
+  local.set $27
+  local.get $27
   local.get $28
-  local.get $29
   i32.const 20
   i32.shl
   i32.add
-  local.set $28
-  local.get $28
+  local.set $27
+  local.get $27
   i32.const 20
   i32.shr_s
   i32.const 0
   i32.le_s
   if
-   local.get $16
-   local.get $29
+   local.get $15
+   local.get $28
    call $~lib/math/NativeMath.scalbn
-   local.set $16
-  else   
-   local.get $16
+   local.set $15
+  else
+   local.get $15
    i64.reinterpret_f64
    i64.const 4294967295
    i64.and
-   local.get $28
+   local.get $27
    i64.extend_i32_s
    i64.const 32
    i64.shl
    i64.or
    f64.reinterpret_i64
-   local.set $16
+   local.set $15
   end
-  local.get $18
-  local.get $16
+  local.get $17
+  local.get $15
   f64.mul
  )
- (func $std/operator-overloading/Tester.pow (; 12 ;) (type $FUNCSIG$iii) (param $0 i32) (param $1 i32) (result i32)
+ (func $std/operator-overloading/Tester.pow (; 13 ;) (type $FUNCSIG$iii) (param $0 i32) (param $1 i32) (result i32)
   (local $2 i32)
   local.get $0
   call $~lib/rt/stub/__retain
-  drop
+  local.set $0
   local.get $1
   call $~lib/rt/stub/__retain
-  drop
+  local.set $1
   i32.const 0
   local.get $0
   i32.load
@@ -1538,14 +1553,14 @@
   call $~lib/rt/stub/__release
   local.get $2
  )
- (func $std/operator-overloading/Tester.and (; 13 ;) (type $FUNCSIG$iii) (param $0 i32) (param $1 i32) (result i32)
+ (func $std/operator-overloading/Tester.and (; 14 ;) (type $FUNCSIG$iii) (param $0 i32) (param $1 i32) (result i32)
   (local $2 i32)
   local.get $0
   call $~lib/rt/stub/__retain
-  drop
+  local.set $0
   local.get $1
   call $~lib/rt/stub/__retain
-  drop
+  local.set $1
   i32.const 0
   local.get $0
   i32.load
@@ -1565,14 +1580,14 @@
   call $~lib/rt/stub/__release
   local.get $2
  )
- (func $std/operator-overloading/Tester.or (; 14 ;) (type $FUNCSIG$iii) (param $0 i32) (param $1 i32) (result i32)
+ (func $std/operator-overloading/Tester.or (; 15 ;) (type $FUNCSIG$iii) (param $0 i32) (param $1 i32) (result i32)
   (local $2 i32)
   local.get $0
   call $~lib/rt/stub/__retain
-  drop
+  local.set $0
   local.get $1
   call $~lib/rt/stub/__retain
-  drop
+  local.set $1
   i32.const 0
   local.get $0
   i32.load
@@ -1592,14 +1607,14 @@
   call $~lib/rt/stub/__release
   local.get $2
  )
- (func $std/operator-overloading/Tester.xor (; 15 ;) (type $FUNCSIG$iii) (param $0 i32) (param $1 i32) (result i32)
+ (func $std/operator-overloading/Tester.xor (; 16 ;) (type $FUNCSIG$iii) (param $0 i32) (param $1 i32) (result i32)
   (local $2 i32)
   local.get $0
   call $~lib/rt/stub/__retain
-  drop
+  local.set $0
   local.get $1
   call $~lib/rt/stub/__retain
-  drop
+  local.set $1
   i32.const 0
   local.get $0
   i32.load
@@ -1619,14 +1634,14 @@
   call $~lib/rt/stub/__release
   local.get $2
  )
- (func $std/operator-overloading/Tester.equals (; 16 ;) (type $FUNCSIG$iii) (param $0 i32) (param $1 i32) (result i32)
+ (func $std/operator-overloading/Tester.equals (; 17 ;) (type $FUNCSIG$iii) (param $0 i32) (param $1 i32) (result i32)
   (local $2 i32)
   local.get $0
   call $~lib/rt/stub/__retain
-  drop
+  local.set $0
   local.get $1
   call $~lib/rt/stub/__retain
-  drop
+  local.set $1
   local.get $0
   i32.load
   local.get $1
@@ -1638,7 +1653,7 @@
    local.get $1
    i32.load offset=4
    i32.eq
-  else   
+  else
    i32.const 0
   end
   local.set $2
@@ -1648,14 +1663,14 @@
   call $~lib/rt/stub/__release
   local.get $2
  )
- (func $std/operator-overloading/Tester.notEquals (; 17 ;) (type $FUNCSIG$iii) (param $0 i32) (param $1 i32) (result i32)
+ (func $std/operator-overloading/Tester.notEquals (; 18 ;) (type $FUNCSIG$iii) (param $0 i32) (param $1 i32) (result i32)
   (local $2 i32)
   local.get $0
   call $~lib/rt/stub/__retain
-  drop
+  local.set $0
   local.get $1
   call $~lib/rt/stub/__retain
-  drop
+  local.set $1
   local.get $0
   i32.load
   local.get $1
@@ -1667,7 +1682,7 @@
    local.get $1
    i32.load offset=4
    i32.ne
-  else   
+  else
    i32.const 0
   end
   local.set $2
@@ -1677,14 +1692,14 @@
   call $~lib/rt/stub/__release
   local.get $2
  )
- (func $std/operator-overloading/Tester.greater (; 18 ;) (type $FUNCSIG$iii) (param $0 i32) (param $1 i32) (result i32)
+ (func $std/operator-overloading/Tester.greater (; 19 ;) (type $FUNCSIG$iii) (param $0 i32) (param $1 i32) (result i32)
   (local $2 i32)
   local.get $0
   call $~lib/rt/stub/__retain
-  drop
+  local.set $0
   local.get $1
   call $~lib/rt/stub/__retain
-  drop
+  local.set $1
   local.get $0
   i32.load
   local.get $1
@@ -1696,7 +1711,7 @@
    local.get $1
    i32.load offset=4
    i32.gt_s
-  else   
+  else
    i32.const 0
   end
   local.set $2
@@ -1706,14 +1721,14 @@
   call $~lib/rt/stub/__release
   local.get $2
  )
- (func $std/operator-overloading/Tester.greaterEquals (; 19 ;) (type $FUNCSIG$iii) (param $0 i32) (param $1 i32) (result i32)
+ (func $std/operator-overloading/Tester.greaterEquals (; 20 ;) (type $FUNCSIG$iii) (param $0 i32) (param $1 i32) (result i32)
   (local $2 i32)
   local.get $0
   call $~lib/rt/stub/__retain
-  drop
+  local.set $0
   local.get $1
   call $~lib/rt/stub/__retain
-  drop
+  local.set $1
   local.get $0
   i32.load
   local.get $1
@@ -1725,7 +1740,7 @@
    local.get $1
    i32.load offset=4
    i32.ge_s
-  else   
+  else
    i32.const 0
   end
   local.set $2
@@ -1735,14 +1750,14 @@
   call $~lib/rt/stub/__release
   local.get $2
  )
- (func $std/operator-overloading/Tester.less (; 20 ;) (type $FUNCSIG$iii) (param $0 i32) (param $1 i32) (result i32)
+ (func $std/operator-overloading/Tester.less (; 21 ;) (type $FUNCSIG$iii) (param $0 i32) (param $1 i32) (result i32)
   (local $2 i32)
   local.get $0
   call $~lib/rt/stub/__retain
-  drop
+  local.set $0
   local.get $1
   call $~lib/rt/stub/__retain
-  drop
+  local.set $1
   local.get $0
   i32.load
   local.get $1
@@ -1754,7 +1769,7 @@
    local.get $1
    i32.load offset=4
    i32.lt_s
-  else   
+  else
    i32.const 0
   end
   local.set $2
@@ -1764,14 +1779,14 @@
   call $~lib/rt/stub/__release
   local.get $2
  )
- (func $std/operator-overloading/Tester.lessEquals (; 21 ;) (type $FUNCSIG$iii) (param $0 i32) (param $1 i32) (result i32)
+ (func $std/operator-overloading/Tester.lessEquals (; 22 ;) (type $FUNCSIG$iii) (param $0 i32) (param $1 i32) (result i32)
   (local $2 i32)
   local.get $0
   call $~lib/rt/stub/__retain
-  drop
+  local.set $0
   local.get $1
   call $~lib/rt/stub/__retain
-  drop
+  local.set $1
   local.get $0
   i32.load
   local.get $1
@@ -1783,7 +1798,7 @@
    local.get $1
    i32.load offset=4
    i32.le_s
-  else   
+  else
    i32.const 0
   end
   local.set $2
@@ -1793,11 +1808,11 @@
   call $~lib/rt/stub/__release
   local.get $2
  )
- (func $std/operator-overloading/Tester.shr (; 22 ;) (type $FUNCSIG$iii) (param $0 i32) (param $1 i32) (result i32)
+ (func $std/operator-overloading/Tester.shr (; 23 ;) (type $FUNCSIG$iii) (param $0 i32) (param $1 i32) (result i32)
   (local $2 i32)
   local.get $0
   call $~lib/rt/stub/__retain
-  drop
+  local.set $0
   i32.const 0
   local.get $0
   i32.load
@@ -1813,11 +1828,11 @@
   call $~lib/rt/stub/__release
   local.get $2
  )
- (func $std/operator-overloading/Tester.shu (; 23 ;) (type $FUNCSIG$iii) (param $0 i32) (param $1 i32) (result i32)
+ (func $std/operator-overloading/Tester.shu (; 24 ;) (type $FUNCSIG$iii) (param $0 i32) (param $1 i32) (result i32)
   (local $2 i32)
   local.get $0
   call $~lib/rt/stub/__retain
-  drop
+  local.set $0
   i32.const 0
   local.get $0
   i32.load
@@ -1833,11 +1848,11 @@
   call $~lib/rt/stub/__release
   local.get $2
  )
- (func $std/operator-overloading/Tester.shl (; 24 ;) (type $FUNCSIG$iii) (param $0 i32) (param $1 i32) (result i32)
+ (func $std/operator-overloading/Tester.shl (; 25 ;) (type $FUNCSIG$iii) (param $0 i32) (param $1 i32) (result i32)
   (local $2 i32)
   local.get $0
   call $~lib/rt/stub/__retain
-  drop
+  local.set $0
   i32.const 0
   local.get $0
   i32.load
@@ -1853,11 +1868,11 @@
   call $~lib/rt/stub/__release
   local.get $2
  )
- (func $std/operator-overloading/Tester.pos (; 25 ;) (type $FUNCSIG$ii) (param $0 i32) (result i32)
+ (func $std/operator-overloading/Tester.pos (; 26 ;) (type $FUNCSIG$ii) (param $0 i32) (result i32)
   (local $1 i32)
   local.get $0
   call $~lib/rt/stub/__retain
-  drop
+  local.set $0
   i32.const 0
   local.get $0
   i32.load
@@ -1869,11 +1884,11 @@
   call $~lib/rt/stub/__release
   local.get $1
  )
- (func $std/operator-overloading/Tester.neg (; 26 ;) (type $FUNCSIG$ii) (param $0 i32) (result i32)
+ (func $std/operator-overloading/Tester.neg (; 27 ;) (type $FUNCSIG$ii) (param $0 i32) (result i32)
   (local $1 i32)
   local.get $0
   call $~lib/rt/stub/__retain
-  drop
+  local.set $0
   i32.const 0
   i32.const 0
   local.get $0
@@ -1889,11 +1904,11 @@
   call $~lib/rt/stub/__release
   local.get $1
  )
- (func $std/operator-overloading/Tester.not (; 27 ;) (type $FUNCSIG$ii) (param $0 i32) (result i32)
+ (func $std/operator-overloading/Tester.not (; 28 ;) (type $FUNCSIG$ii) (param $0 i32) (result i32)
   (local $1 i32)
   local.get $0
   call $~lib/rt/stub/__retain
-  drop
+  local.set $0
   i32.const 0
   local.get $0
   i32.load
@@ -1909,11 +1924,11 @@
   call $~lib/rt/stub/__release
   local.get $1
  )
- (func $std/operator-overloading/Tester.excl (; 28 ;) (type $FUNCSIG$ii) (param $0 i32) (result i32)
+ (func $std/operator-overloading/Tester.excl (; 29 ;) (type $FUNCSIG$ii) (param $0 i32) (result i32)
   (local $1 i32)
   local.get $0
   call $~lib/rt/stub/__retain
-  drop
+  local.set $0
   local.get $0
   i32.load
   i32.eqz
@@ -1921,7 +1936,7 @@
    local.get $0
    i32.load offset=4
    i32.eqz
-  else   
+  else
    i32.const 0
   end
   local.set $1
@@ -1929,7 +1944,7 @@
   call $~lib/rt/stub/__release
   local.get $1
  )
- (func $std/operator-overloading/Tester#inc (; 29 ;) (type $FUNCSIG$ii) (param $0 i32) (result i32)
+ (func $std/operator-overloading/Tester#inc (; 30 ;) (type $FUNCSIG$ii) (param $0 i32) (result i32)
   local.get $0
   local.get $0
   i32.load
@@ -1945,7 +1960,7 @@
   local.get $0
   call $~lib/rt/stub/__retain
  )
- (func $std/operator-overloading/Tester#dec (; 30 ;) (type $FUNCSIG$ii) (param $0 i32) (result i32)
+ (func $std/operator-overloading/Tester#dec (; 31 ;) (type $FUNCSIG$ii) (param $0 i32) (result i32)
   local.get $0
   local.get $0
   i32.load
@@ -1961,7 +1976,7 @@
   local.get $0
   call $~lib/rt/stub/__retain
  )
- (func $std/operator-overloading/Tester#postInc (; 31 ;) (type $FUNCSIG$ii) (param $0 i32) (result i32)
+ (func $std/operator-overloading/Tester#postInc (; 32 ;) (type $FUNCSIG$ii) (param $0 i32) (result i32)
   i32.const 0
   local.get $0
   i32.load
@@ -1973,7 +1988,7 @@
   i32.add
   call $std/operator-overloading/Tester#constructor
  )
- (func $std/operator-overloading/Tester#postDec (; 32 ;) (type $FUNCSIG$ii) (param $0 i32) (result i32)
+ (func $std/operator-overloading/Tester#postDec (; 33 ;) (type $FUNCSIG$ii) (param $0 i32) (result i32)
   i32.const 0
   local.get $0
   i32.load
@@ -1985,7 +2000,7 @@
   i32.sub
   call $std/operator-overloading/Tester#constructor
  )
- (func $std/operator-overloading/TesterInlineStatic#constructor (; 33 ;) (type $FUNCSIG$iiii) (param $0 i32) (param $1 i32) (param $2 i32) (result i32)
+ (func $std/operator-overloading/TesterInlineStatic#constructor (; 34 ;) (type $FUNCSIG$iiii) (param $0 i32) (param $1 i32) (param $2 i32) (result i32)
   local.get $0
   i32.eqz
   if
@@ -2003,7 +2018,7 @@
   i32.store offset=4
   local.get $0
  )
- (func $std/operator-overloading/TesterInlineInstance#constructor (; 34 ;) (type $FUNCSIG$iiii) (param $0 i32) (param $1 i32) (param $2 i32) (result i32)
+ (func $std/operator-overloading/TesterInlineInstance#constructor (; 35 ;) (type $FUNCSIG$iiii) (param $0 i32) (param $1 i32) (param $2 i32) (result i32)
   local.get $0
   i32.eqz
   if
@@ -2021,7 +2036,7 @@
   i32.store offset=4
   local.get $0
  )
- (func $start:std/operator-overloading (; 35 ;) (type $FUNCSIG$v)
+ (func $start:std/operator-overloading (; 36 ;) (type $FUNCSIG$v)
   (local $0 i32)
   (local $1 i32)
   (local $2 i32)
@@ -2082,11 +2097,15 @@
    i32.load offset=4
    i32.const 5
    i32.eq
-  else   
+  else
    i32.const 0
   end
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 145
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -2115,11 +2134,15 @@
    i32.load offset=4
    i32.const 6
    i32.eq
-  else   
+  else
    i32.const 0
   end
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 151
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -2148,11 +2171,15 @@
    i32.load offset=4
    i32.const 10
    i32.eq
-  else   
+  else
    i32.const 0
   end
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 157
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -2181,11 +2208,15 @@
    i32.load offset=4
    i32.const 5
    i32.eq
-  else   
+  else
    i32.const 0
   end
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 163
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -2214,11 +2245,15 @@
    i32.load offset=4
    i32.const 0
    i32.eq
-  else   
+  else
    i32.const 0
   end
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 169
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -2247,11 +2282,15 @@
    i32.load offset=4
    i32.const 243
    i32.eq
-  else   
+  else
    i32.const 0
   end
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 175
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -2280,11 +2319,15 @@
    i32.load offset=4
    i32.const 15
    i32.eq
-  else   
+  else
    i32.const 0
   end
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 181
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -2313,11 +2356,15 @@
    i32.load offset=4
    i32.const 255
    i32.eq
-  else   
+  else
    i32.const 0
   end
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 187
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -2346,11 +2393,15 @@
    i32.load offset=4
    i32.const 255
    i32.eq
-  else   
+  else
    i32.const 0
   end
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 193
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -2373,6 +2424,10 @@
   i32.eq
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 199
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -2395,6 +2450,10 @@
   i32.eq
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 205
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -2407,6 +2466,10 @@
   i32.eq
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 209
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -2419,6 +2482,10 @@
   i32.eq
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 213
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -2441,6 +2508,10 @@
   i32.eq
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 219
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -2463,6 +2534,10 @@
   i32.eq
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 225
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -2485,6 +2560,10 @@
   i32.eq
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 231
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -2507,6 +2586,10 @@
   i32.eq
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 237
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -2530,11 +2613,15 @@
    i32.load offset=4
    i32.const 2
    i32.eq
-  else   
+  else
    i32.const 0
   end
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 242
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -2558,11 +2645,15 @@
    i32.load offset=4
    i32.const 536870910
    i32.eq
-  else   
+  else
    i32.const 0
   end
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 247
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -2582,7 +2673,7 @@
   if
    local.get $12
    call $~lib/rt/stub/__retain
-   drop
+   local.set $12
    local.get $13
    call $~lib/rt/stub/__release
   end
@@ -2597,11 +2688,15 @@
    i32.load offset=4
    i32.const 16
    i32.eq
-  else   
+  else
    i32.const 0
   end
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 252
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -2626,11 +2721,15 @@
    global.get $std/operator-overloading/pos
    i32.load offset=4
    i32.eq
-  else   
+  else
    i32.const 0
   end
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 257
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -2659,11 +2758,15 @@
    i32.load offset=4
    i32.sub
    i32.eq
-  else   
+  else
    i32.const 0
   end
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 262
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -2692,11 +2795,15 @@
    i32.const -1
    i32.xor
    i32.eq
-  else   
+  else
    i32.const 0
   end
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 267
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -2716,12 +2823,16 @@
    global.get $std/operator-overloading/excl
    i32.load offset=4
    i32.eqz
-  else   
+  else
    i32.const 0
   end
   i32.eq
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 272
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -2730,6 +2841,10 @@
   i32.eq
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 273
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -2748,7 +2863,7 @@
   if
    local.get $16
    call $~lib/rt/stub/__retain
-   drop
+   local.set $16
    local.get $17
    call $~lib/rt/stub/__release
   end
@@ -2763,11 +2878,15 @@
    i32.load offset=4
    i32.const 2
    i32.eq
-  else   
+  else
    i32.const 0
   end
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 279
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -2781,7 +2900,7 @@
   if
    local.get $17
    call $~lib/rt/stub/__retain
-   drop
+   local.set $17
    local.get $18
    call $~lib/rt/stub/__release
   end
@@ -2796,11 +2915,15 @@
    i32.load offset=4
    i32.const 1
    i32.eq
-  else   
+  else
    i32.const 0
   end
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 282
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -2824,7 +2947,7 @@
   if
    local.get $19
    call $~lib/rt/stub/__retain
-   drop
+   local.set $19
    local.get $20
    call $~lib/rt/stub/__release
   end
@@ -2842,11 +2965,15 @@
    i32.load offset=4
    i32.const 1
    i32.eq
-  else   
+  else
    i32.const 0
   end
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 287
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -2859,11 +2986,15 @@
    i32.load offset=4
    i32.const 2
    i32.eq
-  else   
+  else
    i32.const 0
   end
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 288
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -2878,7 +3009,7 @@
   if
    local.get $20
    call $~lib/rt/stub/__retain
-   drop
+   local.set $20
    local.get $21
    call $~lib/rt/stub/__release
   end
@@ -2892,7 +3023,7 @@
   if
    local.get $21
    call $~lib/rt/stub/__retain
-   drop
+   local.set $21
    local.get $18
    call $~lib/rt/stub/__release
   end
@@ -2907,11 +3038,15 @@
    i32.load offset=4
    i32.const 2
    i32.eq
-  else   
+  else
    i32.const 0
   end
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 291
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -2924,11 +3059,15 @@
    i32.load offset=4
    i32.const 1
    i32.eq
-  else   
+  else
    i32.const 0
   end
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 292
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -2962,7 +3101,7 @@
   if
    local.get $18
    call $~lib/rt/stub/__retain
-   drop
+   local.set $18
    local.get $21
    call $~lib/rt/stub/__release
   end
@@ -3009,11 +3148,15 @@
    i32.load offset=4
    i32.const 6
    i32.eq
-  else   
+  else
    i32.const 0
   end
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 312
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -3042,7 +3185,7 @@
   if
    local.get $21
    call $~lib/rt/stub/__retain
-   drop
+   local.set $21
    local.get $23
    call $~lib/rt/stub/__release
   end
@@ -3086,11 +3229,15 @@
    i32.load offset=4
    i32.const 6
    i32.eq
-  else   
+  else
    i32.const 0
   end
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 332
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -3141,9 +3288,9 @@
   local.get $22
   call $~lib/rt/stub/__release
  )
- (func $start (; 36 ;) (type $FUNCSIG$v)
+ (func $start (; 37 ;) (type $FUNCSIG$v)
   call $start:std/operator-overloading
  )
- (func $null (; 37 ;) (type $FUNCSIG$v)
+ (func $null (; 38 ;) (type $FUNCSIG$v)
  )
 )

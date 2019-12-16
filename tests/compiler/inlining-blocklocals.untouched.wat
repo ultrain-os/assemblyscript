@@ -1,6 +1,7 @@
 (module
  (type $FUNCSIG$v (func))
- (import "env" "abort" (func $~lib/builtins/abort))
+ (type $FUNCSIG$viiii (func (param i32 i32 i32 i32)))
+ (import "env" "abort" (func $~lib/builtins/abort (param i32 i32 i32 i32)))
  (memory $0 1)
  (data (i32.const 8) ".\00\00\00\01\00\00\00\01\00\00\00.\00\00\00i\00n\00l\00i\00n\00i\00n\00g\00-\00b\00l\00o\00c\00k\00l\00o\00c\00a\00l\00s\00.\00t\00s\00")
  (table $0 1 funcref)
@@ -48,6 +49,10 @@
   i32.eq
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 18
+   i32.const 2
    call $~lib/builtins/abort
    unreachable
   end
@@ -56,6 +61,10 @@
   i32.eq
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 19
+   i32.const 2
    call $~lib/builtins/abort
    unreachable
   end
@@ -64,6 +73,10 @@
   i32.eq
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 20
+   i32.const 2
    call $~lib/builtins/abort
    unreachable
   end
@@ -72,6 +85,10 @@
   i32.eq
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 21
+   i32.const 2
    call $~lib/builtins/abort
    unreachable
   end

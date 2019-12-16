@@ -1,7 +1,8 @@
 (module
  (type $FUNCSIG$iiii (func (param i32 i32 i32) (result i32)))
+ (type $FUNCSIG$viiii (func (param i32 i32 i32 i32)))
  (type $FUNCSIG$v (func))
- (import "env" "abort" (func $~lib/builtins/abort))
+ (import "env" "abort" (func $~lib/builtins/abort (param i32 i32 i32 i32)))
  (memory $0 1)
  (data (i32.const 8) "\14\00\00\00\01\00\00\00\01\00\00\00\14\00\00\00m\00e\00m\00m\00o\00v\00e\00.\00t\00s\00")
  (table $0 1 funcref)
@@ -124,7 +125,7 @@
     end
     unreachable
    end
-  else   
+  else
    local.get $1
    i32.const 8
    i32.rem_u
@@ -239,21 +240,27 @@
   call $memmove/memmove
   global.set $memmove/dest
   global.get $memmove/dest
-  global.get $memmove/base
-  i32.const 1
-  i32.add
+  i32.const 9
   i32.eq
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 55
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
-  global.get $memmove/base
+  i32.const 8
   i64.load
   i64.const 1229783084848853777
   i64.eq
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 56
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -263,52 +270,66 @@
   call $memmove/memmove
   global.set $memmove/dest
   global.get $memmove/dest
-  global.get $memmove/base
+  i32.const 8
   i32.eq
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 59
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
-  global.get $memmove/base
+  i32.const 8
   i64.load
   i64.const 1229783084848853777
   i64.eq
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 60
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
-  global.get $memmove/base
-  i32.const 8
-  i32.add
+  i32.const 16
   i64.load
   i64.const 2459565876494606882
   i64.eq
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 61
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
-  global.get $memmove/base
-  i32.const 16
-  i32.add
+  i32.const 24
   i64.load
   i64.const 3689348814741910323
   i64.eq
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 62
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
-  global.get $memmove/base
-  i32.const 24
-  i32.add
+  i32.const 32
   i64.load
   i64.const 4919131752989213764
   i64.eq
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 63
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -321,12 +342,16 @@
   i32.const 3
   call $memmove/memmove
   global.set $memmove/dest
-  global.get $memmove/base
+  i32.const 8
   i64.load
   i64.const 4919131679688438545
   i64.eq
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 66
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -339,45 +364,55 @@
   i32.const 15
   call $memmove/memmove
   global.set $memmove/dest
-  global.get $memmove/base
+  i32.const 8
   i64.load
   i64.const 4919131679688438545
   i64.eq
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 69
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
-  global.get $memmove/base
-  i32.const 8
-  i32.add
+  i32.const 16
   i64.load
   i64.const 3689348814741910323
   i64.eq
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 70
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
-  global.get $memmove/base
-  i32.const 16
-  i32.add
+  i32.const 24
   i64.load
   i64.const 3694152654344438852
   i64.eq
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 71
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
-  global.get $memmove/base
-  i32.const 24
-  i32.add
+  i32.const 32
   i64.load
   i64.const 4919131752989213764
   i64.eq
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 72
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end

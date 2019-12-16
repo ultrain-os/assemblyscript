@@ -1,11 +1,12 @@
 (module
  (type $FUNCSIG$i (func (result i32)))
  (type $FUNCSIG$iii (func (param i32 i32) (result i32)))
- (type $FUNCSIG$v (func))
+ (type $FUNCSIG$viiii (func (param i32 i32 i32 i32)))
  (type $FUNCSIG$jjj (func (param i64 i64) (result i64)))
  (type $FUNCSIG$ddd (func (param f64 f64) (result f64)))
  (type $FUNCSIG$iiii (func (param i32 i32 i32) (result i32)))
- (import "env" "abort" (func $~lib/builtins/abort))
+ (type $FUNCSIG$v (func))
+ (import "env" "abort" (func $~lib/builtins/abort (param i32 i32 i32 i32)))
  (memory $0 1)
  (data (i32.const 8) "\"\00\00\00\01\00\00\00\01\00\00\00\"\00\00\00f\00u\00n\00c\00t\00i\00o\00n\00-\00t\00y\00p\00e\00s\00.\00t\00s\00")
  (table $0 5 funcref)
@@ -100,6 +101,10 @@
   i32.eq
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 11
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -115,6 +120,10 @@
   i64.eq
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 15
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -128,6 +137,10 @@
   f64.eq
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 17
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -139,6 +152,10 @@
   i32.eq
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 23
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -149,6 +166,10 @@
   i32.eq
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 29
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -160,6 +181,10 @@
   i32.eq
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 35
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -173,6 +198,10 @@
   i32.eq
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 41
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -184,6 +213,10 @@
   i32.eq
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 42
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end

@@ -1,7 +1,8 @@
 (module
  (type $FUNCSIG$iiii (func (param i32 i32 i32) (result i32)))
+ (type $FUNCSIG$viiii (func (param i32 i32 i32 i32)))
  (type $FUNCSIG$v (func))
- (import "env" "abort" (func $~lib/builtins/abort))
+ (import "env" "abort" (func $~lib/builtins/abort (param i32 i32 i32 i32)))
  (memory $0 1)
  (data (i32.const 8) "\12\00\00\00\01\00\00\00\01\00\00\00\12\00\00\00m\00e\00m\00c\00p\00y\00.\00t\00s")
  (global $memcpy/dest (mut i32) (i32.const 0))
@@ -882,108 +883,163 @@
   i32.const 4
   call $memcpy/memcpy
   global.set $memcpy/dest
-  block $folding-inner0
-   global.get $memcpy/dest
-   i32.const 9
-   i32.ne
-   if
-    br $folding-inner0
-   end
-   i32.const 8
-   i64.load
-   i64.const 1229783084848853777
-   i64.ne
-   if
-    br $folding-inner0
-   end
-   i32.const 8
-   i32.const 8
-   i32.const 32
-   call $memcpy/memcpy
-   global.set $memcpy/dest
-   global.get $memcpy/dest
-   i32.const 8
-   i32.ne
-   if
-    br $folding-inner0
-   end
-   i32.const 8
-   i64.load
-   i64.const 1229783084848853777
-   i64.ne
-   if
-    br $folding-inner0
-   end
-   i32.const 16
-   i64.load
-   i64.const 2459565876494606882
-   i64.ne
-   if
-    br $folding-inner0
-   end
+  global.get $memcpy/dest
+  i32.const 9
+  i32.ne
+  if
+   i32.const 0
    i32.const 24
-   i64.load
-   i64.const 3689348814741910323
-   i64.ne
-   if
-    br $folding-inner0
-   end
-   i32.const 32
-   i64.load
-   i64.const 4919131752989213764
-   i64.ne
-   if
-    br $folding-inner0
-   end
-   i32.const 13
-   i32.const 36
-   i32.const 3
-   call $memcpy/memcpy
-   global.set $memcpy/dest
-   i32.const 8
-   i64.load
-   i64.const 4919131679688438545
-   i64.ne
-   if
-    br $folding-inner0
-   end
-   i32.const 16
-   i32.const 24
-   i32.const 15
-   call $memcpy/memcpy
-   global.set $memcpy/dest
-   i32.const 8
-   i64.load
-   i64.const 4919131679688438545
-   i64.ne
-   if
-    br $folding-inner0
-   end
-   i32.const 16
-   i64.load
-   i64.const 3689348814741910323
-   i64.ne
-   if
-    br $folding-inner0
-   end
-   i32.const 24
-   i64.load
-   i64.const 3694152654344438852
-   i64.ne
-   if
-    br $folding-inner0
-   end
-   i32.const 32
-   i64.load
-   i64.const 4919131752989213764
-   i64.ne
-   if
-    br $folding-inner0
-   end
-   return
+   i32.const 151
+   i32.const 0
+   call $~lib/builtins/abort
+   unreachable
   end
-  call $~lib/builtins/abort
-  unreachable
+  i32.const 8
+  i64.load
+  i64.const 1229783084848853777
+  i64.ne
+  if
+   i32.const 0
+   i32.const 24
+   i32.const 152
+   i32.const 0
+   call $~lib/builtins/abort
+   unreachable
+  end
+  i32.const 8
+  i32.const 8
+  i32.const 32
+  call $memcpy/memcpy
+  global.set $memcpy/dest
+  global.get $memcpy/dest
+  i32.const 8
+  i32.ne
+  if
+   i32.const 0
+   i32.const 24
+   i32.const 155
+   i32.const 0
+   call $~lib/builtins/abort
+   unreachable
+  end
+  i32.const 8
+  i64.load
+  i64.const 1229783084848853777
+  i64.ne
+  if
+   i32.const 0
+   i32.const 24
+   i32.const 156
+   i32.const 0
+   call $~lib/builtins/abort
+   unreachable
+  end
+  i32.const 16
+  i64.load
+  i64.const 2459565876494606882
+  i64.ne
+  if
+   i32.const 0
+   i32.const 24
+   i32.const 157
+   i32.const 0
+   call $~lib/builtins/abort
+   unreachable
+  end
+  i32.const 24
+  i64.load
+  i64.const 3689348814741910323
+  i64.ne
+  if
+   i32.const 0
+   i32.const 24
+   i32.const 158
+   i32.const 0
+   call $~lib/builtins/abort
+   unreachable
+  end
+  i32.const 32
+  i64.load
+  i64.const 4919131752989213764
+  i64.ne
+  if
+   i32.const 0
+   i32.const 24
+   i32.const 159
+   i32.const 0
+   call $~lib/builtins/abort
+   unreachable
+  end
+  i32.const 13
+  i32.const 36
+  i32.const 3
+  call $memcpy/memcpy
+  global.set $memcpy/dest
+  i32.const 8
+  i64.load
+  i64.const 4919131679688438545
+  i64.ne
+  if
+   i32.const 0
+   i32.const 24
+   i32.const 162
+   i32.const 0
+   call $~lib/builtins/abort
+   unreachable
+  end
+  i32.const 16
+  i32.const 24
+  i32.const 15
+  call $memcpy/memcpy
+  global.set $memcpy/dest
+  i32.const 8
+  i64.load
+  i64.const 4919131679688438545
+  i64.ne
+  if
+   i32.const 0
+   i32.const 24
+   i32.const 165
+   i32.const 0
+   call $~lib/builtins/abort
+   unreachable
+  end
+  i32.const 16
+  i64.load
+  i64.const 3689348814741910323
+  i64.ne
+  if
+   i32.const 0
+   i32.const 24
+   i32.const 166
+   i32.const 0
+   call $~lib/builtins/abort
+   unreachable
+  end
+  i32.const 24
+  i64.load
+  i64.const 3694152654344438852
+  i64.ne
+  if
+   i32.const 0
+   i32.const 24
+   i32.const 167
+   i32.const 0
+   call $~lib/builtins/abort
+   unreachable
+  end
+  i32.const 32
+  i64.load
+  i64.const 4919131752989213764
+  i64.ne
+  if
+   i32.const 0
+   i32.const 24
+   i32.const 168
+   i32.const 0
+   call $~lib/builtins/abort
+   unreachable
+  end
  )
  (func $start (; 3 ;) (type $FUNCSIG$v)
   call $start:memcpy

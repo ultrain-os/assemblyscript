@@ -1,8 +1,9 @@
 (module
+ (type $FUNCSIG$viiii (func (param i32 i32 i32 i32)))
  (type $FUNCSIG$v (func))
  (type $FUNCSIG$vi (func (param i32)))
  (type $FUNCSIG$vii (func (param i32 i32)))
- (import "env" "abort" (func $~lib/builtins/abort))
+ (import "env" "abort" (func $~lib/builtins/abort (param i32 i32 i32 i32)))
  (memory $0 1)
  (data (i32.const 8) "\1c\00\00\00\01\00\00\00\01\00\00\00\1c\00\00\00s\00t\00d\00/\00p\00o\00i\00n\00t\00e\00r\00.\00t\00s")
  (global $std/pointer/one (mut i32) (i32.const 0))
@@ -158,7 +159,7 @@
       br $continue|2
      end
     end
-   else    
+   else
     local.get $1
     i32.const 7
     i32.and
@@ -238,202 +239,373 @@
   global.set $std/pointer/one
   i32.const 24
   global.set $std/pointer/two
-  block $folding-inner0
-   global.get $std/pointer/one
-   i32.const 8
-   i32.ne
-   global.get $std/pointer/two
+  global.get $std/pointer/two
+  i32.const 24
+  i32.ne
+  if
+   i32.const 0
    i32.const 24
-   i32.ne
-   i32.or
-   br_if $folding-inner0
-   global.get $std/pointer/one
-   i32.const 1
-   i32.store
-   global.get $std/pointer/one
-   i32.const 2
-   i32.store offset=4
-   global.get $std/pointer/one
-   i32.load
-   i32.const 1
-   i32.ne
-   br_if $folding-inner0
-   global.get $std/pointer/one
-   i32.load offset=4
-   i32.const 2
-   i32.ne
-   br_if $folding-inner0
-   global.get $std/pointer/two
-   global.get $std/pointer/one
-   i32.add
-   global.set $std/pointer/add
-   global.get $std/pointer/add
-   i32.const 32
-   i32.ne
-   br_if $folding-inner0
-   global.get $std/pointer/two
-   global.get $std/pointer/one
-   i32.sub
-   global.set $std/pointer/sub
-   global.get $std/pointer/sub
-   i32.const 16
-   i32.ne
-   global.get $std/pointer/one
-   i32.const 8
-   i32.ne
-   i32.or
-   br_if $folding-inner0
-   global.get $std/pointer/one
-   i32.const 8
-   i32.add
-   global.set $std/pointer/one
-   global.get $std/pointer/one
-   global.set $std/pointer/nextOne
-   global.get $std/pointer/nextOne
-   global.get $std/pointer/one
-   i32.ne
-   global.get $std/pointer/one
-   i32.const 16
-   i32.ne
-   i32.or
-   global.get $std/pointer/two
-   i32.const 24
-   i32.ne
-   i32.or
-   br_if $folding-inner0
-   global.get $std/pointer/two
-   i32.const 8
-   i32.sub
-   global.set $std/pointer/two
-   global.get $std/pointer/two
-   i32.const 8
-   i32.sub
-   global.set $std/pointer/two
-   global.get $std/pointer/two
-   i32.const 8
-   i32.ne
-   br_if $folding-inner0
-   global.get $std/pointer/two
-   i32.load
-   i32.const 1
-   i32.ne
-   br_if $folding-inner0
-   global.get $std/pointer/two
-   i32.load offset=4
-   i32.const 2
-   i32.ne
-   br_if $folding-inner0
-   global.get $std/pointer/one
-   local.set $0
-   global.get $std/pointer/two
-   local.tee $1
-   if
-    local.get $0
-    local.get $1
-    call $~lib/memory/memory.copy
-   else    
-    local.get $0
-    call $~lib/memory/memory.fill
-   end
-   global.get $std/pointer/one
-   global.get $std/pointer/two
-   i32.eq
-   br_if $folding-inner0
-   global.get $std/pointer/one
-   i32.load
-   i32.const 1
-   i32.ne
-   br_if $folding-inner0
-   global.get $std/pointer/one
-   i32.load offset=4
-   i32.const 2
-   i32.ne
-   br_if $folding-inner0
+   i32.const 79
    i32.const 0
-   global.set $std/pointer/buf
-   global.get $std/pointer/buf
-   f32.const 1.100000023841858
-   f32.store
-   global.get $std/pointer/buf
-   i32.const 4
-   i32.add
-   f32.const 1.2000000476837158
-   f32.store
-   global.get $std/pointer/buf
-   f32.load
-   f32.const 1.100000023841858
-   f32.ne
-   br_if $folding-inner0
-   global.get $std/pointer/buf
-   i32.const 4
-   i32.add
-   f32.load
-   f32.const 1.2000000476837158
-   f32.ne
-   br_if $folding-inner0
-   global.get $std/pointer/buf
-   f32.load
-   f32.const 1.100000023841858
-   f32.ne
-   br_if $folding-inner0
-   global.get $std/pointer/buf
-   i32.const 4
-   i32.add
-   f32.load
-   f32.const 1.2000000476837158
-   f32.ne
-   br_if $folding-inner0
-   i32.const 0
-   f32.load
-   f32.const 1.100000023841858
-   f32.ne
-   br_if $folding-inner0
-   i32.const 4
-   f32.load
-   f32.const 1.2000000476837158
-   f32.ne
-   br_if $folding-inner0
-   global.get $std/pointer/buf
-   i32.const 8
-   i32.add
-   f32.const 1.2999999523162842
-   f32.store
-   global.get $std/pointer/buf
-   i32.const 8
-   i32.add
-   f32.load
-   f32.const 1.2999999523162842
-   f32.ne
-   br_if $folding-inner0
-   global.get $std/pointer/buf
-   i32.const 8
-   i32.add
-   f32.load
-   f32.const 1.2999999523162842
-   f32.ne
-   br_if $folding-inner0
-   i32.const 8
-   f32.load
-   f32.const 1.2999999523162842
-   f32.ne
-   br_if $folding-inner0
-   global.get $std/pointer/buf
-   f32.const 1.399999976158142
-   f32.store
-   global.get $std/pointer/buf
-   f32.load
-   f32.const 1.399999976158142
-   f32.ne
-   br_if $folding-inner0
-   i32.const 0
-   f32.load
-   f32.const 1.399999976158142
-   f32.ne
-   br_if $folding-inner0
-   return
+   call $~lib/builtins/abort
+   unreachable
   end
-  call $~lib/builtins/abort
-  unreachable
+  global.get $std/pointer/one
+  i32.const 1
+  i32.store
+  global.get $std/pointer/one
+  i32.const 2
+  i32.store offset=4
+  global.get $std/pointer/one
+  i32.load
+  i32.const 1
+  i32.ne
+  if
+   i32.const 0
+   i32.const 24
+   i32.const 83
+   i32.const 0
+   call $~lib/builtins/abort
+   unreachable
+  end
+  global.get $std/pointer/one
+  i32.load offset=4
+  i32.const 2
+  i32.ne
+  if
+   i32.const 0
+   i32.const 24
+   i32.const 84
+   i32.const 0
+   call $~lib/builtins/abort
+   unreachable
+  end
+  global.get $std/pointer/two
+  global.get $std/pointer/one
+  i32.add
+  global.set $std/pointer/add
+  global.get $std/pointer/add
+  i32.const 32
+  i32.ne
+  if
+   i32.const 0
+   i32.const 24
+   i32.const 87
+   i32.const 0
+   call $~lib/builtins/abort
+   unreachable
+  end
+  global.get $std/pointer/two
+  global.get $std/pointer/one
+  i32.sub
+  global.set $std/pointer/sub
+  global.get $std/pointer/sub
+  i32.const 16
+  i32.ne
+  if
+   i32.const 0
+   i32.const 24
+   i32.const 90
+   i32.const 0
+   call $~lib/builtins/abort
+   unreachable
+  end
+  global.get $std/pointer/one
+  i32.const 8
+  i32.ne
+  if
+   i32.const 0
+   i32.const 24
+   i32.const 92
+   i32.const 0
+   call $~lib/builtins/abort
+   unreachable
+  end
+  global.get $std/pointer/one
+  i32.const 8
+  i32.add
+  global.set $std/pointer/one
+  global.get $std/pointer/one
+  global.set $std/pointer/nextOne
+  global.get $std/pointer/nextOne
+  global.get $std/pointer/one
+  i32.ne
+  if
+   i32.const 0
+   i32.const 24
+   i32.const 94
+   i32.const 0
+   call $~lib/builtins/abort
+   unreachable
+  end
+  global.get $std/pointer/one
+  i32.const 16
+  i32.ne
+  if
+   i32.const 0
+   i32.const 24
+   i32.const 95
+   i32.const 0
+   call $~lib/builtins/abort
+   unreachable
+  end
+  global.get $std/pointer/two
+  i32.const 24
+  i32.ne
+  if
+   i32.const 0
+   i32.const 24
+   i32.const 97
+   i32.const 0
+   call $~lib/builtins/abort
+   unreachable
+  end
+  global.get $std/pointer/two
+  i32.const 8
+  i32.sub
+  global.set $std/pointer/two
+  global.get $std/pointer/two
+  i32.const 8
+  i32.sub
+  global.set $std/pointer/two
+  global.get $std/pointer/two
+  i32.const 8
+  i32.ne
+  if
+   i32.const 0
+   i32.const 24
+   i32.const 100
+   i32.const 0
+   call $~lib/builtins/abort
+   unreachable
+  end
+  global.get $std/pointer/two
+  i32.load
+  i32.const 1
+  i32.ne
+  if
+   i32.const 0
+   i32.const 24
+   i32.const 101
+   i32.const 0
+   call $~lib/builtins/abort
+   unreachable
+  end
+  global.get $std/pointer/two
+  i32.load offset=4
+  i32.const 2
+  i32.ne
+  if
+   i32.const 0
+   i32.const 24
+   i32.const 102
+   i32.const 0
+   call $~lib/builtins/abort
+   unreachable
+  end
+  global.get $std/pointer/one
+  local.set $0
+  global.get $std/pointer/two
+  local.tee $1
+  if
+   local.get $0
+   local.get $1
+   call $~lib/memory/memory.copy
+  else
+   local.get $0
+   call $~lib/memory/memory.fill
+  end
+  global.get $std/pointer/one
+  global.get $std/pointer/two
+  i32.eq
+  if
+   i32.const 0
+   i32.const 24
+   i32.const 105
+   i32.const 0
+   call $~lib/builtins/abort
+   unreachable
+  end
+  global.get $std/pointer/one
+  i32.load
+  i32.const 1
+  i32.ne
+  if
+   i32.const 0
+   i32.const 24
+   i32.const 106
+   i32.const 0
+   call $~lib/builtins/abort
+   unreachable
+  end
+  global.get $std/pointer/one
+  i32.load offset=4
+  i32.const 2
+  i32.ne
+  if
+   i32.const 0
+   i32.const 24
+   i32.const 107
+   i32.const 0
+   call $~lib/builtins/abort
+   unreachable
+  end
+  i32.const 0
+  global.set $std/pointer/buf
+  i32.const 0
+  f32.const 1.100000023841858
+  f32.store
+  i32.const 4
+  f32.const 1.2000000476837158
+  f32.store
+  i32.const 0
+  f32.load
+  f32.const 1.100000023841858
+  f32.ne
+  if
+   i32.const 0
+   i32.const 24
+   i32.const 113
+   i32.const 0
+   call $~lib/builtins/abort
+   unreachable
+  end
+  global.get $std/pointer/buf
+  i32.const 4
+  i32.add
+  f32.load
+  f32.const 1.2000000476837158
+  f32.ne
+  if
+   i32.const 0
+   i32.const 24
+   i32.const 114
+   i32.const 0
+   call $~lib/builtins/abort
+   unreachable
+  end
+  global.get $std/pointer/buf
+  f32.load
+  f32.const 1.100000023841858
+  f32.ne
+  if
+   i32.const 0
+   i32.const 24
+   i32.const 116
+   i32.const 0
+   call $~lib/builtins/abort
+   unreachable
+  end
+  global.get $std/pointer/buf
+  i32.const 4
+  i32.add
+  f32.load
+  f32.const 1.2000000476837158
+  f32.ne
+  if
+   i32.const 0
+   i32.const 24
+   i32.const 117
+   i32.const 0
+   call $~lib/builtins/abort
+   unreachable
+  end
+  i32.const 0
+  f32.load
+  f32.const 1.100000023841858
+  f32.ne
+  if
+   i32.const 0
+   i32.const 24
+   i32.const 119
+   i32.const 0
+   call $~lib/builtins/abort
+   unreachable
+  end
+  i32.const 4
+  f32.load
+  f32.const 1.2000000476837158
+  f32.ne
+  if
+   i32.const 0
+   i32.const 24
+   i32.const 120
+   i32.const 0
+   call $~lib/builtins/abort
+   unreachable
+  end
+  global.get $std/pointer/buf
+  i32.const 8
+  i32.add
+  f32.const 1.2999999523162842
+  f32.store
+  global.get $std/pointer/buf
+  i32.const 8
+  i32.add
+  f32.load
+  f32.const 1.2999999523162842
+  f32.ne
+  if
+   i32.const 0
+   i32.const 24
+   i32.const 123
+   i32.const 0
+   call $~lib/builtins/abort
+   unreachable
+  end
+  global.get $std/pointer/buf
+  i32.const 8
+  i32.add
+  f32.load
+  f32.const 1.2999999523162842
+  f32.ne
+  if
+   i32.const 0
+   i32.const 24
+   i32.const 124
+   i32.const 0
+   call $~lib/builtins/abort
+   unreachable
+  end
+  i32.const 8
+  f32.load
+  f32.const 1.2999999523162842
+  f32.ne
+  if
+   i32.const 0
+   i32.const 24
+   i32.const 125
+   i32.const 0
+   call $~lib/builtins/abort
+   unreachable
+  end
+  global.get $std/pointer/buf
+  f32.const 1.399999976158142
+  f32.store
+  global.get $std/pointer/buf
+  f32.load
+  f32.const 1.399999976158142
+  f32.ne
+  if
+   i32.const 0
+   i32.const 24
+   i32.const 128
+   i32.const 0
+   call $~lib/builtins/abort
+   unreachable
+  end
+  i32.const 0
+  f32.load
+  f32.const 1.399999976158142
+  f32.ne
+  if
+   i32.const 0
+   i32.const 24
+   i32.const 129
+   i32.const 0
+   call $~lib/builtins/abort
+   unreachable
+  end
  )
  (func $start (; 4 ;) (type $FUNCSIG$v)
   call $start:std/pointer

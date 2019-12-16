@@ -1,9 +1,10 @@
 (module
- (type $FUNCSIG$v (func))
  (type $FUNCSIG$ii (func (param i32) (result i32)))
+ (type $FUNCSIG$viiii (func (param i32 i32 i32 i32)))
  (type $FUNCSIG$id (func (param f64) (result i32)))
  (type $FUNCSIG$vi (func (param i32)))
- (import "env" "abort" (func $~lib/builtins/abort))
+ (type $FUNCSIG$v (func))
+ (import "env" "abort" (func $~lib/builtins/abort (param i32 i32 i32 i32)))
  (memory $0 1)
  (data (i32.const 8) "\1a\00\00\00\01\00\00\00\01\00\00\00\1a\00\00\00i\00n\00s\00t\00a\00n\00c\00e\00o\00f\00.\00t\00s\00")
  (table $0 1 funcref)
@@ -42,318 +43,14 @@
  (func $start:instanceof (; 7 ;) (type $FUNCSIG$v)
   (local $0 i32)
   (local $1 i32)
-  global.get $instanceof/a
-  drop
-  i32.const 1
-  i32.eqz
-  if
-   call $~lib/builtins/abort
-   unreachable
-  end
-  global.get $instanceof/b
-  drop
-  i32.const 1
-  i32.eqz
-  if
-   call $~lib/builtins/abort
-   unreachable
-  end
-  global.get $instanceof/i
-  drop
-  i32.const 0
-  i32.eqz
-  i32.eqz
-  if
-   call $~lib/builtins/abort
-   unreachable
-  end
-  global.get $instanceof/I
-  drop
-  i32.const 0
-  i32.eqz
-  i32.eqz
-  if
-   call $~lib/builtins/abort
-   unreachable
-  end
-  global.get $instanceof/f
-  drop
-  i32.const 0
-  i32.eqz
-  i32.eqz
-  if
-   call $~lib/builtins/abort
-   unreachable
-  end
-  global.get $instanceof/F
-  drop
-  i32.const 0
-  i32.eqz
-  i32.eqz
-  if
-   call $~lib/builtins/abort
-   unreachable
-  end
-  global.get $instanceof/b
-  drop
-  i32.const 1
-  i32.eqz
-  if
-   call $~lib/builtins/abort
-   unreachable
-  end
-  global.get $instanceof/i
-  drop
-  i32.const 0
-  i32.eqz
-  i32.eqz
-  if
-   call $~lib/builtins/abort
-   unreachable
-  end
-  global.get $instanceof/I
-  drop
-  i32.const 0
-  i32.eqz
-  i32.eqz
-  if
-   call $~lib/builtins/abort
-   unreachable
-  end
-  global.get $instanceof/f
-  drop
-  i32.const 0
-  i32.eqz
-  i32.eqz
-  if
-   call $~lib/builtins/abort
-   unreachable
-  end
-  global.get $instanceof/F
-  drop
-  i32.const 0
-  i32.eqz
-  i32.eqz
-  if
-   call $~lib/builtins/abort
-   unreachable
-  end
-  global.get $instanceof/a
-  drop
-  i32.const 0
-  i32.eqz
-  i32.eqz
-  if
-   call $~lib/builtins/abort
-   unreachable
-  end
-  global.get $instanceof/b
-  drop
-  i32.const 0
-  i32.eqz
-  i32.eqz
-  if
-   call $~lib/builtins/abort
-   unreachable
-  end
-  global.get $instanceof/i
-  drop
-  i32.const 1
-  i32.eqz
-  if
-   call $~lib/builtins/abort
-   unreachable
-  end
-  global.get $instanceof/I
-  drop
-  i32.const 0
-  i32.eqz
-  i32.eqz
-  if
-   call $~lib/builtins/abort
-   unreachable
-  end
-  global.get $instanceof/f
-  drop
-  i32.const 0
-  i32.eqz
-  i32.eqz
-  if
-   call $~lib/builtins/abort
-   unreachable
-  end
-  global.get $instanceof/F
-  drop
-  i32.const 0
-  i32.eqz
-  i32.eqz
-  if
-   call $~lib/builtins/abort
-   unreachable
-  end
-  global.get $instanceof/a
-  drop
-  i32.const 0
-  i32.eqz
-  i32.eqz
-  if
-   call $~lib/builtins/abort
-   unreachable
-  end
-  global.get $instanceof/b
-  drop
-  i32.const 0
-  i32.eqz
-  i32.eqz
-  if
-   call $~lib/builtins/abort
-   unreachable
-  end
-  global.get $instanceof/i
-  drop
-  i32.const 0
-  i32.eqz
-  i32.eqz
-  if
-   call $~lib/builtins/abort
-   unreachable
-  end
-  global.get $instanceof/I
-  drop
-  i32.const 1
-  i32.eqz
-  if
-   call $~lib/builtins/abort
-   unreachable
-  end
-  global.get $instanceof/f
-  drop
-  i32.const 0
-  i32.eqz
-  i32.eqz
-  if
-   call $~lib/builtins/abort
-   unreachable
-  end
-  global.get $instanceof/F
-  drop
-  i32.const 0
-  i32.eqz
-  i32.eqz
-  if
-   call $~lib/builtins/abort
-   unreachable
-  end
-  global.get $instanceof/a
-  drop
-  i32.const 0
-  i32.eqz
-  i32.eqz
-  if
-   call $~lib/builtins/abort
-   unreachable
-  end
-  global.get $instanceof/b
-  drop
-  i32.const 0
-  i32.eqz
-  i32.eqz
-  if
-   call $~lib/builtins/abort
-   unreachable
-  end
-  global.get $instanceof/i
-  drop
-  i32.const 0
-  i32.eqz
-  i32.eqz
-  if
-   call $~lib/builtins/abort
-   unreachable
-  end
-  global.get $instanceof/I
-  drop
-  i32.const 0
-  i32.eqz
-  i32.eqz
-  if
-   call $~lib/builtins/abort
-   unreachable
-  end
-  global.get $instanceof/f
-  drop
-  i32.const 1
-  i32.eqz
-  if
-   call $~lib/builtins/abort
-   unreachable
-  end
-  global.get $instanceof/F
-  drop
-  i32.const 0
-  i32.eqz
-  i32.eqz
-  if
-   call $~lib/builtins/abort
-   unreachable
-  end
-  global.get $instanceof/a
-  drop
-  i32.const 0
-  i32.eqz
-  i32.eqz
-  if
-   call $~lib/builtins/abort
-   unreachable
-  end
-  global.get $instanceof/b
-  drop
-  i32.const 0
-  i32.eqz
-  i32.eqz
-  if
-   call $~lib/builtins/abort
-   unreachable
-  end
-  global.get $instanceof/i
-  drop
-  i32.const 0
-  i32.eqz
-  i32.eqz
-  if
-   call $~lib/builtins/abort
-   unreachable
-  end
-  global.get $instanceof/I
-  drop
-  i32.const 0
-  i32.eqz
-  i32.eqz
-  if
-   call $~lib/builtins/abort
-   unreachable
-  end
-  global.get $instanceof/f
-  drop
-  i32.const 0
-  i32.eqz
-  i32.eqz
-  if
-   call $~lib/builtins/abort
-   unreachable
-  end
-  global.get $instanceof/F
-  drop
-  i32.const 1
-  i32.eqz
-  if
-   call $~lib/builtins/abort
-   unreachable
-  end
   i32.const 0
   call $instanceof/isI32<i32>
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 62
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -362,6 +59,10 @@
   i32.eqz
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 63
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -370,6 +71,10 @@
   i32.eqz
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 64
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -378,6 +83,10 @@
   i32.eqz
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 65
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -387,14 +96,10 @@
   i32.eqz
   i32.eqz
   if
-   call $~lib/builtins/abort
-   unreachable
-  end
-  global.get $instanceof/an
-  drop
-  i32.const 1
-  i32.eqz
-  if
+   i32.const 0
+   i32.const 24
+   i32.const 68
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -406,7 +111,7 @@
   if
    local.get $0
    call $~lib/rt/stub/__retain
-   drop
+   local.set $0
    local.get $1
    call $~lib/rt/stub/__release
   end
@@ -417,14 +122,10 @@
   i32.ne
   i32.eqz
   if
-   call $~lib/builtins/abort
-   unreachable
-  end
-  global.get $instanceof/an
-  drop
-  i32.const 1
-  i32.eqz
-  if
+   i32.const 0
+   i32.const 24
+   i32.const 71
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end

@@ -1,7 +1,8 @@
 (module
  (type $FUNCSIG$ii (func (param i32) (result i32)))
+ (type $FUNCSIG$viiii (func (param i32 i32 i32 i32)))
  (type $FUNCSIG$v (func))
- (import "env" "abort" (func $~lib/builtins/abort))
+ (import "env" "abort" (func $~lib/builtins/abort (param i32 i32 i32 i32)))
  (memory $0 1)
  (data (i32.const 8) "\n\00\00\00\01\00\00\00\01\00\00\00\n\00\00\00i\00f\00.\00t\00s")
  (data (i32.const 40) "\n\00\00\00\01\00\00\00\01\00\00\00\n\00\00\00e\00r\00r\00o\00r")
@@ -26,53 +27,82 @@
   i32.const 0
  )
  (func $start:if (; 3 ;) (type $FUNCSIG$v)
-  block $folding-inner0
+  i32.const 0
+  call $if/ifThenElse
+  if
    i32.const 0
-   call $if/ifThenElse
-   if
-    br $folding-inner0
-   end
-   i32.const 1
-   call $if/ifThenElse
-   i32.const 1
-   i32.ne
-   if
-    br $folding-inner0
-   end
+   i32.const 24
+   i32.const 8
    i32.const 0
-   call $if/ifThen
-   if
-    br $folding-inner0
-   end
-   i32.const 1
-   call $if/ifThen
-   i32.const 1
-   i32.ne
-   if
-    br $folding-inner0
-   end
-   i32.const 0
-   call $if/ifThenElse
-   if
-    br $folding-inner0
-   end
-   i32.const 1
-   call $if/ifThenElse
-   i32.const 1
-   i32.ne
-   if
-    br $folding-inner0
-   end
-   return
+   call $~lib/builtins/abort
+   unreachable
   end
-  call $~lib/builtins/abort
-  unreachable
+  i32.const 1
+  call $if/ifThenElse
+  i32.const 1
+  i32.ne
+  if
+   i32.const 0
+   i32.const 24
+   i32.const 9
+   i32.const 0
+   call $~lib/builtins/abort
+   unreachable
+  end
+  i32.const 0
+  call $if/ifThen
+  if
+   i32.const 0
+   i32.const 24
+   i32.const 17
+   i32.const 0
+   call $~lib/builtins/abort
+   unreachable
+  end
+  i32.const 1
+  call $if/ifThen
+  i32.const 1
+  i32.ne
+  if
+   i32.const 0
+   i32.const 24
+   i32.const 18
+   i32.const 0
+   call $~lib/builtins/abort
+   unreachable
+  end
+  i32.const 0
+  call $if/ifThenElse
+  if
+   i32.const 0
+   i32.const 24
+   i32.const 30
+   i32.const 0
+   call $~lib/builtins/abort
+   unreachable
+  end
+  i32.const 1
+  call $if/ifThenElse
+  i32.const 1
+  i32.ne
+  if
+   i32.const 0
+   i32.const 24
+   i32.const 31
+   i32.const 0
+   call $~lib/builtins/abort
+   unreachable
+  end
  )
  (func $if/ifAlwaysReturns (; 4 ;) (type $FUNCSIG$ii) (param $0 i32) (result i32)
   local.get $0
   if (result i32)
    i32.const 1
-  else   
+  else
+   i32.const 56
+   i32.const 24
+   i32.const 37
+   i32.const 4
    call $~lib/builtins/abort
    unreachable
   end

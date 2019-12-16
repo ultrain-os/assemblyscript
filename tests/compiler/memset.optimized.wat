@@ -1,7 +1,8 @@
 (module
+ (type $FUNCSIG$viiii (func (param i32 i32 i32 i32)))
  (type $FUNCSIG$v (func))
  (type $FUNCSIG$viii (func (param i32 i32 i32)))
- (import "env" "abort" (func $~lib/builtins/abort))
+ (import "env" "abort" (func $~lib/builtins/abort (param i32 i32 i32 i32)))
  (memory $0 1)
  (data (i32.const 8) "\12\00\00\00\01\00\00\00\01\00\00\00\12\00\00\00m\00e\00m\00s\00e\00t\00.\00t\00s")
  (global $memset/dest (mut i32) (i32.const 0))
@@ -233,71 +234,96 @@
  (func $start:memset (; 2 ;) (type $FUNCSIG$v)
   i32.const 44
   global.set $memset/dest
-  global.get $memset/dest
+  i32.const 44
   i32.const 1
   i32.const 16
   call $memset/memset
-  block $folding-inner0
-   global.get $memset/dest
-   i32.load8_u
-   i32.const 1
-   i32.ne
-   if
-    br $folding-inner0
-   end
-   global.get $memset/dest
-   i32.const 15
-   i32.add
-   i32.load8_u
-   i32.const 1
-   i32.ne
-   if
-    br $folding-inner0
-   end
-   global.get $memset/dest
-   i32.const 1
-   i32.add
-   i32.const 2
-   i32.const 14
-   call $memset/memset
-   global.get $memset/dest
-   i32.load8_u
-   i32.const 1
-   i32.ne
-   if
-    br $folding-inner0
-   end
-   global.get $memset/dest
-   i32.const 1
-   i32.add
-   i32.load8_u
-   i32.const 2
-   i32.ne
-   if
-    br $folding-inner0
-   end
-   global.get $memset/dest
-   i32.const 14
-   i32.add
-   i32.load8_u
-   i32.const 2
-   i32.ne
-   if
-    br $folding-inner0
-   end
-   global.get $memset/dest
-   i32.const 15
-   i32.add
-   i32.load8_u
-   i32.const 1
-   i32.ne
-   if
-    br $folding-inner0
-   end
-   return
+  global.get $memset/dest
+  i32.load8_u
+  i32.const 1
+  i32.ne
+  if
+   i32.const 0
+   i32.const 24
+   i32.const 72
+   i32.const 0
+   call $~lib/builtins/abort
+   unreachable
   end
-  call $~lib/builtins/abort
-  unreachable
+  global.get $memset/dest
+  i32.const 15
+  i32.add
+  i32.load8_u
+  i32.const 1
+  i32.ne
+  if
+   i32.const 0
+   i32.const 24
+   i32.const 73
+   i32.const 0
+   call $~lib/builtins/abort
+   unreachable
+  end
+  global.get $memset/dest
+  i32.const 1
+  i32.add
+  i32.const 2
+  i32.const 14
+  call $memset/memset
+  global.get $memset/dest
+  i32.load8_u
+  i32.const 1
+  i32.ne
+  if
+   i32.const 0
+   i32.const 24
+   i32.const 77
+   i32.const 0
+   call $~lib/builtins/abort
+   unreachable
+  end
+  global.get $memset/dest
+  i32.const 1
+  i32.add
+  i32.load8_u
+  i32.const 2
+  i32.ne
+  if
+   i32.const 0
+   i32.const 24
+   i32.const 78
+   i32.const 0
+   call $~lib/builtins/abort
+   unreachable
+  end
+  global.get $memset/dest
+  i32.const 14
+  i32.add
+  i32.load8_u
+  i32.const 2
+  i32.ne
+  if
+   i32.const 0
+   i32.const 24
+   i32.const 79
+   i32.const 0
+   call $~lib/builtins/abort
+   unreachable
+  end
+  global.get $memset/dest
+  i32.const 15
+  i32.add
+  i32.load8_u
+  i32.const 1
+  i32.ne
+  if
+   i32.const 0
+   i32.const 24
+   i32.const 80
+   i32.const 0
+   call $~lib/builtins/abort
+   unreachable
+  end
  )
  (func $start (; 3 ;) (type $FUNCSIG$v)
   call $start:memset

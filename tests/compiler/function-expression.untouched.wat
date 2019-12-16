@@ -1,13 +1,14 @@
 (module
  (type $FUNCSIG$ii (func (param i32) (result i32)))
+ (type $FUNCSIG$viiii (func (param i32 i32 i32 i32)))
  (type $FUNCSIG$v (func))
  (type $FUNCSIG$i (func (result i32)))
  (type $FUNCSIG$iii (func (param i32 i32) (result i32)))
- (import "env" "abort" (func $~lib/builtins/abort))
+ (import "env" "abort" (func $~lib/builtins/abort (param i32 i32 i32 i32)))
  (memory $0 1)
  (data (i32.const 8) ",\00\00\00\01\00\00\00\01\00\00\00,\00\00\00f\00u\00n\00c\00t\00i\00o\00n\00-\00e\00x\00p\00r\00e\00s\00s\00i\00o\00n\00.\00t\00s\00")
- (table $0 11 funcref)
- (elem (i32.const 0) $null $start:function-expression~anonymous|0 $start:function-expression~anonymous|1 $start:function-expression~someName $start:function-expression~anonymous|2 $start:function-expression~anonymous|3 $start:function-expression~anonymous|4 $start:function-expression~anonymous|5 $function-expression/testOmittedReturn1~anonymous|0 $function-expression/testOmittedReturn2~anonymous|0 $function-expression/testOmittedReturn3~anonymous|0)
+ (table $0 12 funcref)
+ (elem (i32.const 0) $null $start:function-expression~anonymous|0 $start:function-expression~anonymous|1 $start:function-expression~someName $start:function-expression~anonymous|2 $start:function-expression~anonymous|3 $start:function-expression~anonymous|4 $start:function-expression~anonymous|5 $function-expression/testOmittedReturn1~anonymous|0 $function-expression/testOmittedReturn2~anonymous|0 $function-expression/testOmittedReturn3~anonymous|0 $function-expression/testNullable~anonymous|0)
  (global $function-expression/f1 (mut i32) (i32.const 1))
  (global $~lib/argc (mut i32) (i32.const 0))
  (global $function-expression/f2 (mut i32) (i32.const 2))
@@ -66,7 +67,21 @@
  (func $function-expression/testOmittedReturn3 (; 14 ;) (type $FUNCSIG$i) (result i32)
   i32.const 10
  )
- (func $start:function-expression (; 15 ;) (type $FUNCSIG$v)
+ (func $function-expression/testNullable~anonymous|0 (; 15 ;) (type $FUNCSIG$i) (result i32)
+  i32.const 1
+ )
+ (func $function-expression/testNullable (; 16 ;) (type $FUNCSIG$ii) (param $0 i32) (result i32)
+  local.get $0
+  if
+   i32.const 11
+   return
+  else
+   i32.const 0
+   return
+  end
+  unreachable
+ )
+ (func $start:function-expression (; 17 ;) (type $FUNCSIG$v)
   i32.const 1
   global.set $~lib/argc
   i32.const 1
@@ -76,6 +91,10 @@
   i32.eq
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 4
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -88,6 +107,10 @@
   i32.eq
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 9
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -103,6 +126,10 @@
   i32.eq
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 16
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -112,6 +139,10 @@
   i32.eq
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 21
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -121,6 +152,10 @@
   i32.eq
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 22
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -130,6 +165,10 @@
   i32.eq
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 23
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -143,6 +182,10 @@
   i32.eq
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 34
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -156,6 +199,10 @@
   i32.eq
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 35
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -169,13 +216,30 @@
   i32.eq
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 36
+   i32.const 0
+   call $~lib/builtins/abort
+   unreachable
+  end
+  i32.const 0
+  call $function-expression/testNullable
+  i32.const 0
+  i32.eq
+  i32.eqz
+  if
+   i32.const 0
+   i32.const 24
+   i32.const 45
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
  )
- (func $start (; 16 ;) (type $FUNCSIG$v)
+ (func $start (; 18 ;) (type $FUNCSIG$v)
   call $start:function-expression
  )
- (func $null (; 17 ;) (type $FUNCSIG$v)
+ (func $null (; 19 ;) (type $FUNCSIG$v)
  )
 )

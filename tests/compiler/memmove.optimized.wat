@@ -1,7 +1,8 @@
 (module
  (type $FUNCSIG$iiii (func (param i32 i32 i32) (result i32)))
+ (type $FUNCSIG$viiii (func (param i32 i32 i32 i32)))
  (type $FUNCSIG$v (func))
- (import "env" "abort" (func $~lib/builtins/abort))
+ (import "env" "abort" (func $~lib/builtins/abort (param i32 i32 i32 i32)))
  (memory $0 1)
  (data (i32.const 8) "\14\00\00\00\01\00\00\00\01\00\00\00\14\00\00\00m\00e\00m\00m\00o\00v\00e\00.\00t\00s")
  (global $memmove/dest (mut i32) (i32.const 0))
@@ -58,7 +59,7 @@
        i32.load8_u
        i32.store8
        br $continue|0
-      else       
+      else
        local.get $3
        return
       end
@@ -115,7 +116,7 @@
      br $continue|2
     end
    end
-  else   
+  else
    local.get $1
    i32.const 7
    i32.and
@@ -145,7 +146,7 @@
        i32.load8_u
        i32.store8
        br $continue|3
-      else       
+      else
        local.get $3
        return
       end
@@ -211,108 +212,163 @@
   i32.const 4
   call $memmove/memmove
   global.set $memmove/dest
-  block $folding-inner0
-   global.get $memmove/dest
-   i32.const 9
-   i32.ne
-   if
-    br $folding-inner0
-   end
-   i32.const 8
-   i64.load
-   i64.const 1229783084848853777
-   i64.ne
-   if
-    br $folding-inner0
-   end
-   i32.const 8
-   i32.const 8
-   i32.const 32
-   call $memmove/memmove
-   global.set $memmove/dest
-   global.get $memmove/dest
-   i32.const 8
-   i32.ne
-   if
-    br $folding-inner0
-   end
-   i32.const 8
-   i64.load
-   i64.const 1229783084848853777
-   i64.ne
-   if
-    br $folding-inner0
-   end
-   i32.const 16
-   i64.load
-   i64.const 2459565876494606882
-   i64.ne
-   if
-    br $folding-inner0
-   end
+  global.get $memmove/dest
+  i32.const 9
+  i32.ne
+  if
+   i32.const 0
    i32.const 24
-   i64.load
-   i64.const 3689348814741910323
-   i64.ne
-   if
-    br $folding-inner0
-   end
-   i32.const 32
-   i64.load
-   i64.const 4919131752989213764
-   i64.ne
-   if
-    br $folding-inner0
-   end
-   i32.const 13
-   i32.const 36
-   i32.const 3
-   call $memmove/memmove
-   global.set $memmove/dest
-   i32.const 8
-   i64.load
-   i64.const 4919131679688438545
-   i64.ne
-   if
-    br $folding-inner0
-   end
-   i32.const 16
-   i32.const 24
-   i32.const 15
-   call $memmove/memmove
-   global.set $memmove/dest
-   i32.const 8
-   i64.load
-   i64.const 4919131679688438545
-   i64.ne
-   if
-    br $folding-inner0
-   end
-   i32.const 16
-   i64.load
-   i64.const 3689348814741910323
-   i64.ne
-   if
-    br $folding-inner0
-   end
-   i32.const 24
-   i64.load
-   i64.const 3694152654344438852
-   i64.ne
-   if
-    br $folding-inner0
-   end
-   i32.const 32
-   i64.load
-   i64.const 4919131752989213764
-   i64.ne
-   if
-    br $folding-inner0
-   end
-   return
+   i32.const 55
+   i32.const 0
+   call $~lib/builtins/abort
+   unreachable
   end
-  call $~lib/builtins/abort
-  unreachable
+  i32.const 8
+  i64.load
+  i64.const 1229783084848853777
+  i64.ne
+  if
+   i32.const 0
+   i32.const 24
+   i32.const 56
+   i32.const 0
+   call $~lib/builtins/abort
+   unreachable
+  end
+  i32.const 8
+  i32.const 8
+  i32.const 32
+  call $memmove/memmove
+  global.set $memmove/dest
+  global.get $memmove/dest
+  i32.const 8
+  i32.ne
+  if
+   i32.const 0
+   i32.const 24
+   i32.const 59
+   i32.const 0
+   call $~lib/builtins/abort
+   unreachable
+  end
+  i32.const 8
+  i64.load
+  i64.const 1229783084848853777
+  i64.ne
+  if
+   i32.const 0
+   i32.const 24
+   i32.const 60
+   i32.const 0
+   call $~lib/builtins/abort
+   unreachable
+  end
+  i32.const 16
+  i64.load
+  i64.const 2459565876494606882
+  i64.ne
+  if
+   i32.const 0
+   i32.const 24
+   i32.const 61
+   i32.const 0
+   call $~lib/builtins/abort
+   unreachable
+  end
+  i32.const 24
+  i64.load
+  i64.const 3689348814741910323
+  i64.ne
+  if
+   i32.const 0
+   i32.const 24
+   i32.const 62
+   i32.const 0
+   call $~lib/builtins/abort
+   unreachable
+  end
+  i32.const 32
+  i64.load
+  i64.const 4919131752989213764
+  i64.ne
+  if
+   i32.const 0
+   i32.const 24
+   i32.const 63
+   i32.const 0
+   call $~lib/builtins/abort
+   unreachable
+  end
+  i32.const 13
+  i32.const 36
+  i32.const 3
+  call $memmove/memmove
+  global.set $memmove/dest
+  i32.const 8
+  i64.load
+  i64.const 4919131679688438545
+  i64.ne
+  if
+   i32.const 0
+   i32.const 24
+   i32.const 66
+   i32.const 0
+   call $~lib/builtins/abort
+   unreachable
+  end
+  i32.const 16
+  i32.const 24
+  i32.const 15
+  call $memmove/memmove
+  global.set $memmove/dest
+  i32.const 8
+  i64.load
+  i64.const 4919131679688438545
+  i64.ne
+  if
+   i32.const 0
+   i32.const 24
+   i32.const 69
+   i32.const 0
+   call $~lib/builtins/abort
+   unreachable
+  end
+  i32.const 16
+  i64.load
+  i64.const 3689348814741910323
+  i64.ne
+  if
+   i32.const 0
+   i32.const 24
+   i32.const 70
+   i32.const 0
+   call $~lib/builtins/abort
+   unreachable
+  end
+  i32.const 24
+  i64.load
+  i64.const 3694152654344438852
+  i64.ne
+  if
+   i32.const 0
+   i32.const 24
+   i32.const 71
+   i32.const 0
+   call $~lib/builtins/abort
+   unreachable
+  end
+  i32.const 32
+  i64.load
+  i64.const 4919131752989213764
+  i64.ne
+  if
+   i32.const 0
+   i32.const 24
+   i32.const 72
+   i32.const 0
+   call $~lib/builtins/abort
+   unreachable
+  end
  )
  (func $start (; 3 ;) (type $FUNCSIG$v)
   call $start:memmove

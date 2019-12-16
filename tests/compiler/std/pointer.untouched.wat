@@ -1,9 +1,10 @@
 (module
  (type $FUNCSIG$ii (func (param i32) (result i32)))
- (type $FUNCSIG$v (func))
+ (type $FUNCSIG$viiii (func (param i32 i32 i32 i32)))
  (type $FUNCSIG$vi (func (param i32)))
  (type $FUNCSIG$viii (func (param i32 i32 i32)))
- (import "env" "abort" (func $~lib/builtins/abort))
+ (type $FUNCSIG$v (func))
+ (import "env" "abort" (func $~lib/builtins/abort (param i32 i32 i32 i32)))
  (memory $0 1)
  (data (i32.const 8) "\1c\00\00\00\01\00\00\00\01\00\00\00\1c\00\00\00s\00t\00d\00/\00p\00o\00i\00n\00t\00e\00r\00.\00t\00s\00")
  (table $0 1 funcref)
@@ -298,7 +299,7 @@
      local.get $1
      i32.const 3
      i32.and
-    else     
+    else
      i32.const 0
     end
     i32.eqz
@@ -1340,7 +1341,7 @@
    i32.le_u
    if (result i32)
     i32.const 1
-   else    
+   else
     local.get $5
     local.get $3
     i32.add
@@ -1455,7 +1456,7 @@
      end
      unreachable
     end
-   else    
+   else
     local.get $4
     i32.const 7
     i32.and
@@ -1571,6 +1572,10 @@
   i32.eq
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 78
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -1581,6 +1586,10 @@
   i32.eq
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 79
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -1611,6 +1620,10 @@
   i32.eq
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 83
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -1625,6 +1638,10 @@
   i32.eq
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 84
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -1651,6 +1668,10 @@
   i32.eq
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 87
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -1677,6 +1698,10 @@
   i32.eq
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 90
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -1687,6 +1712,10 @@
   i32.eq
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 92
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -1704,7 +1733,7 @@
   if
    local.get $0
    call $~lib/rt/stub/__retain
-   drop
+   local.set $0
    local.get $4
    call $~lib/rt/stub/__release
   end
@@ -1718,6 +1747,10 @@
   i32.eq
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 94
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -1728,6 +1761,10 @@
   i32.eq
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 95
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -1738,6 +1775,10 @@
   i32.eq
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 97
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -1755,7 +1796,7 @@
   if
    local.get $0
    call $~lib/rt/stub/__retain
-   drop
+   local.set $0
    local.get $5
    call $~lib/rt/stub/__release
   end
@@ -1775,7 +1816,7 @@
   if
    local.get $0
    call $~lib/rt/stub/__retain
-   drop
+   local.set $0
    local.get $6
    call $~lib/rt/stub/__release
   end
@@ -1788,6 +1829,10 @@
   i32.eq
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 100
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -1802,6 +1847,10 @@
   i32.eq
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 101
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -1816,6 +1865,10 @@
   i32.eq
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 102
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -1836,7 +1889,7 @@
    i32.const 0
    i32.const 8
    call $~lib/memory/memory.fill
-  else   
+  else
    local.get $7
    local.get $6
    i32.const 8
@@ -1851,6 +1904,10 @@
   i32.ne
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 105
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -1865,6 +1922,10 @@
   i32.eq
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 106
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -1879,6 +1940,10 @@
   i32.eq
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 107
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -1929,6 +1994,10 @@
   f32.eq
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 113
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -1946,6 +2015,10 @@
   f32.eq
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 114
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -1963,6 +2036,10 @@
   f32.eq
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 116
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -1980,6 +2057,10 @@
   f32.eq
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 117
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -1989,6 +2070,10 @@
   f32.eq
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 119
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -1998,6 +2083,10 @@
   f32.eq
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 120
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -2028,6 +2117,10 @@
   f32.eq
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 123
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -2045,6 +2138,10 @@
   f32.eq
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 124
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -2054,6 +2151,10 @@
   f32.eq
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 125
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -2075,6 +2176,10 @@
   f32.eq
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 128
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
@@ -2084,6 +2189,10 @@
   f32.eq
   i32.eqz
   if
+   i32.const 0
+   i32.const 24
+   i32.const 129
+   i32.const 0
    call $~lib/builtins/abort
    unreachable
   end
