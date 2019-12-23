@@ -55,12 +55,10 @@ export class Array<T> extends ArrayBufferView implements Serializable {
   private serializeItem (val: T, ds: DataStream): void {
     if (isInteger<T>()) {
         ds.write<T>(val);
-    } else if (isString<T>(val)) {
+    } else if (isString<T>()) {
         ds.writeString(changetype<string>(val));
-    } else if (isReference<T>(val)) {
-        val.serialize(ds);
     } else {
-        assert(false, "unsupport value type for serializable map.");
+        val.serialize(ds);
     }
   }
 

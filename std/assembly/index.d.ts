@@ -1355,7 +1355,7 @@ declare class Float64Array extends TypedArray<f64> {
 }
 
 /** Class representing a sequence of values of type `T`. */
-declare class Array<T> {
+declare class Array<T> implements Serializable { // fanliangqin add Serializable
 
   /** Tests if a value is an array. */
   static isArray<U>(value: any): value is Array<any>;
@@ -1390,6 +1390,10 @@ declare class Array<T> {
   join(separator?: string): string;
   reverse(): T[];
   toString(): string;
+
+  serialize(ds: DataStream): void;
+  deserialize(ds: DataStream): void;
+  primaryKey(): u64;
 }
 
 /** Class representing a fixed sequence of values of type `T`. */
@@ -1523,20 +1527,22 @@ interface Function {}
 interface IArguments {}
 interface RegExp {}
 
-declare class Map<K,V> implements Serializable { // fanliangqin add
+declare class Map<K,V> implements Serializable { // fanliangqin add Serializable
   readonly size: i32;
   has(key: K): bool;
   set(key: K, value: V): void;
   keys(): K[];
   values(): V[];
-  serialize(ds: DataStream): void;
-  deserialize(ds: DataStream): void;
   get(key: K): V;
   delete(key: K): bool;
   clear(): void;
   keys(): K[]; // preliminary
   values(): V[]; // preliminary
   toString(): string;
+
+  serialize(ds: DataStream): void;
+  deserialize(ds: DataStream): void;
+  primaryKey(): u64;
 }
 
 declare class Set<K> {
@@ -1776,7 +1782,6 @@ declare function ignore(target: Function, propertyKey?: any, descriptor?: any): 
 /** Annotates a class filed is the primary key */
 declare function primaryid(target: Function, propertyKey?: any, descriptor?: any): void;
 
-
 /** Object serializable interface */
 interface Serializable { }
 
@@ -1807,21 +1812,6 @@ declare class DataStream {
   readString(): string;
   writeString(str: string): void;
   writeDouble(d: f64): void;
-}
-
-declare class ArrayMap<K, V> implements Serializable {
-  constructor(len: u32);
-  set(key: K, val: V[]): void;
-  get(key: K): V[];
-  remove(key: K): boolean;
-  size(): i32;
-  keys(): K[];
-  values(): V[][];
-  clear(): void;
-  contains(key: K): boolean;
-  serialize(ds: DataStream): void;
-  deserialize(ds: DataStream): void;
-  primaryKey(): u64;
 }
 
 declare class Cursor<T extends Serializable> {

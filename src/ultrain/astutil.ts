@@ -37,7 +37,7 @@ export class AstUtil {
      * @param statement Ast declaration statement
      * @param kind The specify decorators
      */
-    static haveSpecifyDecorator(statement: DeclarationStatement, kind: DecoratorKind): bool {
+    static haveSpecifyDecorator(statement: DeclarationStatement, kind: DecoratorKind): boolean {
         if (statement.decorators) {
             for (let decorator of statement.decorators) {
                 if (decorator.decoratorKind == kind) {
@@ -59,7 +59,7 @@ export class AstUtil {
         return null;
     }
 
-    static isString(typeName: string): bool {
+    static isString(typeName: string): boolean {
         return "string" == typeName || "String" == typeName;
     }
 
@@ -98,7 +98,7 @@ export class AstUtil {
      * Test the declare type whether is array type or not.
      * @param declareType The declare type
      */
-    static isArrayType(declareType: string): bool {
+    static isArrayType(declareType: string): boolean {
         return declareType == "[]" || declareType == "Array";
     }
 
@@ -106,18 +106,14 @@ export class AstUtil {
      * Whether the declare type is map
      * @param declareType the declare type
      */
-    static isMapType(declareType: string): bool {
-        return declareType == "Map" || declareType == "ArrayMap";
-    }
-
-    static isArrayMap(declareType: string): bool {
-        return "ArrayMap" == declareType;
+    static isMapType(declareType: string): boolean {
+        return declareType == "Map";
     }
 
     /**
      * Test the class whether to implement the Serializable interface or not.
      */
-    static impledSerializable(classPrototype: ClassPrototype | null): bool {
+    static impledSerializable(classPrototype: ClassPrototype | null): boolean {
         if (!classPrototype) {
             return false;
         }
@@ -130,12 +126,12 @@ export class AstUtil {
      * Test the class whetherto implement the Returnable interface or not.
      * @param classDeclaration The class declaration
      */
-    static impledReturnable(classDeclaration: ClassDeclaration): bool {
+    static impledReturnable(classDeclaration: ClassDeclaration): boolean {
         const interfaceName = "Returnable";
         return AstUtil.impledInterface(classDeclaration, interfaceName);
     }
 
-    private static impledInterface(classDeclaration: ClassDeclaration, interfaceName: string): bool {
+    private static impledInterface(classDeclaration: ClassDeclaration, interfaceName: string): boolean {
         var implementsTypes = classDeclaration.implementsTypes;
         if (implementsTypes) {
             for (let _type of implementsTypes) {
@@ -150,7 +146,7 @@ export class AstUtil {
     /**
      * Check the classPrototype whther have the contract class.
      */
-    static extendedContract(classPrototype: ClassPrototype): bool {
+    static extendedContract(classPrototype: ClassPrototype): boolean {
         const contractName = "Contract";
         var basePrototype: ClassPrototype | null = classPrototype.basePrototype;
         if (basePrototype && basePrototype.name == contractName) {
@@ -159,11 +155,11 @@ export class AstUtil {
         return false;
     }
 
-    static isClassPrototype(element: Element): bool {
+    static isClassPrototype(element: Element): boolean {
         return element.kind == ElementKind.CLASS_PROTOTYPE;
     }
 
-    static isSpecifyElement(element: Element, kind: ElementKind): bool {
+    static isSpecifyElement(element: Element, kind: ElementKind): boolean {
         return element.kind == kind;
     }
 
@@ -228,7 +224,7 @@ export class TypeNodeAnalyzer {
         return this.typeNode.range.toString();
     }
 
-    isVoid(): bool {
+    isVoid(): boolean {
         return this.typeName == "void";
     }
 
@@ -262,7 +258,7 @@ export class TypeNodeAnalyzer {
         return AbiTypeEnum.NUMBER;
     }
 
-    isArray(): bool {
+    isArray(): boolean {
         return this.abiTypeEnum == AbiTypeEnum.ARRAY;
     }
 
@@ -278,7 +274,7 @@ export class TypeNodeAnalyzer {
         return AbiTypeEnum.NUMBER;
     }
 
-    isPrimaryType(): bool {
+    isPrimaryType(): boolean {
         if (this.abiTypeEnum == AbiTypeEnum.NUMBER) {
             return this.findSourceAsTypeName(this.typeName) == "u64";
         }
@@ -308,11 +304,7 @@ export class TypeNodeAnalyzer {
                 return `${this.getArgs()[0]}[]`;
             }
             case AbiTypeEnum.MAP: {
-                if (AstUtil.isArrayMap(typeName)) {
-                    return `${this.getArgs().join(",")}[]{}`;
-                } else {
-                    return `${this.getArgs().join(",")}{}`;
-                }
+                return `${this.getArgs().join(",")}{}`;
             }
             default: {
                 return typeName;

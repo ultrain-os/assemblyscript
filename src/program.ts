@@ -1272,10 +1272,11 @@ export class Program extends DiagnosticEmitter {
       } else if (numImplementsTypes) {
         // remember classes that implement interfaces
         for (let i = 0; i < numImplementsTypes; ++i) {
-          this.warning(
-            DiagnosticCode.Not_implemented,
-            implementsTypes[i].range
-          );
+          /* fanliangqin comment out for unimplement interface Serializable */
+          // this.warning(
+          //   DiagnosticCode.Not_implemented,
+          //   implementsTypes[i].range
+          // );
         }
         queuedImplements.push(element);
       }
