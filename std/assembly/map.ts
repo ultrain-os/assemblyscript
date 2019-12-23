@@ -192,16 +192,14 @@ export class Map<K,V> implements Serializable{
     ) this.rehash(halfBucketsMask);
     return true;
   }
-
+/* fanliangqin add START */
   private serializeItem<T> (val: T, ds: DataStream): void {
     if (isInteger<T>(val)) {
         ds.write<T>(val);
     } else if (isString<T>(val)) {
         ds.writeString(changetype<string>(val));
-    } else if (isReference<T>(val)) {
-        val.serialize(ds);
     } else {
-        assert(false, "unsupport value type for serializable map.");
+        val.serialize(ds);
     }
   }
 
@@ -222,13 +220,11 @@ export class Map<K,V> implements Serializable{
         return ds.read<T>();
     } else if (isString<T>()) {
         return changetype<T>(ds.readString());
-    } else if (isReference<T>()) {
-        let rst = {} as T;
+    } else {
+        let rst = instantiate<T>();
         rst.deserialize(ds);
         return <T>rst;
     }
-    assert(false, "key type is not support.");
-    return {} as T;
   }
 
   deserialize(ds: DataStream): void {
@@ -244,7 +240,7 @@ export class Map<K,V> implements Serializable{
   primaryKey(): u64 {
     return 0;
   }
-
+/* fanliangqin add END */
   private rehash(newBucketsMask: u32): void {
     var newBucketsCapacity = <i32>(newBucketsMask + 1);
     var newBuckets = new ArrayBuffer(newBucketsCapacity * <i32>BUCKET_SIZE);
@@ -281,7 +277,7 @@ export class Map<K,V> implements Serializable{
     // FIXME: this is preliminary, needs iterators/closures
     var start = changetype<usize>(this.entries);
     var size = this.entriesOffset;
-    var keys = Array.create<K>(size);
+    var keys = new Array<K>();
     for (let i = 0; i < size; ++i) {
       let entry = changetype<MapEntry<K,V>>(start + <usize>i * ENTRY_SIZE<K,V>());
       if (!(entry.taggedNext & EMPTY)) {
@@ -295,7 +291,7 @@ export class Map<K,V> implements Serializable{
     // FIXME: this is preliminary, needs iterators/closures
     var start = changetype<usize>(this.entries);
     var size = this.entriesOffset;
-    var values = Array.create<V>(size);
+    var values = new Array<V>();
     for (let i = 0; i < size; ++i) {
       let entry = changetype<MapEntry<K,V>>(start + <usize>i * ENTRY_SIZE<K,V>());
       if (!(entry.taggedNext & EMPTY)) {

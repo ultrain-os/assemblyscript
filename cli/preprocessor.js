@@ -74,9 +74,14 @@ var libraryFiles = (() => { // set up if not a bundle
     const ultrainLibDir = path.join(__dirname, "..", "ultrainlib");
     find.files(ultrainLibDir, find.TS_EXCEPT_DTS)
         .forEach(file => {
-            bundled[file.replace(/\.ts$/, "")] = fs.readFileSync(path.join(ultrainLibDir, file), "utf8");
+            if (file === 'dbmanager.ts') {
+                bundled['dbmanager'] = fs.readFileSync(path.join(ultrainLibDir, "dbmanager-pre.ts"), "utf8");
+            } else if (file === 'dbmanager-pre.ts') {
+                // skip reading it.
+            } else {
+                bundled[file.replace(/\.ts$/, "")] = fs.readFileSync(path.join(ultrainLibDir, file), "utf8");
+            }
         });
-
     return bundled;
 })();
 

@@ -94,8 +94,9 @@ export class DataStream {
     readVarint32(): u32 {
         var value: u32 = 0;
         var shift: u32 = 0;
+        var b: u8;
         do {
-            var b = this.read<u8>();
+            b = this.read<u8>();
             value |= <u32>(b & 0x7f) << (7 * shift++);
         } while (b & 0x80);
         return value;
@@ -187,7 +188,7 @@ export class DataStream {
 
         let arr = new Array<T>();
         for (let i: u32 = 0; i < len; i++) {
-            let obj = {} as T;
+            let obj = instantiate<T>();
             obj.deserialize(this);
             arr.push(obj);
         }

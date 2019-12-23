@@ -6,7 +6,6 @@ import { ArrayBufferView } from "./arraybuffer";
 import { joinBooleanArray, joinIntegerArray, joinFloatArray, joinStringArray, joinReferenceArray } from "./util/string";
 import { idof, isArray as builtin_isArray } from "./builtins";
 import { E_INDEXOUTOFRANGE, E_INVALIDLENGTH, E_EMPTYARRAY, E_HOLEYARRAY } from "./util/error";
-
 /** Ensures that the given array has _at least_ the specified backing size. */
 function ensureSize(array: usize, minSize: usize, alignLog2: u32): void {
   var oldCapacity = changetype<ArrayBufferView>(array).byteLength;
@@ -24,7 +23,7 @@ function ensureSize(array: usize, minSize: usize, alignLog2: u32): void {
   }
 }
 
-export class Array<T> extends ArrayBufferView {
+export class Array<T> extends ArrayBufferView implements Serializable {
   [key: number]: T;
 
   // Implementing ArrayBufferView isn't strictly necessary here but is done to allow glue code
@@ -52,7 +51,52 @@ export class Array<T> extends ArrayBufferView {
     super(length, alignof<T>());
     this.length_ = length;
   }
+/* fanliangqin add START */
+  private serializeItem (val: T, ds: DataStream): void {
+    if (isInteger<T>()) {
+        ds.write<T>(val);
+    } else if (isString<T>(val)) {
+        ds.writeString(changetype<string>(val));
+    } else if (isReference<T>(val)) {
+        val.serialize(ds);
+    } else {
+        assert(false, "unsupport value type for serializable map.");
+    }
+  }
 
+  serialize(ds: DataStream): void {
+    var length = <u32>this.length;
+    ds.write<u32>(length);
+    for (let index: u32 = 0; index < length; index ++) {
+      let value = this[index];
+      this.serializeItem(value,ds);
+    }
+  }
+
+  private deserializeItem(ds: DataStream): T {
+    if (isInteger<T>()) {
+        return ds.read<T>();
+    } else if (isString<T>()) {
+        return changetype<T>(ds.readString());
+    } else {
+        let rst = instantiate<T>();
+        rst.deserialize(ds);
+        return <T>rst;
+    }
+  }
+
+  deserialize(ds: DataStream): void {
+    var len = ds.read<u32>();
+    for (let index: u32 = 0; index < len; index ++) {
+      let value = this.deserializeItem(ds);
+      this.push(value);
+    }
+  }
+
+  primaryKey(): u64 {
+    return 0;
+  }
+/* fanliangqin add END */
   get length(): i32 {
     return this.length_;
   }

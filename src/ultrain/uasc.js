@@ -41,7 +41,9 @@ exports.findUltrainLib =  function (bundled) {
     const ultrainLibDir = path.join(__dirname, "../..", "ultrainlib" );
     find.files(ultrainLibDir, find.TS_EXCEPT_DTS)
       .forEach(file =>  {
-        bundled[file.replace(/\.ts$/, "")] = fs.readFileSync(path.join(ultrainLibDir, file), "utf8" );
+        if (file !== 'dbmanager-pre.ts') {
+            bundled[file.replace(/\.ts$/, "")] = fs.readFileSync(path.join(ultrainLibDir, file), "utf8" );
+        }
       });
 }
 

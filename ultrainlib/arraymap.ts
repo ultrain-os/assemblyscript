@@ -121,7 +121,7 @@ export class ArrayMap<K, V> implements Serializable {
             let rst = ds.readString();
             this._keys.push(rst);
         } else if (isReference<K>()) {
-            let rst = {} as K;
+            let rst = instantiate<K>();
             rst.deserialize(ds);
             this._keys.push(rst);
         } else {
