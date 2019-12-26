@@ -1916,7 +1916,7 @@ export namespace v64x2 {
 }
 
 // @ts-ignore: decorator
-@external("env", "uabort") // fanliangqin change to uabort
+@external("env", "uabort") // ultrain change to uabort
 declare function uabort(
   message ?: string | null,
   fileName ?: string | null,

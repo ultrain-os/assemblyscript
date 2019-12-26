@@ -280,13 +280,13 @@ export abstract class DiagnosticEmitter {
     var message = DiagnosticMessage.create(code, category, arg0, arg1, arg2).withRange(range);
     if (relatedRange) message.relatedRange = relatedRange;
     this.diagnostics.push(message);
-    /* fanliangqin add START */
+    /* ultrain add START */
     if (category == DiagnosticCategory.ERROR) {
       console.log(formatDiagnosticMessage(message, true, true) + "\n"); // temporary
       console.log(<string>new Error("stack").stack);
       throw <string>new Error("stack").stack;
     }
-    /* fanliangqin add END */
+    /* ultrain add END */
   }
 
   /** Emits an informatory diagnostic message. */

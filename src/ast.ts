@@ -1171,12 +1171,12 @@ export enum DecoratorKind {
   UNMANAGED,
   SEALED,
   INLINE,
-  /* fanliangqin add  START */
+  /* ultrain add  START */
   ACTION,
   DATABASE,
   IGNORE,
   PRIMARYID,
-  /* fanliangqin add  END */
+  /* ultrain add  END */
   EXTERNAL,
   BUILTIN,
   LAZY,
@@ -1192,7 +1192,7 @@ export namespace DecoratorKind {
       let nameStr = (<IdentifierExpression>nameNode).text;
       assert(nameStr.length);
       switch (nameStr.charCodeAt(0)) {
-        /* fanliangqin add START */
+        /* ultrain add START */
         case CharCode.a: {
           if (nameStr == "action") return DecoratorKind.ACTION;
           break;
@@ -1204,7 +1204,7 @@ export namespace DecoratorKind {
         case CharCode.d: {
           if (nameStr == "database") return DecoratorKind.DATABASE;
         }
-        /* fanliangqin add END */
+        /* ultrain add END */
         case CharCode.b: {
           if (nameStr == "builtin") return DecoratorKind.BUILTIN;
           break;
@@ -1219,9 +1219,9 @@ export namespace DecoratorKind {
         }
         case CharCode.i: {
           if (nameStr == "inline") return DecoratorKind.INLINE;
-          /* fanliangqin add  START */
+          /* ultrain add  START */
           if (nameStr == "ignore") return DecoratorKind.IGNORE;
-          /* fanliangqin add  END */
+          /* ultrain add  END */
           break;
         }
         case CharCode.l: {

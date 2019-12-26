@@ -25,7 +25,7 @@ const find = require("./util/find");
 const EOL = process.platform === "win32" ? "\r\n" : "\n";
 const SEP = process.platform === "win32" ? "\\" : "/";
 
-const uasc = require("../src/ultrain/uasc"); // fanliangqin Add
+const uasc = require("../src/ultrain/uasc"); // ultrain Add
 // global.Binaryen = require("../lib/binaryen");
 
 // Emscripten adds an `uncaughtException` listener to Binaryen that results in an additional
@@ -91,9 +91,9 @@ exports.libraryFiles = exports.isBundle ? BUNDLE_LIBRARY : (() => { // set up if
         bundled[file.replace(/\.ts$/, "")] = fs.readFileSync(path.join(libDir, file), "utf8" );
       }
     );
-  /* fanliangqin add START */
+  /* ultrain add START */
   uasc.findUltrainLib(bundled);
-  /* fanliangqin add END */
+  /* ultrain add END */
   return bundled;
 })();
 
@@ -391,9 +391,9 @@ exports.main = function main(argv, options, callback) {
 
     // No such file
     if (sourceText == null) return null;
-    /* fanliangqin add START */
+    /* ultrain add START */
     sourceText = uasc.insertUltrainCode(baseDir, sourcePath, sourceText, args);
-    /* fanliangqin add END */
+    /* ultrain add END */
     return { sourceText, sourcePath };
   }
 
@@ -449,9 +449,9 @@ exports.main = function main(argv, options, callback) {
 
     stats.parseCount++;
     stats.parseTime += measure(() => {
-    /* fanliangqin add START */
+    /* ultrain add START */
       sourceText = uasc.insertUltrainCode(baseDir, sourcePath, sourceText, args);
-    /* fanliangqin add END */
+    /* ultrain add END */
       parser = assemblyscript.parseFile(sourceText, sourcePath, true, parser);
     });
   }
@@ -516,7 +516,7 @@ exports.main = function main(argv, options, callback) {
   // Initialize default aliases
   assemblyscript.setGlobalAlias(compilerOptions, "Math", "NativeMath");
   assemblyscript.setGlobalAlias(compilerOptions, "Mathf", "NativeMathf");
-  assemblyscript.setGlobalAlias(compilerOptions, "uabort", "~lib/builtins/uabort"); // fanliangqin change to uabort
+  assemblyscript.setGlobalAlias(compilerOptions, "uabort", "~lib/builtins/uabort"); // ultrain change to uabort
   assemblyscript.setGlobalAlias(compilerOptions, "trace", "~lib/builtins/trace");
 
   // Add or override aliases if specified
@@ -764,10 +764,10 @@ if (!args.noEmit) {
     }
   }
 
-  /* fanliangqin add START */
+  /* ultrain add START */
     uasc.printUltrainLog(args);
     uasc.saveUltrainFile(args, baseDir, writeFile, writeStdout);
-  /* fanliangqin add END */
+  /* ultrain add END */
     // Write binary
     if (args.binaryFile != null) {
       let sourceMapURL = args.sourceMap != null

@@ -235,5 +235,5 @@ export * from "./tokenizer";
 export * from "./types";
 export * from "./util/index";
 
-// fanliangqin Insert for Ultrain
+// ultrain Insert for Ultrain
 export * from "./ultrain/index";

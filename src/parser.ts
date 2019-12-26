@@ -1521,14 +1521,7 @@ export class Parser extends DiagnosticEmitter {
     if (arrowKind != ArrowKind.ARROW_SINGLE && tn.skip(Token.COLON)) {
       returnType = this.parseType(tn);
       if (!returnType) return null;
-    }
-    /* fanliangqin add  START */
-    else if (tn.skip(Token.SEMICOLON)) {
-      returnType = null;
-      if (!returnType) return null;
-    }
-    /* fanliangqin add  END */
-    else {
+    } else {
       returnType = Node.createOmittedType(tn.range(tn.pos));
     }
 

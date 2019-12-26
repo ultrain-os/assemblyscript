@@ -51,7 +51,7 @@ export class Array<T> extends ArrayBufferView implements Serializable {
     super(length, alignof<T>());
     this.length_ = length;
   }
-/* fanliangqin add START */
+/* ultrain add START */
   private serializeItem (val: T, ds: DataStream): void {
     if (isInteger<T>()) {
         ds.write<T>(val);
@@ -94,7 +94,7 @@ export class Array<T> extends ArrayBufferView implements Serializable {
   primaryKey(): u64 {
     return 0;
   }
-/* fanliangqin add END */
+/* ultrain add END */
   get length(): i32 {
     return this.length_;
   }

@@ -15,9 +15,9 @@ if (~tailArgs) {
 }
 
 try { require("source-map-support").install(); } catch (e) {}
-const preprocessor = require("../cli/preprocessor"); // fanliangqin add
+const preprocessor = require("../cli/preprocessor"); // ultrain add
 const usc = module.exports = require("../cli/asc.js");
 if (/\busc|asc$/.test(process.argv[1])) {
-  preprocessor.process(process.argv.slice(2)); // fanliangqin add
+  preprocessor.process(process.argv.slice(2)); // ultrain add
   process.exitCode = usc.main(process.argv.slice(2));
 }

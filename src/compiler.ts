@@ -9132,12 +9132,12 @@ function mangleImportName(
   mangleImportName_elementName = mangleInternalName(
     element.name, element.parent, element.is(CommonFlags.INSTANCE), true
   );
-  /* fanliangqin add  START */
+  /* ultrain add  START */
   if (element.parent && element.parent.kind == ElementKind.NAMESPACE) {
     mangleImportName_moduleName = "env";
     mangleImportName_elementName = element.name;
   }
-  /* fanliangqin add  END */
+  /* ultrain add  END */
 
   if (!element.hasDecorator(DecoratorFlags.EXTERNAL)) return;
 

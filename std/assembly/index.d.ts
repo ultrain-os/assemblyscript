@@ -1355,7 +1355,7 @@ declare class Float64Array extends TypedArray<f64> {
 }
 
 /** Class representing a sequence of values of type `T`. */
-declare class Array<T> implements Serializable { // fanliangqin add Serializable
+declare class Array<T> implements Serializable { // ultrain add Serializable
 
   /** Tests if a value is an array. */
   static isArray<U>(value: any): value is Array<any>;
@@ -1527,7 +1527,7 @@ interface Function {}
 interface IArguments {}
 interface RegExp {}
 
-declare class Map<K,V> implements Serializable { // fanliangqin add Serializable
+declare class Map<K,V> implements Serializable { // ultrain add Serializable
   readonly size: i32;
   has(key: K): bool;
   set(key: K, value: V): void;

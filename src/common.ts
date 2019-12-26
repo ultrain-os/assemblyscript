@@ -200,7 +200,7 @@ export namespace CommonSymbols {
   export const Float64Array = "Float64Array";
   export const Error = "Error";
   // runtime
-  export const abort = "uabort"; // fanliangqin change to uabort
+  export const abort = "uabort"; // ultrain change to uabort
   export const pow = "pow";
   export const mod = "mod";
   export const alloc = "__alloc";

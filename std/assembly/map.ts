@@ -192,7 +192,7 @@ export class Map<K,V> implements Serializable{
     ) this.rehash(halfBucketsMask);
     return true;
   }
-/* fanliangqin add START */
+/* ultrain add START */
   private serializeItem<T> (val: T, ds: DataStream): void {
     if (isInteger<T>(val)) {
         ds.write<T>(val);
@@ -240,7 +240,7 @@ export class Map<K,V> implements Serializable{
   primaryKey(): u64 {
     return 0;
   }
-/* fanliangqin add END */
+/* ultrain add END */
   private rehash(newBucketsMask: u32): void {
     var newBucketsCapacity = <i32>(newBucketsMask + 1);
     var newBuckets = new ArrayBuffer(newBucketsCapacity * <i32>BUCKET_SIZE);

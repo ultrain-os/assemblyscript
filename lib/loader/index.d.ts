@@ -5,7 +5,7 @@ interface ImportsObject extends Record<string, any> {
   env?: {
     memory?: WebAssembly.Memory,
     table?: WebAssembly.Table,
-    uabort?(msg: number, file: number, line: number, column: number): void, // fanliangqin change to uabort
+    uabort?(msg: number, file: number, line: number, column: number): void, // ultrain change to uabort
     trace?(msg: number, numArgs?: number, ...args: number[]): void
   };
 }

@@ -1,4 +1,4 @@
-declare function uabort( // fanliangqin change to uabort
+declare function uabort( // ultrain change to uabort
   message?: string | null,
   fileName?: string | null,
   lineNumber?: u32,
