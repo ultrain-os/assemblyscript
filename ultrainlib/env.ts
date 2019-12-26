@@ -35,6 +35,6 @@ export declare function current_receiver(): u64;
 
 export function ultrain_assert(condition: boolean, msg: string): void {
   if (condition == false) {
-      ultrainio_assert(0, String.UTF8.encode(msg));
+      ultrainio_assert(0, String.UTF8.encode(msg, true));
   }
 }
