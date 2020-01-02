@@ -25,7 +25,7 @@ function insertCodes(baseDir, sourcePath, sourceText, args) {
         let data = sourceText.split("\n");
         for (let serialize of serializeArray) {
             data.splice(serialize.line, 0, serialize.getCodes());
-            if (args.log) {
+            if (args.log == true) {
                 console.log(`Path: ${sourcePath} line: ${serialize.line}. Insert code:${EOL}${serialize.getCodes()}`);
                 console.log(`Range: ${serialize.toString()}`);
             }
